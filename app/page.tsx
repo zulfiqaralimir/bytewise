@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { NetworkAnimation } from "./components/NetworkAnimation";
 
 export const metadata: Metadata = {
   title: "ByteWise — Programming Concepts Explained from First Principles",
@@ -61,6 +62,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-white">
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
+        <NetworkAnimation />
         <div className="absolute inset-0 opacity-20"
           style={{ backgroundImage: "radial-gradient(circle at 30% 20%, #3b82f6 0%, transparent 50%)" }} />
         <div className="relative max-w-5xl mx-auto px-6 py-28 text-center">
