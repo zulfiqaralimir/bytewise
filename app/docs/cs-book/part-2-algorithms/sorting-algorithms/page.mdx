@@ -1,0 +1,431 @@
+export const metadata = {
+  title: "Sorting Algorithms — ByteWise CS Book",
+  description:
+    "Master sorting algorithms: bubble sort through Timsort. Understand O(n log n) lower bounds, in-place vs stable sorts, and how Python and JavaScript sort internally.",
+  keywords: [
+    "sorting algorithms",
+    "merge sort",
+    "quick sort",
+    "heap sort",
+    "timsort",
+    "comparison sort",
+    "O(n log n)",
+  ],
+  openGraph: {
+    title: "Sorting Algorithms — ByteWise CS Book",
+    description:
+      "From bubble sort to Timsort: learn every major sorting algorithm, their complexities, stability, and when to use each one.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Sorting Algorithms
+
+## The Algorithm That Defined Computer Science
+
+In the 1960s, IBM estimated that more than 25% of all computer time was spent sorting data. Every application — billing systems, personnel records, inventory management — needed sorted output. The fastest computers of the era were so constrained by sorting workloads that entire programming language features (COBOL's `SORT` verb) were added specifically to address it.
+
+Today, sorting is so fast and ubiquitous that we rarely think about it. Python's `sorted()` completes in milliseconds on millions of elements. JavaScript's `Array.prototype.sort()` is built into every browser. Database query planners sort result sets transparently. But scratch the surface and you find that sorting is one of the most theoretically rich topics in computer science, with a proven lower bound, multiple distinct strategies, and production-level algorithms (like Timsort) that represent decades of engineering refinement.
+
+Understanding sorting deeply — not just knowing that "merge sort is $O(n \log n)$" but knowing *why*, when it beats quicksort, and what Python actually does under the hood — is the mark of an engineer who understands their tools rather than just using them.
+
+## Concept Explanation
+
+**Sorting** rearranges a collection into a defined order (ascending, descending, or by a custom key). The key dimensions along which sorting algorithms differ:
+
+- **Time complexity:** How many operations for $n$ elements? Best, average, worst case.
+- **Space complexity:** How much extra memory? $O(1)$ (in-place) vs $O(n)$ (extra array).
+- **Stability:** Does the algorithm preserve the relative order of equal elements? Critical when sorting by multiple keys.
+- **Adaptivity:** Does the algorithm take advantage of partially sorted input?
+
+**The comparison sort lower bound:** Any sorting algorithm that uses only element comparisons requires at least $O(n \log n)$ comparisons in the worst case. This is proven via decision trees: sorting $n$ elements has $n!$ possible outputs; a binary decision tree with $n!$ leaves needs height $\geq \log_2(n!) = O(n \log n)$ by Stirling's approximation. Merge sort, heapsort, and Timsort all achieve this bound.
+
+**Non-comparison sorts** (counting sort, radix sort, bucket sort) break this bound but require additional assumptions about the data (integers in a fixed range, etc.).
+
+**Analogies:**
+- **Bubble sort:** Passing a line of students and swapping any two who are out of order, repeatedly. Exhausting and slow.
+- **Merge sort:** Dividing a deck of cards in half, having two friends sort each half, then carefully merging the two sorted halves.
+- **Quicksort:** Picking one card as a pivot, sorting everyone to its left or right, then repeating for each side. Fast if the pivot is good, terrible if it is always the minimum.
+
+## Mathematical Foundation
+
+**Comparison sort lower bound** (formal):
+
+There are $n!$ permutations of $n$ elements. A comparison-based sort must distinguish all $n!$ outcomes. A binary decision tree has at most $2^h$ leaves at height $h$. Therefore:
+
+$$2^h \geq n! \implies h \geq \log_2(n!)$$
+
+By Stirling's approximation: $\log_2(n!) = \Theta(n \log n)$. Thus no comparison sort can do better than $\Omega(n \log n)$.
+
+**Merge sort recurrence:**
+
+$$T(n) = 2T\left(\frac{n}{2}\right) + O(n) \implies T(n) = O(n \log n)$$
+
+**Quicksort average case:** With random pivot selection, the expected number of comparisons is:
+
+$$E[C_n] = 2n \ln n \approx 1.386 \cdot n \log_2 n$$
+
+**Counting sort:** For integers in range $[0, k]$ with $n$ elements:
+
+$$T(n) = O(n + k) \quad \text{optimal when } k = O(n)$$
+
+**Algorithm complexity summary:**
+
+| Algorithm | Best | Average | Worst | Space | Stable |
+|-----------|------|---------|-------|-------|--------|
+| Bubble | $O(n)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ | Yes |
+| Insertion | $O(n)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ | Yes |
+| Selection | $O(n^2)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ | No |
+| Merge | $O(n \log n)$ | $O(n \log n)$ | $O(n \log n)$ | $O(n)$ | Yes |
+| Quick | $O(n \log n)$ | $O(n \log n)$ | $O(n^2)$ | $O(\log n)$ | No |
+| Heap | $O(n \log n)$ | $O(n \log n)$ | $O(n \log n)$ | $O(1)$ | No |
+| Counting | $O(n+k)$ | $O(n+k)$ | $O(n+k)$ | $O(k)$ | Yes |
+| Timsort | $O(n)$ | $O(n \log n)$ | $O(n \log n)$ | $O(n)$ | Yes |
+
+## Algorithm / Logic
+
+**Merge sort — divide and conquer:**
+
+1. If the array has 0 or 1 elements, return it (already sorted).
+2. Split the array in half.
+3. Recursively sort the left half.
+4. Recursively sort the right half.
+5. Merge the two sorted halves into a single sorted array.
+
+**Quicksort — partition and conquer:**
+
+1. If the array has 0 or 1 elements, return it.
+2. Choose a pivot (last element, first, or random).
+3. Partition: move all elements less than pivot to the left, greater to the right.
+4. Recursively sort the left partition.
+5. Recursively sort the right partition.
+
+**Heapsort — selection using a heap:**
+
+1. Build a max-heap from the array in $O(n)$.
+2. Swap the root (maximum) with the last element.
+3. Reduce heap size by 1 and heapify down.
+4. Repeat until heap is empty.
+
+```
+MERGE_SORT(arr):
+  if len(arr) <= 1: return arr
+  mid = len(arr) // 2
+  left = MERGE_SORT(arr[:mid])
+  right = MERGE_SORT(arr[mid:])
+  return MERGE(left, right)
+
+MERGE(left, right):
+  result, i, j = [], 0, 0
+  while i < len(left) and j < len(right):
+    if left[i] <= right[j]:
+      result.append(left[i]); i += 1
+    else:
+      result.append(right[j]); j += 1
+  return result + left[i:] + right[j:]
+
+QUICKSORT(arr, low, high):
+  if low < high:
+    pivot_idx = PARTITION(arr, low, high)
+    QUICKSORT(arr, low, pivot_idx - 1)
+    QUICKSORT(arr, pivot_idx + 1, high)
+
+PARTITION(arr, low, high):
+  pivot = arr[high]
+  i = low - 1
+  for j in range(low, high):
+    if arr[j] <= pivot:
+      i += 1
+      swap(arr[i], arr[j])
+  swap(arr[i + 1], arr[high])
+  return i + 1
+```
+
+## Programming Implementation
+
+**Python — all major sorting algorithms:**
+
+```python
+from typing import List
+import random
+import heapq
+
+
+# ── Merge Sort — O(n log n), stable, O(n) space ───────────────────────────────
+
+def merge_sort(arr: List[int]) -> List[int]:
+    """Guaranteed O(n log n). Stable. Used for external sorting (files)."""
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return _merge(left, right)
+
+
+def _merge(left: List[int], right: List[int]) -> List[int]:
+    result, i, j = [], 0, 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i]); i += 1
+        else:
+            result.append(right[j]); j += 1
+    return result + left[i:] + right[j:]
+
+
+# ── Quicksort — O(n log n) avg, O(n^2) worst, O(log n) space, in-place ───────
+
+def quicksort(arr: List[int], low: int = 0, high: int = -1) -> None:
+    """In-place sort. Fastest in practice for random data due to cache locality."""
+    if high == -1:
+        high = len(arr) - 1
+    if low < high:
+        pivot_idx = _partition(arr, low, high)
+        quicksort(arr, low, pivot_idx - 1)
+        quicksort(arr, pivot_idx + 1, high)
+
+
+def _partition(arr: List[int], low: int, high: int) -> int:
+    # Random pivot selection to avoid O(n^2) on sorted input
+    rand_idx = random.randint(low, high)
+    arr[rand_idx], arr[high] = arr[high], arr[rand_idx]
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+
+# ── Heapsort — O(n log n), in-place, not stable ───────────────────────────────
+
+def heapsort(arr: List[int]) -> List[int]:
+    """In-place, guaranteed O(n log n). Poor cache performance vs quicksort."""
+    n = len(arr)
+    # Build max-heap
+    for i in range(n // 2 - 1, -1, -1):
+        _heapify(arr, n, i)
+    # Extract elements
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        _heapify(arr, i, 0)
+    return arr
+
+
+def _heapify(arr: List[int], n: int, i: int) -> None:
+    largest, left, right = i, 2 * i + 1, 2 * i + 2
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        _heapify(arr, n, largest)
+
+
+# ── Counting Sort — O(n + k), only for non-negative integers ─────────────────
+
+def counting_sort(arr: List[int]) -> List[int]:
+    """O(n + k) time and space. Breaks O(n log n) barrier for small integer ranges."""
+    if not arr:
+        return []
+    max_val = max(arr)
+    count = [0] * (max_val + 1)
+    for num in arr:
+        count[num] += 1
+    # Accumulate: count[i] = number of elements <= i
+    for i in range(1, len(count)):
+        count[i] += count[i - 1]
+    output = [0] * len(arr)
+    for num in reversed(arr):   # reverse iteration ensures stability
+        count[num] -= 1
+        output[count[num]] = num
+    return output
+
+
+# ── Python's built-in sort (Timsort) ─────────────────────────────────────────
+
+def demo_python_sort():
+    """
+    Python's sorted() and list.sort() use Timsort:
+    - O(n) for nearly sorted data (identifies and merges 'runs')
+    - O(n log n) worst case
+    - Stable: equal elements preserve original order
+    - Guaranteed O(n) space
+    """
+    data = [3, 1, 4, 1, 5, 9, 2, 6]
+    sorted_data = sorted(data)                     # returns new list
+    data.sort()                                    # in-place
+
+    # Sort by custom key — O(n log n) using Timsort
+    people = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
+    by_age = sorted(people, key=lambda p: p["age"])
+
+    # Multi-key sort (stability matters here)
+    by_age_then_name = sorted(people, key=lambda p: (p["age"], p["name"]))
+
+    return sorted_data, by_age, by_age_then_name
+
+
+# ── Merge K sorted lists ──────────────────────────────────────────────────────
+
+def merge_k_sorted(lists: List[List[int]]) -> List[int]:
+    """
+    O(n log k) — merge k sorted lists using a min-heap.
+    n = total elements, k = number of lists.
+    Classic application of heaps + sorting knowledge.
+    """
+    result = []
+    heap = []  # (value, list_index, element_index)
+    for i, lst in enumerate(lists):
+        if lst:
+            heapq.heappush(heap, (lst[0], i, 0))
+    while heap:
+        val, list_i, elem_i = heapq.heappop(heap)
+        result.append(val)
+        if elem_i + 1 < len(lists[list_i]):
+            next_val = lists[list_i][elem_i + 1]
+            heapq.heappush(heap, (next_val, list_i, elem_i + 1))
+    return result
+```
+
+**JavaScript — sorting in modern JS:**
+
+```javascript
+// JavaScript Array.sort() uses Timsort (V8 engine, since Node 11)
+// Note: default sort is lexicographic — always provide a comparator for numbers!
+
+const nums = [10, 2, 30, 4];
+nums.sort();                          // WRONG: ["10", "2", "30", "4"] → lexicographic
+nums.sort((a, b) => a - b);          // CORRECT: [2, 4, 10, 30]
+nums.sort((a, b) => b - a);          // CORRECT descending: [30, 10, 4, 2]
+
+// Sorting objects
+const products = [
+  { name: "Laptop", price: 999 },
+  { name: "Mouse", price: 29 },
+  { name: "Monitor", price: 399 },
+];
+const byPrice = [...products].sort((a, b) => a.price - b.price);
+
+// Multi-key sort
+const employees = [
+  { dept: "Eng", salary: 100000 },
+  { dept: "Eng", salary: 90000 },
+  { dept: "Mkt", salary: 80000 },
+];
+employees.sort((a, b) => {
+  if (a.dept !== b.dept) return a.dept.localeCompare(b.dept);
+  return b.salary - a.salary; // highest salary first within dept
+});
+
+// Merge sort implementation for reference
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSort(arr.slice(0, mid));
+  const right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}
+
+function merge(left, right) {
+  const result = [];
+  let i = 0, j = 0;
+  while (i < left.length && j < right.length) {
+    result.push(left[i] <= right[j] ? left[i++] : right[j++]);
+  }
+  return [...result, ...left.slice(i), ...right.slice(j)];
+}
+```
+
+## System Design Perspective
+
+Sorting appears throughout distributed systems:
+
+```
+[Write Path]
+[Client] → [API] → [Message Queue (ordered by timestamp)]
+                         ↓
+                   [Worker] — sorts batch before writing to DB
+                         ↓
+                   [Database] — maintains B-tree index (sorted)
+                         ↓
+                   [LSM Tree compaction] — merge sorts SSTables
+
+[Read Path]
+[Client] → [API] → [Search Service]
+                         ↓
+                   [Ranking] — top-K using partial sort / heap
+                         ↓
+                   [Pagination] — binary search on sorted cursor
+                         ↓
+                   [Client] ← sorted, paginated results
+```
+
+**Real company sorting systems:**
+
+- **Google Spanner:** Sorts rows by primary key using merge sort during SSTable compaction — the same algorithm, at petabyte scale, across globally distributed data centers.
+- **Netflix's streaming library:** Sorts content recommendations by predicted engagement score using a custom partial sort — only the top 40 results need to be fully sorted for the UI.
+- **Amazon order history:** Orders are stored sorted by date in DynamoDB (sort key). New orders are inserted in $O(\log n)$ into the B-tree; retrieval is sorted by default.
+- **Meta's feed ranking:** News Feed uses a combination of real-time scoring and pre-sorted candidate lists. The final merge of ranked candidates is a k-way merge — identical to merge sort's merge step.
+
+## Visual Content Suggestions
+
+- **Sorting algorithm comparison animation:** Side-by-side bars being sorted by each algorithm at the same speed — visually showing bubble sort's slowness vs merge sort's efficiency.
+- **Merge sort recursion tree:** The divide phase (splitting) and the conquer phase (merging) shown as a balanced tree.
+- **Quicksort partition diagram:** Array before and after partitioning around a pivot, with elements color-coded by position relative to pivot.
+- **Decision tree lower bound proof:** Binary tree with $n!$ leaves illustrating why height must be $\geq \log_2(n!)$.
+- **Timsort run detection:** Array with annotated "runs" (already-sorted sub-sequences) that Timsort identifies and merges.
+
+## Real-World Examples
+
+**Google's MapReduce:** The shuffle phase of MapReduce is fundamentally an external merge sort. Each mapper outputs sorted key-value pairs; the reducer receives them merge-sorted across all mappers. This is the same merge sort algorithm, distributed across thousands of machines, processing terabytes per job.
+
+**PostgreSQL's ORDER BY:** When a result set is too large for memory, PostgreSQL uses an external sort (disk-based merge sort): sort chunks that fit in memory, write sorted runs to disk, then merge the runs. This is the only practical sorting algorithm for data larger than RAM.
+
+**Python's `sorted()` on real data:** Python's Timsort was specifically designed for real-world data patterns. It detects already-sorted "runs" and merges them efficiently. For nearly sorted data (common in practice), it achieves $O(n)$. This is why re-sorting a nearly-sorted list in Python is dramatically faster than theory alone would suggest.
+
+**Meta's Haystack photo storage:** Photos are stored in sorted order by upload timestamp within each volume. Finding photos for a time range is a binary search ($O(\log n)$) followed by a sequential read — a direct consequence of the sorted storage order.
+
+## Common Mistakes
+
+**Mistake 1: Using JavaScript's default `.sort()` on numbers.** `[10, 2, 30].sort()` returns `[10, 2, 30]` — sorted lexicographically as strings. Always pass a comparator: `.sort((a, b) => a - b)`. This silent bug appears in code reviews weekly.
+
+**Mistake 2: Assuming quicksort is always fastest.** Quicksort has $O(n^2)$ worst case on sorted or reverse-sorted input with a naive pivot. Python and Java use more robust algorithms (Timsort, Dual-Pivot Quicksort) specifically to avoid this. For security-sensitive code, be aware that an adversary can craft inputs that trigger worst-case behavior.
+
+**Mistake 3: Ignoring stability when chaining sorts.** If you sort by price, then by category, the second sort must be stable to preserve price ordering within each category. Python's sort is stable; not all sorts are. Always verify stability requirements when using multi-key sorts.
+
+**Mistake 4: Choosing merge sort when memory is constrained.** Merge sort requires $O(n)$ extra space for the merged array. For large datasets with tight memory budgets, heapsort (in-place, $O(1)$ extra space) or an in-place quicksort variant is preferable.
+
+**Mistake 5: Not using counting sort for small integer ranges.** When sorting millions of integers in a known range (e.g., ages 0–120, scores 0–100), counting sort runs in $O(n)$ instead of $O(n \log n)$. This is a 10-100x speedup hiding in plain sight. Always ask: "Are these integers in a bounded range?"
+
+## Interview Angle
+
+**Q: Explain why merge sort is preferred over quicksort in some contexts.**
+
+A: Merge sort guarantees $O(n \log n)$ in all cases — best, average, and worst. Quicksort degrades to $O(n^2)$ on already-sorted or reverse-sorted input with a poor pivot strategy. Additionally, merge sort is **stable** (preserves equal-element order), which is critical when sorting objects by one field while preserving a previous sort by another field. Merge sort also excels in **external sorting** (data larger than RAM), since it naturally works in sequential chunks. Quicksort is typically faster in practice due to better cache locality (in-place, no extra allocation per level), which is why it is preferred for in-memory sorting of random data. Python's Timsort is essentially adaptive merge sort, chosen specifically for its stability and worst-case guarantees.
+
+**Q: What sorting algorithm would you use to sort 1 billion log entries by timestamp, when the data does not fit in memory?**
+
+A: External merge sort. Divide the 1 billion entries into chunks that fit in memory (say, 10 million each — about 100 chunks). Sort each chunk in memory using Timsort (or quicksort) and write to disk. Then perform a k-way merge of the 100 sorted chunks using a min-heap. Reading from k sorted files, the heap always yields the next smallest timestamp in $O(\log k)$ per element, for a total of $O(n \log k)$. This is exactly how databases and data pipelines handle datasets larger than RAM. Hadoop's MapReduce shuffle phase uses this exact algorithm at planetary scale.
+
+## Summary
+
+- The **comparison sort lower bound** is $\Omega(n \log n)$ — proven via decision trees and the $n!$ possible orderings of $n$ elements.
+- **Merge sort:** $O(n \log n)$ guaranteed, stable, $O(n)$ space — ideal for external sorting and when stability is required.
+- **Quicksort:** $O(n \log n)$ average, $O(n^2)$ worst, in-place — fastest in practice for random data; use random pivot to avoid worst case.
+- **Heapsort:** $O(n \log n)$ guaranteed, in-place, not stable — good when both time guarantee and $O(1)$ space are required.
+- **Counting/Radix sort:** $O(n + k)$ — breaks the comparison bound for integer data in bounded ranges.
+- **Timsort** (Python's built-in): adaptive merge sort that exploits natural runs; $O(n)$ for nearly sorted data, stable, used by Python, Java, and V8.
+- Never use JavaScript's `.sort()` on numbers without a numeric comparator — the default is lexicographic.
+- Stability matters for multi-key sorts: verify whether your language's sort is stable before relying on chained sorts.
+- Use counting sort when elements are integers in a small, known range — it is often orders of magnitude faster.
+- Real-world systems (Spanner, MapReduce, PostgreSQL) all use merge sort variants for distributed and external sorting.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/binary-search", label: "Binary Search" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/graph-traversal", label: "Graph Traversal" }}
+/>

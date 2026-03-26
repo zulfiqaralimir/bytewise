@@ -1,0 +1,395 @@
+export const metadata = {
+  title: "Hash Tables — ByteWise CS Book",
+  description:
+    "Deep dive into hash tables: hashing functions, collision resolution, load factors, and why O(1) average lookup powers the fastest systems on Earth.",
+  keywords: [
+    "hash tables",
+    "hash maps",
+    "hashing",
+    "collision resolution",
+    "open addressing",
+    "chaining",
+    "computer science",
+  ],
+  openGraph: {
+    title: "Hash Tables — ByteWise CS Book",
+    description:
+      "Understand how hash tables achieve O(1) lookup, how collisions are handled, and how to implement them in Python and JavaScript.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Hash Tables
+
+## The Miracle of Instant Lookup
+
+In 1953, IBM researcher Hans Peter Luhn wrote an internal memo proposing a technique for storing and retrieving records using a "hashing" function that would transform a key into a direct memory address. He was trying to solve the problem of finding a record in a large file without reading the whole file. His insight — that a mathematical function could eliminate searching entirely — was so counterintuitive that it took years for the broader computing community to appreciate its power.
+
+Today, hash tables are arguably the single most important data structure in software engineering. They are the implementation behind Python's `dict` and `set`, JavaScript's `Map` and `{}` objects, databases' in-memory indexes, and caches like Redis. When engineers at Google serve a search result in 50 milliseconds, part of that speed comes from hash tables. When you log into a website and the server recognizes your session token instantly, that is a hash table lookup. When a Python script runs `if key in my_dict`, that check is $O(1)$ because of hashing.
+
+The question is not whether you use hash tables — you already do, constantly. The question is whether you understand them deeply enough to know when they fail, how to fix them, and how to design systems that rely on their guarantees safely.
+
+## Concept Explanation
+
+A **hash table** is a data structure that maps keys to values using a **hash function** that converts the key into an array index. The underlying storage is a plain array; the magic is the mapping.
+
+**The analogy:** Imagine a library with 100 numbered mailboxes (0 to 99), and a rule: to file a document with title `T`, count the letters in `T` and use `len(T) % 100` as the mailbox number. To retrieve document `T`, apply the same rule and go straight to that mailbox — no searching required.
+
+This is hashing in miniature: a **deterministic function** that maps an input to a fixed range. The function must be:
+- **Deterministic:** Same input → same output, always.
+- **Fast to compute:** $O(1)$ to generate the index.
+- **Uniform:** Distribute keys evenly to avoid hot spots.
+
+**Collisions** occur when two different keys hash to the same index (two documents with the same number of letters). This is inevitable by the **Pigeonhole Principle** — if you have more possible keys than array slots, at least two keys must share a slot. Good hash table design manages collisions efficiently.
+
+**Load factor** $\alpha = n / m$ where $n$ is the number of entries and $m$ is the number of slots. When $\alpha$ exceeds a threshold (typically 0.7–0.75), the table **rehashes**: a new, larger array is allocated and all entries are moved.
+
+## Mathematical Foundation
+
+**Hash function for strings (DJB2):**
+
+$$h(s) = \sum_{i=0}^{|s|-1} s[i] \cdot 31^{|s|-1-i} \pmod{m}$$
+
+where $m$ is the table size (ideally a prime number to minimize clustering).
+
+**Expected number of collisions:** For $n$ keys and $m$ slots, assuming uniform hashing, the expected number of collisions is:
+
+$$E[\text{collisions}] = \binom{n}{2} \cdot \frac{1}{m} \approx \frac{n^2}{2m}$$
+
+For a load factor $\alpha = n/m$, the expected chain length in separate chaining is exactly $\alpha$.
+
+**Expected lookup time with chaining:**
+
+$$E[\text{comparisons}] = 1 + \frac{\alpha}{2}$$
+
+For $\alpha \leq 1$ (load factor under 100%), this is $O(1)$. The guarantee breaks down as $\alpha \to \infty$.
+
+**Rehashing cost amortized:** Doubling the table size costs $O(n)$ for the $n$ entries already present. Amortized over all $n$ insertions:
+
+$$\text{amortized cost} = O(1) + \frac{O(n)}{n} = O(1)$$
+
+**Universal hashing:** A family $\mathcal{H}$ of hash functions is **universal** if for any two distinct keys $x, y$:
+
+$$\Pr_{h \in \mathcal{H}}[h(x) = h(y)] \leq \frac{1}{m}$$
+
+Python's hash randomization (using a random seed per process) achieves this, preventing deliberate collision attacks.
+
+## Algorithm / Logic
+
+**Separate chaining — collision resolution:**
+
+1. Maintain an array of buckets, where each bucket is a linked list.
+2. To insert key `k` with value `v`: compute `i = hash(k) % m`, append `(k, v)` to `bucket[i]`.
+3. To look up key `k`: compute `i = hash(k) % m`, scan `bucket[i]` for a matching key.
+4. To delete key `k`: find and remove the node from `bucket[i]`.
+
+**Open addressing (linear probing) — alternative:**
+
+1. All entries stored directly in the array — no linked lists.
+2. On collision at index `i`, probe `i+1`, `i+2`, ... until an empty slot is found.
+3. On lookup, probe the same sequence until the key is found or an empty slot is reached.
+4. Deletion requires "tombstone" markers to avoid breaking probe chains.
+
+```
+HASH_TABLE_INSERT(table, key, value):
+  index = hash(key) % table.size
+  bucket = table.buckets[index]
+  for entry in bucket:
+    if entry.key == key:
+      entry.value = value     // update existing
+      return
+  bucket.append((key, value)) // new entry
+  table.count += 1
+  if table.count / table.size > LOAD_FACTOR_THRESHOLD:
+    REHASH(table)
+
+HASH_TABLE_GET(table, key):
+  index = hash(key) % table.size
+  for entry in table.buckets[index]:
+    if entry.key == key:
+      return entry.value
+  raise KeyError(key)
+
+REHASH(table):
+  old_buckets = table.buckets
+  table.size *= 2
+  table.buckets = new array of empty lists
+  table.count = 0
+  for bucket in old_buckets:
+    for (key, value) in bucket:
+      HASH_TABLE_INSERT(table, key, value)
+```
+
+## Programming Implementation
+
+**Python — building a hash table from scratch:**
+
+```python
+from typing import Optional, List, Tuple, Any
+
+
+class HashTable:
+    """
+    Hash table with separate chaining.
+    Demonstrates the mechanics behind Python's built-in dict.
+    """
+
+    LOAD_FACTOR_THRESHOLD = 0.75
+    INITIAL_SIZE = 8
+
+    def __init__(self):
+        self._size = self.INITIAL_SIZE
+        self._count = 0
+        self._buckets: List[List[Tuple[Any, Any]]] = [[] for _ in range(self._size)]
+
+    def _hash(self, key: Any) -> int:
+        """Maps any hashable key to a bucket index."""
+        return hash(key) % self._size
+
+    def put(self, key: Any, value: Any) -> None:
+        """Insert or update. O(1) average."""
+        idx = self._hash(key)
+        bucket = self._buckets[idx]
+        for i, (k, _) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)  # update existing
+                return
+        bucket.append((key, value))
+        self._count += 1
+        if self._load_factor() > self.LOAD_FACTOR_THRESHOLD:
+            self._rehash()
+
+    def get(self, key: Any, default: Any = None) -> Any:
+        """Look up by key. O(1) average."""
+        idx = self._hash(key)
+        for k, v in self._buckets[idx]:
+            if k == key:
+                return v
+        return default
+
+    def delete(self, key: Any) -> bool:
+        """Remove a key. Returns True if found. O(1) average."""
+        idx = self._hash(key)
+        bucket = self._buckets[idx]
+        for i, (k, _) in enumerate(bucket):
+            if k == key:
+                bucket.pop(i)
+                self._count -= 1
+                return True
+        return False
+
+    def _load_factor(self) -> float:
+        return self._count / self._size
+
+    def _rehash(self) -> None:
+        """Double the table size and re-insert all entries. O(n) but amortized O(1)."""
+        old_buckets = self._buckets
+        self._size *= 2
+        self._buckets = [[] for _ in range(self._size)]
+        self._count = 0
+        for bucket in old_buckets:
+            for key, value in bucket:
+                self.put(key, value)
+
+    def __contains__(self, key: Any) -> bool:
+        return self.get(key) is not None
+
+    def __len__(self) -> int:
+        return self._count
+
+    def items(self):
+        for bucket in self._buckets:
+            yield from bucket
+
+
+# ── Practical use cases ───────────────────────────────────────────────────────
+
+def word_frequency(text: str) -> dict:
+    """O(n) — count word occurrences using Python's built-in dict."""
+    freq = {}
+    for word in text.lower().split():
+        freq[word] = freq.get(word, 0) + 1
+    return freq
+
+
+def two_sum(nums: List[int], target: int) -> Tuple[int, int]:
+    """
+    O(n) solution using a hash map for complement lookup.
+    Naive O(n^2): check every pair. Hash map: O(n) single pass.
+    """
+    seen = {}  # value → index
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return (seen[complement], i)
+        seen[num] = i
+    raise ValueError("No solution found")
+
+
+def group_anagrams(words: List[str]) -> List[List[str]]:
+    """
+    O(n * k log k) where k is max word length.
+    Key insight: anagrams have the same sorted characters — use as hash key.
+    """
+    groups: dict = {}
+    for word in words:
+        key = tuple(sorted(word))
+        groups.setdefault(key, []).append(word)
+    return list(groups.values())
+
+
+def longest_consecutive_sequence(nums: List[int]) -> int:
+    """
+    O(n) using a hash set. Each number is processed at most twice.
+    Classic interview problem demonstrating hash set power.
+    """
+    num_set = set(nums)
+    longest = 0
+    for num in num_set:
+        if num - 1 not in num_set:   # only start a sequence from its beginning
+            length = 1
+            while num + length in num_set:
+                length += 1
+            longest = max(longest, length)
+    return longest
+```
+
+**JavaScript — hash maps and sets in modern JS:**
+
+```javascript
+// Using Map for guaranteed O(1) operations (unlike plain objects)
+function groupBy(arr, keyFn) {
+  const map = new Map();
+  for (const item of arr) {
+    const key = keyFn(item);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(item);
+  }
+  return map;
+}
+
+// Two-sum in JavaScript
+function twoSum(nums, target) {
+  const seen = new Map(); // value → index
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (seen.has(complement)) {
+      return [seen.get(complement), i];
+    }
+    seen.set(nums[i], i);
+  }
+  return null;
+}
+
+// LRU Cache using Map (maintains insertion order in JS)
+class LRUCache {
+  #capacity;
+  #cache = new Map();
+
+  constructor(capacity) {
+    this.#capacity = capacity;
+  }
+
+  get(key) {
+    if (!this.#cache.has(key)) return -1;
+    const value = this.#cache.get(key);
+    this.#cache.delete(key);
+    this.#cache.set(key, value); // move to end (most recent)
+    return value;
+  }
+
+  put(key, value) {
+    if (this.#cache.has(key)) this.#cache.delete(key);
+    else if (this.#cache.size === this.#capacity) {
+      this.#cache.delete(this.#cache.keys().next().value); // evict LRU (first)
+    }
+    this.#cache.set(key, value);
+  }
+}
+```
+
+## System Design Perspective
+
+Hash tables are the foundation of nearly every high-performance system layer:
+
+```
+[User] → [CDN] → [Load Balancer]
+                       ↓
+              [API Server]
+                — Session store: Hash Map (token → user_id), O(1) auth
+                — Rate limiting: Hash Map (ip → count), O(1) increment
+                       ↓
+              [Redis Cache]
+                — Key-Value store: Hash Map implementation at its core
+                — O(1) GET/SET for hot data
+                       ↓
+              [Database]
+                — Hash indexes: O(1) equality lookups
+                — B-Tree indexes: O(log n) range queries
+```
+
+**Real company usage:**
+
+- **Redis:** Implemented as a hash table internally. Every Redis `SET`/`GET` is an $O(1)$ hash table operation. Redis supports ~1 million $O(1)$ operations per second on a single node.
+- **Amazon DynamoDB:** Each partition key is hashed to determine which physical node stores the data. The hash ensures uniform distribution across thousands of servers — no hot spots.
+- **Memcached:** Pure in-memory hash map used by Facebook to cache database queries, serving billions of requests per day at $O(1)$ per lookup.
+- **Python CPython interpreter:** Python's entire object model is built on hash tables. Attribute lookup (`obj.attr`) is a hash table lookup into the object's `__dict__`.
+
+## Visual Content Suggestions
+
+- **Hash function visualization:** Show how the string "hello" maps to an integer via polynomial hashing, then to a bucket via modulo.
+- **Separate chaining diagram:** Array of buckets with linked lists hanging from collision slots.
+- **Open addressing probe sequence:** Array with arrows showing linear probe path around a collision cluster.
+- **Load factor graph:** Chart showing lookup time increasing sharply as load factor approaches 1.0.
+- **Rehashing animation:** Old array doubling to new array with all entries remapped.
+
+## Real-World Examples
+
+**Google's Spanner:** Uses hash-based sharding to distribute data across globally distributed nodes. The hash of a primary key determines which region stores the data, enabling $O(1)$ routing to the correct datacenter.
+
+**Netflix session management:** Each user's active streaming session (codec, bitrate, position) is stored in a Redis hash with the session token as the key. When a playback request arrives, a single $O(1)$ Redis `HGETALL` retrieves the entire session context.
+
+**Amazon product catalog:** Product SKUs are hashed to determine which DynamoDB partition stores the item data. During Prime Day, billions of product lookups per hour are handled at $O(1)$ per lookup — possible only because of hash-based partitioning.
+
+**Meta's Memcached layer:** Facebook's Memcached deployment (thousands of servers) stores user profile fragments, friend lists, and post data. The consistent hashing ring maps cache keys to servers in $O(1)$, enabling their apps to handle 1 billion daily active users.
+
+## Common Mistakes
+
+**Mistake 1: Using mutable objects as hash keys.** Python will raise a `TypeError` if you try to use a list or dict as a dictionary key, because mutable objects don't have a stable hash. Use tuples instead of lists, or `frozenset` instead of `set`. The rule: hash keys must be **immutable**.
+
+**Mistake 2: Relying on dictionary ordering in Python 2.** Python dicts are ordered by insertion order only since Python 3.7. Code that depended on ordering in Python 2 silently broke. Always use `collections.OrderedDict` or document the ordering guarantee explicitly.
+
+**Mistake 3: Not handling hash collisions in custom implementations.** If you write a hash function that maps everything to index 0, your "hash table" becomes a linked list with $O(n)$ operations. A poor hash function is worse than no hash function because it creates false confidence.
+
+**Mistake 4: Assuming `dict` is always faster than a sorted list.** For very small collections (< 20 items), the overhead of hashing can make a linear scan faster due to CPU cache locality. Python's `dict` has a per-lookup overhead of ~50ns; scanning a 10-item list can be faster.
+
+**Mistake 5: Ignoring hash collision security.** Web frameworks that use unsanitized user input as hash keys are vulnerable to **HashDoS attacks**: an attacker can craft inputs that all hash to the same bucket, degrading lookups to $O(n)$ and crashing the server. Python's hash randomization (PYTHONHASHSEED) mitigates this. Always sanitize and bound user-controlled hash keys.
+
+## Interview Angle
+
+**Q: How would you design a hash function for a custom object?**
+
+A: A good hash function must be deterministic, fast, and distribute outputs uniformly. For a custom object, combine the hashes of its fields using a polynomial hash: `hash = 17; hash = hash * 31 + field1_hash; hash = hash * 31 + field2_hash; ...`. The prime numbers 17 and 31 reduce clustering. In Python, implement `__hash__` and ensure `__eq__` is consistent (if `a == b` then `hash(a) == hash(b)`). Never use mutable fields in `__hash__` — if the object changes, its hash changes and you cannot find it in the table. For security-sensitive contexts, use Python's built-in `hash()` which is randomized per process.
+
+**Q: What happens to a hash table's performance as it fills up, and how do real implementations handle this?**
+
+A: As the load factor $\alpha = n/m$ increases, collision probability increases quadratically. Average lookup time grows from $O(1)$ toward $O(\alpha)$. Most implementations rehash when $\alpha > 0.7$: allocate a new array 2x the size, compute new bucket indices for all entries, and insert them. This costs $O(n)$ but happens infrequently enough that amortized cost remains $O(1)$ per insertion. Python's `dict` rehashes at 2/3 capacity. Java's `HashMap` rehashes at 0.75. Redis has a more sophisticated two-step incremental rehash that avoids blocking — it maintains two hash tables simultaneously and migrates buckets lazily, ensuring no single operation is expensive.
+
+## Summary
+
+- A hash table maps keys to values via a **hash function** that converts keys into array indices.
+- Average-case complexity is $O(1)$ for insert, delete, and lookup — making it the fastest structure for these operations.
+- **Collisions** are inevitable (Pigeonhole Principle) and are resolved via **separate chaining** (linked lists per bucket) or **open addressing** (linear/quadratic probing within the array).
+- **Load factor** $\alpha = n/m$ governs performance; most implementations rehash when $\alpha > 0.75$.
+- **Rehashing** doubles the array size and re-inserts all entries — $O(n)$ but amortized $O(1)$ per insertion.
+- Hash keys must be **immutable** and implement consistent `__hash__` and `__eq__`.
+- Python's `dict`, `set`, JavaScript's `Map`, Redis, Memcached, and DynamoDB are all built on hash table principles.
+- **HashDoS attacks** exploit poor hash functions to force $O(n)$ behavior — Python's per-process hash randomization mitigates this.
+- The classic interview patterns: two-sum, group anagrams, longest consecutive sequence — all reduce to $O(n)$ with hash maps.
+- When choosing between a hash map and a sorted structure: hash maps win on equality lookup; sorted structures win on range queries.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/data-structures", label: "Data Structures" }}
+  next={{ href: "/docs/cs-book/part-1-foundations/recursion", label: "Recursion" }}
+/>

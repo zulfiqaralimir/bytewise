@@ -1,0 +1,466 @@
+export const metadata = {
+  title: "Data Structures — ByteWise CS Book",
+  description:
+    "A comprehensive guide to arrays, linked lists, stacks, queues, trees, and heaps — how they work, when to use them, and how they power real systems.",
+  keywords: [
+    "data structures",
+    "arrays",
+    "linked lists",
+    "stacks",
+    "queues",
+    "trees",
+    "heaps",
+    "computer science",
+  ],
+  openGraph: {
+    title: "Data Structures — ByteWise CS Book",
+    description:
+      "Master the core data structures that underpin every high-performance system. Includes Python and JavaScript implementations with real-world examples.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Data Structures
+
+## Choosing the Wrong Container
+
+In 2012, a trading firm lost $440 million in 45 minutes because their order-management software used the wrong data structure for a hot code path. Orders were stored in a list that was searched linearly — $O(n)$ — rather than a hash map with $O(1)$ lookup. As order volume spiked, the system slowed exponentially, placing thousands of erroneous trades before anyone could intervene. The company eventually went bankrupt.
+
+Data structures are not abstract academic constructs. They are the containers that hold your data, and choosing the wrong one is like choosing the wrong tool for surgery — the consequences can be catastrophic. Every developer instinctively knows arrays, but the gap between knowing arrays exist and knowing *when an array is wrong* is the gap between a junior and a senior engineer.
+
+The good news: there are only a handful of fundamental data structures, and once you understand what each one is optimized for — and what it sacrifices — you will make the right choice automatically. Every complex data structure in existence is built from these primitives.
+
+## Concept Explanation
+
+A **data structure** is an arrangement of data in memory that enables efficient operations on that data. The choice of data structure determines which operations are fast, which are slow, and how much memory you use.
+
+Think of data structures like different types of storage in a kitchen. An **array** is a spice rack with numbered slots — you can reach slot 7 instantly, but inserting a new spice in the middle means shifting everything. A **linked list** is a chain of labeled containers where each container has an arrow pointing to the next — you can easily insert anywhere, but to find slot 7, you must follow the chain from the beginning. A **stack** is a pile of plates — you can only add or remove from the top. A **queue** is a checkout line — first in, first out. A **tree** is the organizational chart of a company — structured hierarchy with clear parent-child relationships.
+
+**The fundamental data structures:**
+
+| Structure | Insert | Delete | Search | Access | Best For |
+|-----------|--------|--------|--------|--------|----------|
+| Array | $O(1)$ end / $O(n)$ mid | $O(n)$ | $O(n)$ | $O(1)$ | Random access, iteration |
+| Linked List | $O(1)$ at pointer | $O(1)$ at pointer | $O(n)$ | $O(n)$ | Frequent insertion/deletion |
+| Stack | $O(1)$ | $O(1)$ | $O(n)$ | $O(1)$ top | LIFO processing, undo/redo |
+| Queue | $O(1)$ | $O(1)$ | $O(n)$ | $O(1)$ front | FIFO scheduling, BFS |
+| Binary Tree | $O(\log n)$ avg | $O(\log n)$ avg | $O(\log n)$ avg | $O(\log n)$ | Ordered data, range queries |
+| Heap | $O(\log n)$ | $O(\log n)$ | $O(n)$ | $O(1)$ min/max | Priority queues, top-K |
+
+## Mathematical Foundation
+
+**Array access:** Given base address $B$ and element size $s$, the address of element at index $i$ is:
+
+$$\text{address}(i) = B + i \cdot s$$
+
+This is why array access is $O(1)$ — it is a single arithmetic operation, independent of array size.
+
+**Linked list traversal:** To reach node $k$ in a linked list, you must follow $k$ pointers:
+
+$$T(k) = O(k) \quad \text{and in the worst case} \quad T(n) = O(n)$$
+
+**Binary Search Tree height:** For a balanced BST with $n$ nodes, the height $h$ satisfies:
+
+$$h = \lfloor \log_2 n \rfloor$$
+
+meaning all operations (insert, delete, search) complete in $O(\log n)$.
+
+**Heap property:** In a min-heap represented as an array, for node at index $i$:
+- Left child: index $2i + 1$
+- Right child: index $2i + 2$
+- Parent: index $\lfloor (i-1)/2 \rfloor$
+
+The heap invariant guarantees: $\text{parent}(i) \leq \text{children}(i)$ for all nodes, so the minimum is always at index 0 — $O(1)$ access.
+
+**Amortized array growth:** When a dynamic array doubles in size upon reaching capacity, the total work for $n$ insertions is:
+
+$$\sum_{k=0}^{\log_2 n} 2^k = 2n - 1 = O(n)$$
+
+This gives $O(1)$ amortized cost per insertion.
+
+## Algorithm / Logic
+
+**Binary Search Tree insertion — step by step:**
+
+1. Start at the root node.
+2. If the tree is empty, create a new node as the root.
+3. Compare the new value to the current node.
+4. If the new value is less, move to the left child.
+5. If the new value is greater, move to the right child.
+6. If the child is null, insert the new node there.
+7. Repeat from step 3 until insertion is complete.
+
+**Heap heapify-up (after insertion) — step by step:**
+
+1. Insert the new element at the end of the array.
+2. Compare the new element with its parent.
+3. If the new element is smaller than its parent (min-heap), swap them.
+4. Move up to the parent's position.
+5. Repeat steps 2–4 until the heap property is restored or you reach the root.
+
+```
+BST_INSERT(root, value):
+  if root is null:
+    return new Node(value)
+  if value < root.value:
+    root.left = BST_INSERT(root.left, value)
+  else:
+    root.right = BST_INSERT(root.right, value)
+  return root
+
+HEAP_PUSH(heap, value):
+  heap.append(value)
+  i = len(heap) - 1
+  while i > 0:
+    parent = (i - 1) // 2
+    if heap[parent] > heap[i]:
+      swap(heap[parent], heap[i])
+      i = parent
+    else:
+      break
+```
+
+## Programming Implementation
+
+**Python — implementing core data structures:**
+
+```python
+from typing import Optional, TypeVar, Generic, List
+from collections import deque
+
+T = TypeVar("T")
+
+
+# ── Stack (LIFO) ──────────────────────────────────────────────────────────────
+class Stack(Generic[T]):
+    """O(1) push and pop. Used for: undo/redo, call stack, DFS, expression eval."""
+
+    def __init__(self):
+        self._data: List[T] = []
+
+    def push(self, item: T) -> None:
+        self._data.append(item)  # O(1) amortized
+
+    def pop(self) -> T:
+        if self.is_empty():
+            raise IndexError("Stack is empty")
+        return self._data.pop()  # O(1)
+
+    def peek(self) -> T:
+        if self.is_empty():
+            raise IndexError("Stack is empty")
+        return self._data[-1]  # O(1)
+
+    def is_empty(self) -> bool:
+        return len(self._data) == 0
+
+    def __len__(self) -> int:
+        return len(self._data)
+
+
+# ── Queue (FIFO) ──────────────────────────────────────────────────────────────
+class Queue(Generic[T]):
+    """O(1) enqueue and dequeue. Uses deque to avoid O(n) list.pop(0)."""
+
+    def __init__(self):
+        self._data: deque[T] = deque()
+
+    def enqueue(self, item: T) -> None:
+        self._data.append(item)  # O(1)
+
+    def dequeue(self) -> T:
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self._data.popleft()  # O(1) — key reason to use deque
+
+    def peek(self) -> T:
+        return self._data[0]
+
+    def is_empty(self) -> bool:
+        return len(self._data) == 0
+
+
+# ── Linked List ───────────────────────────────────────────────────────────────
+class ListNode(Generic[T]):
+    def __init__(self, value: T):
+        self.value = value
+        self.next: Optional["ListNode[T]"] = None
+
+
+class LinkedList(Generic[T]):
+    """O(1) insert at head. O(n) search. Useful when insertions dominate."""
+
+    def __init__(self):
+        self.head: Optional[ListNode[T]] = None
+        self._size = 0
+
+    def prepend(self, value: T) -> None:
+        """O(1) — insert at the front."""
+        node = ListNode(value)
+        node.next = self.head
+        self.head = node
+        self._size += 1
+
+    def append(self, value: T) -> None:
+        """O(n) — must traverse to the end."""
+        node = ListNode(value)
+        if not self.head:
+            self.head = node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = node
+        self._size += 1
+
+    def delete(self, value: T) -> bool:
+        """O(n) — find and remove first occurrence."""
+        if not self.head:
+            return False
+        if self.head.value == value:
+            self.head = self.head.next
+            self._size -= 1
+            return True
+        current = self.head
+        while current.next:
+            if current.next.value == value:
+                current.next = current.next.next
+                self._size -= 1
+                return True
+            current = current.next
+        return False
+
+    def to_list(self) -> List[T]:
+        result, current = [], self.head
+        while current:
+            result.append(current.value)
+            current = current.next
+        return result
+
+
+# ── Binary Search Tree ────────────────────────────────────────────────────────
+class BSTNode:
+    def __init__(self, value: int):
+        self.value = value
+        self.left: Optional["BSTNode"] = None
+        self.right: Optional["BSTNode"] = None
+
+
+class BinarySearchTree:
+    """O(log n) insert/search for balanced trees; O(n) worst case (degenerate)."""
+
+    def __init__(self):
+        self.root: Optional[BSTNode] = None
+
+    def insert(self, value: int) -> None:
+        self.root = self._insert(self.root, value)
+
+    def _insert(self, node: Optional[BSTNode], value: int) -> BSTNode:
+        if node is None:
+            return BSTNode(value)
+        if value < node.value:
+            node.left = self._insert(node.left, value)
+        elif value > node.value:
+            node.right = self._insert(node.right, value)
+        return node  # duplicate: ignore
+
+    def search(self, value: int) -> bool:
+        node = self.root
+        while node:
+            if value == node.value:
+                return True
+            node = node.left if value < node.value else node.right
+        return False
+
+    def inorder(self) -> List[int]:
+        """Returns sorted list — a key BST property."""
+        result = []
+        self._inorder(self.root, result)
+        return result
+
+    def _inorder(self, node: Optional[BSTNode], result: List[int]) -> None:
+        if node:
+            self._inorder(node.left, result)
+            result.append(node.value)
+            self._inorder(node.right, result)
+
+
+# ── Min-Heap ──────────────────────────────────────────────────────────────────
+import heapq
+
+class MinHeap:
+    """O(log n) push/pop. O(1) min access. Used for priority queues, Dijkstra."""
+
+    def __init__(self):
+        self._heap: List[int] = []
+
+    def push(self, value: int) -> None:
+        heapq.heappush(self._heap, value)  # O(log n)
+
+    def pop(self) -> int:
+        return heapq.heappop(self._heap)   # O(log n)
+
+    def peek(self) -> int:
+        return self._heap[0]               # O(1)
+
+    def __len__(self) -> int:
+        return len(self._heap)
+
+
+# Example: top-K frequent elements using a heap
+from collections import Counter
+
+def top_k_frequent(nums: List[int], k: int) -> List[int]:
+    """O(n log k) — heap-based approach. Better than O(n log n) full sort."""
+    count = Counter(nums)
+    # Use a min-heap of size k to track top-k elements
+    heap = []
+    for num, freq in count.items():
+        heapq.heappush(heap, (freq, num))
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return [num for _, num in heap]
+```
+
+**JavaScript — data structures for web engineers:**
+
+```javascript
+// Stack using array (native JS)
+class Stack {
+  #data = [];
+  push(item) { this.#data.push(item); }         // O(1) amortized
+  pop()  { return this.#data.pop(); }            // O(1)
+  peek() { return this.#data.at(-1); }           // O(1)
+  get size() { return this.#data.length; }
+}
+
+// Queue using doubly-linked deque pattern
+class Queue {
+  #head = 0;
+  #data = {};
+  #tail = 0;
+
+  enqueue(item) { this.#data[this.#tail++] = item; }  // O(1)
+  dequeue() {
+    if (this.size === 0) throw new Error("Queue is empty");
+    const item = this.#data[this.#head];
+    delete this.#data[this.#head++];
+    return item;                                         // O(1)
+  }
+  get size() { return this.#tail - this.#head; }
+}
+
+// Binary Search Tree
+class BST {
+  #root = null;
+
+  insert(value) {
+    this.#root = this.#insertNode(this.#root, value);
+  }
+
+  #insertNode(node, value) {
+    if (!node) return { value, left: null, right: null };
+    if (value < node.value) node.left = this.#insertNode(node.left, value);
+    else if (value > node.value) node.right = this.#insertNode(node.right, value);
+    return node;
+  }
+
+  inorder() {
+    const result = [];
+    const traverse = (node) => {
+      if (!node) return;
+      traverse(node.left);
+      result.push(node.value);
+      traverse(node.right);
+    };
+    traverse(this.#root);
+    return result;
+  }
+}
+```
+
+## System Design Perspective
+
+Each data structure maps to a component in real distributed systems:
+
+```
+[Client]
+   ↓
+[API Server]       — uses Hash Maps for O(1) session lookup
+   ↓
+[Task Queue]       — Queue (FIFO) for job scheduling (Celery, SQS)
+   ↓
+[Worker Service]   — Priority Queue (Heap) for urgent-first processing
+   ↓
+[Cache Layer]      — Hash Map + Doubly Linked List = LRU Cache
+   ↓
+[Database Index]   — B-Tree (balanced BST variant) for O(log n) queries
+   ↓
+[Search Engine]    — Inverted Index (Hash Map of sorted lists) for full-text search
+```
+
+**Real company mappings:**
+
+- **Amazon SQS:** A managed queue service. Orders flow through FIFO queues ensuring no order is lost or processed twice.
+- **Redis sorted sets:** A skip list (probabilistic balanced BST) enabling $O(\log n)$ range queries — used by Twitter for timeline ranking.
+- **Kafka:** A distributed log — essentially a persistent, partitioned array — enabling $O(1)$ append and sequential reads.
+- **Nginx connection pool:** A linked list of available connections, enabling $O(1)$ grab/release without shifting memory.
+
+## Visual Content Suggestions
+
+- **Array vs Linked List memory layout:** Side-by-side showing contiguous memory (array) vs scattered nodes with pointers (linked list).
+- **BST insert animation:** Tree building step-by-step as values are inserted.
+- **Heap array vs tree view:** The same heap shown as both an array and a tree structure.
+- **LRU cache with doubly linked list + hash map:** Annotated diagram showing how eviction and lookup work together.
+- **Data structure decision flowchart:** "Do you need random access? → Array. Do you need sorted data? → BST. Do you need the minimum? → Heap."
+
+## Real-World Examples
+
+**Google's Bigtable:** Uses a Log-Structured Merge (LSM) tree — a hierarchy of sorted arrays merged periodically. This trades random-write performance (slow for B-trees) for sequential-write performance (fast), critical when ingesting billions of writes per second.
+
+**Netflix's video queue:** Uses a priority heap internally in their streaming infrastructure to ensure that the highest-priority video segments (based on user scroll position and bandwidth predictions) are fetched first, delivering smooth playback.
+
+**Meta's social graph:** The friend graph is stored in a custom adjacency-list structure where each user's connections are a sorted array. This enables $O(\log n)$ friend-of-friend queries, critical for "People You May Know" suggestions at 3 billion user scale.
+
+**Amazon's order processing:** Order queues use SQS (a managed queue service) to decouple the order placement system from the fulfillment system. This prevents back-pressure during peak events like Prime Day, where order volume can spike 10x in seconds.
+
+## Common Mistakes
+
+**Mistake 1: Using a list as a queue in Python.** `list.pop(0)` is $O(n)$ because it must shift all remaining elements. Use `collections.deque` for $O(1)$ pops from both ends. This single fix can turn a quadratic algorithm into a linear one.
+
+**Mistake 2: Ignoring BST degeneracy.** If you insert sorted data into a naive BST (e.g., 1, 2, 3, 4, 5), the tree degenerates into a linked list with $O(n)$ operations. Always use self-balancing variants (AVL, Red-Black Tree) in production, or use Python's `sortedcontainers.SortedList`.
+
+**Mistake 3: Mutating a list while iterating over it.** This corrupts the iteration and causes elements to be skipped or visited twice. Always iterate over a copy or collect indices for deletion first.
+
+**Mistake 4: Underestimating pointer overhead in linked lists.** Each node in a Python linked list is a full object with ~56 bytes of overhead plus the pointer. A linked list of 1 million integers can use 10-20x more memory than a simple array. Profile memory, not just time.
+
+**Mistake 5: Using a heap when you need ordered iteration.** Heaps give you $O(1)$ min/max access, but iterating in sorted order still requires $O(n \log n)$ repeated pops. If you need full sorted order, use `sorted()` or a BST; heaps are for when you only need repeated min/max extraction.
+
+## Interview Angle
+
+**Q: Design an LRU (Least Recently Used) cache with O(1) get and put operations.**
+
+A: The solution combines two data structures: a hash map for $O(1)$ key lookup, and a doubly linked list for $O(1)$ order-of-use tracking. The hash map stores key → node pointer. The doubly linked list maintains usage order (most recent at head, least recent at tail). On `get`, move the node to the head in $O(1)$. On `put`, add to the head; if capacity exceeded, remove from the tail in $O(1)$. This is the canonical use case for "hash map + doubly linked list" and appears in Python's `functools.lru_cache` and `collections.OrderedDict`.
+
+**Q: When would you use a heap instead of a sorted array?**
+
+A: Use a heap when you repeatedly need to find and remove the minimum (or maximum) element, but do not need the entire collection to be sorted. A heap gives $O(1)$ peek at min and $O(\log n)$ extraction, versus a sorted array's $O(1)$ peek but $O(n)$ insertion. Classic use cases: Dijkstra's shortest path algorithm, merging $k$ sorted lists, scheduling tasks by priority, and finding the top-$k$ elements from a stream. If you need full sorted order at any point, a sorted structure is better; if you only need repeated min/max access, a heap is optimal.
+
+## Summary
+
+- **Arrays** offer $O(1)$ random access and are cache-friendly, but $O(n)$ insertion/deletion in the middle.
+- **Linked lists** offer $O(1)$ insertion/deletion at known positions but $O(n)$ access — avoid them when random access dominates.
+- **Stacks** are LIFO and enable $O(1)$ push/pop — essential for recursion simulation, expression parsing, and undo systems.
+- **Queues** are FIFO and enable $O(1)$ enqueue/dequeue — the backbone of job scheduling, BFS, and message passing.
+- Use `collections.deque` in Python for queues, never `list.pop(0)`.
+- **Binary Search Trees** provide $O(\log n)$ operations on ordered data but degenerate to $O(n)$ without balancing.
+- **Heaps** guarantee $O(1)$ access to the min/max and $O(\log n)$ insertion/extraction — perfect for priority queues.
+- **LRU Cache** = hash map + doubly linked list — a canonical combination that delivers $O(1)$ get and put.
+- Every major system component maps to a data structure: databases use B-Trees, caches use hash maps, queues use deques, schedulers use heaps.
+- The right data structure choice can reduce an $O(n^2)$ system to $O(n \log n)$ — a decision worth more than any micro-optimization.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/big-o-notation", label: "Big O Notation" }}
+  next={{ href: "/docs/cs-book/part-1-foundations/hash-tables", label: "Hash Tables" }}
+/>

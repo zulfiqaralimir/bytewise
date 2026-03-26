@@ -1,0 +1,440 @@
+export const metadata = {
+  title: "Rate Limiting & Throttling Explained | ByteWise",
+  description: "Master rate limiting and throttling — token bucket, sliding window, leaky bucket algorithms with Python and JS implementations.",
+  keywords: ["rate limiting", "throttling", "token bucket", "sliding window", "API", "system design"],
+  openGraph: {
+    title: "Rate Limiting & Throttling Explained | ByteWise",
+    description: "Master rate limiting algorithms — token bucket, sliding window, leaky bucket with real-world examples.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Rate Limiting & Throttling: Protecting Systems Under Load
+
+## The Day Twitter's API Went Down
+
+On a Tuesday in 2013, a popular third-party Twitter client sent 10,000 API requests per second during a major news event. Within minutes, Twitter's servers were overwhelmed. Other apps stopped working. Users across the world saw error messages. A single misbehaving client had degraded service for millions.
+
+Twitter's engineering team scrambled. They had rate limits — but they were applied per endpoint, not per client across all endpoints. One client could legally call five different endpoints at 2,000 requests each. The limits were technically correct but architecturally wrong.
+
+After the incident, Twitter rebuilt their rate limiting layer. Today, every API call — no matter the endpoint — counts against a per-user budget. The limits are generous for human usage and tight enough to protect against abuse. The result is a system that stays healthy even when individual clients misbehave.
+
+Rate limiting is one of those invisible features that only gets noticed when it's missing.
+
+---
+
+## What Is Rate Limiting?
+
+**Rate limiting** controls how many requests a client can make to a system within a time window. It protects against:
+
+- **Abuse and DDoS**: malicious actors flooding your system
+- **Accidental bugs**: a client loop sending 10,000 requests instead of 10
+- **Resource fairness**: one heavy user shouldn't degrade others
+- **Cost control**: cloud APIs charge per call; runaway clients burn money
+
+**Throttling** is the application of rate limits — when a client exceeds their limit, you *throttle* them by rejecting or slowing their requests.
+
+Think of a highway on-ramp. The ramp meter controls how many cars enter per minute to prevent freeway congestion. Rate limiting is your API's on-ramp meter.
+
+---
+
+## Mathematical Foundation
+
+### Token Bucket Algorithm
+
+The most widely used rate limiting algorithm. Tokens accumulate in a bucket at a steady rate and are consumed by each request.
+
+$$\text{Tokens Available} = \min\left(\text{Capacity}, \text{Tokens}_\text{prev} + \text{Rate} \times \Delta t\right)$$
+
+Where:
+- $\text{Capacity}$ = maximum burst size (bucket size)
+- $\text{Rate}$ = tokens added per second (sustained rate)
+- $\Delta t$ = time elapsed since last request
+
+**Request allowed if**: $\text{Tokens Available} \geq \text{Cost}_\text{request}$
+
+**Example**: Rate = 10 req/s, Capacity = 50 tokens.
+- At $t=0$: 50 tokens (full bucket)
+- Burst of 50 requests at $t=0$: allowed (empties bucket)
+- Next request at $t=0.1s$: 1 token added → 1 token → allowed
+- 49 more requests at $t=0.1s$: rejected (not enough tokens)
+
+### Sliding Window Counter
+
+More accurate than fixed windows:
+
+$$\text{Count}_\text{sliding} = \text{Count}_\text{prev} \times \frac{W - \Delta t}{W} + \text{Count}_\text{current}$$
+
+Where $W$ is the window size. This interpolates between the previous and current window counts to smooth out boundary effects.
+
+### Leaky Bucket
+
+Requests enter a queue (bucket) and are processed at a fixed rate, regardless of input rate:
+
+$$\text{Output Rate} = \text{constant}$$
+$$\text{Queue Size} \leq \text{Capacity}$$
+
+Unlike token bucket, leaky bucket guarantees a constant output rate — useful for smoothing bursty traffic before it hits downstream services.
+
+---
+
+## Algorithm / Logic
+
+### Token Bucket — Step by Step
+
+1. Initialize: `tokens = capacity`, `last_refill_time = now()`
+2. On each request:
+   - Calculate elapsed: `elapsed = now() - last_refill_time`
+   - Add tokens: `tokens = min(capacity, tokens + rate × elapsed)`
+   - Update: `last_refill_time = now()`
+   - If `tokens >= 1`: consume token, allow request
+   - Else: reject request (429 Too Many Requests)
+
+### Sliding Window — Step by Step
+
+1. Maintain a sorted list of timestamps for each client
+2. On each request:
+   - Remove timestamps older than `window_size` from the list
+   - If `len(timestamps) < limit`: add current timestamp, allow request
+   - Else: reject request
+3. Timestamps auto-expire, keeping the list bounded
+
+```
+Pseudocode: Token Bucket
+
+class TokenBucket:
+    capacity = 100
+    rate = 10  # tokens per second
+    tokens = capacity
+    last_refill = current_time()
+
+    function allow_request(cost = 1):
+        elapsed = current_time() - last_refill
+        tokens = min(capacity, tokens + rate * elapsed)
+        last_refill = current_time()
+
+        if tokens >= cost:
+            tokens -= cost
+            return ALLOW
+        else:
+            return DENY (retry_after = (cost - tokens) / rate)
+```
+
+---
+
+## Programming Implementation
+
+### Python: Token Bucket with Redis
+
+```python
+import time
+import redis
+from typing import Optional
+
+
+class RateLimiter:
+    """
+    Token bucket rate limiter backed by Redis.
+    Supports distributed environments where multiple API servers
+    share the same rate limit state per client.
+    """
+
+    def __init__(
+        self,
+        redis_client: redis.Redis,
+        rate: float = 10.0,      # tokens per second
+        capacity: int = 50,       # max burst
+        prefix: str = "ratelimit"
+    ) -> None:
+        self.redis = redis_client
+        self.rate = rate
+        self.capacity = capacity
+        self.prefix = prefix
+
+    def _key(self, client_id: str) -> str:
+        return f"{self.prefix}:{client_id}"
+
+    def allow(self, client_id: str, cost: int = 1) -> tuple[bool, dict[str, float]]:
+        """
+        Returns (allowed, metadata) where metadata includes:
+        - remaining: tokens left after this request
+        - retry_after: seconds to wait if rejected (0 if allowed)
+        """
+        key = self._key(client_id)
+        now = time.time()
+
+        # Use a Lua script for atomic read-modify-write
+        # This prevents race conditions in concurrent requests
+        lua_script = """
+        local key = KEYS[1]
+        local capacity = tonumber(ARGV[1])
+        local rate = tonumber(ARGV[2])
+        local now = tonumber(ARGV[3])
+        local cost = tonumber(ARGV[4])
+
+        local data = redis.call('HMGET', key, 'tokens', 'last_refill')
+        local tokens = tonumber(data[1]) or capacity
+        local last_refill = tonumber(data[2]) or now
+
+        -- Refill tokens based on elapsed time
+        local elapsed = now - last_refill
+        tokens = math.min(capacity, tokens + rate * elapsed)
+
+        local allowed = 0
+        local retry_after = 0
+
+        if tokens >= cost then
+            tokens = tokens - cost
+            allowed = 1
+        else
+            retry_after = (cost - tokens) / rate
+        end
+
+        redis.call('HMSET', key, 'tokens', tokens, 'last_refill', now)
+        redis.call('EXPIRE', key, math.ceil(capacity / rate) + 10)
+
+        return {allowed, tokens, retry_after}
+        """
+
+        result = self.redis.eval(
+            lua_script, 1, key,
+            self.capacity, self.rate, now, cost
+        )
+
+        allowed = bool(result[0])
+        remaining = float(result[1])
+        retry_after = float(result[2])
+
+        return allowed, {
+            "remaining": remaining,
+            "retry_after": retry_after,
+            "limit": self.capacity,
+            "rate": self.rate,
+        }
+
+
+# FastAPI middleware usage example
+# from fastapi import Request, HTTPException
+# limiter = RateLimiter(redis_client=redis.Redis(), rate=10, capacity=50)
+#
+# @app.middleware("http")
+# async def rate_limit_middleware(request: Request, call_next):
+#     client_ip = request.client.host
+#     allowed, meta = limiter.allow(client_ip)
+#     if not allowed:
+#         raise HTTPException(
+#             status_code=429,
+#             detail=f"Rate limit exceeded. Retry after {meta['retry_after']:.2f}s",
+#             headers={"Retry-After": str(int(meta['retry_after']) + 1)}
+#         )
+#     response = await call_next(request)
+#     response.headers["X-RateLimit-Remaining"] = str(int(meta["remaining"]))
+#     return response
+```
+
+### Python: Sliding Window (In-Memory, for Single Server)
+
+```python
+import time
+from collections import deque
+from threading import Lock
+
+
+class SlidingWindowRateLimiter:
+    """
+    Sliding window rate limiter using a deque of timestamps.
+    Thread-safe for single-process servers.
+    """
+
+    def __init__(self, limit: int, window: float) -> None:
+        self.limit = limit          # max requests per window
+        self.window = window        # window size in seconds
+        self.clients: dict[str, deque[float]] = {}
+        self.lock = Lock()
+
+    def allow(self, client_id: str) -> tuple[bool, int]:
+        """Returns (allowed, remaining_requests)"""
+        now = time.time()
+        cutoff = now - self.window
+
+        with self.lock:
+            if client_id not in self.clients:
+                self.clients[client_id] = deque()
+
+            timestamps = self.clients[client_id]
+
+            # Remove expired timestamps
+            while timestamps and timestamps[0] < cutoff:
+                timestamps.popleft()
+
+            if len(timestamps) < self.limit:
+                timestamps.append(now)
+                return True, self.limit - len(timestamps)
+            else:
+                return False, 0
+
+
+# Usage: 100 requests per 60-second window
+limiter = SlidingWindowRateLimiter(limit=100, window=60.0)
+
+for i in range(105):
+    allowed, remaining = limiter.allow("user-123")
+    if not allowed:
+        print(f"Request {i+1}: BLOCKED (limit exceeded)")
+    else:
+        print(f"Request {i+1}: OK ({remaining} remaining)")
+```
+
+### JavaScript: Token Bucket (Node.js)
+
+```javascript
+class TokenBucket {
+  constructor({ rate = 10, capacity = 50 } = {}) {
+    this.rate = rate;         // tokens per second
+    this.capacity = capacity;
+    this.buckets = new Map(); // clientId → { tokens, lastRefill }
+  }
+
+  allow(clientId, cost = 1) {
+    const now = Date.now() / 1000; // seconds
+
+    if (!this.buckets.has(clientId)) {
+      this.buckets.set(clientId, { tokens: this.capacity, lastRefill: now });
+    }
+
+    const bucket = this.buckets.get(clientId);
+    const elapsed = now - bucket.lastRefill;
+
+    // Refill tokens
+    bucket.tokens = Math.min(this.capacity, bucket.tokens + this.rate * elapsed);
+    bucket.lastRefill = now;
+
+    if (bucket.tokens >= cost) {
+      bucket.tokens -= cost;
+      return { allowed: true, remaining: Math.floor(bucket.tokens) };
+    }
+
+    const retryAfter = (cost - bucket.tokens) / this.rate;
+    return { allowed: false, remaining: 0, retryAfter };
+  }
+}
+
+// Express middleware
+const limiter = new TokenBucket({ rate: 10, capacity: 50 });
+
+function rateLimitMiddleware(req, res, next) {
+  const clientId = req.ip ?? 'unknown';
+  const result = limiter.allow(clientId);
+
+  res.setHeader('X-RateLimit-Limit', 50);
+  res.setHeader('X-RateLimit-Remaining', result.remaining);
+
+  if (!result.allowed) {
+    res.setHeader('Retry-After', Math.ceil(result.retryAfter));
+    return res.status(429).json({ error: 'Too many requests' });
+  }
+
+  next();
+}
+```
+
+---
+
+## System Design Perspective
+
+### Where to Apply Rate Limits
+
+```
+[Client] → [CDN / Edge] → [Load Balancer] → [API Gateway] → [Service]
+               │                                  │
+           Geo-based                         Per-user/key
+           IP blocking                       rate limits
+```
+
+**Edge level**: Block by IP, geographic region, or known bad actors. Tools: Cloudflare Rate Limiting, AWS Shield.
+
+**API Gateway level**: Per-API-key or per-user limits. This is where most granular control lives. Tools: Kong, AWS API Gateway, nginx rate limiting.
+
+**Service level**: Internal rate limits for protecting downstream databases or services. Tools: Resilience4j, custom middleware.
+
+### Response Headers (Industry Standard)
+
+```
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 873
+X-RateLimit-Reset: 1711400000
+Retry-After: 30
+```
+
+When a client is throttled, return HTTP `429 Too Many Requests` with `Retry-After` header.
+
+---
+
+## Visual Content Suggestions
+
+- Token bucket animation: tokens filling up and being consumed by requests
+- Sliding window diagram showing timestamps being counted and expired
+- Leaky bucket vs token bucket comparison (burst handling difference)
+- Multi-tier rate limiting: edge → gateway → service
+- Redis sorted set structure for sliding window implementation
+
+---
+
+## Real-World Examples
+
+**GitHub API**: 5,000 requests/hour for authenticated users, 60/hour for unauthenticated. Uses token bucket. Returns clear headers on every response so clients can self-throttle. Exceeding limit returns 403 with `X-RateLimit-Reset` timestamp.
+
+**Twitter API v2**: Multi-dimensional limits — per endpoint, per app, per user. Uses a credit system where different endpoints cost different amounts. Streaming endpoints have their own separate limits.
+
+**Stripe API**: Distinguishes between "read" and "write" rate limits. Write operations (creating charges) have stricter limits than reads. Returns 429 with a `Retry-After` header on all limit violations.
+
+**Cloudflare**: Operates at the DNS/edge layer, blocking before traffic even reaches your servers. Can apply rate limits based on IP, country, browser fingerprint, or request characteristics.
+
+---
+
+## Common Mistakes
+
+**1. Fixed windows create boundary burst attacks.** A fixed window of "100 requests per minute" resets at :00. A client can send 100 at :59 and 100 at :01 — 200 requests in 2 seconds. Sliding window or token bucket prevents this.
+
+**2. Rate limiting only at the application layer.** By the time a flood request reaches your application code, you've already paid CPU, DB connection, and network costs. Rate limiting at the edge (nginx, CDN) is far cheaper.
+
+**3. Not returning proper headers.** Clients need to know their limit, remaining requests, and when the window resets. Without this, they can't implement exponential backoff. Always return `X-RateLimit-*` headers.
+
+**4. Same limits for all clients.** A paid enterprise customer and a free tier user shouldn't have the same limits. Tiered rate limits (linked to the API key) are standard practice.
+
+**5. Forgetting distributed state.** A single-server in-memory rate limiter breaks the moment you add a second server. Use Redis or another shared store so all API servers share limit state per client.
+
+---
+
+## Interview Angle
+
+**Q: Design a rate limiter for a distributed API serving 10 million requests per day.**
+
+> I'd use a token bucket algorithm backed by Redis. Each client (by API key or IP) has a bucket: tokens refill at the allowed rate, each request consumes one. Redis Lua scripts ensure atomic read-modify-write — critical for correctness under concurrent requests. The rate limiter runs as a middleware layer before the API handlers. For read-heavy scenarios, I'd add local caching (count against local cache, sync to Redis every N ms) to reduce Redis load. Return `X-RateLimit-*` headers on all responses. Handle Redis failures gracefully — fail open (allow requests) rather than fail closed (reject everything) to prioritize availability.
+
+**Q: What's the difference between rate limiting and throttling?**
+
+> Rate limiting defines a policy — "100 requests per minute per user." Throttling is the enforcement mechanism — what happens when that policy is violated. Common throttling strategies: (1) **Hard rejection** — return 429 immediately; (2) **Soft throttling** — add artificial delay to slow down the client; (3) **Queue** — buffer excess requests and process them when capacity is available; (4) **Degraded service** — serve cached/lower-quality responses. The right choice depends on use case: external APIs typically use hard rejection; internal services might prefer queueing.
+
+---
+
+## Summary
+
+- **Rate limiting** controls how many requests a client can make per time window
+- **Token bucket**: tokens accumulate up to a capacity, consumed per request — allows bursts
+- **Leaky bucket**: fixed output rate regardless of input — smooths traffic
+- **Sliding window**: counts requests in a rolling window — accurate but memory-intensive
+- Apply rate limits at **multiple layers**: edge, API gateway, and service level
+- Use **Redis Lua scripts** for atomic, distributed rate limit state
+- Always return **standard headers**: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After`
+- Return **HTTP 429** with `Retry-After` when clients are throttled
+- Fixed windows are vulnerable to **boundary burst attacks** — prefer sliding window or token bucket
+- **Tiered limits** (free vs. paid) are standard practice for API products
+
+<ArticleNav
+  prev={{ title: "Microservices vs Monolith", href: "/docs/cs-book/part-4-advanced/microservices" }}
+  next={{ title: "CI/CD Pipelines", href: "/docs/cs-book/part-5-modern-engineering/ci-cd" }}
+/>

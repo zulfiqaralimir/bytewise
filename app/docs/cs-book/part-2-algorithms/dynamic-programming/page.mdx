@@ -1,0 +1,446 @@
+export const metadata = {
+  title: "Dynamic Programming — ByteWise CS Book",
+  description:
+    "Master dynamic programming: overlapping subproblems, optimal substructure, memoization vs tabulation, and classic DP patterns for interviews.",
+  keywords: [
+    "dynamic programming",
+    "memoization",
+    "tabulation",
+    "overlapping subproblems",
+    "optimal substructure",
+    "DP patterns",
+    "knapsack",
+    "LCS",
+  ],
+  openGraph: {
+    title: "Dynamic Programming — ByteWise CS Book",
+    description:
+      "Learn dynamic programming: when to use it, how to identify DP problems, and solve classic problems like knapsack, LCS, and coin change.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Dynamic Programming
+
+## The Art of Never Solving the Same Problem Twice
+
+Richard Bellman, who coined the term "dynamic programming" in the 1950s, later admitted the name was chosen partly to obscure what he was doing from the Secretary of Defense, who was suspicious of mathematical research. "Dynamic" sounded impressive and government-friendly. The actual technique — storing solutions to subproblems to avoid recomputation — has nothing to do with the word "dynamic."
+
+Bellman's insight was profound: many optimization problems have the property that their optimal solution contains the optimal solutions to smaller subproblems. If you know the cheapest way to fly from New York to Los Angeles with exactly one stopover, and you know the cheapest direct flight from Chicago to LA, you can quickly determine the cheapest two-stop route through Chicago to LA. You do not need to re-examine every possible Chicago-to-LA route — you already have that answer.
+
+This property — called **optimal substructure** — combined with **overlapping subproblems** (smaller subproblems that recur repeatedly) is the signature of a dynamic programming problem. Once you learn to recognize these two properties, you can transform exponential-time recursive solutions into polynomial-time masterpieces. DP is not a magic trick; it is a disciplined way of trading space for time.
+
+## Concept Explanation
+
+**Dynamic programming** is an algorithmic paradigm that solves complex problems by breaking them down into simpler overlapping subproblems, solving each subproblem only once, and storing the results.
+
+**Two necessary conditions:**
+
+1. **Optimal substructure:** The optimal solution to the problem can be constructed from optimal solutions to its subproblems.
+2. **Overlapping subproblems:** The same subproblems recur multiple times (unlike divide-and-conquer, where subproblems are disjoint).
+
+**Two implementation styles:**
+
+- **Top-down (memoization):** Start with the original problem, recursively break it down, cache results. Natural to write; starts from the original problem definition.
+- **Bottom-up (tabulation):** Start from the smallest subproblems, iteratively build up to the original. Usually faster (no recursion overhead), always $O(n)$ space per dimension.
+
+**The analogy:** Imagine climbing a staircase where you can take 1 or 2 steps at a time. How many ways are there to reach step $n$? A naive recursive approach recomputes the number of ways to reach step 3 dozens of times when calculating step 10. DP says: compute step 1 (1 way), step 2 (2 ways), then each subsequent step = ways(step - 1) + ways(step - 2). You compute each step once and store the answer — Fibonacci numbers in disguise.
+
+**The DP framework (five steps):**
+
+1. **Define the state:** What does `dp[i]` (or `dp[i][j]`) represent?
+2. **Identify the base case:** Smallest valid input with a known answer.
+3. **Write the recurrence:** How does `dp[i]` relate to smaller subproblems?
+4. **Determine the order:** Bottom-up order must compute dependencies before the current state.
+5. **Extract the answer:** Where in the DP table is the final answer?
+
+## Mathematical Foundation
+
+**Fibonacci recurrence:**
+
+$$F(n) = F(n-1) + F(n-2), \quad F(0) = 0, F(1) = 1$$
+
+Without DP: $T(n) = O(2^n)$. With memoization: $T(n) = O(n)$, $S(n) = O(n)$.
+
+**Coin change recurrence** (minimum coins to make amount $A$ using denominations $c_1, c_2, \ldots, c_k$):
+
+$$dp[a] = \min_{c \in \text{coins}} \left(1 + dp[a - c]\right) \quad \text{for } a > 0$$
+
+$$dp[0] = 0 \quad \text{(base case: 0 coins to make amount 0)}$$
+
+**0/1 Knapsack recurrence** (maximize value with capacity $W$, items with weight $w_i$ and value $v_i$):
+
+$$dp[i][w] = \max\left(dp[i-1][w],\; dp[i-1][w - w_i] + v_i\right) \quad \text{if } w_i \leq w$$
+
+$$dp[i][w] = dp[i-1][w] \quad \text{if } w_i > w$$
+
+Space optimized to $O(W)$ by reusing a single array (traversed in reverse).
+
+**Longest Common Subsequence (LCS) recurrence:**
+
+$$dp[i][j] = \begin{cases} dp[i-1][j-1] + 1 & \text{if } s_1[i] = s_2[j] \\ \max(dp[i-1][j],\; dp[i][j-1]) & \text{otherwise} \end{cases}$$
+
+Time: $O(mn)$, Space: $O(mn)$, or $O(\min(m,n))$ with space optimization.
+
+## Algorithm / Logic
+
+**Coin change — bottom-up DP:**
+
+1. Initialize `dp = [infinity] * (amount + 1)`, `dp[0] = 0`.
+2. For each amount `a` from 1 to `amount`:
+   a. For each coin denomination `c`:
+   b. If `a >= c` and `dp[a - c] != infinity`: `dp[a] = min(dp[a], dp[a - c] + 1)`.
+3. Return `dp[amount]`, or -1 if still infinity.
+
+**Longest Increasing Subsequence (LIS) — $O(n^2)$ DP:**
+
+1. Initialize `dp = [1] * n` (every single element is a LIS of length 1).
+2. For each index `i` from 1 to n-1:
+   a. For each index `j` from 0 to i-1:
+   b. If `arr[j] < arr[i]`: `dp[i] = max(dp[i], dp[j] + 1)`.
+3. Return `max(dp)`.
+
+```
+COIN_CHANGE(coins, amount):
+  dp = [inf] * (amount + 1)
+  dp[0] = 0
+  for a in range(1, amount + 1):
+    for c in coins:
+      if a >= c and dp[a - c] + 1 < dp[a]:
+        dp[a] = dp[a - c] + 1
+  return dp[amount] if dp[amount] != inf else -1
+
+KNAPSACK_01(weights, values, W):
+  n = len(weights)
+  dp = [[0] * (W + 1) for _ in range(n + 1)]
+  for i in range(1, n + 1):
+    for w in range(W + 1):
+      dp[i][w] = dp[i-1][w]  // don't take item i
+      if weights[i-1] <= w:
+        take = dp[i-1][w - weights[i-1]] + values[i-1]
+        dp[i][w] = max(dp[i][w], take)
+  return dp[n][W]
+```
+
+## Programming Implementation
+
+**Python — complete DP pattern library:**
+
+```python
+from typing import List, Dict
+from functools import lru_cache
+
+
+# ── 1. Fibonacci (canonical DP introduction) ──────────────────────────────────
+
+def fibonacci_dp(n: int) -> int:
+    """O(n) time, O(1) space — bottom-up with space optimization."""
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+
+# ── 2. Coin Change ────────────────────────────────────────────────────────────
+
+def coin_change(coins: List[int], amount: int) -> int:
+    """
+    O(amount * len(coins)) time, O(amount) space.
+    Minimum number of coins to make 'amount'. -1 if impossible.
+    State: dp[a] = min coins to make amount a.
+    """
+    dp = [float("inf")] * (amount + 1)
+    dp[0] = 0
+    for a in range(1, amount + 1):
+        for c in coins:
+            if a >= c:
+                dp[a] = min(dp[a], dp[a - c] + 1)
+    return dp[amount] if dp[amount] != float("inf") else -1
+
+
+def coin_change_ways(coins: List[int], amount: int) -> int:
+    """
+    O(amount * len(coins)) — count number of ways to make 'amount'.
+    State: dp[a] = number of distinct combinations summing to a.
+    """
+    dp = [0] * (amount + 1)
+    dp[0] = 1  # one way to make 0: use no coins
+    for c in coins:
+        for a in range(c, amount + 1):
+            dp[a] += dp[a - c]
+    return dp[amount]
+
+
+# ── 3. 0/1 Knapsack ───────────────────────────────────────────────────────────
+
+def knapsack_01(weights: List[int], values: List[int], capacity: int) -> int:
+    """
+    O(n * W) time, O(W) space (space-optimized with single array).
+    State: dp[w] = max value with weight budget w.
+    IMPORTANT: iterate weight in REVERSE to avoid using item twice.
+    """
+    dp = [0] * (capacity + 1)
+    for i in range(len(weights)):
+        for w in range(capacity, weights[i] - 1, -1):  # reverse!
+            dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
+    return dp[capacity]
+
+
+# ── 4. Longest Common Subsequence ─────────────────────────────────────────────
+
+def lcs(s1: str, s2: str) -> int:
+    """
+    O(m * n) time and space.
+    State: dp[i][j] = LCS length of s1[:i] and s2[:j].
+    """
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    return dp[m][n]
+
+
+def lcs_string(s1: str, s2: str) -> str:
+    """Reconstruct the actual LCS string by backtracking through DP table."""
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    # Backtrack
+    result, i, j = [], m, n
+    while i > 0 and j > 0:
+        if s1[i-1] == s2[j-1]:
+            result.append(s1[i-1]); i -= 1; j -= 1
+        elif dp[i-1][j] > dp[i][j-1]:
+            i -= 1
+        else:
+            j -= 1
+    return "".join(reversed(result))
+
+
+# ── 5. Longest Increasing Subsequence ────────────────────────────────────────
+
+def lis(nums: List[int]) -> int:
+    """O(n^2) DP. O(n log n) possible with patience sorting / binary search."""
+    if not nums:
+        return 0
+    dp = [1] * len(nums)  # each element is a LIS of length 1 by itself
+    for i in range(1, len(nums)):
+        for j in range(i):
+            if nums[j] < nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    return max(dp)
+
+
+def lis_nlogn(nums: List[int]) -> int:
+    """O(n log n) — patience sorting with binary search."""
+    import bisect
+    tails = []  # tails[i] = smallest tail element of all LIS of length i+1
+    for num in nums:
+        pos = bisect.bisect_left(tails, num)
+        if pos == len(tails):
+            tails.append(num)
+        else:
+            tails[pos] = num
+    return len(tails)
+
+
+# ── 6. Edit Distance (Levenshtein) ────────────────────────────────────────────
+
+def edit_distance(s1: str, s2: str) -> int:
+    """
+    O(m * n) — minimum insert/delete/replace to transform s1 into s2.
+    State: dp[i][j] = edit distance between s1[:i] and s2[:j].
+    Used in: spell checkers, diff tools, DNA sequence alignment.
+    """
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1): dp[i][0] = i  # delete all of s1
+    for j in range(n + 1): dp[0][j] = j  # insert all of s2
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1]   # no operation needed
+            else:
+                dp[i][j] = 1 + min(
+                    dp[i-1][j],    # delete from s1
+                    dp[i][j-1],    # insert into s1
+                    dp[i-1][j-1]   # replace
+                )
+    return dp[m][n]
+
+
+# ── 7. House Robber (1D DP) ───────────────────────────────────────────────────
+
+def rob(houses: List[int]) -> int:
+    """
+    O(n) time, O(1) space.
+    Cannot rob adjacent houses. State: max money up to house i.
+    dp[i] = max(rob house i + dp[i-2], skip house i + dp[i-1])
+    """
+    if not houses: return 0
+    if len(houses) == 1: return houses[0]
+    prev2, prev1 = 0, 0
+    for money in houses:
+        curr = max(prev1, prev2 + money)
+        prev2, prev1 = prev1, curr
+    return prev1
+
+
+# ── 8. Top-down with memoization (decorator) ──────────────────────────────────
+
+@lru_cache(maxsize=None)
+def unique_paths(m: int, n: int) -> int:
+    """
+    O(m * n) — count unique paths in m x n grid moving only right or down.
+    State: unique_paths(m, n) = paths(m-1, n) + paths(m, n-1).
+    """
+    if m == 1 or n == 1:
+        return 1
+    return unique_paths(m - 1, n) + unique_paths(m, n - 1)
+```
+
+**JavaScript — DP for frontend engineers:**
+
+```javascript
+// Memoization with Map cache
+function makeDP(fn) {
+  const cache = new Map();
+  return function memoized(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+// Coin change bottom-up
+function coinChange(coins, amount) {
+  const dp = new Array(amount + 1).fill(Infinity);
+  dp[0] = 0;
+  for (let a = 1; a <= amount; a++) {
+    for (const c of coins) {
+      if (a >= c) dp[a] = Math.min(dp[a], dp[a - c] + 1);
+    }
+  }
+  return dp[amount] === Infinity ? -1 : dp[amount];
+}
+
+// Longest common subsequence
+function lcsLength(s1, s2) {
+  const dp = Array.from({ length: s1.length + 1 }, () =>
+    new Array(s2.length + 1).fill(0)
+  );
+  for (let i = 1; i <= s1.length; i++) {
+    for (let j = 1; j <= s2.length; j++) {
+      dp[i][j] = s1[i-1] === s2[j-1]
+        ? dp[i-1][j-1] + 1
+        : Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  return dp[s1.length][s2.length];
+}
+```
+
+## System Design Perspective
+
+Dynamic programming appears in system-level decisions:
+
+```
+[Search Query Optimization]
+[User Query] → [Query Parser] → [Plan Generator]
+                                      ↓
+                         [DP: find minimum-cost query plan]
+                         dp[subset of tables joined] = min cost
+                         (used in PostgreSQL query planner)
+
+[Sequence Alignment in Genomics]
+[DNA Sequence A] ──── edit distance DP ──── [DNA Sequence B]
+O(m*n) alignment reveals mutations, used at 23andMe scale
+
+[Network Routing: Bellman-Ford]
+[Source Router] → DP: shortest path to every destination
+dp[node][k] = shortest path using at most k hops
+Avoids cycles, handles negative weights
+
+[CDN Cache Sizing]
+[Content Items: size, access frequency] → [Knapsack DP]
+Maximize cache hit rate given storage budget
+```
+
+**Real company applications:**
+
+- **Google's query planner:** Database query optimization is NP-hard in general but DP with memoized join ordering produces near-optimal plans. PostgreSQL's planner uses DP for small table counts and greedy for large counts.
+- **Amazon's delivery routing:** Vehicle routing with capacity constraints is a variant of knapsack + TSP. DP-based approximations determine which packages fit on which truck routes.
+- **Netflix's video encoding:** Choosing optimal encoding bitrates for different network conditions uses DP over a sequence of video frames, minimizing distortion subject to bandwidth constraints.
+- **Meta's content ranking:** Feed ranking uses DP-like sequential decision making to optimize for long-term engagement rather than just the next click.
+
+## Visual Content Suggestions
+
+- **Fibonacci call tree with memoization:** Show the exponential tree and the cached (grayed-out) subtrees side-by-side.
+- **Coin change DP table:** Row showing amount 0-11 with coins [1,2,5], filled in left-to-right showing the minimum coins per amount.
+- **2D LCS DP table:** Two strings on axes, table filled diagonally with match/mismatch arrows.
+- **Knapsack table:** Items on rows, weights on columns, filled with max-value computation traced with arrows.
+- **DP problem identification flowchart:** "Does the optimal solution use optimal subsolutions? → optimal substructure. Do subproblems repeat? → use DP."
+
+## Real-World Examples
+
+**Google Translate:** Machine translation uses sequence-to-sequence models trained with DP-based algorithms (dynamic time warping, Viterbi algorithm for HMMs). The edit distance metric is used to evaluate translation quality against reference translations.
+
+**Git's diff algorithm:** `git diff` uses the Myers diff algorithm — a refinement of edit distance DP — to find the shortest edit script between two files. Every pull request diff you have ever read was computed by a DP variant.
+
+**Amazon Go stores:** Inventory tracking uses DP to match detected item removals with purchase records, optimizing assignment across a sequence of shelf events.
+
+**Spotify's playlist generation:** Dynamic programming over user listening history determines which songs to include in "Discover Weekly," maximizing predicted engagement while satisfying constraints (no repeated artists, session length limits).
+
+## Common Mistakes
+
+**Mistake 1: Not identifying the DP state clearly.** The most common source of DP bugs is an ambiguous `dp[i]` definition. Before writing any code, write in words: "dp[i] represents the [maximum/minimum/count] [property] considering [first i elements / amount a / ...]." An unclear state leads to incorrect recurrences.
+
+**Mistake 2: Wrong base cases.** Setting `dp[0] = 0` when it should be `dp[0] = 1` (or vice versa) cascades errors through the entire table. Think through the base case carefully: what is the answer for the smallest valid input? For coin change, there is exactly one way to make amount 0 (use no coins): `dp[0] = 1` for counting ways, `dp[0] = 0` for minimum coins.
+
+**Mistake 3: Iterating in the wrong order (knapsack).** For 0/1 knapsack (each item used at most once), iterate weight in reverse order. For unbounded knapsack (items reusable), iterate forward. Getting this backwards allows items to be used multiple times (or not at all when they should be usable).
+
+**Mistake 4: Confusing sequence problems with subsequence problems.** A subsequence preserves order but need not be contiguous. A substring/subarray is contiguous. These have different recurrences. LCS is subsequence ($O(mn)$, 2D DP). Longest common substring is contiguous ($O(mn)$ but with reset on mismatch). Know the difference.
+
+**Mistake 5: Exponential space for simple DP tables.** Many 1D DP problems are solved with an array where only the last 1-2 values are needed. Fibonacci only needs `prev` and `curr`. House Robber only needs `prev2` and `prev1`. Rolling array optimization reduces $O(n)$ space to $O(1)$. Always ask: "How many previous rows/values does my recurrence depend on?"
+
+## Interview Angle
+
+**Q: How do you identify whether a problem can be solved with dynamic programming?**
+
+A: Look for two properties: (1) **Optimal substructure** — the optimal solution to the problem can be built from optimal solutions to subproblems. Ask: "If I knew the optimal solution to smaller versions of this problem, could I construct the optimal solution to the full problem?" (2) **Overlapping subproblems** — the same subproblems appear repeatedly in the recursion tree. Draw the recursion tree for a small input — if you see repeated nodes, DP will help. Problem patterns that commonly indicate DP: "minimum/maximum of something," "number of ways to do X," "is it possible to achieve Y," "optimal sequence of decisions." Then define your state, find the recurrence relation, determine base cases, and choose top-down or bottom-up.
+
+**Q: Walk me through solving the edit distance problem.**
+
+A: Edit distance between strings `s1` and `s2` is the minimum number of single-character operations (insert, delete, replace) to transform `s1` into `s2`. State: `dp[i][j]` = edit distance between `s1[:i]` and `s2[:j]`. Base cases: `dp[i][0] = i` (delete i characters from s1), `dp[0][j] = j` (insert j characters). Recurrence: if `s1[i-1] == s2[j-1]`, then `dp[i][j] = dp[i-1][j-1]` (no cost). Otherwise, `dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])` for delete/insert/replace. Time and space: $O(mn)$. Space can be reduced to $O(\min(m,n))$ by keeping only two rows at a time. This algorithm is used in spell checkers (find closest dictionary word), DNA analysis (sequence similarity), and git diff.
+
+## Summary
+
+- Dynamic programming applies when a problem has **optimal substructure** and **overlapping subproblems**.
+- **Top-down (memoization):** Recursive with caching. Use `@lru_cache` in Python. Natural to write; starts from the problem definition.
+- **Bottom-up (tabulation):** Iterative, fills a table from base cases upward. Usually faster; avoids recursion overhead.
+- The **five-step framework:** define state → base case → recurrence → iteration order → extract answer.
+- Classic 1D DP patterns: Fibonacci, coin change, house robber, LIS, climbing stairs.
+- Classic 2D DP patterns: LCS, edit distance, knapsack, grid path counting, matrix chain multiplication.
+- **Knapsack variants:** 0/1 (reverse iteration), unbounded (forward iteration), fractional (greedy, not DP).
+- Space optimization: if your recurrence only uses the previous row/value, you can reduce space from $O(n^2)$ to $O(n)$ or from $O(n)$ to $O(1)$.
+- DP appears in production systems: query planners, diff algorithms, translation models, delivery routing, content ranking.
+- The LCS length of two strings equals `len(s1) + len(s2) - 2 * lcs(s1, s2)` — also the minimum edit distance for insertions and deletions only.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/graph-traversal", label: "Graph Traversal" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/apis-and-rest", label: "APIs and REST" }}
+/>

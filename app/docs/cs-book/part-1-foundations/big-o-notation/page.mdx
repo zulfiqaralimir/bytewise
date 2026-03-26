@@ -1,0 +1,311 @@
+export const metadata = {
+  title: "Big O Notation — ByteWise CS Book",
+  description:
+    "Master Big O notation: time and space complexity analysis, asymptotic bounds, and how to reason about algorithm efficiency like a senior engineer.",
+  keywords: [
+    "big o notation",
+    "time complexity",
+    "space complexity",
+    "algorithm analysis",
+    "asymptotic notation",
+    "computer science fundamentals",
+  ],
+  openGraph: {
+    title: "Big O Notation — ByteWise CS Book",
+    description:
+      "Learn to measure algorithm efficiency with Big O notation. Covers O(1) through O(n!), real-world implications, and interview strategies.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Big O Notation
+
+## The Hidden Cost of Code
+
+Imagine you are a librarian in a library with one million books, and a patron asks you for a specific title. If the books are completely unsorted and scattered randomly across the shelves, you have no choice but to walk through every single book until you find the one you need. On your best day, the book is the very first one you pick up. On your worst day, it is the last. On average, you will check half a million books.
+
+Now imagine the books are arranged alphabetically. You can open to the middle of the library, determine whether the book is in the left half or the right half, then repeat that process — each step cutting your remaining search space in half. You find a book among one million titles in about twenty steps.
+
+This difference — between checking every item versus halving the search space each time — is the difference between $O(n)$ and $O(\log n)$ complexity. Big O notation is the language engineers use to describe exactly this kind of efficiency gap. It is not academic theory; it is the reason Google search results appear in milliseconds instead of minutes, and it is the foundation of every important engineering decision at scale.
+
+## Concept Explanation
+
+Big O notation describes the **growth rate** of an algorithm's resource consumption (time or memory) as the input size grows toward infinity. The "O" stands for "order of magnitude," and it captures the dominant term that matters when inputs get large.
+
+Think of Big O like a fuel efficiency rating for cars. You do not care about the exact mileage on one specific trip — you care about the general pattern: is this car efficient or not? Similarly, Big O ignores constant factors and lower-order terms. An algorithm that takes $3n + 100$ steps and one that takes $n$ steps are both $O(n)$ because they both grow linearly.
+
+**The key insight:** Big O describes the *worst-case* scenario by default (unless specified as best-case or average-case). When someone says "this algorithm is $O(n^2)$," they mean that in the worst case, doubling the input quadruples the work.
+
+**The analogy that sticks:** Imagine filling a bathtub. $O(1)$ is a magic tub that fills instantly regardless of size. $O(\log n)$ is filling with a hose that gets twice as powerful each minute. $O(n)$ is filling it cup by cup. $O(n^2)$ is filling each cup by first filling it with smaller cups. By the time you reach $O(n!)$, you are re-filling the ocean to fill the bathtub.
+
+## Mathematical Foundation
+
+Formally, we say $f(n) = O(g(n))$ if there exist positive constants $c$ and $n_0$ such that:
+
+$$f(n) \leq c \cdot g(n) \quad \text{for all } n \geq n_0$$
+
+This means $g(n)$ is an **upper bound** on the growth of $f(n)$. The three most important asymptotic notations are:
+
+- **Big O** $O(g(n))$: upper bound — "no worse than"
+- **Big Omega** $\Omega(g(n))$: lower bound — "no better than"
+- **Big Theta** $\Theta(g(n))$: tight bound — "exactly this order"
+
+**Common complexities ranked from fastest to slowest:**
+
+$$O(1) < O(\log n) < O(n) < O(n \log n) < O(n^2) < O(2^n) < O(n!)$$
+
+**Space complexity** follows the same rules. An algorithm that creates a new array of size $n$ uses $O(n)$ space, even if it runs in $O(n \log n)$ time.
+
+**Amortized analysis:** Sometimes a single operation is expensive, but the average over many operations is cheap. Dynamic arrays (Python lists, JavaScript arrays) are $O(1)$ amortized for append, even though occasional resizing takes $O(n)$, because the cost is spread across all insertions.
+
+The **Master Theorem** helps solve recursive time complexities of the form $T(n) = aT(n/b) + O(n^d)$:
+
+$$T(n) = \begin{cases} O(n^d) & \text{if } d > \log_b a \\ O(n^d \log n) & \text{if } d = \log_b a \\ O(n^{\log_b a}) & \text{if } d < \log_b a \end{cases}$$
+
+For merge sort: $T(n) = 2T(n/2) + O(n)$, giving $a=2, b=2, d=1$. Since $\log_2 2 = 1 = d$, merge sort is $O(n \log n)$.
+
+## Algorithm / Logic
+
+**How to analyze Big O complexity — step by step:**
+
+1. **Identify the input size** — what is $n$? It could be the length of an array, number of nodes in a graph, or digits in a number.
+2. **Count dominant operations** — focus on the operations that repeat most: loops, recursive calls, comparisons.
+3. **Handle nested structures** — nested loops multiply complexities. A loop inside a loop is typically $O(n^2)$.
+4. **Drop constants and lower-order terms** — $O(3n^2 + 2n + 7)$ simplifies to $O(n^2)$.
+5. **Consider the worst case** — unless the problem specifies best or average case.
+6. **Analyze space separately** — track any additional data structures you create.
+
+```
+ANALYZE_COMPLEXITY(code):
+  complexity = O(1)           // start assumption
+  for each loop in code:
+    if loop runs n times:
+      multiply complexity by n
+    if loop runs log(n) times:
+      multiply complexity by log(n)
+  for each recursive call:
+    apply Master Theorem or recursion tree
+  drop constants and lower-order terms
+  return simplified complexity
+```
+
+## Programming Implementation
+
+**Python — demonstrating different complexity classes:**
+
+```python
+from typing import List
+import time
+
+
+def constant_time(arr: List[int]) -> int:
+    """O(1) — access by index, no matter how large arr is."""
+    return arr[0]
+
+
+def logarithmic_time(sorted_arr: List[int], target: int) -> int:
+    """O(log n) — binary search halves the search space each step."""
+    low, high = 0, len(sorted_arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if sorted_arr[mid] == target:
+            return mid
+        elif sorted_arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+
+def linear_time(arr: List[int]) -> int:
+    """O(n) — must visit every element once."""
+    total = 0
+    for num in arr:
+        total += num
+    return total
+
+
+def linearithmic_time(arr: List[int]) -> List[int]:
+    """O(n log n) — merge sort: divide O(log n) times, merge O(n) each level."""
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = linearithmic_time(arr[:mid])
+    right = linearithmic_time(arr[mid:])
+    return merge(left, right)
+
+
+def merge(left: List[int], right: List[int]) -> List[int]:
+    result, i, j = [], 0, 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i]); i += 1
+        else:
+            result.append(right[j]); j += 1
+    return result + left[i:] + right[j:]
+
+
+def quadratic_time(arr: List[int]) -> List[tuple]:
+    """O(n^2) — check every pair: bubble sort, naive duplicate detection."""
+    pairs = []
+    for i in range(len(arr)):
+        for j in range(i + 1, len(arr)):
+            pairs.append((arr[i], arr[j]))
+    return pairs
+
+
+def benchmark(func, *args):
+    """Measure actual runtime to verify theoretical complexity."""
+    start = time.perf_counter()
+    result = func(*args)
+    elapsed = time.perf_counter() - start
+    return result, elapsed
+
+
+# Demonstrate space complexity
+def space_constant(n: int) -> int:
+    """O(1) space — only uses a fixed number of variables."""
+    result = 0
+    for i in range(n):
+        result += i
+    return result
+
+
+def space_linear(n: int) -> List[int]:
+    """O(n) space — creates a list proportional to input."""
+    return [i * 2 for i in range(n)]
+
+
+def space_quadratic(n: int) -> List[List[int]]:
+    """O(n^2) space — creates an n x n matrix."""
+    return [[0] * n for _ in range(n)]
+```
+
+**JavaScript — same concepts for frontend engineers:**
+
+```javascript
+// O(1) — hash map lookup
+function getUser(userMap, userId) {
+  return userMap[userId]; // constant time regardless of map size
+}
+
+// O(n) — linear scan
+function findMax(arr) {
+  let max = -Infinity;
+  for (const num of arr) {
+    if (num > max) max = num;
+  }
+  return max;
+}
+
+// O(n log n) — built-in sort uses Timsort
+function sortAndDeduplicate(arr) {
+  return [...new Set(arr)].sort((a, b) => a - b);
+}
+
+// O(n^2) — naive approach, avoid at scale
+function hasDuplicatesNaive(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i] === arr[j]) return true;
+    }
+  }
+  return false;
+}
+
+// O(n) — smart approach using a Set
+function hasDuplicatesFast(arr) {
+  const seen = new Set();
+  for (const num of arr) {
+    if (seen.has(num)) return true;
+    seen.add(num);
+  }
+  return false;
+}
+```
+
+## System Design Perspective
+
+Big O thinking permeates every layer of a production system:
+
+```
+[Client Request]
+     ↓
+[Load Balancer]  — O(1) routing via consistent hashing
+     ↓
+[API Gateway]    — O(1) auth token lookup in cache
+     ↓
+[Service Layer]  — O(log n) indexed DB query vs O(n) full table scan
+     ↓
+[Cache (Redis)]  — O(1) key-value reads; critical for hot paths
+     ↓
+[Database]       — O(log n) B-tree index vs O(n) sequential scan
+     ↓
+[Response]
+```
+
+**Real company applications:**
+
+- **Google Search Index:** Google's core search uses inverted indices and PageRank computed with matrix operations, carefully optimized to avoid $O(n^2)$ behavior across billions of documents.
+- **Amazon DynamoDB:** Designed so every operation is $O(1)$ at the API level — partition keys route requests directly to the right shard, eliminating table scans.
+- **Netflix Recommendation Engine:** Candidate generation is $O(1)$ via pre-computed embeddings; ranking runs in $O(k \log k)$ where $k$ is a fixed candidate pool size — never $O(n)$ over all content.
+- **Meta's News Feed:** Feed ranking runs in $O(k \log k)$ on a fixed window of posts. Without this, ranking all posts for 3 billion users would be computationally impossible.
+
+## Visual Content Suggestions
+
+- **Complexity growth chart:** Line graph showing $O(1)$, $O(\log n)$, $O(n)$, $O(n \log n)$, $O(n^2)$, $O(2^n)$ plotted for $n = 1$ to $100$.
+- **Bathtub analogy illustration:** Five bathtubs with different filling mechanisms labeled with their Big O class.
+- **Nested loop visualization:** Two-dimensional grid showing why nested loops produce $O(n^2)$ work.
+- **Master Theorem decision tree:** Flowchart for determining recurrence complexity.
+- **Real-world impact table:** Table showing actual latency difference for $n = 1,000,000$ operations across each complexity class.
+
+## Real-World Examples
+
+**Google:** When Google's crawler indexes a new page, it must insert the page's keywords into an inverted index. Using a hash map keeps each insertion at $O(1)$ amortized. If they used a sorted array with binary search insertions, every new word would cost $O(n)$ for shifting — catastrophic at web scale.
+
+**Netflix:** Every time a user opens the app, Netflix must surface ~40 relevant recommendations from a catalog of 15,000+ titles. By pre-computing embeddings and using Approximate Nearest Neighbor search (effectively $O(\log n)$), the system responds in under 100ms. A brute-force $O(n)$ similarity scan per user would be 150x slower.
+
+**Amazon:** Amazon's product search must return results in under 50ms. Their Elasticsearch clusters use inverted B-tree indices — $O(\log n)$ per query — over hundreds of millions of product records. Without indexing, each search would be a full $O(n)$ table scan: at 500M records and 50ms target, mathematically impossible.
+
+**Meta:** Facebook's friend suggestion algorithm cannot run a naive $O(n^2)$ "compare every user to every other user" pass — that would be $10^{18}$ operations for 3 billion users. Instead, they use graph-based clustering algorithms that achieve near-linear time by exploiting the structure of the social graph.
+
+## Common Mistakes
+
+**Mistake 1: Ignoring constants in practice.** While $O(n)$ and $O(n \log n)$ have the same asymptotic class as $O(100n)$ and $O(100n \log n)$, a constant factor of 100 absolutely matters in production. Big O tells you the *shape* of growth, not the actual performance. Always benchmark.
+
+**Mistake 2: Confusing average and worst case.** QuickSort is $O(n \log n)$ average but $O(n^2)$ worst case. If your system could be fed sorted input by a user, relying on average-case analysis is a security vulnerability (algorithmic complexity attacks).
+
+**Mistake 3: Forgetting space complexity.** A clever $O(n \log n)$ algorithm that uses $O(n^2)$ space will crash before it finishes. Both dimensions matter, especially in memory-constrained environments like mobile devices or Lambda functions.
+
+**Mistake 4: Assuming O(1) for dictionary lookups always.** Hash maps are $O(1)$ *amortized* and *expected*. Hash collisions can degrade to $O(n)$ in pathological cases. Python's `dict` uses a randomized hash seed to mitigate deliberate collision attacks.
+
+**Mistake 5: Misidentifying the input variable.** A function that iterates over all edges in a graph is $O(E)$, not $O(n)$. A function that processes a string character-by-character is $O(|s|)$, not $O(1)$. Always clarify what $n$ represents before analyzing.
+
+## Interview Angle
+
+**Q: What is the time complexity of looking up a value in a Python dictionary?**
+
+A: $O(1)$ on average, due to hashing. Python computes the hash of the key, maps it to a bucket, and retrieves the value in constant time. In the worst case — when many keys hash to the same bucket — it degrades to $O(n)$, but Python's implementation uses open addressing and a good hash function to keep this rare. For interview purposes, always say "$O(1)$ average" and mention the worst case to show depth.
+
+**Q: You have an unsorted list of 1 million integers and need to find duplicates as fast as possible. What is the optimal approach and its complexity?**
+
+A: The optimal approach is a single-pass hash set: iterate through the list, and for each element, check if it is already in the set. If yes, it is a duplicate. This is $O(n)$ time and $O(n)$ space. A naive nested-loop approach would be $O(n^2)$ time with $O(1)$ extra space. Sorting first gives $O(n \log n)$ time and $O(1)$ extra space (or $O(n)$ if using merge sort). The hash set approach wins on time at the cost of space — a classic time-space tradeoff. Mention that the choice depends on memory constraints.
+
+## Summary
+
+- Big O notation describes the **growth rate** of an algorithm's time or space usage as input size approaches infinity.
+- It captures the **worst-case upper bound** by default; Omega ($\Omega$) is the lower bound, Theta ($\Theta$) is the tight bound.
+- Constants and lower-order terms are dropped because they become irrelevant at scale: $O(3n^2 + 5n + 1) = O(n^2)$.
+- The complexity hierarchy from best to worst: $O(1) < O(\log n) < O(n) < O(n \log n) < O(n^2) < O(2^n) < O(n!)$.
+- **Space complexity** is analyzed the same way — track additional memory used, not the input itself.
+- Nested loops multiply complexities; independent loops add them.
+- The **Master Theorem** solves divide-and-conquer recurrences of the form $T(n) = aT(n/b) + O(n^d)$.
+- Real systems at Google, Netflix, Amazon, and Meta are designed from first principles to avoid super-linear complexity on hot paths.
+- Big O is a theoretical model — always benchmark real implementations because constants, cache behavior, and hardware matter.
+- In interviews, state the complexity, justify it step-by-step, mention tradeoffs, and proactively discuss best/average/worst cases.
+
+<ArticleNav
+  prev={null}
+  next={{ href: "/docs/cs-book/part-1-foundations/data-structures", label: "Data Structures" }}
+/>

@@ -1,0 +1,468 @@
+export const metadata = {
+  title: "Graph Traversal — ByteWise CS Book",
+  description:
+    "Master BFS and DFS graph traversal: algorithms, time complexity, topological sort, shortest paths, and how they power social networks and maps.",
+  keywords: [
+    "graph traversal",
+    "BFS",
+    "DFS",
+    "breadth first search",
+    "depth first search",
+    "topological sort",
+    "shortest path",
+    "graph algorithms",
+  ],
+  openGraph: {
+    title: "Graph Traversal — ByteWise CS Book",
+    description:
+      "Learn BFS and DFS from scratch. Covers cycle detection, topological sort, connected components, and real-world graph problems at Google and Meta scale.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Graph Traversal
+
+## The Six Degrees of Kevin Bacon
+
+In 1994, three college students proposed the "Six Degrees of Kevin Bacon" game: any actor in Hollywood can be connected to Kevin Bacon through a chain of film appearances in six steps or fewer. What started as a trivia game became a famous demonstration of a mathematical property called "small world networks" — and the algorithm that discovers those chains is breadth-first search (BFS).
+
+When LinkedIn shows you "2nd connections" — people who know someone you know — that is BFS running on a graph of 900 million professional profiles. When Google Maps finds the shortest driving route from your house to the airport, that is a weighted BFS variant (Dijkstra's algorithm) on a graph of road intersections. When a dependency resolver installs npm packages in the right order, that is a topological sort running on a dependency graph. When a virus spreads through a contact network, epidemiologists model it as BFS propagation on a social graph.
+
+Graphs are the most general data structure, and graph traversal is the most powerful family of algorithms. Once you see the world as a graph — nodes connected by edges — an enormous class of problems suddenly becomes tractable.
+
+## Concept Explanation
+
+A **graph** $G = (V, E)$ consists of a set of **vertices** (nodes) $V$ and a set of **edges** $E$ connecting pairs of vertices. Edges can be **directed** (one-way) or **undirected** (two-way), and can have **weights** (distances, costs) or be unweighted.
+
+**Representations:**
+- **Adjacency list:** Dictionary mapping each node to its list of neighbors. Space: $O(V + E)$. Preferred for sparse graphs.
+- **Adjacency matrix:** $V \times V$ matrix where `matrix[i][j] = 1` if there is an edge. Space: $O(V^2)$. Preferred for dense graphs.
+
+**The two fundamental traversal strategies:**
+
+**Breadth-First Search (BFS):** Explores all neighbors at the current depth before going deeper. Uses a **queue** (FIFO). Finds shortest paths (in unweighted graphs). Analogy: ripples expanding from a stone dropped in water — all nodes at distance 1 are visited before any at distance 2.
+
+**Depth-First Search (DFS):** Explores as far as possible along each branch before backtracking. Uses a **stack** (explicit or call stack). Analogy: navigating a maze by always turning left until you hit a dead end, then backtracking.
+
+**When to use which:**
+- BFS: shortest path, level-by-level processing, connected components in unweighted graphs.
+- DFS: cycle detection, topological sort, path existence, tree traversal, backtracking.
+
+## Mathematical Foundation
+
+**Graph properties:**
+- $|V|$ = number of vertices (nodes)
+- $|E|$ = number of edges; for a simple undirected graph: $0 \leq |E| \leq \frac{|V|(|V|-1)}{2}$
+- A **tree** is a connected acyclic graph with $|E| = |V| - 1$
+
+**Time and space complexity of traversal:**
+
+$$T_{\text{BFS}} = T_{\text{DFS}} = O(V + E)$$
+
+Both traversals visit each vertex once ($O(V)$) and traverse each edge once ($O(E)$).
+
+**Space complexity:**
+- BFS: $O(V)$ for the queue (all nodes at the current level)
+- DFS: $O(V)$ for the stack (depth of recursion equals longest path)
+- For a balanced tree: DFS stack depth is $O(\log V)$; BFS queue can hold up to $O(V/2)$ nodes at the widest level
+
+**Shortest path (BFS) correctness:** BFS processes nodes in non-decreasing order of distance from the source. When a node is first dequeued, its distance is finalized. Proof by induction on distance $d$: all nodes at distance $\leq d$ are correct when we begin processing distance $d+1$.
+
+**Topological sort existence:** A directed graph has a topological ordering if and only if it is a **Directed Acyclic Graph (DAG)**. Kahn's algorithm (BFS-based) processes nodes with in-degree 0, which must come first in any valid ordering.
+
+## Algorithm / Logic
+
+**BFS — step by step:**
+
+1. Initialize: add the start node to a queue, mark it visited.
+2. While the queue is not empty:
+   a. Dequeue the front node.
+   b. Process/record the node.
+   c. For each unvisited neighbor: mark visited, enqueue.
+3. When the queue is empty, all reachable nodes have been visited.
+
+**DFS (iterative) — step by step:**
+
+1. Initialize: push the start node onto a stack, mark it visited.
+2. While the stack is not empty:
+   a. Pop the top node.
+   b. Process/record the node.
+   c. For each unvisited neighbor: mark visited, push onto stack.
+
+**Topological sort (Kahn's algorithm) — step by step:**
+
+1. Compute in-degree (number of incoming edges) for each node.
+2. Initialize queue with all nodes of in-degree 0.
+3. While the queue is not empty:
+   a. Dequeue a node, add to result.
+   b. For each neighbor: decrement its in-degree.
+   c. If neighbor's in-degree becomes 0, enqueue it.
+4. If result contains all $V$ nodes: valid topological order. Otherwise: cycle exists.
+
+```
+BFS(graph, start):
+  queue = deque([start])
+  visited = {start}
+  while queue:
+    node = queue.popleft()
+    process(node)
+    for neighbor in graph[node]:
+      if neighbor not in visited:
+        visited.add(neighbor)
+        queue.append(neighbor)
+
+DFS_RECURSIVE(graph, node, visited):
+  visited.add(node)
+  process(node)
+  for neighbor in graph[node]:
+    if neighbor not in visited:
+      DFS_RECURSIVE(graph, neighbor, visited)
+```
+
+## Programming Implementation
+
+**Python — complete graph traversal toolkit:**
+
+```python
+from typing import Dict, List, Set, Optional, Tuple
+from collections import deque, defaultdict
+
+
+Graph = Dict[int, List[int]]
+
+
+# ── BFS ───────────────────────────────────────────────────────────────────────
+
+def bfs(graph: Graph, start: int) -> List[int]:
+    """O(V + E) — visit all reachable nodes level by level."""
+    visited, order = {start}, []
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+
+def bfs_shortest_path(graph: Graph, start: int, end: int) -> Optional[List[int]]:
+    """O(V + E) — shortest path in unweighted graph using BFS."""
+    if start == end:
+        return [start]
+    visited = {start}
+    queue = deque([(start, [start])])  # (node, path_so_far)
+    while queue:
+        node, path = queue.popleft()
+        for neighbor in graph.get(node, []):
+            if neighbor == end:
+                return path + [neighbor]
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+    return None  # no path exists
+
+
+def bfs_levels(graph: Graph, start: int) -> Dict[int, int]:
+    """Returns distance (number of hops) from start to each reachable node."""
+    distance = {start: 0}
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph.get(node, []):
+            if neighbor not in distance:
+                distance[neighbor] = distance[node] + 1
+                queue.append(neighbor)
+    return distance
+
+
+# ── DFS ───────────────────────────────────────────────────────────────────────
+
+def dfs_recursive(graph: Graph, node: int, visited: Optional[Set[int]] = None) -> List[int]:
+    """O(V + E) — depth-first traversal using recursion."""
+    if visited is None:
+        visited = set()
+    visited.add(node)
+    order = [node]
+    for neighbor in graph.get(node, []):
+        if neighbor not in visited:
+            order.extend(dfs_recursive(graph, neighbor, visited))
+    return order
+
+
+def dfs_iterative(graph: Graph, start: int) -> List[int]:
+    """O(V + E) — iterative DFS avoids recursion limit issues."""
+    visited, order = {start}, []
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        order.append(node)
+        for neighbor in reversed(graph.get(node, [])):  # reverse for left-to-right order
+            if neighbor not in visited:
+                visited.add(neighbor)
+                stack.append(neighbor)
+    return order
+
+
+def has_cycle_undirected(graph: Graph) -> bool:
+    """O(V + E) — detect cycle in undirected graph using DFS."""
+    visited: Set[int] = set()
+
+    def dfs(node: int, parent: int) -> bool:
+        visited.add(node)
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                if dfs(neighbor, node):
+                    return True
+            elif neighbor != parent:
+                return True  # visited neighbor that's not parent = cycle
+        return False
+
+    for node in graph:
+        if node not in visited:
+            if dfs(node, -1):
+                return True
+    return False
+
+
+def has_cycle_directed(graph: Graph) -> bool:
+    """O(V + E) — detect cycle in directed graph using DFS with coloring."""
+    WHITE, GRAY, BLACK = 0, 1, 2
+    color = {node: WHITE for node in graph}
+
+    def dfs(node: int) -> bool:
+        color[node] = GRAY  # currently in the DFS stack
+        for neighbor in graph.get(node, []):
+            if color[neighbor] == GRAY:
+                return True  # back edge = cycle
+            if color[neighbor] == WHITE and dfs(neighbor):
+                return True
+        color[node] = BLACK  # fully processed
+        return False
+
+    return any(dfs(node) for node in graph if color[node] == WHITE)
+
+
+# ── Topological Sort ──────────────────────────────────────────────────────────
+
+def topological_sort_kahn(graph: Graph, num_nodes: int) -> Optional[List[int]]:
+    """
+    O(V + E) — Kahn's algorithm (BFS-based).
+    Returns topological order, or None if cycle exists.
+    """
+    in_degree = defaultdict(int)
+    for node in graph:
+        for neighbor in graph[node]:
+            in_degree[neighbor] += 1
+    # Initialize with all nodes (including those with no outgoing edges)
+    all_nodes = set(graph.keys()) | set(in_degree.keys())
+    queue = deque([n for n in all_nodes if in_degree[n] == 0])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph.get(node, []):
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+    return order if len(order) == len(all_nodes) else None  # None = cycle
+
+
+def topological_sort_dfs(graph: Graph) -> List[int]:
+    """O(V + E) — DFS-based topological sort using finish times."""
+    visited: Set[int] = set()
+    order: List[int] = []
+
+    def dfs(node: int) -> None:
+        visited.add(node)
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                dfs(neighbor)
+        order.append(node)  # add after all descendants are processed
+
+    for node in graph:
+        if node not in visited:
+            dfs(node)
+    return list(reversed(order))
+
+
+# ── Connected Components ──────────────────────────────────────────────────────
+
+def connected_components(graph: Graph) -> List[List[int]]:
+    """O(V + E) — find all connected components using BFS."""
+    visited: Set[int] = set()
+    components: List[List[int]] = []
+    for node in graph:
+        if node not in visited:
+            component = bfs(graph, node)
+            components.append(component)
+            visited.update(component)
+    return components
+
+
+# ── Number of Islands (grid BFS) ─────────────────────────────────────────────
+
+def num_islands(grid: List[List[str]]) -> int:
+    """
+    O(m * n) — classic BFS/DFS on a 2D grid graph.
+    Treats '1' cells as nodes, '0' cells as absent.
+    """
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+
+    def bfs_flood(r: int, c: int) -> None:
+        queue = deque([(r, c)])
+        grid[r][c] = "0"  # mark visited by overwriting
+        while queue:
+            row, col = queue.popleft()
+            for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:
+                nr, nc = row + dr, col + dc
+                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "1":
+                    grid[nr][nc] = "0"
+                    queue.append((nr, nc))
+
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                bfs_flood(r, c)
+                count += 1
+    return count
+```
+
+**JavaScript — graph traversal for web engineers:**
+
+```javascript
+// BFS shortest path in a graph represented as adjacency list
+function shortestPath(graph, start, end) {
+  const visited = new Set([start]);
+  const queue = [[start, [start]]];
+  while (queue.length) {
+    const [node, path] = queue.shift();
+    if (node === end) return path;
+    for (const neighbor of graph[node] ?? []) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push([neighbor, [...path, neighbor]]);
+      }
+    }
+  }
+  return null;
+}
+
+// DFS for topological sort (task scheduling)
+function topSort(tasks, prereqs) {
+  const graph = {};
+  for (const task of tasks) graph[task] = [];
+  for (const [task, pre] of prereqs) graph[pre].push(task);
+
+  const visited = new Set(), temp = new Set(), order = [];
+  function dfs(node) {
+    if (temp.has(node)) throw new Error("Cycle detected");
+    if (visited.has(node)) return;
+    temp.add(node);
+    for (const neighbor of graph[node]) dfs(neighbor);
+    temp.delete(node);
+    visited.add(node);
+    order.unshift(node);
+  }
+  for (const task of tasks) dfs(task);
+  return order;
+}
+```
+
+## System Design Perspective
+
+Graph traversal powers core distributed system patterns:
+
+```
+[Dependency Resolution (npm/pip)]
+Package A → depends on → B, C
+Package B → depends on → D
+DFS topological sort: D → B → C → A (safe install order)
+
+[Social Network: "People You May Know"]
+[User X] → BFS to depth 2 → [Friends of Friends]
+           filter: not already connected
+           rank: by mutual connection count
+
+[Distributed Service Mesh]
+[Service A] → [Service B] → [Service C]
+              ↕
+         [Service D]
+DFS cycle detection: prevent circular dependency in microservices
+BFS health check propagation: detect cascading failures
+
+[Web Crawler (Google)]
+[Seed URLs] → BFS → [Level 1 pages] → [Level 2 pages] ...
+visited set prevents re-crawling
+politeness delay per domain
+```
+
+**Real company applications:**
+
+- **LinkedIn:** "2nd degree connections" is BFS to depth 2 on the professional graph. "Path to connection" is BFS shortest path. The entire "People You May Know" feature is graph traversal.
+- **Google Search crawler:** BFS from seed URLs, following hyperlinks as edges. The frontier queue contains billions of URLs at any time.
+- **npm package manager:** Topological sort on the dependency graph determines installation order. Circular dependencies trigger an error — detected by DFS cycle detection.
+- **Netflix's microservices:** Service dependency graphs are checked for cycles using DFS before deployment. A circular service dependency would cause deadlock.
+
+## Visual Content Suggestions
+
+- **BFS ripple animation:** Graph with nodes colored level by level as BFS processes them, showing the "wavefront" expansion.
+- **DFS backtracking animation:** Stack growing and shrinking as DFS explores and backtracks through the graph.
+- **Adjacency list vs matrix:** Side-by-side for the same 5-node graph, showing memory difference.
+- **Topological sort step-by-step:** DAG with in-degree counts decreasing as Kahn's algorithm processes each node.
+- **Number of islands solution:** Grid with BFS flood-fill coloring each island a different color.
+
+## Real-World Examples
+
+**Google Maps routing:** Dijkstra's algorithm (weighted BFS) on a graph of road intersections, where edges are roads and weights are travel times. For long-distance routing, A* search (heuristic-guided BFS) prunes the search space, reducing explored nodes by ~90%.
+
+**Facebook's friend recommendations:** BFS to depth 2 finds friends of friends. The count of mutual friends (shared edges) ranks recommendations. For 3 billion users, this runs on a distributed graph database (TAO) that partitions the social graph across thousands of servers.
+
+**Netflix's content graph:** Netflix models movies, actors, directors, genres, and moods as a heterogeneous graph. Content recommendations use graph traversal to find "movies 3 hops away in genre/actor/mood space" from content a user has watched.
+
+**Amazon's fraud detection:** Amazon's fraud graph connects users, devices, IP addresses, and transactions as nodes. Suspicious clusters (connected components with unusual density) are found using BFS/DFS, identifying fraud rings where one compromised account infects connected accounts.
+
+## Common Mistakes
+
+**Mistake 1: Not marking nodes as visited before enqueuing (BFS) or during DFS.** If you mark visited only when dequeuing, the same node can be enqueued multiple times, leading to exponential work. Always mark visited when you first encounter the node (when adding to queue/stack), not when you process it.
+
+**Mistake 2: Using a list as a queue in BFS.** `list.pop(0)` is $O(n)$. For BFS on large graphs, this turns $O(V + E)$ into $O(V^2 + E)$. Always use `collections.deque` with `popleft()` for $O(1)$ dequeue.
+
+**Mistake 3: Infinite recursion in DFS without visited tracking.** Graphs can have cycles — unlike trees. Without a `visited` set, DFS on a cyclic graph runs forever. Every graph DFS must maintain a visited set.
+
+**Mistake 4: Confusing undirected and directed cycle detection.** In an undirected graph, encountering the parent is not a cycle — it is just the edge you came from. In a directed graph, encountering any node in the current DFS path (GRAY/in-stack) is a cycle. Using the wrong approach gives false positives.
+
+**Mistake 5: Not handling disconnected graphs.** BFS/DFS from a single start node only visits nodes reachable from that start. For full traversal of a disconnected graph, you must run BFS/DFS from each unvisited node. Classic mistake: counting connected components by running BFS once and assuming everything is reachable.
+
+## Interview Angle
+
+**Q: How would you detect a cycle in a directed graph?**
+
+A: Use DFS with three-color marking: WHITE (unvisited), GRAY (currently in the recursion stack), and BLACK (fully processed). When visiting a neighbor, if it is GRAY, we have found a back edge — a cycle. If it is BLACK, it has been fully processed with no cycle through it. The algorithm runs in $O(V + E)$. The key insight: a directed graph has a cycle if and only if DFS finds a back edge — an edge to a node still in the current recursion stack. For undirected graphs, the same approach works but you must not flag the parent edge as a cycle.
+
+**Q: How would you find the shortest path between two users in a social network?**
+
+A: Use BFS from the source user. BFS naturally explores nodes in order of increasing hop distance, so the first time we reach the destination, we have found the shortest path in terms of number of edges (connections). Track the path by storing each node's parent — when we reach the destination, backtrack through parents. Time complexity is $O(V + E)$ where $V$ is users and $E$ is connections. In production at LinkedIn scale, the graph does not fit on one machine — bidirectional BFS (simultaneously expanding from source and destination) reduces the search space from $O(b^d)$ to $O(b^{d/2})$ where $b$ is average degree and $d$ is shortest path length, making it feasible for real social networks.
+
+## Summary
+
+- A **graph** $G = (V, E)$ models pairwise relationships; vertices are entities, edges are connections.
+- **BFS** uses a queue (FIFO) and visits nodes level by level; guarantees shortest path in unweighted graphs.
+- **DFS** uses a stack (explicit or call stack) and explores as deep as possible before backtracking.
+- Both BFS and DFS run in $O(V + E)$ time and $O(V)$ space.
+- Use `collections.deque` for BFS in Python — `list.pop(0)` is $O(n)$ and will ruin your time complexity.
+- **Cycle detection:** undirected graphs use parent tracking in DFS; directed graphs use three-color (WHITE/GRAY/BLACK) marking.
+- **Topological sort** is only defined for DAGs; Kahn's algorithm (BFS-based) detects cycles simultaneously.
+- **Connected components** require running BFS/DFS from every unvisited node, not just one.
+- Graphs power LinkedIn's friend recommendations, Google's crawler, npm's dependency resolution, and fraud detection at Amazon.
+- Grid problems (number of islands, maze solving, flood fill) are disguised graph traversal problems — treat each cell as a node and each adjacent cell as an edge.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/sorting-algorithms", label: "Sorting Algorithms" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/dynamic-programming", label: "Dynamic Programming" }}
+/>

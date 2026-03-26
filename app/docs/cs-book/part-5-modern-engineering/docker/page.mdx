@@ -1,0 +1,415 @@
+export const metadata = {
+  title: "Docker & Containers Explained | ByteWise",
+  description: "Master Docker and containerization — images, layers, Compose, networking, and production patterns used by Netflix, Uber, and Google.",
+  keywords: ["Docker", "containers", "containerization", "Kubernetes", "DevOps", "microservices"],
+  openGraph: {
+    title: "Docker & Containers Explained | ByteWise",
+    description: "Master Docker and containerization with real-world patterns and production examples.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Docker & Containers: The Shipping Container Revolution
+
+## The "Works On My Machine" Problem
+
+In 2008, a startup's lead engineer pushed a critical bug fix late on a Friday. Their staging tests passed. They deployed to production. Everything broke.
+
+The problem? The engineer's laptop ran Ubuntu 18.04 with Python 3.8 and a specific version of a cryptography library. Staging ran Python 3.9. Production ran Python 3.6 with a security-patched version of that same library that had a different API. Three different environments. Three different behaviors.
+
+"Works on my machine" became so common in software that it spawned an entire industry of tooling: VMs, Vagrant, configuration management tools. All of them fought the same war — making environments consistent — and all of them were either too heavy, too slow, or too complex for everyday use.
+
+Docker won that war. It solved the environment problem so cleanly and completely that within five years of its 2013 release, it had become the default way to package and ship software.
+
+---
+
+## What Is a Container?
+
+A **container** is a lightweight, isolated process that packages an application with all its dependencies — libraries, runtime, configuration — into a single unit. Unlike a virtual machine, it shares the host operating system's kernel, making it fast to start and efficient in resources.
+
+The physical world analogy is perfect: a **shipping container**. Before standardized shipping containers, loading cargo onto a ship required custom handling for every item. A shipping container standardized the interface — any container fits any ship, truck, or crane. Docker did the same for software: any container runs on any Docker host.
+
+```
+Virtual Machine:                Container:
+┌──────────────────┐           ┌──────────────────┐
+│   Application    │           │   Application    │
+│   Binaries/Libs  │           │   Binaries/Libs  │
+│   Guest OS       │           └────────┬─────────┘
+│   Hypervisor     │                    │ shares
+│   Host OS        │           ┌────────▼─────────┐
+│   Hardware       │           │   Container      │
+└──────────────────┘           │   Runtime        │
+  ~GBs, minutes to boot        │   Host OS        │
+                                │   Hardware       │
+                                └──────────────────┘
+                                  ~MBs, seconds to start
+```
+
+---
+
+## Core Concepts
+
+### Images and Layers
+
+A Docker **image** is a read-only blueprint for a container — like a class definition in code. It's built in layers, where each instruction in a Dockerfile adds a layer:
+
+```
+Layer 5: COPY app/ /app          (your code)
+Layer 4: RUN pip install -r ...  (your dependencies)
+Layer 3: COPY requirements.txt . (your requirements file)
+Layer 2: RUN apt-get install ... (system packages)
+Layer 1: FROM python:3.12-slim   (base OS + Python)
+```
+
+Layers are **cached and shared**. If your `requirements.txt` hasn't changed, Docker reuses the cached layer — rebuilds take seconds instead of minutes. This is why the order of Dockerfile instructions matters: put frequently changing things (your code) at the bottom, rarely changing things (base image, dependencies) at the top.
+
+### Container Lifecycle
+
+```
+Image → [docker run] → Container (running)
+                             │
+                    [docker stop] → Container (stopped)
+                             │
+                    [docker rm] → Deleted
+```
+
+A container is a *running instance* of an image. You can run many containers from one image simultaneously.
+
+---
+
+## Mathematical Foundation
+
+### Resource Isolation with cgroups
+
+Docker uses Linux **control groups (cgroups)** to limit container resource usage:
+
+$$\text{CPU Share} = \frac{\text{Container CPU Shares}}{\sum \text{All Running Container Shares}}$$
+
+If Container A has 1024 shares and Container B has 512 shares:
+$$\text{CPU}_A = \frac{1024}{1024 + 512} = 66.7\%$$
+$$\text{CPU}_B = \frac{512}{1024 + 512} = 33.3\%$$
+
+Memory limits are hard caps — exceed the limit and the container is OOM-killed:
+$$\text{If } \text{MemUsage} > \text{MemLimit} \Rightarrow \text{SIGKILL}$$
+
+### Image Layer Deduplication
+
+If you run 100 containers from the same base image, the base image is stored **once**:
+
+$$\text{Disk Usage} = \text{BaseImage} + \sum_{i=1}^{100} \text{AppLayer}_i$$
+
+Without layer sharing:
+$$\text{Disk Usage} = 100 \times (\text{BaseImage} + \text{AppLayer})$$
+
+With 500MB base images, this is the difference between 50GB and ~1GB of disk usage.
+
+---
+
+## Algorithm / Logic: Docker Build Process
+
+```
+Dockerfile → Parser → Build Context → Layer Cache Check →
+  Cache Hit?  → Reuse layer → Next instruction
+  Cache Miss? → Execute instruction → Create new layer → Cache it
+
+Final: Combine all layers → Image with manifest
+Push: image → registry (layer-by-layer, deduplication across pushes)
+Pull: registry → host (only download layers not already present)
+```
+
+**Multi-stage build logic** (for compiled languages):
+
+```
+Stage 1 (builder):
+  FROM golang:1.22 AS builder
+  COPY . .
+  RUN go build -o /app ./cmd/server
+  # Produces: large image with Go toolchain + binary
+
+Stage 2 (final):
+  FROM alpine:3.19    # tiny OS, no Go toolchain
+  COPY --from=builder /app /app
+  CMD ["/app"]
+  # Produces: tiny image with just the binary
+```
+
+Result: build image ~800MB → production image ~10MB.
+
+---
+
+## Programming Implementation
+
+### Production Dockerfile for a Python API
+
+```dockerfile
+# syntax=docker/dockerfile:1.7
+# ── Stage 1: Builder ────────────────────────────────────────────────
+FROM python:3.12-slim AS builder
+
+# Install build dependencies (won't be in final image)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Python dependencies (cached unless requirements change)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# ── Stage 2: Production ──────────────────────────────────────────────
+FROM python:3.12-slim AS production
+
+# Security: don't run as root
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+WORKDIR /app
+COPY --chown=appuser:appuser src/ ./src/
+
+USER appuser
+
+# Health check for container orchestrators
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -c "import httpx; httpx.get('http://localhost:8000/health')" || exit 1
+
+EXPOSE 8000
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+### Docker Compose: Full Development Stack
+
+```yaml
+# docker-compose.yml
+version: "3.9"
+
+services:
+  # ── Application API ──────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      target: production    # use the production stage
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/appdb
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: ${SECRET_KEY}  # from .env file
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # ── PostgreSQL Database ──────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: appdb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d appdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # ── Redis Cache ──────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+  # ── Nginx Reverse Proxy ──────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  app-network:
+    driver: bridge
+```
+
+### Python: Docker SDK Automation
+
+```python
+import docker
+from typing import Optional
+
+
+def deploy_container(
+    image: str,
+    name: str,
+    port: int,
+    env: Optional[dict[str, str]] = None,
+) -> str:
+    """
+    Pull latest image and run a container.
+    Returns the container ID.
+    """
+    client = docker.from_env()
+
+    # Pull latest version of the image
+    print(f"Pulling {image}...")
+    client.images.pull(image)
+
+    # Stop and remove existing container if it exists
+    try:
+        existing = client.containers.get(name)
+        print(f"Stopping existing container {name}...")
+        existing.stop(timeout=10)
+        existing.remove()
+    except docker.errors.NotFound:
+        pass
+
+    # Start new container
+    container = client.containers.run(
+        image=image,
+        name=name,
+        detach=True,
+        ports={f"8000/tcp": port},
+        environment=env or {},
+        restart_policy={"Name": "unless-stopped"},
+        mem_limit="512m",
+        cpu_quota=50000,  # 50% of one CPU
+        labels={
+            "version": image.split(":")[-1],
+            "managed-by": "deploy-script",
+        },
+    )
+
+    print(f"Started container {container.short_id}")
+    return container.id
+```
+
+---
+
+## System Design Perspective
+
+### Container Orchestration
+
+In production, you rarely manage containers directly — you use an orchestrator:
+
+```
+[Developer pushes code]
+        │
+[CI/CD builds image → registry]
+        │
+[Kubernetes receives deployment manifest]
+        │
+[Scheduler finds nodes with capacity]
+        │
+[Kubelet on node pulls image → starts container]
+        │
+[Service mesh handles networking + load balancing]
+        │
+[Health checks → restart failed containers automatically]
+```
+
+**Kubernetes** is the dominant orchestrator. It handles:
+- **Scheduling**: which server runs which container
+- **Scaling**: auto-scale based on CPU/memory/custom metrics
+- **Self-healing**: restart failed containers, replace unhealthy nodes
+- **Rolling deployments**: update containers without downtime
+- **Service discovery**: containers find each other by name, not IP
+
+---
+
+## Visual Content Suggestions
+
+- Docker architecture: client → daemon → registry
+- Image layer stacking diagram with cache hit/miss indicators
+- Multi-stage build: large builder → small production image
+- Docker Compose service dependency graph
+- Container networking: bridge, host, overlay modes
+- Kubernetes pod/deployment/service relationship diagram
+
+---
+
+## Real-World Examples
+
+**Netflix**: Runs over 700 microservices, all containerized and orchestrated by Titus (their in-house container platform built on Mesos/Kubernetes). Each service team owns their container image. Netflix publishes their container tooling as open source.
+
+**Google**: Invented the concepts behind Kubernetes internally (Borg, then Omega). Google's infrastructure runs billions of containers per week. Every Google product — Search, YouTube, Gmail — runs in containers.
+
+**Uber**: Uses Docker + Kubernetes to manage their global microservices fleet. Their M3 monitoring system and Cadence workflow engine are both open-sourced and containerized.
+
+**Airbnb**: Migrated from VMs to containers to handle their hybrid on-prem/cloud infrastructure. Container startup time went from ~5 minutes (VM boot) to ~5 seconds, dramatically improving their incident response.
+
+---
+
+## Common Mistakes
+
+**1. Running as root inside containers.** By default, containers run as root. If an attacker exploits your app, they get root inside the container — which can lead to container escape. Always create a non-root user: `USER appuser`.
+
+**2. Storing state in containers.** Containers are ephemeral — when they stop, all data written inside them is lost. Use Docker volumes or external databases for persistent data. Never store uploads or session data inside the container filesystem.
+
+**3. Huge image sizes.** A 2GB Python image vs a 50MB one has real costs: slower CI, slower deployment, more storage bills. Use slim/alpine base images, multi-stage builds, and `.dockerignore` to exclude unnecessary files.
+
+**4. Not using `.dockerignore`.** Without a `.dockerignore`, your build context includes `node_modules/`, `.git/`, test files, and secrets. Add a `.dockerignore` like `.gitignore` — always.
+
+**5. Baking secrets into images.** Never use `ENV SECRET_KEY=abc123` in a Dockerfile — it's stored in the image history, visible to anyone who pulls the image. Use environment variables at runtime, Docker secrets, or a secrets manager like Vault.
+
+---
+
+## Interview Angle
+
+**Q: How does Docker differ from a virtual machine?**
+
+> Both Docker and VMs provide isolation, but at different levels. A VM virtualizes hardware and runs a complete operating system — guest OS, kernel, everything — on top of a hypervisor. This means VMs are heavy (GBs) and slow to start (minutes). A Docker container virtualizes at the OS level — it shares the host kernel and runs as an isolated process using Linux namespaces and cgroups. Containers are lightweight (MBs), start in seconds, and have minimal overhead. The tradeoff: VMs have stronger isolation (separate kernels), containers are faster and more efficient but share the host kernel. In practice, you often use both: containers running inside VMs (AWS EC2 instance running Docker containers).
+
+**Q: Explain Docker image layers and why they matter.**
+
+> Docker images are built as a stack of read-only layers, one per Dockerfile instruction. When you change your code and rebuild, Docker uses cached layers for every instruction above the changed line. This means if only your application code changed, Docker reuses the base OS layer, system packages layer, and dependencies layer — only rebuilding the final app layer. For a 500MB image, this turns a 3-minute build into a 5-second build. Layers also enable deduplication: 50 containers from the same base image share one copy of that base layer on disk. The design principle is: put slowly-changing things (base image, system deps) at the top of your Dockerfile, and fast-changing things (your code) at the bottom.
+
+---
+
+## Summary
+
+- **Containers** package apps with their dependencies, ensuring consistent behavior across environments
+- Docker uses Linux **namespaces** (isolation) and **cgroups** (resource limits) — no hypervisor needed
+- **Images** are read-only blueprints built in cacheable **layers**; containers are running instances
+- **Multi-stage builds** produce tiny production images by separating build tooling from runtime
+- **Docker Compose** orchestrates multi-container apps locally with a single YAML file
+- Always run containers as a **non-root user** and never bake secrets into images
+- Use `.dockerignore` to keep build contexts small and builds fast
+- **Kubernetes** orchestrates containers at scale: scheduling, scaling, self-healing, and rolling deployments
+- Container images should be **immutable** — tag with git SHA, never reuse `latest` in production
+- Containers are **ephemeral** — all state must live outside the container in volumes or external services
+
+<ArticleNav
+  prev={{ title: "CI/CD Pipelines", href: "/docs/cs-book/part-5-modern-engineering/ci-cd" }}
+  next={{ title: "OAuth & Authentication", href: "/docs/cs-book/part-5-modern-engineering/oauth" }}
+/>

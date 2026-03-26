@@ -1,0 +1,409 @@
+export const metadata = {
+  title: "Databases — ByteWise CS Book",
+  description:
+    "Master databases: SQL vs NoSQL, ACID properties, indexing, sharding, replication, and how to choose the right database for your system design.",
+  keywords: [
+    "databases",
+    "SQL",
+    "NoSQL",
+    "ACID",
+    "indexing",
+    "sharding",
+    "replication",
+    "database design",
+    "PostgreSQL",
+    "DynamoDB",
+  ],
+  openGraph: {
+    title: "Databases — ByteWise CS Book",
+    description:
+      "Learn database fundamentals: relational vs NoSQL, ACID guarantees, indexing strategies, sharding, and replication for scalable systems.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Databases
+
+## The Engine Under Every Application
+
+In 1970, Edgar Codd published a paper titled "A Relational Model of Data for Large Shared Data Banks." Working at IBM, he proposed a radical idea: instead of programs accessing data through hierarchical pointers, all data should be organized in tables, and programs should access data through a declarative language that described *what* they wanted, not *how* to get it. He called this language SQL.
+
+Codd's relational model became the foundation of nearly all commercial databases for three decades. Then, around 2007, the limitations of relational databases at internet scale became apparent. Google published the Bigtable paper. Amazon published Dynamo. The NoSQL movement was born — not to replace SQL, but to complement it for use cases where strict consistency could be traded for massive scale.
+
+Today, a senior engineer's database knowledge spans both worlds and knows when to use each. The question "should we use SQL or NoSQL?" has a real answer that depends on your access patterns, consistency requirements, scale, and team's expertise. This chapter gives you the framework to answer that question and the depth to justify your answer in a system design interview.
+
+## Concept Explanation
+
+**Databases** are organized collections of data with mechanisms for structured access, modification, and persistence.
+
+**Relational (SQL) databases** organize data into tables with rows and columns. Relationships between tables are expressed via foreign keys. SQL (Structured Query Language) provides a declarative interface. Examples: PostgreSQL, MySQL, SQLite, SQL Server.
+
+**NoSQL databases** relax the relational model for specific use cases:
+- **Document stores:** JSON documents without a fixed schema (MongoDB, Firestore).
+- **Key-value stores:** Simple hash map interface (Redis, DynamoDB).
+- **Column-family stores:** Wide rows optimized for analytics (Cassandra, Bigtable).
+- **Graph databases:** Nodes and edges for relationship-heavy data (Neo4j).
+
+**ACID properties** (relational databases guarantee these):
+- **Atomicity:** A transaction is all-or-nothing. If one part fails, the entire transaction rolls back.
+- **Consistency:** Every transaction brings the database from one valid state to another. Data integrity constraints are always satisfied.
+- **Isolation:** Concurrent transactions execute as if they were serial. No dirty reads or write-write conflicts.
+- **Durability:** Once a transaction commits, it persists — even if the server crashes immediately after.
+
+**The BASE alternative** (NoSQL systems often offer):
+- **Basically Available:** The system guarantees availability.
+- **Soft state:** State may change without input (replication converges eventually).
+- **Eventually consistent:** The system will converge to a consistent state over time.
+
+## Mathematical Foundation
+
+**B-Tree index lookup:** For a table with $n$ rows and a B-tree index, lookup is:
+
+$$T_{\text{lookup}} = O(\log_B n) \quad \text{where } B \approx 100\text{-}1000 \text{ (branching factor)}$$
+
+For $n = 10^9$ rows and $B = 500$: $\log_{500}(10^9) \approx 3$ disk reads — extraordinary efficiency.
+
+**Index selectivity:** The selectivity of an index is:
+
+$$\text{selectivity} = \frac{\text{distinct values}}{\text{total rows}}$$
+
+High selectivity (close to 1.0) means the index is useful. Low selectivity (close to 0, e.g., a boolean column) means the index may not be used because scanning is cheaper than random disk reads.
+
+**Replication lag** in asynchronous replication:
+
+$$\text{lag} = T_{\text{replica applied}} - T_{\text{primary committed}}$$
+
+Under normal load, lag is milliseconds. Under heavy write load, lag can grow to seconds — during which reads from replicas may return stale data.
+
+**Sharding capacity:** For $S$ shards each handling $C$ capacity:
+
+$$\text{total capacity} = S \times C$$
+
+Adding shards scales linearly — the core advantage of horizontal sharding over vertical scaling.
+
+**Consistent hashing:** For $N$ nodes on a hash ring, each node is responsible for $\frac{1}{N}$ of the key space. Adding one node transfers only $\frac{1}{N+1}$ fraction of keys — minimal disruption compared to naive modulo hashing.
+
+## Algorithm / Logic
+
+**Query execution pipeline:**
+
+1. **Parse:** SQL text → abstract syntax tree.
+2. **Bind:** Resolve table and column names to actual objects.
+3. **Optimize:** Generate candidate query plans; estimate costs using statistics; choose the plan with minimum estimated I/O.
+4. **Execute:** Run the chosen plan: scan tables, use indexes, join, filter, sort, aggregate.
+5. **Return results:** Stream rows to the client.
+
+**B-tree index insertion:**
+
+1. Find the leaf node where the key belongs.
+2. Insert the key-pointer pair.
+3. If the leaf node overflows (too many keys), split it and propagate the median key to the parent.
+4. Repeat splits upward if parent overflows.
+5. If the root splits, create a new root — this is the only way a B-tree grows taller.
+
+**Two-phase commit (distributed transaction):**
+
+1. **Prepare phase:** Coordinator asks all participants to "prepare" — write to a durable log, lock resources.
+2. **Commit phase:** If all participants say "ready," coordinator sends "commit." Otherwise sends "abort."
+3. Each participant commits or rolls back based on the coordinator's decision.
+4. If the coordinator crashes after phase 1 but before phase 2, participants remain locked until recovery.
+
+```
+-- Efficient index usage examples --
+-- Good: index on user_id, WHERE clause uses leftmost index column
+SELECT * FROM orders WHERE user_id = 123 ORDER BY created_at DESC LIMIT 20;
+
+-- Bad: function on indexed column prevents index use
+SELECT * FROM orders WHERE YEAR(created_at) = 2024;  -- full table scan!
+
+-- Good: equivalent query that uses the index
+SELECT * FROM orders WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01';
+```
+
+## Programming Implementation
+
+**Python — database operations with SQLAlchemy and proper patterns:**
+
+```python
+from sqlalchemy import (
+    create_engine, Column, Integer, String, DateTime,
+    ForeignKey, Index, func, text
+)
+from sqlalchemy.orm import DeclarativeBase, relationship, Session
+from sqlalchemy.pool import QueuePool
+from datetime import datetime
+from contextlib import contextmanager
+from typing import List, Optional
+
+
+# ── Models ────────────────────────────────────────────────────────────────────
+
+class Base(DeclarativeBase):
+    pass
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    name = Column(String(100), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    orders = relationship("Order", back_populates="user", lazy="select")
+
+    # Composite index for common query pattern
+    __table_args__ = (
+        Index("ix_users_created_at_email", "created_at", "email"),
+    )
+
+
+class Order(Base):
+    __tablename__ = "orders"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    total = Column(Integer, nullable=False)   # store in cents to avoid float
+    status = Column(String(20), default="pending")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    user = relationship("User", back_populates="orders")
+
+
+# ── Connection pooling ────────────────────────────────────────────────────────
+
+engine = create_engine(
+    "postgresql://user:pass@localhost/mydb",
+    poolclass=QueuePool,
+    pool_size=10,        # permanent connections
+    max_overflow=20,     # extra connections under peak load
+    pool_timeout=30,     # seconds to wait for a connection
+    pool_pre_ping=True,  # test connections before use (detect stale connections)
+)
+
+
+@contextmanager
+def get_session():
+    """Context manager for database sessions with automatic rollback on error."""
+    with Session(engine) as session:
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+
+
+# ── Queries — showing good vs bad patterns ───────────────────────────────────
+
+def get_user_orders_bad(user_id: int) -> list:
+    """N+1 query problem — avoid this pattern!"""
+    with get_session() as session:
+        users = session.query(User).all()
+        result = []
+        for user in users:
+            orders = session.query(Order).filter(Order.user_id == user.id).all()
+            result.append((user, orders))
+        return result  # 1 + N queries!
+
+
+def get_user_orders_good(user_id: int) -> list:
+    """O(1) queries using JOIN. Always prefer this over N+1."""
+    with get_session() as session:
+        return (
+            session.query(User, Order)
+            .join(Order, User.id == Order.user_id)
+            .filter(User.id == user_id)
+            .all()
+        )  # 1 query
+
+
+def cursor_paginate_orders(
+    user_id: int,
+    cursor: Optional[int] = None,   # last seen order ID
+    limit: int = 20,
+) -> List[Order]:
+    """
+    Cursor-based pagination — O(log n) using index on id.
+    Stable even as new orders are inserted.
+    """
+    with get_session() as session:
+        q = session.query(Order).filter(Order.user_id == user_id)
+        if cursor:
+            q = q.filter(Order.id < cursor)   # get orders before cursor
+        return q.order_by(Order.id.desc()).limit(limit).all()
+
+
+def bulk_insert_orders(orders_data: List[dict]) -> None:
+    """
+    Bulk insert: O(1) round trips instead of O(n).
+    100x faster than individual inserts for large datasets.
+    """
+    with get_session() as session:
+        session.execute(Order.__table__.insert(), orders_data)
+
+
+def aggregate_stats(user_id: int) -> dict:
+    """Push aggregation to the database — don't fetch rows and sum in Python."""
+    with get_session() as session:
+        result = session.query(
+            func.count(Order.id).label("order_count"),
+            func.sum(Order.total).label("total_spent"),
+            func.avg(Order.total).label("avg_order_value"),
+        ).filter(Order.user_id == user_id).one()
+        return {
+            "order_count": result.order_count,
+            "total_spent_cents": result.total_spent,
+            "avg_order_cents": int(result.avg_order_value),
+        }
+
+
+# ── Transaction example ───────────────────────────────────────────────────────
+
+def transfer_balance(from_user_id: int, to_user_id: int, amount_cents: int) -> None:
+    """
+    Atomic money transfer — both operations succeed or neither does.
+    Uses database transaction for ACID guarantees.
+    """
+    with get_session() as session:
+        from_user = session.query(User).filter(User.id == from_user_id).with_for_update().one()
+        to_user = session.query(User).filter(User.id == to_user_id).with_for_update().one()
+        # ... debit/credit logic
+        # If any exception is raised, get_session rolls back both operations
+```
+
+**JavaScript — PostgreSQL with node-postgres:**
+
+```javascript
+const { Pool } = require("pg");
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 20,           // max pool size
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 2_000,
+});
+
+// Parameterized query — always use $1 placeholders, never string interpolation (SQL injection!)
+async function getUserOrders(userId) {
+  const { rows } = await pool.query(
+    `SELECT u.name, o.id, o.total, o.status
+     FROM users u
+     JOIN orders o ON u.id = o.user_id
+     WHERE u.id = $1
+     ORDER BY o.created_at DESC
+     LIMIT 20`,
+    [userId]
+  );
+  return rows;
+}
+
+// Transaction with rollback on failure
+async function placeOrder(userId, items) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const orderRes = await client.query(
+      "INSERT INTO orders (user_id, status) VALUES ($1, 'pending') RETURNING id",
+      [userId]
+    );
+    const orderId = orderRes.rows[0].id;
+    for (const item of items) {
+      await client.query(
+        "INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)",
+        [orderId, item.productId, item.quantity]
+      );
+    }
+    await client.query("COMMIT");
+    return orderId;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+```
+
+## System Design Perspective
+
+Database architecture in a production system:
+
+```
+[Application Servers]
+          ↓  (writes)        ↓  (reads)
+[Primary DB]  ──replication──→  [Read Replicas ×3]
+          ↓
+[Replication Log (WAL)]
+          ↓
+[Analytics Replica]  →  [Data Warehouse (Redshift/BigQuery)]
+
+[Sharded Architecture for Scale]
+[App] → [Shard Router (consistent hash on user_id)]
+              ↓              ↓              ↓
+         [Shard 0]      [Shard 1]      [Shard 2]
+         users 0-33%    users 33-66%   users 66-99%
+         each with own primary + replicas
+```
+
+**Real company database architectures:**
+
+- **GitHub:** Uses MySQL with Vitess for horizontal sharding. Tables are sharded by repository ID. Read replicas serve the majority of traffic; primary handles all writes.
+- **Instagram (Meta):** PostgreSQL for relational data, sharded by user ID. Cassandra for the activity feed (append-heavy, high write throughput). Redis for sessions and caching.
+- **Amazon DynamoDB:** Fully managed NoSQL. Every table is automatically sharded across thousands of storage nodes. Designed for single-digit millisecond latency at any scale.
+- **Netflix:** Cassandra for viewing history (write-heavy, time-series). MySQL for metadata (movies, shows, content rights). Redis for session data and real-time features.
+
+## Visual Content Suggestions
+
+- **B-tree structure diagram:** Multi-level tree with internal nodes (keys) and leaf nodes (row pointers), showing a lookup path.
+- **Primary vs replica replication flow:** Write to primary, WAL stream to replicas, read from replicas.
+- **Sharding diagram:** Hash ring with nodes and data partitions labeled.
+- **ACID transaction timeline:** Timeline showing two transactions, isolation levels, and what each isolation level allows/prevents.
+- **SQL vs NoSQL comparison matrix:** Side-by-side feature comparison for use case selection.
+
+## Real-World Examples
+
+**Twitter's database evolution:** Twitter started on MySQL, struggled with scale, added memcached, then moved hot data to Redis for the timeline. User data remains in MySQL (relational, ACID). The follow graph migrated to a custom graph store. This illustrates the multi-database pattern: use the right tool per data type.
+
+**Airbnb's data stack:** Core bookings and user data in MySQL (ACID required for money). Search index in Elasticsearch (full-text, geospatial queries). Analytics in Presto over S3/Hive (OLAP). This is the classic OLTP + OLAP separation.
+
+**Slack's message store:** MySQL for most data, with message history moved to a custom storage layer as scale increased. Messages are append-only (immutable), which makes them an ideal fit for write-optimized log-structured storage.
+
+**Uber's geospatial database:** Uses PostgreSQL with PostGIS extension for geospatial queries ("find all drivers within 2km of this location"). Geohashing partitions the globe into cells; querying nearby drivers involves looking up a small set of geohash cells.
+
+## Common Mistakes
+
+**Mistake 1: The N+1 query problem.** Fetching a list of users and then making one query per user to get their orders is $O(n)$ queries when one JOIN would suffice. Use ORM eager loading (`joinedload`, `selectinload`) or write explicit JOIN queries. The N+1 problem is the most common database performance bug in ORM-heavy applications.
+
+**Mistake 2: Not using indexes for columns in WHERE/JOIN/ORDER BY clauses.** Without indexes, every query is a full table scan ($O(n)$). A query that runs in 10ms on a 10k row table will take 10 seconds on a 10M row table without an index. Always add indexes on foreign keys, frequently filtered columns, and sort columns.
+
+**Mistake 3: Storing money as floating-point.** Float arithmetic has rounding errors. `0.1 + 0.2 != 0.3` in most systems. Always store money as integers (cents, or smallest denomination) and convert to decimal only for display.
+
+**Mistake 4: Fetching all columns when you need two.** `SELECT *` fetches all columns, including large text and blob fields. This wastes I/O, network bandwidth, and memory. Always specify the columns you need: `SELECT id, email FROM users`.
+
+**Mistake 5: Ignoring database connection pooling.** Opening a new database connection per request can take 10-100ms and exhaust database connection limits. Always use a connection pool (SQLAlchemy's `QueuePool`, `pg-pool` in Node). Most database servers support a maximum of 100-500 connections; with pooling, thousands of application threads share a small pool.
+
+## Interview Angle
+
+**Q: When would you choose a NoSQL database over a relational database?**
+
+A: Choose NoSQL when: (1) Your data has no clear relational structure, or relationships are hierarchical and always accessed together (document store is more natural). (2) You need horizontal scaling beyond what a single primary can handle, and your queries are simple enough to work within the constraints of a NoSQL model (no arbitrary joins). (3) Your access pattern is a known key-value lookup and sub-millisecond latency at millions of requests/second is required (Redis, DynamoDB). (4) You need a flexible schema that changes frequently without migrations. Choose relational when: data has complex relationships requiring multi-table joins, you need ACID transactions across tables, or you do not yet know your access patterns (SQL's flexibility is an asset early on).
+
+**Q: What is database sharding and when do you use it?**
+
+A: Sharding is horizontal partitioning: splitting one large database table into multiple smaller tables (shards) across multiple servers. Each shard holds a subset of rows. A shard key determines which shard stores each row — typically user_id, tenant_id, or geographic region. You shard when a single database server (even the most powerful) cannot handle your write throughput or data volume. Signs you need sharding: write latency is increasing despite indexes, you are approaching storage limits, replication lag is growing. Sharding has costs: cross-shard queries are expensive (cannot join across shards), shard rebalancing when adding nodes is complex, and you lose cross-shard ACID transactions. Many companies delay sharding as long as possible by optimizing indexes, adding read replicas, and caching — and only shard when those measures are exhausted.
+
+## Summary
+
+- **Relational databases** (SQL) provide ACID guarantees, structured schema, and flexible querying via JOINs — ideal for financial data, user accounts, and any data with complex relationships.
+- **NoSQL databases** sacrifice some consistency guarantees for horizontal scale, flexible schema, and specific access pattern optimization.
+- **ACID properties:** Atomicity (all-or-nothing), Consistency (valid state transitions), Isolation (concurrent transactions don't interfere), Durability (committed data persists).
+- **B-tree indexes** enable $O(\log n)$ lookups; without indexes, every query is $O(n)$ full table scan.
+- **N+1 query problem:** Fetching a list and making one query per item is the most common ORM performance bug — use JOINs or eager loading.
+- **Read replicas** distribute read load; the primary handles all writes. Replica lag is a consistency consideration.
+- **Sharding** enables horizontal write scaling but introduces complexity: no cross-shard joins, no cross-shard transactions.
+- **Connection pooling** is mandatory in production — opening per-request connections exhausts database limits and adds latency.
+- Always store monetary values as integers (cents), use parameterized queries to prevent SQL injection, and `SELECT` only needed columns.
+- The multi-database pattern is normal: use PostgreSQL for relational data, Redis for caching, Cassandra for time-series, Elasticsearch for search — each tool optimized for its workload.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/apis-and-rest", label: "APIs and REST" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/caching", label: "Caching" }}
+/>

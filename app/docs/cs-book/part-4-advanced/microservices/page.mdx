@@ -1,0 +1,462 @@
+export const metadata = {
+  title: "Microservices vs Monolith Explained | ByteWise",
+  description: "Deep dive into microservices architecture vs monolithic systems — trade-offs, patterns, real-world examples from Netflix, Amazon, and Uber.",
+  keywords: ["microservices", "monolith", "system design", "architecture", "distributed systems", "programming"],
+  openGraph: {
+    title: "Microservices vs Monolith Explained | ByteWise",
+    description: "Deep dive into microservices architecture vs monolithic systems — trade-offs, patterns, real-world examples.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Microservices vs Monolith: Choosing the Right Architecture
+
+## The $2 Billion Lesson
+
+In 2011, Netflix engineers were terrified. A single database corruption event had taken down the entire streaming platform for three days. Every feature — search, playback, recommendations, billing — lived in one massive application. When it died, everything died together. Engineers called this their "monolith moment."
+
+The decision Netflix made next would define how an entire generation of software engineers thinks about architecture. They began breaking their application into small, independent services — each owning its own data, its own deployment, its own failure boundary. Today Netflix runs over 700 microservices, handling 200 million subscribers with 99.99% uptime.
+
+But here's what they don't tell you in the blog posts: that migration took seven years, cost hundreds of millions of dollars, and required rebuilding almost every engineering practice from scratch. The question isn't "monolith or microservices?" — it's "which is right for *you*, right *now*?"
+
+---
+
+## What Is a Monolith?
+
+A **monolithic architecture** is a single deployable unit where all application functionality lives together: the user interface, business logic, and data access layers are compiled and deployed as one artifact.
+
+Think of it like a Swiss Army knife. Everything is in one place, always available, always connected. Need the scissors? They're right there next to the corkscrew.
+
+A typical monolith looks like this:
+
+```
+┌─────────────────────────────────┐
+│           Monolith App          │
+│  ┌──────────┐ ┌──────────────┐  │
+│  │    UI    │ │   Business   │  │
+│  │  Layer   │ │    Logic     │  │
+│  └──────────┘ └──────────────┘  │
+│  ┌──────────┐ ┌──────────────┐  │
+│  │   Auth   │ │  Data Access │  │
+│  │ Module   │ │    Layer     │  │
+│  └──────────┘ └──────────────┘  │
+└────────────────┬────────────────┘
+                 │
+         ┌───────▼───────┐
+         │   Single DB   │
+         └───────────────┘
+```
+
+### Strengths of the Monolith
+- **Simple development**: One codebase, one IDE, one deployment
+- **Easy debugging**: Stack traces in one place
+- **No network latency**: In-process function calls
+- **Transactions are easy**: ACID across all data
+- **Low operational overhead**: One app to monitor and deploy
+
+### Weaknesses of the Monolith
+- **Scaling is all-or-nothing**: Can't scale just the checkout service
+- **Deployment risk**: Every deploy touches everything
+- **Technology lock-in**: Stuck with one language and framework
+- **Team bottlenecks**: 50 engineers all editing the same codebase
+
+---
+
+## What Are Microservices?
+
+**Microservices** decompose an application into small, independently deployable services. Each service:
+- Owns a single business capability
+- Has its own database (no shared data stores)
+- Communicates via APIs or message queues
+- Can be deployed, scaled, and failed independently
+
+The Swiss Army knife becomes a toolbox. Each tool is specialized, replaceable, and upgradeable without affecting the others.
+
+```
+[User] → [API Gateway]
+              │
+    ┌─────────┼─────────┐
+    ▼         ▼         ▼
+[Auth     [Product   [Order
+Service]  Service]  Service]
+    │         │         │
+  [DB-A]   [DB-B]    [DB-C]
+```
+
+---
+
+## Mathematical Foundation
+
+### Conway's Law
+
+The principle that shapes architecture decisions:
+
+$$\text{System Design} \equiv \text{Organization's Communication Structure}$$
+
+In plain English: your software architecture mirrors your team structure. A company with 3 teams will naturally build a 3-service architecture. This isn't a coincidence — it's sociology.
+
+### Service Granularity
+
+Finding the right service size involves a trade-off:
+
+$$\text{Benefit}(n) = \text{Scalability}(n) + \text{Autonomy}(n) - \text{Overhead}(n)$$
+
+Where $n$ is the number of services. As $n$ grows:
+- Scalability increases (each service scales independently)
+- Autonomy increases (teams own their services)
+- Overhead increases **exponentially** (network calls, monitoring, distributed tracing)
+
+The optimum is somewhere in between — the "right size" varies by team and load.
+
+### Latency Math
+
+A monolith function call: $\approx 1\mu s$ (microseconds, in-process)
+
+A microservice network call: $\approx 1–5ms$ (milliseconds)
+
+For a request that touches 10 services in sequence:
+$$\text{Total Latency} = \sum_{i=1}^{10} L_i + \sum_{i=1}^{10} \text{Serialization}_i$$
+
+This can easily reach 50–100ms just in inter-service overhead. Monolith? That same chain might run in under 1ms.
+
+---
+
+## Architecture Patterns
+
+### 1. API Gateway Pattern
+
+All external traffic enters through a single gateway that routes, authenticates, and rate-limits.
+
+```
+[Client] → [API Gateway] → [Auth Service]
+                        → [Product Service]
+                        → [Recommendation Service]
+```
+
+**Used by**: Netflix (Zuul/Spring Cloud Gateway), Amazon (AWS API Gateway)
+
+### 2. Saga Pattern (Distributed Transactions)
+
+Microservices can't use database transactions across services. The Saga pattern coordinates multi-step workflows using a series of local transactions with compensating actions on failure.
+
+```
+Order Placed → Reserve Inventory → Charge Payment → Ship Order
+     ↓ (fail)        ↓ (fail)           ↓ (fail)
+Cancel Order  Release Inventory   Refund Payment
+```
+
+### 3. Event Sourcing
+
+Instead of storing current state, store every event that led to that state:
+
+```
+Event Log:
+  1. UserRegistered {id: 123, email: "a@b.com"}
+  2. UserUpdatedEmail {id: 123, email: "c@d.com"}
+  3. UserUpgraded {id: 123, plan: "premium"}
+
+Current State = Replay(Event Log)
+```
+
+### 4. Circuit Breaker
+
+Prevents cascading failures when a downstream service is slow:
+
+```
+Service A → [Circuit Breaker] → Service B
+                │
+    CLOSED (normal) → OPEN (failing) → HALF-OPEN (testing)
+```
+
+When Service B fails repeatedly, the circuit "opens" and returns cached/default responses instantly rather than waiting for timeouts.
+
+---
+
+## Algorithm / Logic: Service Decomposition
+
+How do you split a monolith? The Domain-Driven Design (DDD) approach:
+
+**Step 1**: Identify bounded contexts — areas of the business with their own language and rules.
+
+**Step 2**: Find aggregate roots — the primary entities in each context.
+
+**Step 3**: Map communication — which contexts need to talk? Minimize cross-context calls.
+
+**Step 4**: Define service boundaries — one service per bounded context.
+
+**Step 5**: Choose communication style — synchronous (REST) for queries, asynchronous (events) for commands.
+
+```
+Pseudocode: Circuit Breaker
+
+state = CLOSED
+failure_count = 0
+threshold = 5
+timeout = 30s
+
+function call_service(request):
+    if state == OPEN:
+        if time_since_opened > timeout:
+            state = HALF_OPEN
+        else:
+            return fallback_response()
+
+    try:
+        response = service.call(request)
+        if state == HALF_OPEN:
+            state = CLOSED
+            failure_count = 0
+        return response
+    except Exception:
+        failure_count += 1
+        if failure_count >= threshold:
+            state = OPEN
+            record_open_time()
+        raise
+```
+
+---
+
+## Programming Implementation
+
+### Python: Simple Service Mesh with Circuit Breaker
+
+```python
+import time
+from enum import Enum
+from typing import Callable, TypeVar
+
+T = TypeVar('T')
+
+
+class CircuitState(Enum):
+    CLOSED = "closed"      # Normal operation
+    OPEN = "open"          # Failing — reject calls
+    HALF_OPEN = "half_open"  # Testing recovery
+
+
+class CircuitBreaker:
+    """
+    Wraps a service call with a circuit breaker pattern.
+    Prevents cascading failures in microservice architectures.
+    """
+
+    def __init__(
+        self,
+        failure_threshold: int = 5,
+        recovery_timeout: float = 30.0
+    ):
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout
+        self.state = CircuitState.CLOSED
+        self.failure_count = 0
+        self.last_failure_time: float = 0.0
+
+    def call(self, func: Callable[[], T], fallback: Callable[[], T]) -> T:
+        if self.state == CircuitState.OPEN:
+            if time.time() - self.last_failure_time > self.recovery_timeout:
+                self.state = CircuitState.HALF_OPEN
+                print("Circuit HALF-OPEN: testing recovery...")
+            else:
+                print("Circuit OPEN: returning fallback")
+                return fallback()
+
+        try:
+            result = func()
+            self._on_success()
+            return result
+        except Exception as e:
+            self._on_failure()
+            raise e
+
+    def _on_success(self) -> None:
+        self.failure_count = 0
+        if self.state == CircuitState.HALF_OPEN:
+            self.state = CircuitState.CLOSED
+            print("Circuit CLOSED: service recovered")
+
+    def _on_failure(self) -> None:
+        self.failure_count += 1
+        self.last_failure_time = time.time()
+        if self.failure_count >= self.failure_threshold:
+            self.state = CircuitState.OPEN
+            print(f"Circuit OPEN: {self.failure_count} failures detected")
+
+
+class OrderService:
+    """Microservice that depends on PaymentService"""
+
+    def __init__(self) -> None:
+        self.payment_breaker = CircuitBreaker(
+            failure_threshold=3,
+            recovery_timeout=10.0
+        )
+
+    def place_order(self, order_id: str, amount: float) -> dict[str, str]:
+        def charge_payment() -> str:
+            # Simulated HTTP call to PaymentService
+            # In real code: requests.post("http://payment-service/charge", ...)
+            if amount > 1000:
+                raise ConnectionError("Payment service timeout")
+            return f"payment-{order_id}-confirmed"
+
+        def fallback_payment() -> str:
+            # Queue for later processing
+            return f"payment-{order_id}-queued"
+
+        payment_ref = self.payment_breaker.call(
+            charge_payment,
+            fallback_payment
+        )
+
+        return {
+            "order_id": order_id,
+            "status": "created",
+            "payment_ref": payment_ref
+        }
+
+
+# Usage
+service = OrderService()
+print(service.place_order("ORD-001", 50.0))    # Normal
+print(service.place_order("ORD-002", 2000.0))  # Will fail, open circuit
+```
+
+### JavaScript: Service Discovery Pattern
+
+```javascript
+// Simple service registry for local development / testing
+class ServiceRegistry {
+  constructor() {
+    this.services = new Map();
+  }
+
+  register(name, instances) {
+    // instances: [{host, port, healthy}]
+    this.services.set(name, instances);
+  }
+
+  // Round-robin load balancing across healthy instances
+  discover(name) {
+    const instances = this.services.get(name) ?? [];
+    const healthy = instances.filter(i => i.healthy);
+    if (healthy.length === 0) throw new Error(`No healthy instances of ${name}`);
+
+    const instance = healthy[this._roundRobin(name, healthy.length)];
+    return `http://${instance.host}:${instance.port}`;
+  }
+
+  _roundRobin(name, count) {
+    const key = `_rr_${name}`;
+    this[key] = ((this[key] ?? -1) + 1) % count;
+    return this[key];
+  }
+}
+
+const registry = new ServiceRegistry();
+registry.register('product-service', [
+  { host: '10.0.0.1', port: 8080, healthy: true },
+  { host: '10.0.0.2', port: 8080, healthy: true },
+  { host: '10.0.0.3', port: 8080, healthy: false },
+]);
+
+console.log(registry.discover('product-service')); // 10.0.0.1
+console.log(registry.discover('product-service')); // 10.0.0.2
+console.log(registry.discover('product-service')); // 10.0.0.1 (wraps)
+```
+
+---
+
+## System Design Perspective
+
+### Netflix Architecture (Simplified)
+
+```
+[Mobile/Web Client]
+        │
+[API Gateway — Zuul]
+        │
+    ┌───┼───┬───────────┐
+    ▼   ▼   ▼           ▼
+[Auth] [User] [Catalog] [Recommendations]
+  │      │       │             │
+[DB-A] [DB-B] [DB-C]    [ML Pipeline]
+  │                           │
+[Redis Cache]          [Spark Cluster]
+```
+
+Netflix uses **Hystrix** (now Resilience4j) for circuit breaking and **Eureka** for service discovery. Each service team owns their service end-to-end: they build it, deploy it, run it at 3am.
+
+### Amazon's "Two-Pizza Rule"
+
+Jeff Bezos famously mandated: if a team can't be fed with two pizzas, it's too big. Each small team owns one microservice. This isn't a technical rule — it's an organizational one that enforces loose coupling through Conway's Law.
+
+---
+
+## Visual Content Suggestions
+
+- Monolith vs microservices side-by-side deployment diagram
+- Request flow through API Gateway to multiple services
+- Circuit breaker state machine (CLOSED → OPEN → HALF-OPEN)
+- Netflix service dependency graph (the famous spaghetti diagram)
+- Saga choreography vs orchestration comparison
+
+---
+
+## Real-World Examples
+
+**Amazon**: Split their monolith in 2001–2006. Today runs ~3,000 microservices. The AWS platform emerged partly from building infrastructure to manage all these services. Their API mandated internal services to use HTTP interfaces — the "Bezos API Mandate."
+
+**Uber**: Started as a monolith, migrated to microservices as they scaled globally. Now runs hundreds of services. They built their own service mesh (YARPC) to handle the complexity.
+
+**Shopify**: A famous "modular monolith" success story. Instead of microservices, they decomposed their Rails monolith into components with strict boundaries — same process, better organization. Handles Black Friday traffic without microservice complexity.
+
+**Etsy**: Deliberately stayed monolithic while competitors went microservices. They invested in tooling to make monolith deployment fast and safe. Proved that a well-run monolith can scale to millions of users.
+
+---
+
+## Common Mistakes
+
+**1. Starting with microservices.** Martin Fowler calls this the "microservice premium" — the overhead of distributed systems. For startups and new products, a monolith ships faster, costs less, and is easier to change. Extract services when you have a *specific* scaling or team problem.
+
+**2. Sharing databases between services.** This completely defeats the purpose. If Service A can write to Service B's database, they are not truly independent. Use APIs or events to share data.
+
+**3. Synchronous chains.** Calling Service A → B → C → D synchronously creates a latency chain and a single point of failure. Use async messaging for non-critical paths.
+
+**4. Not investing in observability.** Debugging a monolith: grep logs, look at stack trace. Debugging microservices: you need distributed tracing (Jaeger, Zipkin), centralized logging (ELK stack), and metrics dashboards. Without these, microservices are undebuggable.
+
+**5. Making services too small.** "Nano-services" that do one thing (like a service just for email validation) create massive operational overhead for minimal benefit. If two services always deploy together and always talk to each other, they should be one service.
+
+---
+
+## Interview Angle
+
+**Q: When would you choose a monolith over microservices?**
+
+> For a new product with a small team (under 10 engineers), a monolith is almost always the right choice. Microservices solve scaling problems — organizational and technical — that small teams don't have yet. The overhead of distributed systems (service discovery, network latency, distributed tracing) slows development velocity. Start monolith, extract services when pain is real: a specific service needs to scale independently, a team ownership boundary is getting painful, or a service needs a different technology stack.
+
+**Q: How do you handle transactions across microservices?**
+
+> Since each service owns its database, you can't use ACID transactions across service boundaries. The two main patterns are: (1) **Saga** — a sequence of local transactions where each step has a compensating action for rollback. Choreography-based sagas use events; orchestration-based use a central coordinator. (2) **Two-Phase Commit (2PC)** — technically possible but avoided in practice because it creates tight coupling and can hang if the coordinator fails. Most teams use choreography-based sagas with idempotent operations and eventual consistency.
+
+---
+
+## Summary
+
+- A **monolith** is a single deployable unit — simple to develop, test, and deploy for small teams
+- **Microservices** decompose into independent services with their own data stores and deployments
+- **Conway's Law** says your architecture mirrors your org structure — design both together
+- The **API Gateway** pattern provides a single entry point for external clients
+- The **Circuit Breaker** pattern prevents cascading failures across services
+- **Sagas** replace ACID transactions in distributed systems using compensating actions
+- Microservices add significant **operational overhead** — distributed tracing, service discovery, and networking complexity
+- **Start with a monolith**; extract services when you have concrete scaling or team problems
+- Netflix, Amazon, and Uber are success stories — but they migrated after achieving scale, not before
+- The "right" architecture depends on team size, traffic patterns, and deployment requirements
+
+<ArticleNav
+  prev={{ title: "Message Queues", href: "/docs/cs-book/part-4-advanced/message-queues" }}
+  next={{ title: "Rate Limiting", href: "/docs/cs-book/part-4-advanced/rate-limiting" }}
+/>

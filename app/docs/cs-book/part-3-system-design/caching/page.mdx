@@ -1,0 +1,434 @@
+export const metadata = {
+  title: "Caching — ByteWise CS Book",
+  description:
+    "Master caching strategies: cache-aside, write-through, write-back, eviction policies, CDN caching, and how to design cache layers for high-performance systems.",
+  keywords: [
+    "caching",
+    "Redis",
+    "cache-aside",
+    "write-through",
+    "LRU cache",
+    "CDN",
+    "cache invalidation",
+    "TTL",
+  ],
+  openGraph: {
+    title: "Caching — ByteWise CS Book",
+    description:
+      "Learn caching strategies, eviction policies, cache invalidation, and how Redis powers the world's fastest applications.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Caching
+
+## The Two Hard Problems
+
+Phil Karlton, a Netscape engineer in the 1990s, famously quipped: "There are only two hard things in computer science: cache invalidation and naming things." Three decades later, this joke still resonates because cache invalidation remains genuinely difficult, and the consequences of getting it wrong — serving stale data, inconsistent state across services, silent bugs — are serious.
+
+Yet caching is also one of the most powerful performance tools available to engineers. Instagram serves over 1 billion daily active users, and a large fraction of that traffic is served directly from in-memory caches. Google's search index, updated billions of times per day, uses a layered caching hierarchy that serves most queries from RAM rather than disk. Netflix's CDN caches video content at edge nodes around the world, ensuring that the same video bytes are never sent across the ocean more than once.
+
+The gap between a system that handles 1,000 requests per second and one that handles 1,000,000 is often a well-designed caching layer. But that layer must be designed with care: cache incorrectly and you trade correctness for speed, which is never a good deal.
+
+## Concept Explanation
+
+A **cache** is a high-speed storage layer that stores copies of frequently accessed data, reducing the need to recompute or refetch from the slower authoritative source (database, external API, computation result).
+
+**Why caches work — the 80/20 principle:** In most systems, roughly 20% of the data is accessed 80% of the time. If you cache that hot 20%, you serve 80% of requests from fast memory, falling through to slow storage for only the remaining 20%.
+
+**Cache terminology:**
+- **Cache hit:** The requested data is found in the cache.
+- **Cache miss:** The requested data is not in the cache; must fetch from origin.
+- **Cache hit rate:** Percentage of requests served from cache. 95%+ is generally the target.
+- **TTL (Time-to-Live):** How long a cache entry is valid before it expires.
+- **Eviction:** Removing entries from cache when it is full.
+- **Warm vs cold cache:** A warm cache has good hit rates from serving previous traffic; a cold cache (just started or just cleared) has high miss rates.
+
+**Caching layers in a typical system:**
+1. **CPU cache (L1/L2/L3):** Hardware-managed, nanosecond access, kilobytes-megabytes.
+2. **Application memory cache:** In-process dictionary/LRU cache, microsecond access.
+3. **Distributed cache (Redis/Memcached):** Shared across servers, sub-millisecond access.
+4. **CDN edge cache:** Geographically distributed, tens of milliseconds from user.
+5. **Database buffer pool:** DB-managed in-memory page cache, reduces disk I/O.
+
+## Mathematical Foundation
+
+**Effective latency with cache:**
+
+$$T_{\text{effective}} = p_{\text{hit}} \cdot T_{\text{cache}} + (1 - p_{\text{hit}}) \cdot (T_{\text{cache}} + T_{\text{db}})$$
+
+For $T_{\text{cache}} = 1\text{ms}$, $T_{\text{db}} = 100\text{ms}$, $p_{\text{hit}} = 0.95$:
+
+$$T_{\text{effective}} = 0.95 \times 1 + 0.05 \times 101 = 0.95 + 5.05 = 6\text{ms}$$
+
+vs. $T_{\text{db}} = 100\text{ms}$ without cache — a **16x speedup**.
+
+**LRU cache lookup and eviction:** With a hash map + doubly linked list:
+
+$$T_{\text{get}} = O(1), \quad T_{\text{put}} = O(1), \quad S = O(\text{capacity})$$
+
+**Cache capacity planning:** Given $n$ total items, hit rate goal $p$, and Zipf distribution (top $k$ items get $p$ of traffic):
+
+$$k \approx n^{1 - (1/\alpha)} \quad \text{where } \alpha \approx 1 \text{ (Zipf parameter)}$$
+
+For $n = 10^6$ items and 95% hit rate, typically only ~50,000 items (5%) need to be cached.
+
+**Thunder herd:** If $C$ clients simultaneously request a cache miss for the same key, all $C$ go to the database simultaneously:
+
+$$\text{DB load} = C \times \text{normal load} \quad \text{(without protection)}$$
+
+Solutions: mutex lock on the cache key, probabilistic early expiration, or circuit breakers.
+
+## Algorithm / Logic
+
+**Cache-aside (lazy loading) pattern:**
+
+1. Application checks the cache for the requested key.
+2. If cache hit: return the cached value.
+3. If cache miss: fetch from database, store in cache with TTL, return value.
+4. On data update: update the database, then delete (invalidate) the cache key.
+
+**Write-through pattern:**
+
+1. Application writes to the cache.
+2. Cache synchronously writes to the database.
+3. Both cache and database are always in sync.
+4. On read: always check cache first (always present for recently written keys).
+
+**Write-back (write-behind) pattern:**
+
+1. Application writes to the cache only.
+2. Cache asynchronously writes to the database (batched, delayed).
+3. Risk: data in cache but not yet in DB is lost if cache crashes.
+
+**LRU eviction algorithm:**
+
+1. Maintain a doubly linked list (most recently used at head, LRU at tail) and a hash map (key → node).
+2. On get: move the accessed node to the head. Return its value.
+3. On put: if key exists, update and move to head. If new, add to head. If over capacity, remove the tail node.
+
+```
+CACHE_ASIDE_GET(cache, db, key):
+  value = cache.get(key)
+  if value is not None:
+    return value          // cache hit
+  value = db.query(key)   // cache miss: go to DB
+  cache.set(key, value, ttl=300)
+  return value
+
+CACHE_ASIDE_INVALIDATE(cache, db, key, new_value):
+  db.update(key, new_value)  // write to DB first
+  cache.delete(key)           // then invalidate cache
+  // Next read will repopulate from DB
+```
+
+## Programming Implementation
+
+**Python — LRU cache implementation and Redis patterns:**
+
+```python
+from collections import OrderedDict
+from typing import Any, Optional
+import redis
+import json
+import time
+import hashlib
+from functools import wraps
+
+
+# ── LRU Cache from scratch ────────────────────────────────────────────────────
+
+class LRUCache:
+    """
+    O(1) get and put using OrderedDict (doubly linked list + hash map).
+    Python's OrderedDict moves items to end, making LRU trivial.
+    """
+
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache: OrderedDict = OrderedDict()
+
+    def get(self, key: Any) -> Optional[Any]:
+        if key not in self.cache:
+            return None
+        self.cache.move_to_end(key)  # mark as recently used
+        return self.cache[key]
+
+    def put(self, key: Any, value: Any) -> None:
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        if len(self.cache) > self.capacity:
+            self.cache.popitem(last=False)  # remove LRU (first item)
+
+    def __len__(self) -> int:
+        return len(self.cache)
+
+
+# ── Redis cache patterns ──────────────────────────────────────────────────────
+
+class CacheLayer:
+    """Production-ready Redis cache with cache-aside pattern."""
+
+    def __init__(self, redis_url: str = "redis://localhost:6379"):
+        self.redis = redis.Redis.from_url(redis_url, decode_responses=True)
+        self.default_ttl = 300  # 5 minutes
+
+    def get(self, key: str) -> Optional[Any]:
+        """O(1) cache lookup."""
+        value = self.redis.get(key)
+        if value is None:
+            return None
+        return json.loads(value)
+
+    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
+        """O(1) cache write with TTL."""
+        self.redis.setex(
+            key,
+            ttl or self.default_ttl,
+            json.dumps(value, default=str)
+        )
+
+    def delete(self, key: str) -> None:
+        """Invalidate a cache entry."""
+        self.redis.delete(key)
+
+    def delete_pattern(self, pattern: str) -> int:
+        """
+        Invalidate all keys matching a pattern (e.g., 'user:123:*').
+        Use sparingly — SCAN is O(n) over all keys.
+        """
+        keys = list(self.redis.scan_iter(pattern))
+        if keys:
+            return self.redis.delete(*keys)
+        return 0
+
+    def get_or_set(self, key: str, fetch_fn, ttl: Optional[int] = None) -> Any:
+        """Cache-aside in one call."""
+        value = self.get(key)
+        if value is not None:
+            return value
+        value = fetch_fn()
+        self.set(key, value, ttl)
+        return value
+
+    def increment(self, key: str, amount: int = 1, ttl: Optional[int] = None) -> int:
+        """
+        Atomic increment — used for rate limiting, counters.
+        O(1) and thread-safe without application-level locks.
+        """
+        pipe = self.redis.pipeline()
+        pipe.incrby(key, amount)
+        if ttl:
+            pipe.expire(key, ttl)
+        results = pipe.execute()
+        return results[0]
+
+
+# ── Cache decorator ───────────────────────────────────────────────────────────
+
+cache = CacheLayer()
+
+def cached(ttl: int = 300, key_prefix: str = ""):
+    """
+    Decorator: automatically cache function results.
+    Cache key = prefix + hash of arguments.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # Build cache key from function name + arguments
+            key_data = f"{key_prefix}{func.__name__}:{args}:{sorted(kwargs.items())}"
+            cache_key = hashlib.md5(key_data.encode()).hexdigest()
+            result = cache.get(cache_key)
+            if result is not None:
+                return result
+            result = func(*args, **kwargs)
+            cache.set(cache_key, result, ttl)
+            return result
+        return wrapper
+    return decorator
+
+
+@cached(ttl=600, key_prefix="user:")
+def get_user_profile(user_id: int) -> dict:
+    """Automatically cached for 10 minutes. Cache miss triggers DB query."""
+    # db.query("SELECT * FROM users WHERE id = %s", user_id)
+    return {"id": user_id, "name": "Alice"}
+
+
+# ── Rate limiter using Redis ──────────────────────────────────────────────────
+
+def is_rate_limited(user_id: str, limit: int = 100, window: int = 60) -> bool:
+    """
+    Fixed window rate limiter using Redis INCR + EXPIRE.
+    O(1) per check. limit = requests, window = seconds.
+    """
+    key = f"rate:{user_id}:{int(time.time()) // window}"
+    count = cache.increment(key, ttl=window)
+    return count > limit
+
+
+# ── Cache stampede prevention ─────────────────────────────────────────────────
+
+def get_with_lock(redis_client, key: str, fetch_fn, ttl: int = 300) -> Any:
+    """
+    Prevent cache stampede: only one worker rebuilds cache on miss.
+    Others wait and get the result once it's populated.
+    """
+    value = redis_client.get(key)
+    if value:
+        return json.loads(value)
+
+    lock_key = f"{key}:lock"
+    lock_acquired = redis_client.set(lock_key, "1", nx=True, ex=10)
+
+    if lock_acquired:
+        try:
+            value = fetch_fn()
+            redis_client.setex(key, ttl, json.dumps(value))
+            return value
+        finally:
+            redis_client.delete(lock_key)
+    else:
+        # Wait for the lock holder to populate the cache
+        for _ in range(20):
+            time.sleep(0.5)
+            value = redis_client.get(key)
+            if value:
+                return json.loads(value)
+        return fetch_fn()   # fallback: go to DB directly
+```
+
+**JavaScript — Redis caching in Node.js:**
+
+```javascript
+const { createClient } = require("redis");
+
+const redis = createClient({ url: process.env.REDIS_URL });
+redis.connect();
+
+// Cache-aside pattern
+async function getCachedUser(userId) {
+  const key = `user:${userId}`;
+  const cached = await redis.get(key);
+  if (cached) return JSON.parse(cached);
+
+  const user = await db.query("SELECT * FROM users WHERE id = $1", [userId]);
+  await redis.setEx(key, 300, JSON.stringify(user)); // TTL 5 min
+  return user;
+}
+
+// Cache invalidation on update
+async function updateUser(userId, data) {
+  await db.query("UPDATE users SET name = $1 WHERE id = $2", [data.name, userId]);
+  await redis.del(`user:${userId}`); // invalidate cache
+}
+
+// Sliding window rate limiter with Redis sorted sets
+async function checkRateLimit(userId, limit = 100, windowMs = 60_000) {
+  const now = Date.now();
+  const key = `rl:${userId}`;
+  const pipe = redis.multi();
+  pipe.zRemRangeByScore(key, 0, now - windowMs); // remove old entries
+  pipe.zAdd(key, { score: now, value: `${now}` });
+  pipe.zCard(key);
+  pipe.expire(key, Math.ceil(windowMs / 1000));
+  const [,, count] = await pipe.exec();
+  return count > limit;
+}
+```
+
+## System Design Perspective
+
+Caching architecture in a production system:
+
+```
+[User Browser]
+  — Browser cache: static assets (JS, CSS, images) with Cache-Control headers
+  — Service Worker cache: offline support
+       ↓
+[CDN (Cloudflare/CloudFront)]
+  — Edge cache: HTML, API responses with short TTL
+  — Geographic proximity: <20ms latency vs 100ms+ to origin
+       ↓
+[API Gateway / Load Balancer]
+  — Response cache for idempotent endpoints
+       ↓
+[Application Server]
+  — In-process LRU cache: hot config, feature flags (microseconds)
+  — L1 cache: O(1) local lookup before hitting Redis
+       ↓
+[Redis Cluster]
+  — L2 distributed cache: shared across all app servers
+  — TTL-based expiration, LRU eviction
+  — Hash slots for horizontal scaling
+       ↓
+[Database]  ← only 5-10% of requests reach here with good caching
+```
+
+**Real company caching:**
+
+- **Facebook/Meta:** Memcached cluster with thousands of servers (hundreds of terabytes of RAM) caches social graph data. TAO (The Associations and Objects) provides a caching layer specifically for the social graph.
+- **Twitter:** Redis cluster caches home timelines (pre-computed, fan-out on write). Each user's timeline is stored as a sorted set of tweet IDs — $O(\log n)$ read, $O(1)$ sequential access.
+- **GitHub:** Varnish (reverse proxy cache) in front of GitHub.com caches HTML responses for anonymous users, massively reducing origin load for public repositories.
+- **Amazon:** ElastiCache (managed Redis) is used throughout Amazon's microservices. Product catalog, pricing, and session data are all heavily cached.
+
+## Visual Content Suggestions
+
+- **Cache-aside vs write-through vs write-back flow diagrams:** Three side-by-side sequence diagrams.
+- **LRU cache state transitions:** Linked list + hash map state changing as items are accessed and evicted.
+- **Cache hit/miss latency comparison:** Bar chart showing 1ms cache vs 100ms DB for a 95% hit rate.
+- **CDN edge cache world map:** Globe with edge nodes closer to users than the origin server.
+- **Cache stampede sequence diagram:** Multiple clients simultaneously missing cache and hammering the DB, then with lock-based prevention.
+
+## Real-World Examples
+
+**Google's web search:** Google's search results are cached at multiple levels. Popular queries are cached in Memorystore (Redis) for instant serving. Static content (images, scripts on google.com) is served from CDN edge nodes. Google has reported that their caching infrastructure prevents hundreds of petabytes of redundant data transfer daily.
+
+**Netflix's CDN:** Netflix's Open Connect CDN has 17,000+ servers in 6,000+ locations globally. Popular content is proactively cached ("prefetched") to edge nodes during off-peak hours, so when users request a hit movie during peak hours, the bytes are already physically close to them. Netflix serves over 15% of global internet traffic this way.
+
+**Discord's caching for real-time messaging:** Discord uses Redis for online presence ("green dot"), user sessions, and channel membership. Messages themselves are stored in Cassandra. The combination allows Discord to serve 200+ million monthly users with sub-100ms message delivery.
+
+**Amazon's product page caching:** Amazon's product detail pages involve data from ~100 microservices. Each service's data is independently cached with different TTLs based on how frequently it changes (price: 1 minute, reviews: 5 minutes, title/image: 1 hour). This selective caching strategy balances freshness with performance.
+
+## Common Mistakes
+
+**Mistake 1: Cache invalidation on update before the DB write.** If you delete the cache key before updating the database, another request can populate the cache with stale data between the delete and the write. Always write to the database first, then invalidate the cache (or use write-through).
+
+**Mistake 2: Caching without TTL.** Data cached without an expiration time stays in cache forever, serving increasingly stale content. Always set a TTL appropriate to how frequently the underlying data changes. Configuration: hours. User profiles: minutes. Prices: seconds.
+
+**Mistake 3: Using a single Redis instance in production.** A single Redis node is a single point of failure. Use Redis Cluster (for horizontal sharding and fault tolerance) or Redis Sentinel (for high availability with automatic failover). A Redis crash without clustering brings down every service depending on it.
+
+**Mistake 4: Caching large objects without monitoring memory.** Storing large JSON blobs (hundreds of KB) in Redis can quickly exhaust memory. Monitor Redis memory usage and set `maxmemory` with an eviction policy (`allkeys-lru` is usually correct). Use `redis.memory_usage(key)` to inspect individual key sizes.
+
+**Mistake 5: Not handling cache-miss spikes after deployment.** When you deploy new code and restart all application servers, the in-process cache is cleared simultaneously. If the distributed cache (Redis) is also cleared, every request hits the database at once — the "cold start stampede." Solutions: gradual deployment, cache warming before switching traffic, or probabilistic early re-expiry.
+
+## Interview Angle
+
+**Q: How would you design a caching strategy for a social media news feed?**
+
+A: Use a multi-tier strategy. For the user's own feed, use write-through fan-out: when a user posts, pre-compute and push the post ID to each follower's feed list in Redis (a sorted set keyed by timestamp). This is $O(1)$ feed reads. For users with millions of followers (celebrities), fan-out on read instead — compute their feed items on-demand and cache the result with a short TTL. For individual posts (content), cache in Redis with a medium TTL (5-10 minutes). Use CDN for static content (images, videos). The key insight: distinguish between the feed index (which posts to show, cached per user) and post content (the actual content, cached by post ID). Use different eviction strategies: LRU for post content, fixed-size ring buffer for feed indexes.
+
+**Q: What is cache invalidation and why is it hard?**
+
+A: Cache invalidation is the process of removing or updating stale cache entries when the underlying data changes. It is hard because: (1) **Distribution:** In a system with multiple cache servers and application servers, you must ensure all copies of stale data are removed — missing even one server means some users see stale data. (2) **Timing:** The gap between updating the database and invalidating the cache (however brief) is a window where stale data can be cached again by another request. (3) **Cascading dependencies:** Changing user data may require invalidating a user profile cache, a user's posts cache, a user's follower feed cache — the dependency graph is complex. (4) **Failure modes:** If the cache invalidation fails (Redis is down), the cache continues serving stale data indefinitely unless there's a TTL fallback. Common solutions: TTL-based expiration (accept eventual consistency), event-driven invalidation via database change streams, and versioned cache keys (change the key structure on update so old keys expire naturally).
+
+## Summary
+
+- A cache stores copies of frequently accessed data in fast storage, reducing load on the slower authoritative source.
+- **Cache hit rate** is the primary metric: 95%+ is typically the goal for well-designed caches.
+- **Cache-aside (lazy loading):** Check cache, on miss fetch from DB and populate cache. Invalidate on writes. Most common pattern.
+- **Write-through:** Write to cache and DB synchronously. Always consistent; slower writes.
+- **Write-back (write-behind):** Write to cache only, DB updated asynchronously. Fastest writes; risk of data loss on cache failure.
+- **LRU eviction** (Least Recently Used): $O(1)$ get and put using hash map + doubly linked list.
+- Always set TTLs — data without expiration grows stale silently.
+- Use Redis Cluster or Sentinel in production — single Redis nodes are a single point of failure.
+- **Cache stampede prevention:** Use mutex locks or probabilistic early expiry to prevent multiple concurrent cache misses from overwhelming the database.
+- Redis supports rate limiting (INCR + EXPIRE), sorted set timelines, pub/sub, and distributed locks — far beyond simple key-value caching.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/databases", label: "Databases" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/load-balancing", label: "Load Balancing" }}
+/>

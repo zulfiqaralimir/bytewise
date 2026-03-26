@@ -1,0 +1,406 @@
+export const metadata = {
+  title: "Recursion — ByteWise CS Book",
+  description:
+    "Master recursion: base cases, recursive cases, the call stack, memoization, and how to think recursively to solve complex problems elegantly.",
+  keywords: [
+    "recursion",
+    "recursive algorithms",
+    "base case",
+    "call stack",
+    "memoization",
+    "tree traversal",
+    "divide and conquer",
+  ],
+  openGraph: {
+    title: "Recursion — ByteWise CS Book",
+    description:
+      "Learn recursion from first principles. Covers the call stack, base cases, memoization, and Python/JavaScript implementations with real examples.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Recursion
+
+## To Understand Recursion, You Must First Understand Recursion
+
+There is a famous computer science joke: "To understand recursion, you must first understand recursion." Like all good jokes, it contains a deep truth. Recursion is the concept of a function calling itself — and the punchline is that this seemingly circular definition is actually a perfectly valid and powerful programming technique, provided you give it a way to stop.
+
+Consider how you might explain the process of Russian nesting dolls (Matryoshkas) to someone who has never seen one. You could say: "A Matryoshka is a wooden doll that either contains nothing, or contains a smaller Matryoshka inside it." That is a recursive definition — you defined the whole in terms of a smaller version of itself, with a base case (contains nothing) that stops the regression. This is the entire structure of recursive programming.
+
+Recursion feels magical when it clicks, and maddening before it does. Every professional programmer has stared at a recursive function, traced through its calls, and eventually had the moment where they stopped fighting the idea and started trusting the structure. This chapter will give you that clarity.
+
+## Concept Explanation
+
+**Recursion** is when a function solves a problem by reducing it to smaller instances of the same problem, until it reaches a **base case** — a simple instance that can be solved directly without further recursion.
+
+Every recursive solution has exactly two components:
+1. **Base case(s):** Conditions under which the function returns a value directly, without calling itself.
+2. **Recursive case:** The function calling itself on a smaller/simpler version of the problem.
+
+**The analogy — searching for your keys in a building:** Imagine you need to find your keys, which are somewhere in a multi-story building. Recursive thinking says: "Check if the keys are on this floor. If not, recursively search the building minus this floor." The base case is "the building has no floors left — the keys are not here."
+
+The call stack is what makes this work. Each recursive call is placed on a **call stack** — a stack of function calls, each with its own local variables. When a base case is reached, the stack unwinds: each call returns its result to the caller below it, all the way up to the original call.
+
+**Recursion vs. iteration:** Any recursive algorithm can be converted to an iterative one (and vice versa) using an explicit stack. Recursion is often cleaner and more readable for problems that are naturally hierarchical (trees, graphs, nested structures). Iteration is often more efficient because it avoids function call overhead.
+
+## Mathematical Foundation
+
+**Factorial** is the canonical recursive definition:
+
+$$n! = \begin{cases} 1 & \text{if } n = 0 \\ n \cdot (n-1)! & \text{if } n > 0 \end{cases}$$
+
+**Fibonacci** sequence:
+
+$$F(n) = \begin{cases} 0 & \text{if } n = 0 \\ 1 & \text{if } n = 1 \\ F(n-1) + F(n-2) & \text{if } n > 1 \end{cases}$$
+
+Naive recursive Fibonacci is $O(2^n)$ — each call branches into two, creating an exponential tree of redundant computations.
+
+**Recurrence relation for merge sort:**
+
+$$T(n) = 2T\left(\frac{n}{2}\right) + O(n) \implies T(n) = O(n \log n)$$
+
+This is solved by the Master Theorem: $a=2, b=2, d=1$, and since $\log_2 2 = 1 = d$, the result is $O(n \log n)$.
+
+**Call stack depth** for a linear recursion on input of size $n$:
+
+$$\text{depth} = n \implies \text{space complexity} = O(n)$$
+
+For balanced divide-and-conquer on input of size $n$:
+
+$$\text{depth} = \log_2 n \implies \text{space complexity} = O(\log n)$$
+
+**Memoized Fibonacci** reduces time complexity from $O(2^n)$ to $O(n)$ by storing computed values, trading space ($O(n)$) for time.
+
+## Algorithm / Logic
+
+**Structure of any recursive function:**
+
+1. **Check base case(s):** If the input is small enough to solve directly, return the answer.
+2. **Decompose the problem:** Break the input into smaller subproblems.
+3. **Recurse:** Call the function on each subproblem.
+4. **Combine:** Merge the results of the recursive calls into the answer for the current call.
+5. **Return:** Return the combined result.
+
+**Tree traversal (inorder) — step by step:**
+
+1. If the current node is null, return (base case).
+2. Recursively traverse the left subtree.
+3. Process (visit) the current node.
+4. Recursively traverse the right subtree.
+
+```
+FACTORIAL(n):
+  if n == 0:              // base case
+    return 1
+  return n * FACTORIAL(n - 1)  // recursive case
+
+BINARY_SEARCH(arr, target, low, high):
+  if low > high:          // base case: not found
+    return -1
+  mid = (low + high) // 2
+  if arr[mid] == target:  // base case: found
+    return mid
+  if arr[mid] < target:   // recurse right half
+    return BINARY_SEARCH(arr, target, mid + 1, high)
+  return BINARY_SEARCH(arr, target, low, mid - 1)  // recurse left half
+
+FLATTEN(nested_list):
+  result = []
+  for item in nested_list:
+    if item is a list:
+      result.extend(FLATTEN(item))  // recurse into sublists
+    else:
+      result.append(item)           // base case: scalar
+  return result
+```
+
+## Programming Implementation
+
+**Python — from basics to advanced recursive patterns:**
+
+```python
+from typing import List, Optional, Any
+from functools import lru_cache
+import sys
+
+# Increase recursion limit for deep recursions (default is 1000)
+sys.setrecursionlimit(10_000)
+
+
+# ── Classic examples ──────────────────────────────────────────────────────────
+
+def factorial(n: int) -> int:
+    """O(n) time, O(n) space (call stack depth = n)."""
+    if n == 0:        # base case
+        return 1
+    return n * factorial(n - 1)  # recursive case
+
+
+def fibonacci_naive(n: int) -> int:
+    """O(2^n) time — exponential due to redundant recomputation."""
+    if n <= 1:
+        return n
+    return fibonacci_naive(n - 1) + fibonacci_naive(n - 2)
+
+
+@lru_cache(maxsize=None)
+def fibonacci_memo(n: int) -> int:
+    """O(n) time, O(n) space — memoization eliminates redundant calls."""
+    if n <= 1:
+        return n
+    return fibonacci_memo(n - 1) + fibonacci_memo(n - 2)
+
+
+def fibonacci_iterative(n: int) -> int:
+    """O(n) time, O(1) space — best approach for large n."""
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+
+# ── Tree operations ───────────────────────────────────────────────────────────
+
+class TreeNode:
+    def __init__(self, val: int, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def tree_height(root: Optional[TreeNode]) -> int:
+    """O(n) — visits every node once. Height = max depth of any leaf."""
+    if root is None:
+        return 0
+    return 1 + max(tree_height(root.left), tree_height(root.right))
+
+
+def inorder_traversal(root: Optional[TreeNode]) -> List[int]:
+    """O(n) — left → root → right. Returns sorted values for a BST."""
+    if root is None:
+        return []
+    return inorder_traversal(root.left) + [root.val] + inorder_traversal(root.right)
+
+
+def is_balanced(root: Optional[TreeNode]) -> bool:
+    """
+    O(n) — checks if tree is height-balanced.
+    A tree is balanced if every node's left/right subtree heights differ by ≤ 1.
+    """
+    def check(node: Optional[TreeNode]) -> int:
+        """Returns height, or -1 if unbalanced."""
+        if node is None:
+            return 0
+        left_h = check(node.left)
+        if left_h == -1:
+            return -1
+        right_h = check(node.right)
+        if right_h == -1:
+            return -1
+        if abs(left_h - right_h) > 1:
+            return -1
+        return 1 + max(left_h, right_h)
+    return check(root) != -1
+
+
+# ── Backtracking (advanced recursion) ────────────────────────────────────────
+
+def generate_permutations(nums: List[int]) -> List[List[int]]:
+    """
+    O(n!) time, O(n) space (call stack depth).
+    Backtracking: build, recurse, undo.
+    """
+    result = []
+
+    def backtrack(current: List[int], remaining: List[int]) -> None:
+        if not remaining:       # base case: no more elements to add
+            result.append(current[:])
+            return
+        for i in range(len(remaining)):
+            current.append(remaining[i])
+            backtrack(current, remaining[:i] + remaining[i+1:])
+            current.pop()       # undo (backtrack)
+
+    backtrack([], nums)
+    return result
+
+
+def generate_subsets(nums: List[int]) -> List[List[int]]:
+    """
+    O(2^n) — every element is either included or not.
+    Classic divide-and-conquer recursion.
+    """
+    if not nums:
+        return [[]]
+    first = nums[0]
+    rest_subsets = generate_subsets(nums[1:])
+    with_first = [[first] + subset for subset in rest_subsets]
+    return rest_subsets + with_first
+
+
+def flatten(nested: Any) -> List[Any]:
+    """Flatten arbitrarily nested lists using recursion."""
+    if not isinstance(nested, list):
+        return [nested]
+    result = []
+    for item in nested:
+        result.extend(flatten(item))
+    return result
+
+
+# ── Tail recursion simulation ─────────────────────────────────────────────────
+
+def factorial_tail(n: int, accumulator: int = 1) -> int:
+    """
+    Tail-recursive factorial — Python doesn't optimize tail calls,
+    but this pattern is important to understand for other languages.
+    Convert to iterative for production Python code.
+    """
+    if n == 0:
+        return accumulator
+    return factorial_tail(n - 1, n * accumulator)
+```
+
+**JavaScript — recursion for frontend and Node.js:**
+
+```javascript
+// Recursive DOM traversal (common in frontend work)
+function findAllElements(element, selector) {
+  const results = [];
+  if (element.matches?.(selector)) results.push(element);
+  for (const child of element.children) {
+    results.push(...findAllElements(child, selector)); // recurse into children
+  }
+  return results;
+}
+
+// Memoized fibonacci with closure
+function makeFibonacci() {
+  const cache = new Map([[0, 0], [1, 1]]);
+  return function fib(n) {
+    if (cache.has(n)) return cache.get(n);
+    const result = fib(n - 1) + fib(n - 2);
+    cache.set(n, result);
+    return result;
+  };
+}
+const fib = makeFibonacci();
+
+// Deep object clone using recursion
+function deepClone(obj) {
+  if (obj === null || typeof obj !== "object") return obj; // base case
+  if (Array.isArray(obj)) return obj.map(deepClone);
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => [k, deepClone(v)])
+  );
+}
+
+// Directory tree builder (Node.js)
+const fs = require("fs");
+const path = require("path");
+
+function buildFileTree(dirPath) {
+  const stat = fs.statSync(dirPath);
+  if (!stat.isDirectory()) {   // base case: file node
+    return { name: path.basename(dirPath), type: "file" };
+  }
+  const children = fs.readdirSync(dirPath).map(
+    (child) => buildFileTree(path.join(dirPath, child))
+  );
+  return { name: path.basename(dirPath), type: "dir", children };
+}
+```
+
+## System Design Perspective
+
+Recursion maps directly to the structure of hierarchical systems:
+
+```
+[File System Request]
+        ↓
+[Root Directory]  — recursive scan: each subdirectory triggers same logic
+        ↓
+[Subdirectory A]  → [File 1], [File 2]
+        ↓
+[Subdirectory B]  → [Subdirectory C] → [File 3]
+
+[JSON/XML Parser]
+  parse(token) → if object: parse each key-value recursively
+               → if array: parse each element recursively
+               → if primitive: return value (base case)
+
+[Distributed Map-Reduce]
+  MAP(data, f):
+    if data.length == 1: return f(data[0])          // base case
+    left  = MAP(data[:half], f)                     // recurse
+    right = MAP(data[half:], f)
+    return REDUCE(left, right)                      // combine
+```
+
+**Real company applications:**
+
+- **Google's PageRank:** Conceptually a recursive algorithm — a page's rank depends on the rank of pages linking to it, which depends on the rank of pages linking to them. In practice implemented as iterative matrix multiplication, but the recursive formulation defines the problem.
+- **Amazon's category tree:** Product categories (Electronics → Phones → Smartphones → iPhones) are a recursive tree structure. Rendering category menus and breadcrumbs uses recursive tree traversal.
+- **Netflix's content recommendation:** Their content ontology (genres, sub-genres, moods) is a tree traversed recursively to find related content.
+- **Meta's comment threads:** Nested comments (replies to replies to replies) are stored as trees and rendered using recursive component rendering in React.
+
+## Visual Content Suggestions
+
+- **Call stack diagram for factorial(4):** Stack frames showing each call and the values being returned as the stack unwinds.
+- **Fibonacci call tree:** Binary tree showing how `fib(5)` branches into overlapping subproblems, visualizing the $O(2^n)$ explosion.
+- **Memoized fibonacci:** Same tree with grayed-out nodes representing cached (skipped) computations.
+- **Backtracking decision tree:** Tree showing all paths explored for generating permutations of [1,2,3].
+- **Recursive vs iterative call stack:** Side-by-side comparison of stack usage for depth-10 recursion.
+
+## Real-World Examples
+
+**Google's File System (GFS):** The GFS chunk server hierarchy traverses directory structures recursively when resolving file paths. The recursive structure mirrors the filesystem hierarchy itself, making the code natural and maintainable.
+
+**Netflix's React UI:** Netflix's frontend is built in React, and React's rendering model is fundamentally recursive. A component renders its children, each child renders its children, and so on — until leaf nodes (base cases) return plain HTML elements.
+
+**Amazon's JSON API responses:** Amazon's product API returns deeply nested JSON (product → variants → images → metadata). Parsing and serializing these structures uses recursive descent parsers under the hood in every language and framework.
+
+**Meta's Graph API:** Facebook's Graph API models users, posts, comments, and reactions as a graph. Recursive graph traversal (DFS) is used internally to resolve friend-of-friend connections, identify clusters, and detect communities.
+
+## Common Mistakes
+
+**Mistake 1: Missing or incorrect base cases.** The most common recursion bug: forgetting a base case or placing it after the recursive call. This causes infinite recursion and a stack overflow. Always write the base case first, before the recursive case.
+
+**Mistake 2: Not reducing the problem.** The recursive call must always be on a *strictly smaller* version of the problem. `factorial(n)` calling `factorial(n)` (same size) is infinite recursion. The problem size must decrease with every call, guaranteed to reach the base case.
+
+**Mistake 3: Recomputing subproblems (exponential naive recursion).** Fibonacci computed naively makes $O(2^n)$ calls because it recomputes `fib(k)` exponentially many times. Add memoization (`@lru_cache`) immediately when you notice overlapping subproblems.
+
+**Mistake 4: Stack overflow on large inputs.** Python's default recursion limit is 1000. For large trees or deep recursions, either increase the limit (`sys.setrecursionlimit`), convert to iterative with an explicit stack, or use trampolining. In production systems, always prefer iterative for unbounded inputs.
+
+**Mistake 5: Mutating shared state inside recursive calls.** If you pass a list and append to it in each recursive call without copying, all calls share the same list. This is a common backtracking bug. Either pass copies (expensive) or carefully undo mutations after each recursive call (the backtracking pattern).
+
+## Interview Angle
+
+**Q: How would you convert a recursive solution to an iterative one?**
+
+A: Every recursive function uses the call stack implicitly. To convert to iterative, replace the implicit call stack with an explicit one (a list in Python). For DFS on a tree, instead of calling `dfs(node.left)` recursively, push `node.left` onto a stack and process in a while loop. The key steps: (1) initialize a stack with the starting state, (2) while the stack is not empty, pop the current state, (3) process it, (4) push the next states (the recursive calls). For algorithms with a return value, you may need to store intermediate results on the stack alongside the nodes. Iterative DFS avoids Python's 1000-frame recursion limit and uses less memory.
+
+**Q: What is the time and space complexity of your recursive tree traversal?**
+
+A: For a balanced binary tree traversal (inorder, preorder, postorder), time complexity is $O(n)$ because every node is visited exactly once. Space complexity is $O(\log n)$ for the call stack — the maximum depth of the call stack equals the height of the tree, which is $\log n$ for a balanced tree. For a degenerate tree (all nodes in one direction, like a sorted array inserted into a naive BST), the height is $O(n)$, making space complexity $O(n)$. Always mention both the balanced and unbalanced cases when asked about tree algorithms.
+
+## Summary
+
+- Recursion solves a problem by reducing it to smaller instances of the same problem until reaching a **base case**.
+- Every recursive function needs: (1) one or more base cases that terminate, and (2) a recursive case that moves toward the base case.
+- The **call stack** stores each active function call's state; recursion depth is bounded by the stack depth.
+- Python's default recursion limit is 1000 — always consider iterative alternatives or explicit stacks for large inputs.
+- Naive recursive Fibonacci is $O(2^n)$; memoization reduces it to $O(n)$ by caching computed subproblems.
+- The `@lru_cache` decorator in Python provides automatic memoization for recursive functions.
+- **Backtracking** is recursion with undoing: build a candidate solution, recurse, then undo the last change if it does not work out.
+- Tree and graph algorithms are the most common recursive patterns in interviews: DFS, BFS (iterative with queue), tree height, path sums, subsets, permutations.
+- Recursion trades call stack space for code clarity — for deep trees or large $n$, convert to iterative with an explicit stack.
+- The trust principle: write the base case, trust that the recursive call returns the correct answer for a smaller input, and combine results. Do not mentally trace through all levels simultaneously.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/hash-tables", label: "Hash Tables" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/binary-search", label: "Binary Search" }}
+/>

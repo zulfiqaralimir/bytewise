@@ -1,0 +1,431 @@
+export const metadata = {
+  title: "Message Queues — ByteWise CS Book",
+  description:
+    "Master message queues: async communication, pub/sub patterns, Kafka, RabbitMQ, at-least-once delivery, and how to decouple services for resilience.",
+  keywords: [
+    "message queues",
+    "Kafka",
+    "RabbitMQ",
+    "pub/sub",
+    "async messaging",
+    "event streaming",
+    "dead letter queue",
+    "at-least-once delivery",
+  ],
+  openGraph: {
+    title: "Message Queues — ByteWise CS Book",
+    description:
+      "Learn message queues, Kafka event streaming, delivery guarantees, and how async communication powers resilient distributed systems.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Message Queues
+
+## The Buffer That Saves Systems
+
+On June 5, 2012, a single bad Facebook status update triggered a cascade that took their messaging infrastructure offline for hours. The root cause: a tight synchronous coupling between services. When one service slowed under load, it blocked all callers, which backed up their threads, which exhausted connection pools, which cascaded across the entire system. Every service that called another service directly was a dependency that could propagate failure.
+
+The fix, adopted industrywide after incidents like this, is **asynchronous decoupling via message queues**. Instead of Service A calling Service B and waiting for a response, Service A drops a message into a queue and immediately moves on. Service B reads from the queue when it is ready. If Service B is slow, messages accumulate in the queue — a buffer — rather than backing up Service A. If Service B crashes, messages wait in the queue until B recovers. No cascade. No total failure.
+
+Message queues are the shock absorbers of distributed systems. They transform synchronous, brittle, tightly coupled architectures into asynchronous, resilient, loosely coupled ones. Kafka, RabbitMQ, AWS SQS, and Google Pub/Sub handle trillions of messages per day across every major internet company. Understanding them — not just how to use them, but why they are designed the way they are — is essential for building systems that stay up.
+
+## Concept Explanation
+
+A **message queue** is a communication buffer that enables **asynchronous**, **decoupled** communication between services. A **producer** sends messages to the queue. One or more **consumers** read messages from the queue at their own pace.
+
+**Core benefits:**
+
+- **Decoupling:** Producer and consumer do not need to be available simultaneously.
+- **Load leveling:** A burst of producer messages is smoothed out; consumers process at a steady rate.
+- **Resilience:** Consumer failures do not affect producers; messages persist until consumed.
+- **Scalability:** Multiple consumers can process messages in parallel.
+
+**Key concepts:**
+
+- **Queue:** Point-to-point. One message is consumed by exactly one consumer. Classic work queue.
+- **Topic/Pub-Sub:** One message is broadcast to all subscribers. Event-driven systems.
+- **Consumer group:** In Kafka, a group of consumers share partitions — each partition consumed by one group member. Adding consumers scales throughput linearly (up to the partition count).
+- **Offset:** In Kafka, a consumer's position in the log. Consumers advance their offset as they process messages. They can "rewind" to replay events.
+- **Dead letter queue (DLQ):** Messages that fail processing repeatedly are routed here for inspection and manual intervention.
+
+**Delivery semantics — the critical tradeoff:**
+
+| Semantic | Guarantee | Risk | Use Case |
+|----------|-----------|------|----------|
+| At-most-once | Delivered 0 or 1 times | Message loss | Logging, metrics |
+| At-least-once | Delivered 1+ times | Duplicate processing | Most use cases |
+| Exactly-once | Delivered exactly once | Complexity, performance | Financial transactions |
+
+Most systems use **at-least-once** delivery with **idempotent consumers** — designed to safely process the same message multiple times.
+
+## Mathematical Foundation
+
+**Queue throughput:** With $P$ producers each sending $\lambda_p$ messages/second and $C$ consumers each processing $\mu$ messages/second:
+
+$$\text{system stable if: } P \cdot \lambda_p \leq C \cdot \mu$$
+
+**Queue depth (Little's Law):** Average number of messages in the queue:
+
+$$L = \lambda \cdot W$$
+
+where $\lambda$ = arrival rate and $W$ = average processing time per message.
+
+**Consumer lag:** The number of messages produced but not yet consumed:
+
+$$\text{lag} = \text{latest offset} - \text{consumer committed offset}$$
+
+If lag grows, consumers are falling behind — add more consumer instances.
+
+**Kafka throughput:** Kafka's sequential disk writes achieve:
+
+$$\text{throughput} \approx \text{disk sequential write speed} \approx 500\text{MB/s per partition}$$
+
+vs random writes of $\approx 1\text{MB/s}$ — why Kafka is orders of magnitude faster than database-backed queues.
+
+**Partition count for parallelism:** Maximum parallelism equals the number of partitions. With $k$ partitions and $n$ consumers in a group:
+
+$$\text{active consumers} = \min(k, n)$$
+
+Consumers exceeding partition count are idle. Over-partition rather than under-partition.
+
+## Algorithm / Logic
+
+**Message processing with at-least-once delivery:**
+
+1. Consumer reads a message from the queue.
+2. Consumer begins processing.
+3. Consumer successfully processes.
+4. Consumer acknowledges the message (ACK) — message is removed from queue.
+5. If consumer crashes between steps 2 and 4: the queue re-delivers the message to another consumer.
+6. Therefore: consumer must be **idempotent** — processing the same message twice must be safe.
+
+**Idempotency patterns:**
+
+1. **Deduplication key:** Include a unique message ID. Before processing, check if ID has been processed. If yes, skip.
+2. **Idempotent operations:** Use `INSERT ... ON CONFLICT DO NOTHING` (upsert). Final state is the same regardless of how many times applied.
+3. **Conditional writes:** Only apply if version/timestamp matches expected state.
+
+**Kafka partition assignment (consumer group rebalance):**
+
+1. Consumer joins a group, connects to the group coordinator broker.
+2. Coordinator assigns partitions across all group members (round-robin or sticky).
+3. If a consumer leaves/crashes, coordinator reassigns its partitions to remaining consumers.
+4. During rebalance: all consumers pause — minimize rebalances by using sticky assignment.
+
+```
+PRODUCER:
+  message = {id: uuid(), data: payload, timestamp: now()}
+  queue.send(topic, partition_key, message)
+  // Return immediately — do not wait for consumer
+
+CONSUMER_LOOP:
+  while running:
+    messages = queue.poll(max_messages=100, timeout_ms=1000)
+    for message in messages:
+      if not dedup_store.contains(message.id):
+        try:
+          process(message)
+          dedup_store.add(message.id)
+          queue.commit_offset(message)  // ACK after processing
+        except RetryableError:
+          // Don't ACK — queue will redeliver
+          break
+        except FatalError:
+          queue.send(DEAD_LETTER_QUEUE, message)
+          queue.commit_offset(message)  // ACK to avoid infinite loop
+```
+
+## Programming Implementation
+
+**Python — Kafka producer and consumer:**
+
+```python
+from confluent_kafka import Producer, Consumer, KafkaException
+from confluent_kafka.admin import AdminClient, NewTopic
+import json
+import uuid
+from typing import Any, Callable
+import redis
+
+
+# ── Kafka Producer ────────────────────────────────────────────────────────────
+
+class EventProducer:
+    """Kafka producer with at-least-once delivery guarantees."""
+
+    def __init__(self, bootstrap_servers: str = "localhost:9092"):
+        self.producer = Producer({
+            "bootstrap.servers": bootstrap_servers,
+            "acks": "all",              # wait for all replicas to acknowledge
+            "retries": 5,              # retry on transient failures
+            "retry.backoff.ms": 300,
+            "enable.idempotence": True, # exactly-once at producer level
+        })
+
+    def send(self, topic: str, key: str, value: Any) -> None:
+        """
+        Asynchronous send — callback fires when broker acknowledges.
+        Producer returns immediately; does not block.
+        """
+        message = {
+            "event_id": str(uuid.uuid4()),
+            "timestamp": __import__("time").time(),
+            "data": value,
+        }
+        self.producer.produce(
+            topic=topic,
+            key=key.encode("utf-8"),
+            value=json.dumps(message).encode("utf-8"),
+            callback=self._delivery_report,
+        )
+        self.producer.poll(0)  # trigger callbacks
+
+    def flush(self) -> None:
+        """Wait for all pending messages to be delivered."""
+        self.producer.flush()
+
+    @staticmethod
+    def _delivery_report(err, msg) -> None:
+        if err:
+            print(f"Delivery failed: {err}")
+        else:
+            print(f"Delivered to {msg.topic()} [{msg.partition()}] @ offset {msg.offset()}")
+
+
+# ── Kafka Consumer ────────────────────────────────────────────────────────────
+
+class EventConsumer:
+    """
+    Kafka consumer with at-least-once delivery and idempotency via Redis dedup.
+    """
+
+    def __init__(
+        self,
+        topics: list,
+        group_id: str,
+        bootstrap_servers: str = "localhost:9092",
+    ):
+        self.consumer = Consumer({
+            "bootstrap.servers": bootstrap_servers,
+            "group.id": group_id,
+            "auto.offset.reset": "earliest",
+            "enable.auto.commit": False,   # manual commit for at-least-once
+        })
+        self.consumer.subscribe(topics)
+        self.dedup = redis.Redis(decode_responses=True)
+        self.running = True
+
+    def process_events(self, handler: Callable[[dict], None]) -> None:
+        """Main processing loop with at-least-once semantics."""
+        try:
+            while self.running:
+                msgs = self.consumer.consume(num_messages=100, timeout=1.0)
+                for msg in msgs:
+                    if msg.error():
+                        raise KafkaException(msg.error())
+                    event = json.loads(msg.value().decode("utf-8"))
+                    event_id = event.get("event_id")
+
+                    # Idempotency check — skip duplicates
+                    if event_id and self.dedup.get(f"processed:{event_id}"):
+                        self.consumer.commit(message=msg)
+                        continue
+
+                    try:
+                        handler(event)
+                        # Mark as processed with 24h TTL
+                        if event_id:
+                            self.dedup.setex(f"processed:{event_id}", 86400, "1")
+                        self.consumer.commit(message=msg)   # commit AFTER success
+                    except Exception as e:
+                        print(f"Processing failed: {e} — message will be redelivered")
+                        # Do NOT commit — let Kafka redeliver
+                        break
+        finally:
+            self.consumer.close()
+
+    def stop(self) -> None:
+        self.running = False
+
+
+# ── Dead Letter Queue handler ─────────────────────────────────────────────────
+
+class DeadLetterHandler:
+    """Retry messages from DLQ with exponential backoff."""
+
+    def __init__(self, max_retries: int = 3):
+        self.max_retries = max_retries
+
+    def handle(self, event: dict) -> None:
+        retries = event.get("_retry_count", 0)
+        if retries >= self.max_retries:
+            # Alert engineering, write to permanent failure store
+            print(f"CRITICAL: message {event.get('event_id')} failed after {retries} retries")
+            return
+        delay = 2 ** retries  # exponential backoff: 1s, 2s, 4s
+        __import__("time").sleep(delay)
+        # Re-send to main topic with incremented retry count
+        event["_retry_count"] = retries + 1
+        # producer.send("main-topic", event)
+
+
+# ── Example: order processing pipeline ───────────────────────────────────────
+
+producer = EventProducer()
+
+def place_order(order_data: dict) -> None:
+    """Publish order-placed event — immediately returns, processing is async."""
+    producer.send(
+        topic="orders",
+        key=str(order_data["user_id"]),  # partition by user for ordering
+        value=order_data,
+    )
+
+def handle_order_event(event: dict) -> None:
+    """Consumer handler — can be called multiple times safely (idempotent)."""
+    order = event["data"]
+    print(f"Processing order {order['id']} for user {order['user_id']}")
+    # Update inventory, send confirmation email, etc.
+    # Using upsert operations to handle duplicates safely
+
+# Consumer runs in a separate process/thread
+# consumer = EventConsumer(["orders"], "order-processor")
+# consumer.process_events(handle_order_event)
+```
+
+**JavaScript — SQS and pub/sub with AWS SDK:**
+
+```javascript
+const { SQSClient, SendMessageCommand, ReceiveMessageCommand, DeleteMessageCommand } = require("@aws-sdk/client-sqs");
+
+const sqs = new SQSClient({ region: "us-east-1" });
+const QUEUE_URL = process.env.SQS_QUEUE_URL;
+
+// Producer: send message to SQS
+async function sendOrderEvent(order) {
+  await sqs.send(new SendMessageCommand({
+    QueueUrl: QUEUE_URL,
+    MessageBody: JSON.stringify({ eventId: crypto.randomUUID(), data: order }),
+    MessageGroupId: String(order.userId),            // FIFO: order by user
+    MessageDeduplicationId: `order-${order.id}`,    // exactly-once at SQS level
+  }));
+}
+
+// Consumer: long-polling with at-least-once processing
+async function processOrders(handler) {
+  while (true) {
+    const { Messages = [] } = await sqs.send(new ReceiveMessageCommand({
+      QueueUrl: QUEUE_URL,
+      MaxNumberOfMessages: 10,
+      WaitTimeSeconds: 20,   // long polling — reduces empty receives
+    }));
+
+    for (const msg of Messages) {
+      const event = JSON.parse(msg.Body);
+      try {
+        await handler(event);
+        // Delete AFTER successful processing (at-least-once: if we crash before delete, it redelivers)
+        await sqs.send(new DeleteMessageCommand({
+          QueueUrl: QUEUE_URL,
+          ReceiptHandle: msg.ReceiptHandle,
+        }));
+      } catch (err) {
+        console.error("Processing failed, message will be redelivered:", err);
+        // Do NOT delete — SQS will redeliver after visibility timeout
+      }
+    }
+  }
+}
+```
+
+## System Design Perspective
+
+Message queues in a production distributed system:
+
+```
+[Order Service]
+    ↓ publish "order.placed" event
+[Message Broker (Kafka)]
+    ↓ fan-out to multiple consumer groups
+    ├── [Inventory Service]    — deduct stock
+    ├── [Email Service]        — send confirmation
+    ├── [Analytics Service]    — update revenue metrics
+    └── [Fraud Service]        — check for suspicious patterns
+
+Each service processes independently:
+- inventory failure → retries, does not affect email
+- analytics slow → message waits in queue, other services unaffected
+- fraud service down → messages accumulate, processed when recovered
+
+[Event Sourcing Pattern]
+[Order Placed] → [Payment Charged] → [Item Shipped] → [Delivered]
+All state changes published as immutable events
+Replay events to reconstruct state or populate new services
+```
+
+**Real company message queue usage:**
+
+- **LinkedIn (Kafka birthplace):** LinkedIn created Kafka in 2011 to handle activity streams from 300 million users. Now Kafka processes 7 trillion messages per day at LinkedIn, including profile views, job applications, and connection requests.
+- **Uber:** Uses Kafka for real-time location updates from millions of drivers. Each driver's GPS ping is a message; the rides platform processes them to update ETAs and match riders. 1 trillion messages per day.
+- **Netflix:** Uses Kafka for all operational events — playback events, error events, A/B test events. Their Keystone pipeline routes messages to real-time analytics, offline Hadoop jobs, and alerting systems.
+- **Airbnb:** Uses RabbitMQ and Kafka for booking event processing. When a booking is confirmed, a message triggers room-blocking, payment charging, host notification, and guest email — all independently.
+
+## Visual Content Suggestions
+
+- **Synchronous vs asynchronous coupling:** Side-by-side showing tight coupling (direct calls, cascading failure) vs loose coupling (queue buffer).
+- **Kafka topic partition diagram:** Topic with 4 partitions, 2 consumer groups, showing which consumer owns which partition.
+- **At-least-once delivery timeline:** Producer → Queue → Consumer crash before ACK → Queue redelivers → Consumer processes again.
+- **Dead letter queue flow:** Main queue → retry → max retries exceeded → DLQ → alert.
+- **Fan-out pub/sub diagram:** One event published → replicated to multiple consumer group offsets.
+
+## Real-World Examples
+
+**Stripe's payment processing:** When a payment intent is confirmed, Stripe publishes a `payment_intent.succeeded` event to Kafka. Multiple internal consumers read this event: the webhook service (to notify the merchant), the reporting service (to update revenue dashboards), the anti-fraud service (to update risk models), and the ledger service (to record the transaction). Each runs independently, at its own pace, without one service's slowness affecting others.
+
+**WhatsApp's message delivery:** WhatsApp uses a message queue to deliver messages when the recipient is offline. The sender's message is stored in a queue. When the recipient comes online, messages are delivered in order and the queue is cleared. This enables the "delivered" / "read" receipt system while allowing offline delivery.
+
+**YouTube's video transcoding:** When a video is uploaded, an event is placed in a queue. Multiple transcoding workers pick up the event and encode the video at different resolutions (360p, 720p, 1080p, 4K) in parallel. The queue enables massive parallelism without any worker knowing about other workers.
+
+**Amazon's order pipeline:** Amazon's order fulfillment uses queues at every step: payment authorization, inventory reservation, warehouse picking, shipping label generation, carrier notification. Each step is a message that triggers the next. This "saga pattern" allows each step to be retried independently if it fails, without affecting the entire order.
+
+## Common Mistakes
+
+**Mistake 1: Not making consumers idempotent.** At-least-once delivery means duplicates will happen — network retries, consumer restarts, rebalances. If your consumer charges a credit card or sends an email, processing the same message twice has real consequences. Always design consumers to be idempotent using deduplication keys, upserts, or conditional writes.
+
+**Mistake 2: Committing the offset before processing.** If you ACK (commit the offset) before processing succeeds, and the consumer crashes during processing, the message is lost forever. Always commit AFTER successful processing. This is the at-least-once guarantee trade.
+
+**Mistake 3: Too few partitions in Kafka.** You can add partitions to a topic but only with careful consideration (it changes the partition key mapping). Start with more partitions than you think you need (at least 2x expected consumers). Fewer partitions than consumers means some consumers are idle — you cannot scale beyond partition count.
+
+**Mistake 4: Storing large payloads in messages.** Message queues are optimized for small messages (< 1MB). Storing binary blobs, large JSON, or file contents in messages causes memory pressure on brokers, slow consumers, and increased latency. Store large data in S3/GCS and put only a reference (ID or URL) in the message.
+
+**Mistake 5: Ignoring consumer lag monitoring.** Rising consumer lag means consumers are falling behind producers. If unchecked, the queue fills up, backpressure causes producer slowdowns, and the entire system degrades. Set up lag alerts: if lag grows by more than X messages over Y minutes, page on-call. Prometheus + Grafana + the Kafka consumer lag exporter is the standard stack.
+
+## Interview Angle
+
+**Q: How would you design a notification system that sends emails and push notifications reliably at scale?**
+
+A: Use an event-driven architecture with a message queue. When an event occurs (new follower, payment confirmed), publish an event to a Kafka topic. Have two separate consumer groups: one for email, one for push notifications. Each group reads from the same topic independently at its own pace. Email service processes messages and calls the email provider (SendGrid/SES). Push service calls APNs/FCM. Both consumers are idempotent — each event has a unique ID, and before sending, check a Redis set of already-sent notification IDs. Use separate DLQs for failed emails and failed pushes. Benefits: email slowness does not affect push; provider outages cause messages to queue (not be lost); each service scales independently; replay events if a new notification type is added.
+
+**Q: What is the difference between Kafka and RabbitMQ?**
+
+A: Kafka is a **distributed log** — messages are appended to an immutable, ordered log and retained for a configurable period (days to forever). Consumers read by advancing an offset; multiple consumer groups can read the same topic independently. Kafka is optimized for high-throughput streaming, event sourcing, and replayable event logs. RabbitMQ is a **traditional message broker** — messages are pushed to consumers and deleted once consumed and acknowledged. RabbitMQ supports complex routing (exchanges, bindings, fanout, topic routing) and is better for task queues where messages should not be replayed. Choose Kafka when: you need event streaming, replay capability, multiple consumers for the same events, or very high throughput (millions/second). Choose RabbitMQ when: you need complex routing, exactly-once task processing, or your use case is a classic work queue where tasks should be consumed once and deleted.
+
+## Summary
+
+- Message queues enable **asynchronous, decoupled communication** between services — the producer does not wait for the consumer.
+- **Decoupling benefits:** Failure isolation (consumer crash doesn't affect producer), load leveling (absorb traffic bursts), independent scaling.
+- **Delivery semantics:** At-most-once (can lose), at-least-once (can duplicate), exactly-once (complex). Most systems use at-least-once with idempotent consumers.
+- **Idempotency is mandatory** for at-least-once consumers — processing the same message twice must produce the same result.
+- Always **commit the offset after** successful processing — committing before risks message loss on consumer failure.
+- **Kafka** is an immutable distributed log — messages persist, consumers advance offsets, multiple groups read independently. Optimized for high-throughput streaming.
+- **RabbitMQ/SQS** are traditional queues — messages consumed and deleted. Better for work queues and complex routing.
+- **Consumer lag** is the primary health metric — if lag grows, add consumers (up to partition count in Kafka).
+- **Dead letter queues (DLQ)** capture persistently failing messages for inspection, preventing poison pill messages from blocking the entire queue.
+- Message queues are the foundation of event-driven architectures, sagas, event sourcing, and CQRS — patterns that enable systems to scale to internet scale while remaining resilient to failure.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-4-advanced/cap-theorem", label: "CAP Theorem" }}
+  next={{ href: "/docs/cs-book/part-4-advanced/microservices", label: "Microservices" }}
+/>

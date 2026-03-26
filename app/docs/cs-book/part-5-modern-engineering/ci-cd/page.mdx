@@ -1,0 +1,460 @@
+export const metadata = {
+  title: "CI/CD Pipelines Explained | ByteWise",
+  description: "Master Continuous Integration and Continuous Deployment — pipelines, automation, testing strategies, and real-world CI/CD patterns from top engineering teams.",
+  keywords: ["CI/CD", "continuous integration", "continuous deployment", "DevOps", "pipelines", "automation"],
+  openGraph: {
+    title: "CI/CD Pipelines Explained | ByteWise",
+    description: "Master CI/CD pipelines — automation, testing, deployment strategies with real-world examples.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# CI/CD Pipelines: Shipping Code with Confidence
+
+## The Friday Afternoon Deploy
+
+Every engineering team knows the unspoken rule: never deploy on Friday afternoon. The origin of this rule is a history of late-night war rooms, rolled-back releases, and engineers spending weekends debugging production failures caused by code they pushed at 4pm before leaving for the weekend.
+
+For years, software deployment was a ritual of fear. Teams would batch changes for weeks, then release everything at once during a "maintenance window." The release was a ceremony: a checklist, a war room of engineers, a prayer. If something went wrong — and something always went wrong — the fix was a race against time.
+
+Then something changed. Amazon started deploying code every 11.7 seconds. Netflix pushed to production dozens of times per day. Google deployed hundreds of times daily across services used by billions. These companies weren't more careful — they were more automated. CI/CD didn't make deployment less scary by making engineers more careful. It made deployment less scary by making it *routine*.
+
+---
+
+## What Is CI/CD?
+
+**Continuous Integration (CI)** is the practice of automatically building, testing, and validating code every time a developer pushes a change. No manual steps, no "it works on my machine."
+
+**Continuous Delivery (CD)** ensures that every validated build is *deployable* to production at any time — the deployment requires a human approval step.
+
+**Continuous Deployment** goes one step further: every validated build is *automatically* deployed to production with no human intervention.
+
+Think of CI/CD as an assembly line in a car factory. Before CI/CD, engineers built the whole car and tested it at the end. With CI/CD, every component is tested as it's added, defects are caught immediately, and the final car rolls off the line already verified.
+
+---
+
+## Pipeline Architecture
+
+A typical CI/CD pipeline has these stages:
+
+```
+[Code Push] → [Trigger CI] → [Install Deps] → [Lint/Format Check]
+                                                      │
+                                               [Unit Tests]
+                                                      │
+                                          [Integration Tests]
+                                                      │
+                                           [Build Artifact]
+                                                      │
+                                        [Security Scan] → [FAIL → Alert]
+                                                      │
+                                          [Deploy to Staging]
+                                                      │
+                                          [Smoke Tests] → [FAIL → Rollback]
+                                                      │
+                                         [Deploy to Production]
+                                                      │
+                                           [Health Checks]
+```
+
+Each stage is a **gate**: if it fails, the pipeline stops and the team is notified. Code never reaches production unless all gates pass.
+
+---
+
+## Mathematical Foundation
+
+### Mean Time to Recovery (MTTR)
+
+A key DevOps metric that CI/CD dramatically improves:
+
+$$\text{MTTR} = \frac{\text{Total Downtime}}{\text{Number of Incidents}}$$
+
+With large, infrequent releases:
+- Changes per deploy: ~500
+- Time to find the bad commit: hours
+- MTTR: 2–4 hours
+
+With CI/CD small releases:
+- Changes per deploy: 1–5
+- Time to find the bad commit: minutes
+- MTTR: 10–20 minutes
+
+### Deployment Frequency vs. Change Failure Rate
+
+DORA (DevOps Research and Assessment) research shows elite teams achieve:
+
+$$\text{Deployment Frequency} > \text{Multiple per day}$$
+$$\text{Change Failure Rate} < 15\%$$
+$$\text{MTTR} < 1 \text{ hour}$$
+
+Counter-intuitively, high deployment frequency *reduces* failure rate. More frequent deploys mean smaller changes, which means smaller blast radius when something goes wrong.
+
+### Test Pyramid
+
+The optimal distribution of tests follows a pyramid:
+
+$$\text{Unit Tests} \gg \text{Integration Tests} \gg \text{E2E Tests}$$
+
+- Unit tests: ~70% of tests, run in seconds
+- Integration tests: ~20%, run in minutes
+- E2E tests: ~10%, run in 10–30 minutes
+
+The pyramid shape is intentional: fast, cheap tests at the bottom; slow, expensive tests at the top.
+
+---
+
+## Algorithm / Logic: Pipeline as Code
+
+```
+Pseudocode: GitHub Actions Pipeline
+
+on: [push to main, pull_request]
+
+jobs:
+  ci:
+    steps:
+      1. Checkout code
+      2. Setup language runtime (Node 20, Python 3.12, etc.)
+      3. Cache dependencies (restore if cache hit)
+      4. Install dependencies
+      5. Lint (eslint, ruff, golangci-lint)
+      6. Type check (tsc, mypy)
+      7. Unit tests (pytest, jest) + coverage report
+      8. Build artifact (docker build, npm run build)
+      9. If all pass: mark commit as green
+
+  cd:
+    needs: [ci]
+    if: branch == main
+    steps:
+      1. Pull green artifact from registry
+      2. Deploy to staging
+      3. Run smoke tests against staging
+      4. If smoke tests pass: deploy to production
+      5. Run health checks (HTTP 200, latency < 500ms)
+      6. If health checks fail: auto-rollback to previous version
+      7. Notify team (Slack/PagerDuty)
+```
+
+---
+
+## Programming Implementation
+
+### GitHub Actions: Complete Python Project Pipeline
+
+```yaml
+# .github/workflows/ci-cd.yml
+name: ByteWise CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.12"
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ── Stage 1: Quality Checks ──────────────────────────────────────────
+  quality:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements*.txt') }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install ruff mypy pytest pytest-cov
+
+      - name: Lint with ruff
+        run: ruff check .
+
+      - name: Type check with mypy
+        run: mypy src/ --strict
+
+  # ── Stage 2: Tests ───────────────────────────────────────────────────
+  test:
+    name: Unit & Integration Tests
+    needs: quality
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest pytest-cov
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: postgresql://postgres:testpassword@localhost:5432/testdb
+        run: |
+          pytest tests/ \
+            --cov=src \
+            --cov-report=xml \
+            --cov-fail-under=80 \
+            -v
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage.xml
+
+  # ── Stage 3: Build & Push Docker Image ──────────────────────────────
+  build:
+    name: Build Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── Stage 4: Deploy to Production ───────────────────────────────────
+  deploy:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://bytewise.example.com
+    concurrency:
+      group: production
+      cancel-in-progress: false
+
+    steps:
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/api \
+            api=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          kubectl rollout status deployment/api --timeout=5m
+
+      - name: Run smoke tests
+        run: |
+          sleep 10
+          curl -f https://bytewise.example.com/health || exit 1
+
+      - name: Notify team
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: "Deployment ${{ job.status }} for ${{ github.sha }}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+```
+
+### Python: Deployment Health Check Script
+
+```python
+import time
+import sys
+import httpx
+from typing import NamedTuple
+
+
+class HealthResult(NamedTuple):
+    healthy: bool
+    status_code: int
+    latency_ms: float
+    message: str
+
+
+def check_health(url: str, timeout: float = 5.0) -> HealthResult:
+    """Single health check request."""
+    try:
+        start = time.monotonic()
+        response = httpx.get(f"{url}/health", timeout=timeout)
+        latency = (time.monotonic() - start) * 1000
+
+        if response.status_code == 200:
+            return HealthResult(True, 200, latency, "OK")
+        return HealthResult(False, response.status_code, latency,
+                           f"Non-200 status: {response.status_code}")
+    except httpx.TimeoutException:
+        return HealthResult(False, 0, timeout * 1000, "Timeout")
+    except Exception as e:
+        return HealthResult(False, 0, 0, str(e))
+
+
+def wait_for_healthy(
+    url: str,
+    max_attempts: int = 30,
+    interval: float = 10.0,
+    latency_threshold: float = 500.0
+) -> bool:
+    """
+    Poll until service is healthy or max_attempts exceeded.
+    Used in deployment pipelines after rolling out new version.
+    """
+    print(f"Waiting for {url} to become healthy...")
+
+    for attempt in range(1, max_attempts + 1):
+        result = check_health(url)
+        print(f"  Attempt {attempt}/{max_attempts}: {result.message} "
+              f"({result.latency_ms:.0f}ms)")
+
+        if result.healthy and result.latency_ms < latency_threshold:
+            print(f"✓ Service healthy after {attempt} attempts")
+            return True
+
+        if attempt < max_attempts:
+            time.sleep(interval)
+
+    print(f"✗ Service failed to become healthy after {max_attempts} attempts")
+    return False
+
+
+if __name__ == "__main__":
+    url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8000"
+    success = wait_for_healthy(url)
+    sys.exit(0 if success else 1)
+```
+
+---
+
+## System Design Perspective
+
+### Deployment Strategies
+
+```
+Blue-Green Deployment:
+  [Load Balancer] → [Blue v1.0] (active)
+                  → [Green v1.1] (new, idle)
+  Switch: LB redirects 100% traffic to Green
+  Rollback: LB redirects back to Blue
+
+Canary Deployment:
+  [Load Balancer] → [v1.0] 95% traffic
+                  → [v1.1] 5% traffic (canary)
+  Gradually increase canary % as metrics look good
+  Full rollout or rollback based on error rates
+
+Rolling Deployment:
+  Server 1: v1.0 → v1.1 (deploy)
+  Server 2: v1.0 → v1.0 (wait)  → v1.1 (deploy)
+  Server 3: v1.0 → v1.0 → v1.0  → v1.1 (deploy)
+  Zero downtime, but multiple versions running briefly
+```
+
+---
+
+## Visual Content Suggestions
+
+- CI/CD pipeline diagram with stage gates
+- Test pyramid: unit/integration/E2E ratios
+- Blue-green deployment traffic switch animation
+- Canary release percentage ramp diagram
+- DORA metrics comparison: low vs. elite performers
+- GitHub Actions workflow DAG visualization
+
+---
+
+## Real-World Examples
+
+**Amazon**: Deploys to production every 11.7 seconds on average. Their "Deployment Pipeline" uses canary deployments: every change is deployed to 1% of servers, monitored for 1 hour, then gradually expanded. Any anomaly triggers automatic rollback.
+
+**Facebook**: Uses a system called "Gatekeeper" for feature flags combined with CI/CD. New code ships to production but is hidden behind feature flags until tested. This separates deployment from release.
+
+**Google**: Their Borg system (predecessor to Kubernetes) handles thousands of deployments per day. They practice "error budgets" — a service has a budget of allowed downtime (e.g., 0.01%); if exceeded, new deployments pause until reliability improves.
+
+**Etsy**: Pioneered "continuous deployment" as a philosophy. Their book "Deploying at the Speed of Business" documented how going from monthly releases to 25+ deploys per day *reduced* incidents.
+
+---
+
+## Common Mistakes
+
+**1. Testing only in CI, not continuously.** Tests should run on every commit, not just before release. Catching a bug 20 commits later is much more expensive than catching it immediately.
+
+**2. Slow pipelines that nobody runs.** A 45-minute CI pipeline gets skipped. Aim for: lint/unit tests under 5 minutes, full pipeline under 20 minutes. Parallelize stages, cache aggressively.
+
+**3. Not testing the deployment itself.** Smoke tests after deployment are critical. A green build can still fail to deploy due to Kubernetes config errors, environment variables, or database migrations.
+
+**4. Manual approval gates everywhere.** Every manual step is a bottleneck. Use automated checks (health checks, metrics comparison) to gate deployments. Manual approval should be reserved for business decisions, not technical ones.
+
+**5. Treating CI/CD as a tool problem, not a culture problem.** CI/CD requires teams to write good tests, keep builds fast, and fix broken builds immediately. A culture of ignoring red CI builds makes the whole system worthless.
+
+---
+
+## Interview Angle
+
+**Q: How would you set up CI/CD for a new microservice?**
+
+> I'd use GitHub Actions (or equivalent) with four stages: (1) Quality: lint, type check, format verification — fast, fails fast; (2) Test: unit tests with code coverage gate (e.g., 80%), integration tests against real services using Docker Compose in CI; (3) Build: Docker image built and pushed to registry, tagged with git SHA for traceability; (4) Deploy: canary deployment to 5% of traffic, monitor error rates and latency for 10 minutes, then gradual rollout with automated rollback triggers. Feature flags for risky changes. Slack notifications for failures.
+
+**Q: What's the difference between Continuous Delivery and Continuous Deployment?**
+
+> Continuous Delivery means every build *could* be deployed to production — it passes all automated checks and is in a deployable state, but requires a human to push the "deploy" button. Continuous Deployment removes that final human step: every green build is automatically deployed. Continuous Delivery is appropriate for systems with compliance requirements (someone must approve every change) or business reasons for batching releases. Continuous Deployment works well for web services where frequent small deployments are lower risk than infrequent large ones.
+
+---
+
+## Summary
+
+- **CI** automatically builds, lints, and tests code on every push; catches bugs before they merge
+- **CD** ensures every green build is automatically deployable (Continuous Delivery) or deployed (Continuous Deployment)
+- **Test pyramid**: many fast unit tests, fewer integration tests, minimal E2E tests
+- **Pipeline stages**: quality → test → build → deploy → health check
+- **Blue-green** swaps entire environments; **canary** gradually shifts traffic; **rolling** updates servers one by one
+- **DORA metrics**: deployment frequency, lead time, MTTR, and change failure rate measure DevOps maturity
+- Elite teams deploy **multiple times per day** with lower failure rates than teams deploying monthly
+- **Feature flags** decouple deployment from release — ship code before enabling it
+- Keep pipelines **fast** (under 10 min) or engineers will work around them
+- CI/CD is a **culture** as much as a toolchain — broken builds must be fixed immediately
+
+<ArticleNav
+  prev={{ title: "Rate Limiting", href: "/docs/cs-book/part-4-advanced/rate-limiting" }}
+  next={{ title: "Docker & Containers", href: "/docs/cs-book/part-5-modern-engineering/docker" }}
+/>

@@ -1,0 +1,414 @@
+export const metadata = {
+  title: "CAP Theorem — ByteWise CS Book",
+  description:
+    "Master the CAP theorem: consistency, availability, and partition tolerance, why you can only choose two, and how real systems navigate this tradeoff.",
+  keywords: [
+    "CAP theorem",
+    "consistency",
+    "availability",
+    "partition tolerance",
+    "distributed systems",
+    "eventual consistency",
+    "PACELC",
+  ],
+  openGraph: {
+    title: "CAP Theorem — ByteWise CS Book",
+    description:
+      "Understand CAP theorem, why every distributed system must sacrifice either consistency or availability during network partitions, and how to design around this.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# CAP Theorem
+
+## The Fundamental Tradeoff of Distributed Systems
+
+In 2000, Eric Brewer, then a professor at UC Berkeley, made a conjecture at the PODC symposium that would reshape how the entire industry thought about distributed systems. His claim: it is impossible for a distributed data store to simultaneously guarantee all three of the following properties — Consistency, Availability, and Partition tolerance. You must choose two.
+
+Two years later, MIT researchers Seth Gilbert and Nancy Lynch formally proved Brewer's conjecture. The result — now known as the CAP theorem — is not a guideline or a best practice. It is a mathematical impossibility result. No amount of engineering cleverness, clever algorithms, or faster hardware can circumvent it.
+
+The CAP theorem provoked a decade of debate and is still frequently misunderstood. It does not say "pick your favorite two and ignore the third forever." It says that during a **network partition** — when some servers cannot communicate with each other — you must choose between consistency (returning the most recent data) and availability (returning some data, even if stale). In the absence of partitions (the vast majority of the time), you can have both. Understanding this nuance separates engineers who parrot "CAP theorem" from those who can actually use it to make design decisions.
+
+## Concept Explanation
+
+**The three properties:**
+
+- **Consistency (C):** Every read returns the most recent write, or an error. All nodes see the same data at the same time. This is **not** the C in ACID — it refers to linearizability (the strongest consistency model).
+
+- **Availability (A):** Every request receives a response (not an error). The response may not be the most recent data, but the system will not refuse or hang. Every non-failing node returns a response to every request.
+
+- **Partition Tolerance (P):** The system continues to operate even when network partitions occur — when messages between nodes are dropped, delayed, or reordered. The system cannot prevent partitions; it must handle them.
+
+**The key insight:** Network partitions are not optional in any real distributed system. Networks are unreliable. Machines fail. Data centers lose connectivity. Therefore, **P is mandatory** — you cannot choose to not handle partitions, because they will happen whether you plan for them or not.
+
+Given that P is always required, the real choice is: **CP or AP**?
+
+- **CP systems:** During a partition, choose consistency. Some nodes will refuse to respond rather than return potentially stale data. Examples: HBase, Zookeeper, Redis (in cluster mode), etcd.
+- **AP systems:** During a partition, choose availability. All nodes respond, but responses may be stale or conflicting. Examples: DynamoDB (by default), Cassandra, CouchDB, DNS.
+
+**The analogy:** Imagine a bank with two branches that normally sync their ledgers every few minutes. If the phone line between branches goes down (partition), Branch A must choose: (1) Stop processing transactions until the line is restored — consistency, no availability. (2) Keep processing transactions and reconcile conflicts later — availability, no consistency. Banks choose consistency for accounts (you cannot spend money that does not exist). Social media feeds choose availability (a stale like count is acceptable).
+
+## Mathematical Foundation
+
+**Formal statement (Gilbert & Lynch, 2002):**
+
+It is impossible for a web service to provide all three of the following guarantees simultaneously in the presence of network partitions:
+
+1. **Consistency:** For all reads $R$ of key $k$ after write $W$ on key $k$ completes: $R$ returns the value from $W$ (or a later write).
+2. **Availability:** For all requests to a non-failed node: the node returns a response within a finite time.
+3. **Partition Tolerance:** The system continues to operate if an arbitrary number of messages between nodes are dropped.
+
+**Consistency models ranked from strong to weak:**
+
+$$\text{Linearizability} > \text{Sequential consistency} > \text{Causal consistency} > \text{Eventual consistency}$$
+
+**Eventual consistency convergence:** If no new updates are made to an item, all replicas will eventually agree on the same value. Formally, for any two replicas $R_1$ and $R_2$ and time $t$:
+
+$$\exists T: \forall t > T, \; R_1(t) = R_2(t)$$
+
+**PACELC theorem** (Daniel Abadi, 2012) — extends CAP to normal operation:
+
+$$\text{If Partition: } C \text{ vs } A \quad \text{Else (normal): } L \text{ (latency) vs } C \text{ (consistency)}$$
+
+Even without partitions, synchronous replication (consistency) is slower than asynchronous replication (lower latency). PACELC acknowledges this always-present tradeoff.
+
+## Algorithm / Logic
+
+**Two-phase commit (CP approach) — ensuring distributed consistency:**
+
+1. **Phase 1 (Prepare):** Coordinator asks all participants to prepare. Each participant writes to a log and locks resources.
+2. **Phase 2 (Commit):** If all participants say "prepared," coordinator sends commit. All participants commit.
+3. If any participant says "abort," coordinator sends abort. All participants roll back.
+4. If coordinator fails after phase 1: participants are blocked until coordinator recovers — reduces availability.
+
+**Last-Write-Wins (AP approach) — eventual consistency with vector clocks:**
+
+1. Each update carries a logical timestamp.
+2. On conflict (same key, different values from partition): the update with the higher timestamp wins.
+3. This can discard legitimate writes (data loss) but ensures the system always responds.
+
+**Read repair (AP self-healing):**
+
+1. On read, coordinator asks multiple replicas for the value.
+2. If replicas disagree, return the most recent value (by timestamp) to the client.
+3. Simultaneously, send the latest value to all lagging replicas ("repair").
+4. Over time, all replicas converge without a central coordinator.
+
+```
+// CP: Distributed lock with Zookeeper
+acquire_lock(resource):
+  create ephemeral sequential znode: /locks/resource/lock-{seq}
+  get all children of /locks/resource/
+  if my znode has the lowest sequence number:
+    hold the lock (no one else can write)
+  else:
+    watch the next-lowest znode
+    wait for notification (previous lock holder released)
+  // DOWNSIDE: if Zookeeper quorum is unavailable, lock cannot be acquired
+  // System is unavailable during partition to maintain consistency
+
+// AP: Cassandra write with quorum
+write(key, value, timestamp):
+  send to all replicas
+  wait for W replicas to acknowledge (W < total replicas)
+  return success even if some replicas haven't acknowledged
+  // UPSIDE: always available (W=1 means respond after 1 ack)
+  // DOWNSIDE: reads may see different values from different replicas
+```
+
+## Programming Implementation
+
+**Python — demonstrating CP vs AP patterns:**
+
+```python
+import threading
+import time
+import random
+from typing import Dict, Optional, Tuple
+from dataclasses import dataclass, field
+from enum import Enum
+
+
+class ConsistencyLevel(Enum):
+    ONE = 1     # AP: fastest, least consistent
+    QUORUM = 2  # balance: need majority
+    ALL = 3     # CP: most consistent, slowest
+
+
+@dataclass
+class Replica:
+    node_id: str
+    data: Dict[str, Tuple[str, int]] = field(default_factory=dict)  # key → (value, timestamp)
+    is_alive: bool = True
+    _lock: threading.Lock = field(default_factory=threading.Lock)
+
+    def write(self, key: str, value: str, timestamp: int) -> bool:
+        """Accept a write, applying last-write-wins on conflict."""
+        if not self.is_alive:
+            return False
+        with self._lock:
+            current = self.data.get(key)
+            if current is None or timestamp > current[1]:
+                self.data[key] = (value, timestamp)
+        return True
+
+    def read(self, key: str) -> Optional[Tuple[str, int]]:
+        """Read from this replica."""
+        if not self.is_alive:
+            return None
+        with self._lock:
+            return self.data.get(key)
+
+
+class DistributedStore:
+    """
+    Simulates a distributed key-value store demonstrating CAP tradeoffs.
+    Can operate in CP or AP mode by adjusting consistency level.
+    """
+
+    def __init__(self, replicas: int = 3):
+        self.replicas = [Replica(f"node-{i}") for i in range(replicas)]
+        self.n = replicas
+
+    def write(self, key: str, value: str, consistency: ConsistencyLevel) -> bool:
+        """
+        Write to replicas based on consistency level.
+        CP (ALL): must write to all replicas. Fails if any are down.
+        AP (ONE): write to one replica. Always succeeds if at least one is up.
+        """
+        timestamp = int(time.time() * 1000)
+        required_acks = {
+            ConsistencyLevel.ONE: 1,
+            ConsistencyLevel.QUORUM: (self.n // 2) + 1,
+            ConsistencyLevel.ALL: self.n,
+        }[consistency]
+
+        acks = 0
+        for replica in self.replicas:
+            if replica.write(key, value, timestamp):
+                acks += 1
+                if consistency == ConsistencyLevel.ONE:
+                    # Send to remaining replicas asynchronously (fire-and-forget)
+                    self._async_replicate(key, value, timestamp, exclude=replica)
+                    return True
+
+        return acks >= required_acks
+
+    def _async_replicate(self, key: str, value: str, timestamp: int, exclude: Replica) -> None:
+        """Background replication — achieves eventual consistency."""
+        def replicate():
+            time.sleep(random.uniform(0.01, 0.1))  # simulate network delay
+            for replica in self.replicas:
+                if replica is not exclude:
+                    replica.write(key, value, timestamp)
+        threading.Thread(target=replicate, daemon=True).start()
+
+    def read(self, key: str, consistency: ConsistencyLevel) -> Optional[str]:
+        """
+        Read from replicas based on consistency level.
+        QUORUM reads + QUORUM writes guarantee linearizability when n=3.
+        (Read quorum + write quorum > n)
+        """
+        required_reads = {
+            ConsistencyLevel.ONE: 1,
+            ConsistencyLevel.QUORUM: (self.n // 2) + 1,
+            ConsistencyLevel.ALL: self.n,
+        }[consistency]
+
+        results = []
+        for replica in self.replicas:
+            result = replica.read(key)
+            if result is not None:
+                results.append(result)
+                if len(results) >= required_reads:
+                    break
+
+        if len(results) < required_reads:
+            if consistency != ConsistencyLevel.ONE:
+                return None  # CP: refuse to answer if can't get quorum
+            return results[0][0] if results else None
+
+        # Return the value with the highest timestamp (last-write-wins)
+        latest = max(results, key=lambda x: x[1])
+        self._repair_stale_replicas(key, latest)
+        return latest[0]
+
+    def _repair_stale_replicas(self, key: str, latest: Tuple[str, int]) -> None:
+        """Read repair: bring lagging replicas up to date."""
+        def repair():
+            for replica in self.replicas:
+                current = replica.data.get(key)
+                if current is None or current[1] < latest[1]:
+                    replica.write(key, latest[0], latest[1])
+        threading.Thread(target=repair, daemon=True).start()
+
+    def simulate_partition(self, node_ids: list) -> None:
+        """Simulate a network partition by marking nodes as down."""
+        for replica in self.replicas:
+            if replica.node_id in node_ids:
+                replica.is_alive = False
+                print(f"PARTITION: {replica.node_id} is unreachable")
+
+    def heal_partition(self) -> None:
+        """Restore all nodes — trigger gossip/anti-entropy to catch up."""
+        for replica in self.replicas:
+            replica.is_alive = True
+        print("Partition healed — replicas will converge via gossip")
+
+
+# Demonstrating the CAP tradeoff
+store = DistributedStore(replicas=3)
+
+# Normal operation: both CP and AP work fine
+store.write("user:1:name", "Alice", ConsistencyLevel.QUORUM)
+print(store.read("user:1:name", ConsistencyLevel.QUORUM))  # "Alice"
+
+# Simulate partition — node-2 goes down
+store.simulate_partition(["node-2"])
+
+# AP mode: still available, may read stale data
+store.write("user:1:name", "Alice Smith", ConsistencyLevel.ONE)  # succeeds
+print(store.read("user:1:name", ConsistencyLevel.ONE))  # returns a value
+
+# CP mode: refuses to operate without quorum
+result = store.write("user:1:name", "Bob", ConsistencyLevel.ALL)  # fails (node-2 down)
+print(f"CP write succeeded: {result}")  # False
+```
+
+**JavaScript — vector clocks for conflict resolution:**
+
+```javascript
+// Vector clock implementation for tracking causality
+class VectorClock {
+  constructor(nodeId, clocks = {}) {
+    this.nodeId = nodeId;
+    this.clocks = { ...clocks };
+  }
+
+  increment() {
+    this.clocks[this.nodeId] = (this.clocks[this.nodeId] || 0) + 1;
+    return new VectorClock(this.nodeId, this.clocks);
+  }
+
+  merge(other) {
+    const merged = { ...this.clocks };
+    for (const [node, time] of Object.entries(other.clocks)) {
+      merged[node] = Math.max(merged[node] || 0, time);
+    }
+    return new VectorClock(this.nodeId, merged);
+  }
+
+  happensBefore(other) {
+    // this < other if every component of this <= other and at least one <
+    const nodes = new Set([...Object.keys(this.clocks), ...Object.keys(other.clocks)]);
+    let allLeq = true, oneLt = false;
+    for (const node of nodes) {
+      const t = this.clocks[node] || 0;
+      const o = other.clocks[node] || 0;
+      if (t > o) { allLeq = false; break; }
+      if (t < o) oneLt = true;
+    }
+    return allLeq && oneLt;
+  }
+
+  concurrent(other) {
+    return !this.happensBefore(other) && !other.happensBefore(this);
+  }
+}
+```
+
+## System Design Perspective
+
+CAP decisions flow through every layer of a distributed system:
+
+```
+[Financial Transaction System — CP]
+[Client] → [API Server] → [2PC Coordinator]
+                               ↓
+                    [DB Primary (locked)]
+                    ↓               ↓
+              [Replica A]    [Replica B]
+              Both must ack before commit
+              PARTITION → refuse transaction (return error)
+              Sacrifice availability to protect money
+
+[Social Media Feed — AP]
+[Client] → [API Server] → [Cassandra Cluster]
+                               ↓
+              [Node 1]    [Node 2]    [Node 3]
+              Write to 1, replicate async
+              PARTITION → serve potentially stale likes/comments
+              Sacrifice consistency for always-on availability
+
+[DNS — AP]
+Record updated at authoritative server
+TTL controls how stale cached answers can be (typical: 300s)
+During partition: DNS resolvers serve cached (stale) answers
+Always available, not always consistent
+```
+
+**Real company CAP choices:**
+
+- **Zookeeper (CP):** Used by Kafka, HBase for coordination. During partition, the minority partition refuses to serve reads/writes. Chosen where consistency of configuration and coordination is critical.
+- **Cassandra (AP):** "Always on" — designed for global replication across data centers. During partition, all nodes serve reads/writes, resolving conflicts with timestamps (last-write-wins). Used by Netflix, Instagram, Discord.
+- **DynamoDB (tunable):** Can be configured for eventual consistency (AP) or strong consistency (CP) per-read via `ConsistentRead=True`. Default is eventually consistent for performance.
+- **PostgreSQL with streaming replication (CP):** Synchronous replication mode refuses writes if the replica is not caught up. Asynchronous mode (AP) allows writes that may be lost if primary fails before replication.
+
+## Visual Content Suggestions
+
+- **CAP triangle diagram:** Three vertices (C, A, P) with real databases plotted on the C-P or A-P edge.
+- **Partition scenario sequence diagram:** Normal operation (C+A+P), then partition occurs, showing the C vs A choice.
+- **Consistency models spectrum:** Arrow from strong (linearizable) through sequential, causal, to eventual consistency.
+- **Two-phase commit failure scenarios:** Timeline showing coordinator failure between phases and participant blockage.
+- **PACELC matrix:** Table showing major databases' choices on both axes of PACELC.
+
+## Real-World Examples
+
+**Amazon DynamoDB during AWS region outage:** In 2011, an AWS US-East region outage caused DynamoDB to experience degraded availability. Amazon's design choice of AP meant that some DynamoDB tables served stale data during the partition. Services that had chosen strongly consistent reads were unavailable. This incident prompted many companies to think carefully about their CAP choices and to design for "eventual consistency is acceptable" in most cases.
+
+**Cassandra at Netflix:** Netflix chose Cassandra for its AP properties. When a network partition occurs between their US and EU data centers, Cassandra in both regions continues to accept writes. After the partition heals, conflicts are resolved using last-write-wins with timestamps. Netflix accepts that a user's profile update might briefly show different values in different regions — the always-on requirement trumps perfect consistency.
+
+**Zookeeper for Kafka coordination:** Kafka uses Zookeeper for leader election and cluster coordination (though newer versions use its own Raft-based consensus). Zookeeper is CP: during a partition, the minority partition becomes unavailable (cannot elect a leader). Kafka operators accept this because incorrect leader election would be worse than temporary unavailability.
+
+**Google Spanner (CA+P):** Google's Spanner claims to provide globally consistent transactions across data centers. The secret: Spanner uses TrueTime (GPS + atomic clock hardware) to bound clock uncertainty to within 7 milliseconds globally. This allows transactions to wait out the uncertainty window, effectively giving CP behavior with very high availability — not by violating CAP, but by minimizing the partition duration through near-perfect time synchronization.
+
+## Common Mistakes
+
+**Mistake 1: Thinking CAP means you permanently sacrifice one property.** CAP is only about behavior during a **network partition**. During normal operation (no partition), you can have both consistency and availability. The theorem tells you what happens in the failure case, not the common case.
+
+**Mistake 2: Treating "eventual consistency" as "might be wrong forever."** Eventual consistency means replicas will converge if no new updates are made. In practice, convergence happens in milliseconds to seconds. For most user-facing applications, this is imperceptible. The danger is when your application logic assumes linerizability when it only has eventual consistency — leading to read-your-own-writes violations.
+
+**Mistake 3: Choosing CP when your business can tolerate AP.** Many developers default to strong consistency (CP) out of caution, adding unnecessary latency and reducing availability. Most social media interactions, read counters, and recommendation systems can tolerate eventual consistency. Choose the weakest consistency model that your use case allows — it is always faster and more available.
+
+**Mistake 4: Ignoring PACELC.** Even without partitions, synchronous replication (consistency) adds latency vs asynchronous (availability). A system that writes to the primary and synchronously to two replicas before responding has 3x the write latency of an asynchronous system. This always-present tradeoff is captured by PACELC and matters more than CAP for day-to-day performance.
+
+**Mistake 5: Conflating CAP Consistency with ACID Consistency.** CAP's C means linearizability (all nodes see the same data simultaneously). ACID's C means database constraints are always satisfied (referential integrity, uniqueness, etc.). These are completely different properties. A database can have ACID consistency without CAP consistency.
+
+## Interview Angle
+
+**Q: In the context of CAP theorem, explain why you can't avoid choosing between C and A during a partition.**
+
+A: During a network partition, some nodes cannot communicate with each other. Imagine nodes A and B are partitioned. A client writes a new value to node A. Now another client reads from node B. For consistency (C), node B must either return the new value — but it has not received it yet — or return an error (refuse to serve the read). For availability (A), node B must return a response — but the response may be the old value, violating consistency. There is no third option: returning the new value would require either node B to have received it (impossible during partition) or guessing (incorrect). This is the fundamental impossibility: during a partition, you must pick C (refuse to respond with potentially stale data) or A (respond with potentially stale data). You cannot do both.
+
+**Q: How would you design a distributed shopping cart that handles network partitions correctly?**
+
+A: A shopping cart should favor **availability (AP)** over consistency. If a customer adds an item to their cart and the write goes to a partitioned node, refusing the operation would destroy trust more than a minor sync delay. Choose Dynamo-style AP: accept the write, mark it with a vector clock, and reconcile conflicts when the partition heals. Conflict resolution: if two carts diverge (user adds item A on node 1, item B on node 2 during partition), the reconciliation strategy is to merge — add both A and B (never silently drop an add). This is "causal consistency with merge conflict resolution." Amazon's Dynamo paper describes exactly this approach for their shopping cart, which was the motivating example for the Dynamo design.
+
+## Summary
+
+- The CAP theorem states: a distributed system cannot simultaneously guarantee Consistency, Availability, and Partition Tolerance during a network partition.
+- **Partition tolerance (P) is mandatory** — real networks partition; you cannot opt out. The real choice is **CP vs AP**.
+- **CP systems** (Zookeeper, HBase, etcd): during partition, refuse to respond rather than return stale data. Favor correctness over uptime.
+- **AP systems** (Cassandra, DynamoDB, CouchDB): during partition, respond with potentially stale data. Favor uptime over correctness.
+- CAP applies only **during partitions** — in normal operation, you can have both C and A.
+- **PACELC** extends CAP: even without partitions, synchronous replication (consistency) costs latency vs asynchronous (availability).
+- **Eventual consistency** converges in milliseconds to seconds in practice — acceptable for most user-facing features.
+- Never confuse CAP's C (linearizability) with ACID's C (constraint satisfaction) — completely different concepts.
+- Choose the weakest consistency model your use case allows: it is always faster, more available, and simpler to scale.
+- Real databases are tunable: DynamoDB's `ConsistentRead`, Cassandra's consistency levels, and PostgreSQL's synchronous commit allow per-operation CAP positioning.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/load-balancing", label: "Load Balancing" }}
+  next={{ href: "/docs/cs-book/part-4-advanced/message-queues", label: "Message Queues" }}
+/>

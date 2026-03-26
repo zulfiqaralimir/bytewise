@@ -1,0 +1,387 @@
+export const metadata = {
+  title: "APIs and REST — ByteWise CS Book",
+  description:
+    "Master REST API design: HTTP methods, status codes, resource modeling, versioning, authentication, and how to build scalable APIs like the big tech companies.",
+  keywords: [
+    "REST API",
+    "API design",
+    "HTTP methods",
+    "REST principles",
+    "API versioning",
+    "RESTful architecture",
+    "web services",
+  ],
+  openGraph: {
+    title: "APIs and REST — ByteWise CS Book",
+    description:
+      "Learn REST API design principles, HTTP semantics, authentication patterns, and how to design APIs that scale to millions of requests.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# APIs and REST
+
+## The Contract That Powers the Internet
+
+In 2000, Roy Fielding published his doctoral dissertation "Architectural Styles and the Design of Network-based Software Architectures." In it, he described a set of architectural constraints he called REST — Representational State Transfer. Fielding was not inventing something new; he was describing the principles that had made the web successful and formalizing them as a design philosophy for APIs.
+
+Two decades later, REST is the dominant architectural style for web APIs. When your phone shows you today's weather, it is making a REST API call. When you share a post on social media, a REST API receives it. When an e-commerce site shows you product recommendations, hundreds of REST API calls happen in milliseconds behind the scenes. The modern internet is a web of REST APIs calling each other.
+
+Yet "REST" is one of the most misunderstood terms in software engineering. Many APIs called "RESTful" violate the principles Fielding defined. Understanding true REST — statelessness, resource orientation, uniform interface, hypermedia — versus the pragmatic "REST-like" APIs that most companies build is essential for designing APIs that are maintainable, scalable, and intuitive to consume.
+
+## Concept Explanation
+
+**REST (Representational State Transfer)** is an architectural style — not a protocol — for building networked applications. It defines six constraints:
+
+1. **Client-Server:** Separation of concerns between UI and data storage. The client does not need to know how data is stored; the server does not need to know how data is displayed.
+2. **Stateless:** Each request from client to server must contain all information needed to understand it. The server stores no client session state between requests.
+3. **Cacheable:** Responses must define themselves as cacheable or non-cacheable, allowing clients and intermediaries to cache responses.
+4. **Layered System:** A client cannot tell whether it is connected directly to the server or to an intermediary (load balancer, CDN, cache).
+5. **Uniform Interface:** The most defining constraint. Includes resource identification via URIs, manipulation through representations, self-descriptive messages, and HATEOAS (hypermedia as the engine of application state).
+6. **Code on Demand (optional):** Servers can extend client functionality by sending executable code (JavaScript).
+
+**Resources vs. actions:** REST models everything as a **resource** — a noun, not a verb. A user is a resource (`/users/123`), not an action (`/getUser?id=123`). Operations on resources are expressed through HTTP methods.
+
+**HTTP methods and their semantics:**
+
+| Method | Purpose | Idempotent | Safe | Body |
+|--------|---------|-----------|------|------|
+| GET | Retrieve resource | Yes | Yes | No |
+| POST | Create resource | No | No | Yes |
+| PUT | Replace resource | Yes | No | Yes |
+| PATCH | Partial update | No | No | Yes |
+| DELETE | Remove resource | Yes | No | No |
+
+**Idempotent** means calling the same request multiple times produces the same result. Safe means the request does not modify server state. These properties matter for retry logic and caching.
+
+## Mathematical Foundation
+
+**Latency vs. throughput tradeoff:** For an API under load:
+
+$$\text{throughput} = \frac{\text{requests processed}}{\text{time}} \quad \text{(requests/second)}$$
+
+$$\text{average latency} = \frac{\text{total response time}}{\text{number of requests}}$$
+
+By Little's Law, the relationship between throughput ($\lambda$), average number of requests in the system ($L$), and average latency ($W$) is:
+
+$$L = \lambda \cdot W$$
+
+If your API can handle 1000 req/s and average latency is 100ms, there are $L = 1000 \times 0.1 = 100$ concurrent requests in flight.
+
+**Cache hit rate impact on latency:**
+
+$$\text{effective latency} = p_{\text{hit}} \cdot T_{\text{cache}} + (1 - p_{\text{hit}}) \cdot T_{\text{db}}$$
+
+If cache takes 1ms and DB takes 100ms, even a 90% cache hit rate gives effective latency of $0.9 \times 1 + 0.1 \times 100 = 10.9\text{ms}$ — 9x improvement.
+
+**HTTP status codes (semantic mapping):**
+
+$$2xx: \text{success} \quad 3xx: \text{redirect} \quad 4xx: \text{client error} \quad 5xx: \text{server error}$$
+
+## Algorithm / Logic
+
+**RESTful endpoint design — decision process:**
+
+1. **Identify resources:** What are the nouns in your domain? Users, posts, orders, products.
+2. **Model relationships:** Users have posts. Orders contain products.
+3. **Map to URIs:** `/users`, `/users/{id}`, `/users/{id}/posts`, `/orders/{id}/items`
+4. **Assign HTTP methods:** GET reads, POST creates, PUT/PATCH updates, DELETE removes.
+5. **Define request/response contracts:** JSON schema, required fields, optional fields.
+6. **Add status codes:** 200 OK, 201 Created, 204 No Content, 400 Bad Request, 404 Not Found, 409 Conflict, 422 Unprocessable Entity, 500 Server Error.
+7. **Plan versioning:** URI versioning `/v1/`, header versioning `Accept: application/vnd.api.v2+json`.
+8. **Add pagination:** Cursor-based or offset-based for collections.
+
+```
+GET /users                → 200 [list of users] (paginated)
+GET /users/{id}           → 200 user | 404 not found
+POST /users               → 201 created user | 400 invalid | 409 duplicate
+PUT /users/{id}           → 200 updated user | 404 not found
+PATCH /users/{id}         → 200 partially updated | 404 not found
+DELETE /users/{id}        → 204 no content | 404 not found
+
+// Nested resources
+GET /users/{id}/posts     → 200 [user's posts]
+POST /users/{id}/posts    → 201 new post for user
+
+// Search/filter via query parameters
+GET /products?category=electronics&price_min=100&page=2&limit=20
+```
+
+## Programming Implementation
+
+**Python — FastAPI REST server:**
+
+```python
+from fastapi import FastAPI, HTTPException, Query, Depends
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List
+from datetime import datetime
+import uuid
+
+app = FastAPI(title="ByteWise API", version="1.0.0")
+
+
+# ── Data Models ───────────────────────────────────────────────────────────────
+
+class UserCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    email: EmailStr
+    role: str = Field(default="user", pattern="^(user|admin)$")
+
+
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    email: str
+    role: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class PaginatedResponse(BaseModel):
+    data: List[UserResponse]
+    total: int
+    page: int
+    limit: int
+    next_cursor: Optional[str] = None
+
+
+# ── In-memory store (replace with real DB in production) ──────────────────────
+
+users_db: dict = {}
+
+
+# ── Endpoints ─────────────────────────────────────────────────────────────────
+
+@app.get("/v1/users", response_model=PaginatedResponse)
+async def list_users(
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    role: Optional[str] = Query(None),
+):
+    """GET /v1/users — list users with pagination and optional filtering."""
+    all_users = list(users_db.values())
+    if role:
+        all_users = [u for u in all_users if u["role"] == role]
+    total = len(all_users)
+    start = (page - 1) * limit
+    page_data = all_users[start:start + limit]
+    return PaginatedResponse(
+        data=page_data, total=total, page=page, limit=limit
+    )
+
+
+@app.get("/v1/users/{user_id}", response_model=UserResponse)
+async def get_user(user_id: str):
+    """GET /v1/users/{id} — retrieve a specific user."""
+    if user_id not in users_db:
+        raise HTTPException(status_code=404, detail="User not found")
+    return users_db[user_id]
+
+
+@app.post("/v1/users", response_model=UserResponse, status_code=201)
+async def create_user(user: UserCreate):
+    """POST /v1/users — create a new user."""
+    # Check for duplicate email
+    if any(u["email"] == user.email for u in users_db.values()):
+        raise HTTPException(status_code=409, detail="Email already registered")
+    user_id = str(uuid.uuid4())
+    user_data = {
+        "id": user_id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "created_at": datetime.utcnow(),
+    }
+    users_db[user_id] = user_data
+    return user_data
+
+
+@app.patch("/v1/users/{user_id}", response_model=UserResponse)
+async def update_user(user_id: str, updates: dict):
+    """PATCH /v1/users/{id} — partial update. Only provided fields change."""
+    if user_id not in users_db:
+        raise HTTPException(status_code=404, detail="User not found")
+    allowed_fields = {"name", "email", "role"}
+    invalid = set(updates.keys()) - allowed_fields
+    if invalid:
+        raise HTTPException(status_code=422, detail=f"Invalid fields: {invalid}")
+    users_db[user_id].update(updates)
+    return users_db[user_id]
+
+
+@app.delete("/v1/users/{user_id}", status_code=204)
+async def delete_user(user_id: str):
+    """DELETE /v1/users/{id} — remove user. Returns 204 No Content."""
+    if user_id not in users_db:
+        raise HTTPException(status_code=404, detail="User not found")
+    del users_db[user_id]
+
+
+# ── Error handling middleware ──────────────────────────────────────────────────
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Return consistent error format for unhandled exceptions."""
+    return JSONResponse(
+        status_code=500,
+        content={"error": "internal_server_error", "message": str(exc)},
+    )
+```
+
+**JavaScript — Express.js REST API:**
+
+```javascript
+const express = require("express");
+const { v4: uuidv4 } = require("uuid");
+const app = express();
+app.use(express.json());
+
+const users = new Map();
+
+// Middleware: request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+  next();
+});
+
+// GET /v1/users — list with pagination
+app.get("/v1/users", (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+  const all = [...users.values()];
+  const total = all.length;
+  const data = all.slice((page - 1) * limit, page * limit);
+  res.json({ data, total, page, limit });
+});
+
+// GET /v1/users/:id
+app.get("/v1/users/:id", (req, res) => {
+  const user = users.get(req.params.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+  res.json(user);
+});
+
+// POST /v1/users
+app.post("/v1/users", (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: "name and email are required" });
+  }
+  const id = uuidv4();
+  const user = { id, name, email, createdAt: new Date().toISOString() };
+  users.set(id, user);
+  res.status(201).json(user);
+});
+
+// DELETE /v1/users/:id
+app.delete("/v1/users/:id", (req, res) => {
+  if (!users.has(req.params.id))
+    return res.status(404).json({ error: "User not found" });
+  users.delete(req.params.id);
+  res.status(204).end();
+});
+
+app.listen(3000, () => console.log("API running on port 3000"));
+```
+
+## System Design Perspective
+
+A production REST API involves many layers:
+
+```
+[Client (Browser/Mobile App)]
+          ↓ HTTPS request
+[CDN (Cloudflare/Akamai)]
+  — Cache GET responses (static resources, public data)
+  — TLS termination
+          ↓
+[API Gateway (Kong/AWS API GW)]
+  — Rate limiting: O(1) token bucket check
+  — Auth validation: JWT signature verify
+  — Request routing: /v1/users → User Service
+          ↓
+[Load Balancer]
+  — Round-robin or least-connections to API servers
+          ↓
+[API Server Pool]
+  — Business logic, input validation
+  — Serialize/deserialize JSON
+          ↓
+[Cache (Redis)]  ←── read-through for GET /users/{id}
+          ↓
+[Database (PostgreSQL/DynamoDB)]
+  — Source of truth
+          ↓
+[Response]  →  API Server  →  CDN cache  →  Client
+```
+
+**Real company API design:**
+
+- **Stripe's API:** Considered the gold standard for REST design. Idempotency keys on POST requests allow safe retries. Every object has a predictable ID format (`cus_`, `ch_`, `pi_`). Pagination via cursor (`starting_after`). Versioning via date in header.
+- **Twitter (X) API:** Cursor-based pagination for timelines (tweets change rapidly, offset pagination breaks). Rate limits per endpoint per user per 15 minutes.
+- **GitHub API:** HATEOAS links in responses. ETag-based conditional caching. GraphQL as alternative for complex queries.
+- **Twilio API:** Webhook callbacks for asynchronous events (SMS delivery, call status). REST for configuration, webhooks for state changes.
+
+## Visual Content Suggestions
+
+- **REST request-response cycle:** Client → DNS → CDN → Load Balancer → API Server → DB, with annotation at each step.
+- **HTTP method and status code quick reference:** Color-coded table of most common combinations.
+- **Pagination strategies:** Offset vs cursor-based, showing why cursor is superior for feeds.
+- **API versioning strategies:** URI vs header vs query parameter versioning with examples.
+- **JWT token structure:** Header.Payload.Signature with decoded JSON shown for each part.
+
+## Real-World Examples
+
+**Stripe's payment API:** Stripe's API handles billions of dollars in transactions. Their idempotency key pattern ensures that network failures do not cause duplicate charges — if a POST to create a payment times out, the client retries with the same idempotency key, and Stripe returns the original response if the payment was already created.
+
+**Twitter's timeline API:** The public timeline uses cursor-based pagination (`max_id`, `since_id`) rather than offset pagination. This is critical because new tweets arrive constantly — offset pagination would skip or repeat tweets as the underlying data changes between requests.
+
+**Slack's Events API:** Slack uses a webhook pattern where your server registers a URL, and Slack POSTs events to it when things happen (messages, reactions, user joins). The payload includes an event ID so receivers can detect and discard duplicate deliveries.
+
+**Amazon's Product Advertising API:** Product data is cached aggressively at the API layer. GET requests for stable product data (title, ASIN, category) are cached for hours. Price and inventory (dynamic) bypass the cache with `Cache-Control: no-store`.
+
+## Common Mistakes
+
+**Mistake 1: Using verbs in resource URIs.** `/getUsers`, `/createPost`, `/deleteComment` are not RESTful. HTTP methods are already the verbs. Resources should be nouns: `/users`, `/posts`, `/comments`. The action is expressed by the HTTP method on the resource.
+
+**Mistake 2: Wrong HTTP status codes.** Returning 200 OK with `{"success": false, "error": "not found"}` in the body is a common anti-pattern. Use 404 for not found, 401 for unauthenticated, 403 for unauthorized, 422 for validation errors, 409 for conflicts. Clients (and monitoring systems) depend on status codes.
+
+**Mistake 3: Non-idempotent PUT requests.** PUT must be idempotent — calling it twice with the same body must produce the same result. If your PUT generates a new ID or timestamp each time, it is not idempotent. Use POST for non-idempotent creation, PUT for idempotent replacement.
+
+**Mistake 4: Offset pagination on large, changing datasets.** `LIMIT 20 OFFSET 1000` fetches 1020 rows and discards 1000 — both expensive and incorrect if new rows were inserted since the last page. Use cursor-based pagination: `WHERE created_at < :cursor ORDER BY created_at DESC LIMIT 20`.
+
+**Mistake 5: Exposing internal database IDs.** Sequential integer IDs (`/users/12345`) reveal business data (number of users, order volume) and are susceptible to enumeration attacks (try every ID). Use UUIDs or opaque random IDs. Stripe uses prefixed IDs (`cus_xyz`) that encode object type without revealing count.
+
+## Interview Angle
+
+**Q: Design the REST API for a Twitter-like system.**
+
+A: Identify resources: Users, Tweets, Followers, Timelines. Key endpoints: `POST /tweets` (create tweet, 201), `GET /tweets/{id}` (get tweet, 200), `GET /users/{id}/timeline` (paginated timeline, cursor-based), `POST /users/{id}/follow` (follow user), `DELETE /users/{id}/follow` (unfollow). Use cursor-based pagination for timelines — offset breaks as new tweets arrive. Authentication via Bearer JWT tokens. Rate limiting: 300 GET /timeline per 15 minutes per user. For the timeline, denormalize (fan-out on write) into a Redis sorted set per user, or compute on-read for high-follower users (hybrid approach). Return `next_cursor` in paginated responses. Status codes: 201 Created, 200 OK, 204 No Content for DELETE, 429 Too Many Requests.
+
+**Q: What is the difference between PUT and PATCH?**
+
+A: PUT replaces the entire resource — you send a complete representation, and the server replaces the stored resource with it. If you PUT a user with only `{"name": "Alice"}`, the email field becomes null/missing. It must be idempotent. PATCH makes a partial update — you send only the fields you want to change. If you PATCH a user with `{"name": "Alice"}`, only the name changes; email is preserved. PATCH is not required to be idempotent (though in practice, most implementations are). Use PUT when you have the complete updated representation and want to replace the whole resource. Use PATCH for incremental updates where you want to touch only specific fields.
+
+## Summary
+
+- REST is an architectural style defined by six constraints: client-server, stateless, cacheable, layered, uniform interface, code-on-demand.
+- Resources are **nouns** (not verbs); HTTP methods are the verbs: GET (read), POST (create), PUT (replace), PATCH (partial update), DELETE (remove).
+- **Statelessness** means each request must be self-contained — no server-side session state between requests.
+- HTTP status codes convey semantic meaning: 2xx success, 3xx redirect, 4xx client error, 5xx server error. Never return 200 for errors.
+- **Idempotency**: GET, PUT, DELETE are idempotent; POST is not. This matters for safe retry logic.
+- Use **cursor-based pagination** for feeds and time-ordered data; offset pagination breaks when data changes between requests.
+- **API versioning**: URI versioning (`/v1/`) is most common; header versioning is cleaner but harder to test in browsers.
+- Never expose sequential integer IDs — use UUIDs or prefixed opaque IDs.
+- Authentication: JWT Bearer tokens for stateless auth; API keys for server-to-server; OAuth 2.0 for delegated access.
+- Production APIs need rate limiting, request validation, structured error responses, comprehensive logging, and distributed tracing from day one.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/dynamic-programming", label: "Dynamic Programming" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/databases", label: "Databases" }}
+/>

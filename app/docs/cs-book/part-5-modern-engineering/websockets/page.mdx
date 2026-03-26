@@ -1,0 +1,417 @@
+export const metadata = {
+  title: "WebSockets & Real-Time Systems Explained | ByteWise",
+  description: "Master WebSockets and real-time communication — protocol internals, scaling patterns, and production implementations from Slack, Discord, and Twitch.",
+  keywords: ["WebSockets", "real-time", "Socket.IO", "Server-Sent Events", "long polling", "system design"],
+  openGraph: {
+    title: "WebSockets & Real-Time Systems Explained | ByteWise",
+    description: "Master WebSockets and real-time communication patterns with production-ready implementations.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# WebSockets & Real-Time Systems: The Always-On Connection
+
+## The Chat App That Couldn't Chat
+
+In 2008, building a real-time chat feature required a technique so ugly it had an affectionate nickname: "long polling." Here's how it worked: the browser sent an HTTP request to the server and asked "any new messages?" The server held the request open, waiting. Nothing happened. Nothing happened. A message arrived — the server responded with it. The browser immediately sent another request: "any new messages?" And the cycle repeated.
+
+Every message required a new HTTP connection, a new set of headers (often several kilobytes), and a new handshake. If your chat app had 10,000 users, your server was managing 10,000 perpetually pending HTTP requests. The overhead was enormous. The latency was noticeable. Engineers joked that long polling was "real-time" the way a flip book was a "movie."
+
+Then in 2011, the WebSocket protocol was standardized. It started with an HTTP request and upgraded it to a persistent, full-duplex TCP connection. One handshake. Bidirectional communication. No headers on every message. Slack, Discord, Figma, Google Docs collaborative editing, live sports scores, trading platforms — the entire modern real-time web is built on this protocol.
+
+---
+
+## What Are WebSockets?
+
+A **WebSocket** is a persistent, full-duplex communication channel over a single TCP connection between a client and server.
+
+**Full-duplex** means both sides can send messages simultaneously — unlike HTTP, which is request/response (half-duplex).
+
+**Persistent** means the connection stays open until explicitly closed — unlike HTTP, which opens and closes for each request.
+
+The protocol upgrade:
+```
+Client: GET /chat HTTP/1.1
+        Upgrade: websocket
+        Connection: Upgrade
+        Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+        Sec-WebSocket-Version: 13
+
+Server: HTTP/1.1 101 Switching Protocols
+        Upgrade: websocket
+        Connection: Upgrade
+        Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+```
+
+After this handshake, both sides speak the WebSocket frame protocol — a lightweight binary format, not HTTP.
+
+---
+
+## Real-Time Options Compared
+
+Not all real-time is WebSocket. Here's the full spectrum:
+
+| Technique | Direction | Latency | Overhead | Use Case |
+|-----------|-----------|---------|----------|----------|
+| Polling | Client→Server | High (poll interval) | Very high | Legacy |
+| Long Polling | Server→Client | Medium (connection overhead) | High | Fallback |
+| Server-Sent Events | Server→Client only | Low | Low | Notifications, feeds |
+| WebSocket | Both directions | Very low | Very low | Chat, gaming, collaboration |
+| WebRTC | Peer-to-peer | Extremely low | Low | Video calls, gaming |
+
+**Server-Sent Events (SSE)** are often overlooked. They're simpler than WebSockets, use standard HTTP, and work perfectly for one-directional server push (notifications, live feeds, AI streaming responses). If you don't need the client to send data in real-time, SSE is easier.
+
+---
+
+## Mathematical Foundation
+
+### WebSocket vs HTTP Overhead
+
+HTTP header overhead per request: ~800 bytes
+WebSocket frame header: 2–10 bytes
+
+For a chat message sent 1 message/second over 1 hour (3,600 messages):
+
+$$\text{HTTP overhead} = 3600 \times 800B = 2.88MB$$
+$$\text{WebSocket overhead} = 3600 \times 10B = 36KB$$
+
+WebSocket is **80x more efficient** for high-frequency messaging.
+
+### Connection Scaling
+
+A WebSocket server with $N$ concurrent connections, each idle:
+$$\text{Memory per connection} \approx 4KB$$
+$$\text{Total for 100K connections} = 100,000 \times 4KB = 400MB$$
+
+This is manageable on a single server, but at 1M connections you need either:
+1. Larger servers ($4GB$ RAM just for connection state)
+2. Multiple servers with a pub/sub coordinator (Redis Pub/Sub)
+
+### Message Fan-Out
+
+For a group chat with $G$ members, sending one message requires:
+$$\text{Fan-out} = G - 1 \text{ WebSocket sends}$$
+
+For Discord at scale: a popular server might have 100,000 members. A single message triggers 99,999 WebSocket sends. This is why Discord shards their gateway into separate processes.
+
+---
+
+## Algorithm / Logic: WebSocket Server Architecture
+
+```
+Client Connection:
+  1. TCP connection established
+  2. HTTP upgrade handshake
+  3. Connection registered in connection map: {client_id → WebSocket}
+  4. Join room(s): {room_id → Set[client_id]}
+
+Message Delivery:
+  1. Server receives frame from client A
+  2. Parse message: {type, room_id, content}
+  3. Look up room members: Set[client_id]
+  4. For each member_id in room:
+       if member_id != sender_id:
+           send frame to connections[member_id]
+
+Disconnection:
+  1. TCP close or timeout detected
+  2. Remove from connection map
+  3. Remove from all room memberships
+  4. Notify room members of departure (optional)
+
+Multi-Server Fan-Out:
+  Server 1 receives message → publishes to Redis channel "room:42"
+  Server 1 delivers to local connections in room 42
+  Server 2 subscribes to "room:42" → receives message
+  Server 2 delivers to its local connections in room 42
+```
+
+---
+
+## Programming Implementation
+
+### Python: WebSocket Server with FastAPI
+
+```python
+import json
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from typing import Any
+import asyncio
+
+app = FastAPI()
+
+
+class ConnectionManager:
+    """
+    Manages all active WebSocket connections and room membership.
+    For production, replace the in-memory dicts with Redis pub/sub
+    to support multiple server instances.
+    """
+
+    def __init__(self) -> None:
+        # client_id → WebSocket
+        self.connections: dict[str, WebSocket] = {}
+        # room_id → set of client_ids
+        self.rooms: dict[str, set[str]] = {}
+
+    async def connect(self, client_id: str, websocket: WebSocket) -> None:
+        await websocket.accept()
+        self.connections[client_id] = websocket
+        print(f"Client {client_id} connected. Total: {len(self.connections)}")
+
+    def disconnect(self, client_id: str) -> None:
+        self.connections.pop(client_id, None)
+        # Remove from all rooms
+        for members in self.rooms.values():
+            members.discard(client_id)
+        print(f"Client {client_id} disconnected. Total: {len(self.connections)}")
+
+    async def join_room(self, client_id: str, room_id: str) -> None:
+        if room_id not in self.rooms:
+            self.rooms[room_id] = set()
+        self.rooms[room_id].add(client_id)
+        # Notify room of new member
+        await self.broadcast_to_room(room_id, {
+            "type": "user_joined",
+            "user": client_id,
+            "room": room_id,
+        }, exclude=client_id)
+
+    async def broadcast_to_room(
+        self,
+        room_id: str,
+        message: dict[str, Any],
+        exclude: str = "",
+    ) -> None:
+        """Send message to all room members except the sender."""
+        members = self.rooms.get(room_id, set())
+        payload = json.dumps(message)
+
+        # Send to all connected members concurrently
+        tasks = [
+            self.connections[member_id].send_text(payload)
+            for member_id in members
+            if member_id != exclude and member_id in self.connections
+        ]
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def send_to_client(self, client_id: str, message: dict[str, Any]) -> None:
+        ws = self.connections.get(client_id)
+        if ws:
+            await ws.send_text(json.dumps(message))
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: str) -> None:
+    await manager.connect(client_id, websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            message = json.loads(data)
+
+            msg_type = message.get("type")
+
+            if msg_type == "join_room":
+                await manager.join_room(client_id, message["room"])
+                await manager.send_to_client(client_id, {
+                    "type": "joined",
+                    "room": message["room"],
+                })
+
+            elif msg_type == "message":
+                # Broadcast to room, excluding sender
+                await manager.broadcast_to_room(
+                    room_id=message["room"],
+                    message={
+                        "type": "message",
+                        "from": client_id,
+                        "room": message["room"],
+                        "text": message["text"],
+                        "timestamp": message.get("timestamp"),
+                    },
+                    exclude=client_id,
+                )
+
+            elif msg_type == "ping":
+                await manager.send_to_client(client_id, {"type": "pong"})
+
+    except WebSocketDisconnect:
+        manager.disconnect(client_id)
+```
+
+### JavaScript: WebSocket Client with Reconnection
+
+```javascript
+class ReconnectingWebSocket {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.maxRetries = options.maxRetries ?? 10;
+    this.baseDelay = options.baseDelay ?? 1000;   // 1 second
+    this.maxDelay = options.maxDelay ?? 30000;     // 30 seconds
+    this.retryCount = 0;
+    this.handlers = { message: [], open: [], close: [], error: [] };
+    this.ws = null;
+    this.connect();
+  }
+
+  connect() {
+    this.ws = new WebSocket(this.url);
+
+    this.ws.onopen = (event) => {
+      console.log('WebSocket connected');
+      this.retryCount = 0;  // Reset on successful connection
+      this.handlers.open.forEach(h => h(event));
+    };
+
+    this.ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.handlers.message.forEach(h => h(data));
+    };
+
+    this.ws.onclose = (event) => {
+      this.handlers.close.forEach(h => h(event));
+      if (!event.wasClean && this.retryCount < this.maxRetries) {
+        // Exponential backoff with jitter
+        const delay = Math.min(
+          this.baseDelay * Math.pow(2, this.retryCount) +
+          Math.random() * 1000,
+          this.maxDelay
+        );
+        console.log(`Reconnecting in ${Math.round(delay)}ms (attempt ${this.retryCount + 1})`);
+        this.retryCount++;
+        setTimeout(() => this.connect(), delay);
+      }
+    };
+
+    this.ws.onerror = (event) => {
+      this.handlers.error.forEach(h => h(event));
+    };
+  }
+
+  send(message) {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    } else {
+      console.warn('WebSocket not connected, message dropped');
+    }
+  }
+
+  on(event, handler) {
+    this.handlers[event].push(handler);
+    return this;  // Enable chaining
+  }
+
+  close() {
+    this.maxRetries = 0;  // Prevent reconnection
+    this.ws?.close(1000, 'Client closed');
+  }
+}
+
+// Usage
+const socket = new ReconnectingWebSocket('wss://chat.example.com/ws/user-123')
+  .on('open', () => socket.send({ type: 'join_room', room: 'general' }))
+  .on('message', (data) => {
+    if (data.type === 'message') {
+      console.log(`${data.from}: ${data.text}`);
+    }
+  });
+```
+
+---
+
+## System Design Perspective
+
+### Scaling WebSockets Horizontally
+
+```
+[Client A] ──── [Server 1] ──┐
+[Client B] ──── [Server 1]   │
+[Client C] ──── [Server 2] ──┤─── [Redis Pub/Sub]
+[Client D] ──── [Server 2]   │
+[Client E] ──── [Server 3] ──┘
+
+Message flow:
+  Client A (on Server 1) sends to room "general"
+  Server 1 delivers to local room members (A, B)
+  Server 1 publishes to Redis channel "room:general"
+  Server 2 receives from Redis → delivers to C
+  Server 3 receives from Redis → delivers to E
+```
+
+This pattern — WebSocket servers connected via Redis Pub/Sub — powers Slack, Discord, and most major real-time platforms at scale.
+
+---
+
+## Visual Content Suggestions
+
+- HTTP request/response vs WebSocket persistent connection diagram
+- WebSocket frame format: FIN bit, opcode, masking, payload
+- Room-based broadcasting: one message fan-out to N connections
+- Multi-server scaling with Redis Pub/Sub hub
+- Client reconnection with exponential backoff timing chart
+- Comparison: Polling vs Long Polling vs SSE vs WebSocket latency
+
+---
+
+## Real-World Examples
+
+**Slack**: Every message, typing indicator, presence update, and reaction is delivered via WebSocket. Slack handles millions of concurrent connections across their WebSocket gateways, sharded by workspace. They use a custom protocol on top of WebSocket for message acknowledgment and ordering.
+
+**Discord**: Their "Gateway" service handles WebSocket connections for voice status, message delivery, and user presence. Discord shards the gateway: large guilds are distributed across multiple shards (each a separate WebSocket connection) to handle fan-out for servers with hundreds of thousands of members.
+
+**Figma**: Collaborative vector editing is powered by WebSockets. Every cursor movement, object manipulation, and property change is transmitted in real-time to all collaborators in the file. Figma uses operational transforms (similar to Google Docs) to resolve concurrent edits.
+
+**Twitch Chat**: IRC-over-WebSocket, handling millions of concurrent chat participants. Popular streams have chat so fast that messages appear and disappear in milliseconds. Twitch rate-limits individual chatters (20 messages per 30 seconds) to prevent flooding.
+
+---
+
+## Common Mistakes
+
+**1. Not implementing reconnection logic.** WebSocket connections drop — network changes, server restarts, mobile phone sleep. Always implement exponential backoff reconnection on the client. Never assume a connection is permanent.
+
+**2. Broadcasting to rooms on a single server.** If your WebSocket server is a single process, fine. But the moment you scale horizontally (multiple servers), you need a message broker (Redis Pub/Sub, Kafka) so Server 1 can deliver messages to clients connected to Server 2.
+
+**3. No heartbeat/ping-pong.** Idle connections can be silently killed by load balancers, firewalls, or NAT gateways after a timeout (often 60–120 seconds). Implement a ping/pong heartbeat every 30 seconds to keep connections alive.
+
+**4. Sending large payloads over WebSocket.** WebSocket is optimized for small, frequent messages. Sending large files or images through WebSocket is inefficient — use regular HTTP upload for large payloads, WebSocket for notifications and metadata.
+
+**5. No authentication on WebSocket connections.** The upgrade handshake is a regular HTTP request — you can authenticate it with a token in the header or URL parameter. Without authentication, anyone can connect to your WebSocket server and receive messages.
+
+---
+
+## Interview Angle
+
+**Q: How would you scale a WebSocket chat system to 1 million concurrent users?**
+
+> First, I'd calculate memory requirements: 1M connections × 4KB each = 4GB, which requires multiple servers. I'd front the WebSocket servers with a load balancer that supports sticky sessions (so reconnects hit the same server) or stateless routing (possible with external state). Each server maintains its local connection map. For cross-server message delivery, I'd use Redis Pub/Sub: when a message is sent to room X, the server publishes to the Redis channel for room X. All servers subscribed to that channel deliver to their local members. For very high fan-out (1M user rooms), I'd add a message queue (Kafka) between servers and the Redis layer to handle backpressure. Horizontal scaling of the WebSocket tier itself is straightforward — add more servers.
+
+**Q: When would you choose Server-Sent Events over WebSockets?**
+
+> Server-Sent Events are simpler and often better for one-directional server-to-client streaming. They're just HTTP — they work through HTTP/2 multiplexing, corporate proxies, and firewalls that might block WebSocket upgrades. They reconnect automatically and support event IDs for resuming after disconnection. I'd choose SSE for: live news feeds, notification systems, AI model streaming responses, stock price tickers — anywhere the server pushes data and the client only reads. I'd choose WebSocket when the client needs to send data in real-time too: chat, collaborative editing, multiplayer games, live bidding.
+
+---
+
+## Summary
+
+- **WebSocket** upgrades an HTTP connection to a persistent, full-duplex TCP channel — both sides can send anytime
+- WebSocket frame overhead is 2–10 bytes vs ~800 bytes for HTTP headers — **80x more efficient** for high-frequency messages
+- **Server-Sent Events (SSE)** are simpler for one-way server push — use SSE when clients only receive
+- Always implement **exponential backoff reconnection** — connections drop; clients must recover automatically
+- Use a **heartbeat ping/pong** every 30 seconds to prevent silent connection drops by firewalls
+- Scale horizontally using **Redis Pub/Sub** to deliver messages across multiple WebSocket servers
+- **Authenticate** WebSocket connections at the HTTP upgrade request — don't skip auth for WS
+- Room-based **fan-out** is the core pattern: one message → broadcast to all room members
+- Discord, Slack, Figma, and Twitch all use WebSockets for real-time features at massive scale
+- WebSocket is ideal for **bidirectional** real-time: chat, gaming, collaboration; HTTP/SSE for unidirectional feeds
+
+<ArticleNav
+  prev={{ title: "OAuth & Authentication", href: "/docs/cs-book/part-5-modern-engineering/oauth" }}
+  next={null}
+/>

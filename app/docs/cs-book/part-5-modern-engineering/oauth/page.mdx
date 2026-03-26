@@ -1,0 +1,447 @@
+export const metadata = {
+  title: "OAuth & Authentication Flows Explained | ByteWise",
+  description: "Master OAuth 2.0, OpenID Connect, JWT tokens, and authentication flows — with Python and JavaScript implementations and security best practices.",
+  keywords: ["OAuth", "OAuth 2.0", "OpenID Connect", "JWT", "authentication", "authorization", "security"],
+  openGraph: {
+    title: "OAuth & Authentication Flows Explained | ByteWise",
+    description: "Master OAuth 2.0, OpenID Connect, JWT, and modern auth flows with production-ready code.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# OAuth & Authentication Flows: Identity in the Modern Web
+
+## The Problem OAuth Solved
+
+In 2007, if you wanted a third-party app to access your Gmail contacts, you had to give it your Gmail username and password. Directly. The app stored your credentials, logged into Gmail as you, and scraped whatever it needed.
+
+The security implications were catastrophic. If the third-party app was breached, attackers had your actual Gmail password — and probably your bank password too, since most people reused passwords. You had no way to revoke access without changing your password entirely. The app had the same permissions as you — it could delete all your emails, not just read contacts.
+
+This was the state of API security before OAuth. Engineers at Twitter, Google, and other companies designed OAuth 1.0 in 2007 specifically to solve this problem. The key insight: **instead of sharing your password, you share a limited, revocable token that grants specific permissions.**
+
+Today OAuth 2.0 powers authentication for billions of users across every major platform. "Sign in with Google" — that's OAuth. GitHub integrations — OAuth. Spotify letting apps play music — OAuth. Understanding it is fundamental to building any modern web application.
+
+---
+
+## Core Concepts
+
+### Authentication vs Authorization
+
+These are frequently confused:
+
+- **Authentication** (AuthN): "Who are you?" — proving identity. *You are Alice.*
+- **Authorization** (AuthZ): "What can you do?" — proving permission. *Alice can read, but not write.*
+
+OAuth is primarily an **authorization** framework. OpenID Connect (OIDC), built on top of OAuth 2.0, adds **authentication**.
+
+### The Four OAuth Roles
+
+1. **Resource Owner**: The user who owns the data (you)
+2. **Resource Server**: The API holding the data (Google's People API)
+3. **Client**: The application requesting access (a contacts app)
+4. **Authorization Server**: Issues tokens after user consent (Google's auth server)
+
+### Token Types
+
+- **Access Token**: Short-lived (minutes to hours). Grants access to specific resources.
+- **Refresh Token**: Long-lived (days to weeks). Used to get new access tokens without re-login.
+- **ID Token**: JWT containing user identity info. Specific to OpenID Connect.
+
+---
+
+## Mathematical Foundation
+
+### JWT Structure
+
+A JSON Web Token (JWT) is three Base64URL-encoded parts joined by dots:
+
+$$\text{JWT} = \text{Header} \cdot \text{Payload} \cdot \text{Signature}$$
+
+**Header**: `{"alg": "RS256", "typ": "JWT"}`
+**Payload**: `{"sub": "user123", "exp": 1711400000, "scope": "read:contacts"}`
+**Signature**: `RSASHA256(base64(header) + "." + base64(payload), privateKey)`
+
+Verification:
+$$\text{Valid} \iff \text{RSASHA256}(\text{header}.\text{payload}, \text{publicKey}) = \text{Signature}$$
+
+The server never needs to look up the token in a database — it verifies the cryptographic signature. This makes JWT stateless and horizontally scalable.
+
+### Token Expiry Design
+
+Access token lifetime involves a trade-off:
+
+$$\text{Security} \propto \frac{1}{\text{Token Lifetime}}$$
+$$\text{Usability} \propto \text{Token Lifetime}$$
+
+Short-lived tokens (15 min) limit the window if a token is stolen. Long-lived tokens reduce the frequency of re-authentication. The solution: short access tokens + long refresh tokens, with refresh token rotation.
+
+---
+
+## Algorithm / Logic: Authorization Code Flow
+
+The most secure and commonly used OAuth flow:
+
+```
+Step 1: Client redirects user to Authorization Server
+  URL: /authorize?
+    response_type=code
+    &client_id=APP_ID
+    &redirect_uri=https://app.com/callback
+    &scope=read:contacts email
+    &state=RANDOM_STRING  ← CSRF protection
+
+Step 2: User logs in and grants consent at Authorization Server
+
+Step 3: Authorization Server redirects back with code
+  URL: https://app.com/callback?code=AUTH_CODE&state=RANDOM_STRING
+
+Step 4: Client verifies state matches (CSRF check)
+
+Step 5: Client exchanges code for tokens (server-to-server)
+  POST /token
+  Body: grant_type=authorization_code
+        &code=AUTH_CODE
+        &redirect_uri=https://app.com/callback
+        &client_id=APP_ID
+        &client_secret=SECRET  ← never exposed to browser
+
+Step 6: Authorization Server returns tokens
+  {
+    "access_token": "eyJ...",
+    "refresh_token": "dGh...",
+    "expires_in": 3600,
+    "token_type": "Bearer"
+  }
+
+Step 7: Client uses access token
+  GET /api/contacts
+  Authorization: Bearer eyJ...
+```
+
+**Why the two-step exchange?** The authorization code is sent via browser redirect (URL bar, logs, referrer headers). Exchanging it for tokens happens server-to-server, never exposed in the browser. The authorization server also verifies the `client_secret`, ensuring only the legitimate app gets tokens.
+
+---
+
+## Programming Implementation
+
+### Python: OAuth 2.0 Server with FastAPI
+
+```python
+import secrets
+import time
+from typing import Optional
+from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
+import jwt  # PyJWT
+
+app = FastAPI()
+
+# In production: use a real database
+CLIENTS = {
+    "my-app-id": {
+        "secret": "my-app-secret",
+        "redirect_uris": ["https://app.example.com/callback"],
+        "scopes": ["read:profile", "read:email"],
+    }
+}
+
+# Temporary storage for auth codes (use Redis in production)
+auth_codes: dict[str, dict] = {}
+
+SECRET_KEY = "your-rsa-private-key"  # Use RS256 with real private key
+ISSUER = "https://auth.example.com"
+
+
+class TokenRequest(BaseModel):
+    grant_type: str
+    code: Optional[str] = None
+    redirect_uri: Optional[str] = None
+    client_id: str
+    client_secret: str
+    refresh_token: Optional[str] = None
+
+
+def create_access_token(user_id: str, scopes: list[str]) -> str:
+    """Create a signed JWT access token."""
+    now = int(time.time())
+    payload = {
+        "iss": ISSUER,
+        "sub": user_id,
+        "iat": now,
+        "exp": now + 3600,  # 1 hour
+        "scope": " ".join(scopes),
+        "jti": secrets.token_urlsafe(16),  # JWT ID for revocation
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+
+@app.get("/authorize")
+async def authorize(
+    response_type: str,
+    client_id: str,
+    redirect_uri: str,
+    scope: str,
+    state: str,
+    request: Request,
+):
+    """Step 1: Display consent screen to user."""
+    client = CLIENTS.get(client_id)
+    if not client:
+        raise HTTPException(400, "Unknown client_id")
+    if redirect_uri not in client["redirect_uris"]:
+        raise HTTPException(400, "Invalid redirect_uri")
+    if response_type != "code":
+        raise HTTPException(400, "Only authorization_code flow supported")
+
+    # In production: show a login/consent HTML page
+    # For demo: auto-approve and redirect back
+    code = secrets.token_urlsafe(32)
+    auth_codes[code] = {
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+        "scope": scope,
+        "user_id": "user-123",  # From authenticated session
+        "expires_at": time.time() + 600,  # 10 minutes
+    }
+
+    return RedirectResponse(
+        url=f"{redirect_uri}?code={code}&state={state}"
+    )
+
+
+@app.post("/token")
+async def token_endpoint(body: TokenRequest):
+    """Step 5: Exchange authorization code for tokens."""
+    client = CLIENTS.get(body.client_id)
+    if not client or client["secret"] != body.client_secret:
+        raise HTTPException(401, "Invalid client credentials")
+
+    if body.grant_type == "authorization_code":
+        code_data = auth_codes.pop(body.code or "", None)
+        if not code_data:
+            raise HTTPException(400, "Invalid or expired code")
+        if code_data["client_id"] != body.client_id:
+            raise HTTPException(400, "Code was not issued to this client")
+        if time.time() > code_data["expires_at"]:
+            raise HTTPException(400, "Code expired")
+
+        scopes = code_data["scope"].split()
+        access_token = create_access_token(code_data["user_id"], scopes)
+        refresh_token = secrets.token_urlsafe(32)
+
+        return {
+            "access_token": access_token,
+            "token_type": "Bearer",
+            "expires_in": 3600,
+            "refresh_token": refresh_token,
+            "scope": code_data["scope"],
+        }
+
+    raise HTTPException(400, f"Unsupported grant_type: {body.grant_type}")
+
+
+def verify_token(authorization: str = Depends()) -> dict:
+    """FastAPI dependency to verify Bearer tokens on protected routes."""
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Missing Bearer token")
+
+    token = authorization[7:]
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"],
+                             options={"require": ["exp", "sub", "iss"]})
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token expired")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(401, f"Invalid token: {e}")
+
+
+@app.get("/api/profile")
+async def get_profile(token: dict = Depends(verify_token)):
+    """Protected endpoint — requires valid Bearer token."""
+    return {"user_id": token["sub"], "scope": token.get("scope")}
+```
+
+### JavaScript: OAuth Client (PKCE Flow for SPAs)
+
+```javascript
+// PKCE (Proof Key for Code Exchange) — OAuth for browser apps
+// Replaces client_secret with a cryptographic challenge
+
+async function generatePKCE() {
+  const codeVerifier = btoa(
+    String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))
+  ).replace(/[+/=]/g, '');  // URL-safe base64
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+
+  const codeChallenge = btoa(
+    String.fromCharCode(...new Uint8Array(hash))
+  ).replace(/[+/=]/g, '');
+
+  return { codeVerifier, codeChallenge };
+}
+
+async function startLogin() {
+  const { codeVerifier, codeChallenge } = await generatePKCE();
+  const state = crypto.randomUUID();
+
+  // Store for verification after redirect
+  sessionStorage.setItem('pkce_verifier', codeVerifier);
+  sessionStorage.setItem('oauth_state', state);
+
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: 'my-spa-client',
+    redirect_uri: window.location.origin + '/callback',
+    scope: 'openid profile email',
+    state,
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
+  });
+
+  window.location.href = `https://auth.example.com/authorize?${params}`;
+}
+
+async function handleCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const state = params.get('state');
+
+  // Verify state to prevent CSRF
+  if (state !== sessionStorage.getItem('oauth_state')) {
+    throw new Error('State mismatch — possible CSRF attack');
+  }
+
+  const codeVerifier = sessionStorage.getItem('pkce_verifier');
+  sessionStorage.removeItem('pkce_verifier');
+  sessionStorage.removeItem('oauth_state');
+
+  // Exchange code for tokens
+  const response = await fetch('https://auth.example.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: window.location.origin + '/callback',
+      client_id: 'my-spa-client',
+      code_verifier: codeVerifier,  // Proves this is the same browser session
+    }),
+  });
+
+  const tokens = await response.json();
+  // Store access_token in memory (NOT localStorage — XSS risk)
+  // Store refresh_token in httpOnly cookie (server sets it)
+  return tokens;
+}
+```
+
+---
+
+## System Design Perspective
+
+### Token Storage Security
+
+```
+SPA (Browser App):
+  ✓ Access token: in memory (lost on page refresh, but safe from XSS)
+  ✓ Refresh token: httpOnly cookie (server sets, JS can't access)
+  ✗ NEVER localStorage for tokens (vulnerable to XSS)
+
+Server-Side App:
+  ✓ Tokens in session (server memory or encrypted session store)
+  ✓ Session ID in httpOnly, Secure, SameSite=Strict cookie
+
+Mobile App:
+  ✓ Secure Enclave (iOS) or Android Keystore
+  ✓ Encrypted local storage with biometric unlock
+```
+
+### Identity Provider Architecture
+
+```
+[User Browser]
+      │
+      ▼
+[Your App] → [Authorization Server] → [User Database]
+      │              │                      │
+      │         [Token Store]          [MFA Service]
+      │              │
+[Resource API] ← [JWT Verification]
+   (stateless — no DB lookup needed)
+```
+
+---
+
+## Visual Content Suggestions
+
+- Authorization Code Flow sequence diagram (all 7 steps)
+- JWT structure: header.payload.signature with decode
+- PKCE flow for SPAs vs traditional server flow comparison
+- Token storage security comparison table
+- Refresh token rotation flow diagram
+- OAuth scopes visualization: what each scope grants
+
+---
+
+## Real-World Examples
+
+**Google Sign-In**: Uses OAuth 2.0 + OpenID Connect. Returns an ID token (JWT) with user profile and an access token for Google APIs. Google's OAuth infrastructure handles billions of sign-ins daily, using PKCE for mobile apps.
+
+**GitHub OAuth Apps**: Allows third-party tools (CI/CD systems, IDEs, code review tools) to access GitHub APIs. Uses authorization code flow. Scopes control access: `repo` (all repos), `repo:status` (commit status only).
+
+**Stripe Connect**: Merchants authorize Stripe to charge on their behalf. Uses OAuth to let platforms collect payments for their marketplace sellers. Demonstrates OAuth's power for complex, multi-party authorization.
+
+**Spotify**: OAuth lets apps play music, manage playlists, read recently played. Their scope system is granular: `streaming` (play music), `playlist-modify-public` (edit playlists), `user-read-email` (profile email). Users can see and revoke third-party access in their account settings.
+
+---
+
+## Common Mistakes
+
+**1. Storing tokens in localStorage.** Any JavaScript on the page (including third-party scripts) can read localStorage. An XSS vulnerability anywhere gives attackers your tokens. Use memory for access tokens, httpOnly cookies for refresh tokens.
+
+**2. Skipping state parameter validation.** The `state` parameter prevents CSRF attacks. If you don't verify it on callback, an attacker can trick a user into connecting their account to the attacker's authorization code. Always generate, store, and verify `state`.
+
+**3. Long-lived access tokens.** If an access token is leaked, every second it's valid is a second the attacker can use it. Keep access tokens short-lived (15–60 minutes) and use refresh tokens for re-issuance.
+
+**4. Using implicit flow.** The OAuth 2.0 implicit flow (response_type=token) returns access tokens directly in the URL — visible in browser history, logs, and referrer headers. It's been deprecated in OAuth 2.1. Use PKCE instead for all browser-based apps.
+
+**5. Not implementing refresh token rotation.** Refresh tokens should be single-use. When used to get a new access token, issue a new refresh token and invalidate the old one. If a stolen refresh token is used, the legitimate user's next request detects the rotation and invalidates all tokens.
+
+---
+
+## Interview Angle
+
+**Q: Explain the OAuth authorization code flow and why it's more secure than implicit flow.**
+
+> In the authorization code flow, the authorization server first returns a short-lived, single-use `code` to the browser. The client then exchanges this code for tokens via a server-to-server request that includes the `client_secret`. The tokens never appear in the browser's URL bar, history, or logs. The implicit flow, by contrast, returns the access token directly in the URL fragment — exposed to browser history, JavaScript, and any third-party scripts. Additionally, implicit flow can't use refresh tokens, requiring users to re-authenticate frequently. For browser apps without a backend, PKCE replaces the `client_secret` with a cryptographic challenge that achieves similar security without a server.
+
+**Q: What is the difference between OAuth and OpenID Connect?**
+
+> OAuth 2.0 is an authorization framework — it lets an application get permission to access resources on behalf of a user. It tells you *what* an app can do. OpenID Connect (OIDC) is an identity layer built on top of OAuth 2.0. It adds an `id_token` (a JWT) that contains who the user is — their name, email, and user ID. OAuth answers "Can this app read your contacts?" OIDC answers "Who is this user?" In practice, when you implement "Sign in with Google," you're using OIDC for authentication and OAuth for any additional API access (like reading calendar events).
+
+---
+
+## Summary
+
+- **OAuth 2.0** is an authorization framework — grants apps limited access to resources without sharing passwords
+- **OpenID Connect** adds authentication on top of OAuth — returns an ID token with user identity
+- **Authorization Code Flow** is the most secure: code exchanged server-to-server, never exposed in browser
+- **PKCE** extends authorization code flow for browser/mobile apps without a `client_secret`
+- **JWT access tokens** are stateless — verifiable via cryptographic signature without a DB lookup
+- **Short-lived access tokens** (15–60 min) + **long-lived refresh tokens** balances security and usability
+- **Refresh token rotation** makes stolen refresh tokens detectable — always rotate on use
+- Never store tokens in **localStorage** — use memory for access tokens, httpOnly cookies for refresh tokens
+- Always validate the **state parameter** to prevent CSRF attacks
+- **Scopes** define the minimum necessary permissions — request only what you need
+
+<ArticleNav
+  prev={{ title: "Docker & Containers", href: "/docs/cs-book/part-5-modern-engineering/docker" }}
+  next={{ title: "WebSockets & Real-Time", href: "/docs/cs-book/part-5-modern-engineering/websockets" }}
+/>

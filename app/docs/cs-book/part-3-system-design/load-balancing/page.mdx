@@ -1,0 +1,480 @@
+export const metadata = {
+  title: "Load Balancing — ByteWise CS Book",
+  description:
+    "Master load balancing: algorithms, Layer 4 vs Layer 7, health checks, sticky sessions, consistent hashing, and how to distribute traffic at scale.",
+  keywords: [
+    "load balancing",
+    "round robin",
+    "consistent hashing",
+    "health checks",
+    "sticky sessions",
+    "layer 7",
+    "nginx",
+    "horizontal scaling",
+  ],
+  openGraph: {
+    title: "Load Balancing — ByteWise CS Book",
+    description:
+      "Learn load balancing algorithms, deployment patterns, and how Nginx, AWS ALB, and Cloudflare distribute billions of requests daily.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Load Balancing
+
+## The Traffic Director
+
+On Black Friday 2019, Amazon processed over 60,000 orders per minute. On Super Bowl Sunday, Akamai's CDN delivers hundreds of terabits per second of video. On New Year's Eve, Twilio routes millions of simultaneous voice calls. None of these traffic spikes are handled by a single server — they are distributed across hundreds or thousands of servers by load balancers.
+
+A load balancer is a system that accepts incoming requests and distributes them across a pool of servers, ensuring no single server becomes a bottleneck. But that description undersells what modern load balancers do: they perform health checks (routing around failed servers automatically), handle SSL termination (offloading expensive cryptographic work from application servers), enable zero-downtime deployments (gradually shifting traffic to new servers), and enforce rate limits and security policies.
+
+Understanding load balancing is essential for designing any system that needs to handle more traffic than a single machine can serve. And since virtually every production system at scale needs this, load balancing is one of the most important system design concepts to master.
+
+## Concept Explanation
+
+A **load balancer** sits in front of a pool of servers and distributes incoming requests among them according to an algorithm. The goals are:
+
+1. **No server is overwhelmed** while others are idle.
+2. **Failures are transparent** to clients — if a server dies, requests route around it.
+3. **Horizontal scaling** is possible — adding a new server to the pool immediately increases capacity.
+
+**Layer 4 vs Layer 7 load balancing:**
+
+- **Layer 4 (Transport layer):** Routes based on IP address and TCP port. Fast, low overhead. Cannot inspect request content. Examples: AWS NLB, HAProxy in TCP mode.
+- **Layer 7 (Application layer):** Routes based on HTTP headers, URL paths, cookies, request body. Slower but smarter. Enables content-based routing, A/B testing, authentication. Examples: AWS ALB, Nginx, Envoy.
+
+**Common load balancing algorithms:**
+
+| Algorithm | Description | Best For |
+|-----------|-------------|----------|
+| Round Robin | Each server gets requests in turn | Stateless, equal-cost servers |
+| Weighted Round Robin | Servers with higher weight get more requests | Heterogeneous server capacity |
+| Least Connections | Route to server with fewest active connections | Variable request duration |
+| Least Response Time | Route to server with lowest latency | Latency-sensitive systems |
+| IP Hash | Hash client IP to a consistent server | Session affinity (sticky) |
+| Consistent Hashing | Hash key to consistent server on hash ring | Cache consistency, microservices |
+| Random | Pick a random server | Simple, surprisingly effective |
+
+**Health checks:** Load balancers continuously probe backend servers (HTTP GET `/health`, TCP connection, or custom check). Servers that fail checks are removed from the pool. Servers that recover are re-added. This is the mechanism that makes distributed systems self-healing.
+
+## Mathematical Foundation
+
+**Round-robin distribution:** For $n$ servers and $R$ requests:
+
+$$\text{requests per server} = \left\lfloor \frac{R}{n} \right\rfloor \text{ or } \left\lceil \frac{R}{n} \right\rceil$$
+
+Variance is $O(1)$ — essentially perfectly balanced for uniform requests.
+
+**Least connections optimality:** If request processing times are exponentially distributed with rate $\mu$, least-connections routing approaches the optimal assignment from an M/M/c queue:
+
+$$E[\text{wait time}] = \frac{\lambda}{n\mu(\mu - \lambda/n)} \quad \text{(Erlang-C formula)}$$
+
+**Consistent hashing:** With $n$ real nodes and $v$ virtual nodes per server on a hash ring of size $2^{32}$:
+
+$$\text{expected keys per server} = \frac{2^{32}}{n}$$
+
+$$\text{keys remapped when adding one node} = \frac{1}{n+1} \cdot \text{total keys}$$
+
+vs naive modulo hashing where adding one node remaps $\frac{n}{n+1}$ of all keys — catastrophic for caches.
+
+**Capacity planning:** For $N$ application servers each handling $C$ requests per second:
+
+$$\text{total capacity} = N \times C$$
+
+With redundancy goal (survive $k$ server failures):
+
+$$\text{total capacity} = (N - k) \times C \implies N = \frac{\text{desired capacity}}{C} + k$$
+
+## Algorithm / Logic
+
+**Consistent hashing ring construction:**
+
+1. Place $n$ servers on a circular hash ring of $2^{32}$ positions by hashing each server's identifier.
+2. For each server, add $v$ virtual nodes (hash server's ID + replica index) to the ring for better distribution.
+3. To assign a key: hash the key, find the position on the ring, walk clockwise to the first server/virtual node.
+4. When adding a server: only keys between the new server's position and the previous server's position are remapped.
+5. When removing a server: its keys are reassigned to the next server clockwise.
+
+**Health check algorithm:**
+
+1. Every $T$ seconds, send a health probe to each backend server.
+2. If probe succeeds: mark server healthy (or keep in healthy pool).
+3. If probe fails $F$ consecutive times: mark server unhealthy, remove from rotation.
+4. If server recovers (passes $S$ consecutive checks): re-add to rotation.
+5. Alert on-call if healthy pool drops below $M$ servers.
+
+```
+ROUND_ROBIN(servers, request):
+  server = servers[current_index % len(servers)]
+  current_index += 1
+  return server
+
+LEAST_CONNECTIONS(servers, request):
+  return min(servers, key=lambda s: s.active_connections)
+
+CONSISTENT_HASH(ring, key):
+  hash_value = hash(key) % RING_SIZE
+  // Find the nearest server clockwise
+  for position in sorted(ring.keys()):
+    if position >= hash_value:
+      return ring[position]
+  return ring[min(ring.keys())]  // wrap around
+
+HEALTH_CHECK(server, fail_threshold, pass_threshold):
+  consecutive_failures = 0
+  consecutive_successes = 0
+  while True:
+    sleep(CHECK_INTERVAL)
+    if probe(server):
+      consecutive_failures = 0
+      consecutive_successes += 1
+      if consecutive_successes >= pass_threshold:
+        mark_healthy(server)
+    else:
+      consecutive_successes = 0
+      consecutive_failures += 1
+      if consecutive_failures >= fail_threshold:
+        mark_unhealthy(server)
+```
+
+## Programming Implementation
+
+**Python — load balancer algorithms:**
+
+```python
+import hashlib
+import random
+from typing import List, Optional
+from dataclasses import dataclass, field
+from collections import defaultdict
+import bisect
+
+
+@dataclass
+class Server:
+    host: str
+    port: int
+    weight: int = 1
+    active_connections: int = 0
+    healthy: bool = True
+    response_time_ms: float = 0.0
+
+    @property
+    def address(self) -> str:
+        return f"{self.host}:{self.port}"
+
+
+class RoundRobinBalancer:
+    """O(1) per request. Assumes all servers have equal capacity."""
+
+    def __init__(self, servers: List[Server]):
+        self.servers = servers
+        self._index = 0
+
+    def get_server(self) -> Optional[Server]:
+        healthy = [s for s in self.servers if s.healthy]
+        if not healthy:
+            return None
+        server = healthy[self._index % len(healthy)]
+        self._index += 1
+        return server
+
+
+class WeightedRoundRobinBalancer:
+    """O(total_weight) per request. Routes proportionally to server capacity."""
+
+    def __init__(self, servers: List[Server]):
+        self.servers = servers
+        self._expand_servers()
+
+    def _expand_servers(self) -> None:
+        self._pool = []
+        for server in self.servers:
+            self._pool.extend([server] * server.weight)
+        self._index = 0
+
+    def get_server(self) -> Optional[Server]:
+        healthy = [s for s in self._pool if s.healthy]
+        if not healthy:
+            return None
+        server = healthy[self._index % len(healthy)]
+        self._index += 1
+        return server
+
+
+class LeastConnectionsBalancer:
+    """O(n) per request. Best for variable request duration."""
+
+    def __init__(self, servers: List[Server]):
+        self.servers = servers
+
+    def get_server(self) -> Optional[Server]:
+        healthy = [s for s in self.servers if s.healthy]
+        if not healthy:
+            return None
+        return min(healthy, key=lambda s: s.active_connections)
+
+    def release(self, server: Server) -> None:
+        server.active_connections = max(0, server.active_connections - 1)
+
+
+class ConsistentHashBalancer:
+    """
+    O(log n) per request using binary search on sorted ring.
+    Keys consistently route to the same server.
+    Minimal remapping when servers are added/removed.
+    """
+
+    VIRTUAL_NODES = 150  # more = better distribution
+
+    def __init__(self, servers: List[Server]):
+        self._ring: dict = {}
+        self._sorted_keys: List[int] = []
+        for server in servers:
+            self.add_server(server)
+
+    def _hash(self, key: str) -> int:
+        return int(hashlib.md5(key.encode()).hexdigest(), 16) % (2**32)
+
+    def add_server(self, server: Server) -> None:
+        """Add a server with virtual nodes for better distribution."""
+        for i in range(self.VIRTUAL_NODES):
+            vnode_key = self._hash(f"{server.address}:vnode:{i}")
+            self._ring[vnode_key] = server
+            bisect.insort(self._sorted_keys, vnode_key)
+
+    def remove_server(self, server: Server) -> None:
+        """Remove a server and all its virtual nodes."""
+        for i in range(self.VIRTUAL_NODES):
+            vnode_key = self._hash(f"{server.address}:vnode:{i}")
+            del self._ring[vnode_key]
+            idx = bisect.bisect_left(self._sorted_keys, vnode_key)
+            self._sorted_keys.pop(idx)
+
+    def get_server(self, key: str) -> Optional[Server]:
+        """O(log n) — binary search to find the right server."""
+        if not self._ring:
+            return None
+        hash_val = self._hash(key)
+        idx = bisect.bisect(self._sorted_keys, hash_val)
+        if idx == len(self._sorted_keys):
+            idx = 0  # wrap around
+        server = self._ring[self._sorted_keys[idx]]
+        # Try next server if unhealthy (walk clockwise)
+        for _ in range(len(self._sorted_keys)):
+            if server.healthy:
+                return server
+            idx = (idx + 1) % len(self._sorted_keys)
+            server = self._ring[self._sorted_keys[idx]]
+        return None  # all servers unhealthy
+
+
+class HealthChecker:
+    """Continuously monitors server health and updates the pool."""
+
+    def __init__(self, servers: List[Server], fail_threshold: int = 3):
+        self.servers = servers
+        self.fail_threshold = fail_threshold
+        self._failures: dict = defaultdict(int)
+
+    def record_result(self, server: Server, success: bool) -> None:
+        if success:
+            self._failures[server.address] = 0
+            server.healthy = True
+        else:
+            self._failures[server.address] += 1
+            if self._failures[server.address] >= self.fail_threshold:
+                server.healthy = False
+                print(f"Server {server.address} marked UNHEALTHY")
+
+    def healthy_count(self) -> int:
+        return sum(1 for s in self.servers if s.healthy)
+
+
+# ── Example: Layer 7 routing by path ─────────────────────────────────────────
+
+class Layer7Router:
+    """Route requests to different server pools based on URL path."""
+
+    def __init__(self):
+        self.routes: dict = {}
+
+    def register_route(self, path_prefix: str, balancer) -> None:
+        self.routes[path_prefix] = balancer
+
+    def route(self, path: str) -> Optional[Server]:
+        # Match longest prefix
+        for prefix in sorted(self.routes.keys(), key=len, reverse=True):
+            if path.startswith(prefix):
+                return self.routes[prefix].get_server()
+        return None
+
+
+# Usage
+api_servers = [Server("10.0.0.1", 8080, weight=2), Server("10.0.0.2", 8080)]
+static_servers = [Server("10.0.1.1", 80), Server("10.0.1.2", 80)]
+router = Layer7Router()
+router.register_route("/api/", LeastConnectionsBalancer(api_servers))
+router.register_route("/static/", RoundRobinBalancer(static_servers))
+```
+
+**JavaScript/Nginx config — load balancing in practice:**
+
+```javascript
+// Node.js HTTP proxy with round-robin load balancing
+const http = require("http");
+const httpProxy = require("http-proxy");
+
+const servers = [
+  "http://10.0.0.1:8080",
+  "http://10.0.0.2:8080",
+  "http://10.0.0.3:8080",
+];
+let current = 0;
+
+const proxy = httpProxy.createProxyServer({});
+const server = http.createServer((req, res) => {
+  const target = servers[current % servers.length];
+  current++;
+  proxy.web(req, res, { target }, (err) => {
+    res.writeHead(502);
+    res.end("Bad Gateway");
+  });
+});
+server.listen(80);
+```
+
+```nginx
+# Nginx upstream configuration
+upstream api_servers {
+    least_conn;                          # least connections algorithm
+    server 10.0.0.1:8080 weight=3;      # this server gets 3x traffic
+    server 10.0.0.2:8080 weight=1;
+    server 10.0.0.3:8080 backup;        # only used when others are down
+
+    keepalive 32;                        # persistent connections to backends
+}
+
+upstream cache_servers {
+    hash $request_uri consistent;        # consistent hash by URL
+    server 10.0.1.1:6379;
+    server 10.0.1.2:6379;
+}
+
+server {
+    listen 443 ssl;
+    ssl_certificate /etc/ssl/cert.pem;
+    ssl_certificate_key /etc/ssl/key.pem;
+
+    location /api/ {
+        proxy_pass http://api_servers;
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+        health_check interval=5 fails=3 passes=2;
+    }
+
+    location /static/ {
+        root /var/www;
+        expires 1y;                      # aggressive caching for static assets
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+## System Design Perspective
+
+Load balancing architecture in a large system:
+
+```
+[Global DNS / GeoDNS]
+  — Resolves to nearest regional data center
+  — Anycast routing for global load distribution
+         ↓
+[CDN Edge Layer]
+  — Cloudflare / Akamai edge nodes
+  — Cache static content, terminate TLS
+         ↓
+[External Load Balancer (Layer 7)]
+  — AWS ALB / Nginx / Envoy
+  — SSL termination, routing by path/header
+  — WAF (Web Application Firewall) rules
+         ↓
+[Internal Load Balancer (Layer 4)]
+  — Fast TCP-level routing between microservices
+  — Service mesh (Envoy sidecar in Kubernetes)
+         ↓
+[Application Server Pool]
+  [Server 1] [Server 2] [Server 3] ... [Server N]
+  — Auto-scaling group (add/remove based on CPU/RPS)
+         ↓
+[Database Load Balancer / Proxy (PgBouncer)]
+  — Connection pooling
+  — Read/write splitting (primary vs replicas)
+```
+
+**Real company load balancing:**
+
+- **AWS ALB (Application Load Balancer):** Performs Layer 7 routing, health checks, sticky sessions, and weighted target groups (for canary deployments). Handles millions of requests per second per balancer.
+- **Cloudflare:** Routes 4.5 trillion DNS queries per day using anycast — every query reaches the nearest data center automatically. Their load balancers perform health checks every 60 seconds to 25,000+ IP addresses.
+- **Netflix:** Uses Zuul (open-sourced) as their API gateway and load balancer. Eureka handles service discovery. Ribbon does client-side load balancing within their microservices.
+- **Google's Maglev:** Google's custom load balancer handles over 1 million packets per second per core using consistent hashing with connection tracking. Maglev ensures the same TCP flow always goes to the same backend server.
+
+## Visual Content Suggestions
+
+- **Round-robin vs least-connections animation:** Requests being distributed to servers, showing connection counts.
+- **Consistent hash ring diagram:** Circle with servers and virtual nodes, showing a key being mapped clockwise to its server.
+- **Load balancer topology:** Multi-tier diagram (DNS → CDN → L7 LB → L4 LB → app servers → DB).
+- **Health check state machine:** Server states: healthy → degraded → unhealthy → recovering → healthy.
+- **Canary deployment traffic split:** 95% to stable, 5% to canary, gradually shifting.
+
+## Real-World Examples
+
+**Google's Maglev:** Google built a custom software load balancer that achieves line-rate packet processing using consistent hashing with flow tracking. Each packet in a TCP connection must reach the same backend server, but the balancer must be stateless (no per-connection state) to enable unlimited horizontal scaling of the balancers themselves. Maglev's consistent hashing achieves this by computing the same server assignment for all packets in the same flow.
+
+**Facebook's layer of load balancers:** Facebook uses a four-tier model: Anycast DNS routes to the nearest PoP, Edge LBs terminate TLS and do path routing, Cluster LBs distribute within a data center, and Server LBs handle the final hop. This hierarchy scales to billions of requests daily with sub-20ms routing overhead.
+
+**Stripe's zero-downtime deployments:** Stripe uses weighted routing on their load balancers to implement canary deployments. New code is deployed to 1% of servers, weighted routing sends 1% of traffic there, metrics are monitored, and if healthy, the weight shifts to 100% over ~30 minutes. If metrics degrade, weight is immediately shifted back to 0%.
+
+**Amazon Prime Day:** Amazon's auto-scaling groups use load balancer health checks to automatically add new EC2 instances when CPU or request rate exceeds thresholds. During Prime Day, thousands of instances are added and removed within minutes to match traffic patterns, entirely automatically.
+
+## Common Mistakes
+
+**Mistake 1: Using IP-hash (sticky sessions) with autoscaling.** When new servers are added or removed, IP-hash reassigns many clients to new servers, breaking their sessions. Use application-level session storage (Redis) instead of session stickiness, so any server can handle any request.
+
+**Mistake 2: Health check endpoint that does too much.** A health check endpoint that queries the database, checks external services, and runs business logic is slow and can fail for reasons unrelated to server health. Keep `/health` lightweight: check that the server process is running and can accept connections. Use separate `/readiness` (can handle traffic) and `/liveness` (process is alive) probes (Kubernetes pattern).
+
+**Mistake 3: Not accounting for connection draining on shutdown.** When a server is removed from the pool (deployment, scaling in), existing long-lived connections should complete before the server stops. Without connection draining, in-flight requests are abruptly terminated. AWS ALB and Nginx both support draining with configurable timeout (typically 30s).
+
+**Mistake 4: Single load balancer as a new single point of failure.** If your load balancer is a single instance, it becomes the new single point of failure you were trying to eliminate. Use managed load balancers (AWS ALB, GCP LB) that are inherently highly available, or deploy active-active pairs with VRRP/BGP failover.
+
+**Mistake 5: Ignoring the thundering herd on recovery.** When a load balancer marks a recovered server as healthy and adds it back to the pool, it can suddenly receive a surge of traffic from all the backed-up requests. Use gradual re-admission: start the server at 10% weight, monitor metrics, then gradually increase. Many LBs call this "slow start."
+
+## Interview Angle
+
+**Q: How does consistent hashing solve the problem of adding or removing cache servers?**
+
+A: With naive modulo hashing (`key % n`), adding or removing one server from a pool of $n$ changes the assignment for nearly all keys (since `key % n` ≠ `key % (n+1)` for most keys). This causes massive cache misses — all those misrouted keys hit the database simultaneously. Consistent hashing places both servers and keys on a circular hash ring. A key is assigned to the nearest server clockwise on the ring. When a server is added, only the keys between the new server and the previous clockwise server are remapped — approximately $1/(n+1)$ of all keys. When a server is removed, its keys go to the next server clockwise — again only $1/n$ of keys. This minimal disruption is critical for cache systems where a sudden mass cache miss (cache stampede) would overwhelm the database.
+
+**Q: You need to do a zero-downtime deployment of a new version of an API. How do you use the load balancer to achieve this?**
+
+A: Use weighted canary deployment. First, deploy the new version to a small subset of servers (say, 2 out of 20). Configure the load balancer to route 10% of traffic to new servers, 90% to old. Monitor error rate, latency, and business metrics for 10-15 minutes. If metrics are healthy, gradually shift: 25%, 50%, 75%, 100%. If metrics degrade at any point, shift all traffic back to old servers immediately (instant rollback). Modern tools: AWS ALB weighted target groups, Kubernetes ingress canary annotations, feature flags to route specific users. The key insight: the load balancer is the control plane for deployment risk management — it lets you roll forward or roll back without downtime, and without affecting all users simultaneously.
+
+## Summary
+
+- A load balancer distributes incoming requests across a pool of servers, enabling horizontal scaling and high availability.
+- **Layer 4** (TCP/IP) load balancers route by IP and port — fast but content-unaware. **Layer 7** (HTTP) load balancers route by URL, headers, cookies — smarter but higher overhead.
+- **Round-robin:** Simple, effective for stateless equal-capacity servers.
+- **Least connections:** Better when request processing times vary significantly.
+- **Consistent hashing:** Minimal key remapping when adding/removing nodes — critical for cache layers.
+- **Health checks** are the mechanism that makes systems self-healing: failed servers are automatically removed from rotation.
+- **Connection draining** ensures in-flight requests complete before a server is removed — essential for zero-downtime deployments.
+- Never rely on sticky sessions (IP hash) for application state — use distributed session storage (Redis) instead.
+- Managed load balancers (AWS ALB, GCP LB) are inherently highly available; self-managed LBs need active-active pairs.
+- Load balancers enable canary deployments, A/B testing, blue-green deployments, and gradual traffic shifting — powerful operational tools beyond just traffic distribution.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/caching", label: "Caching" }}
+  next={{ href: "/docs/cs-book/part-4-advanced/cap-theorem", label: "CAP Theorem" }}
+/>
