@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { SidebarClient } from "./SidebarClient";
+import { ReadingTime } from "@/app/components/ReadingTime";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,7 +13,10 @@ export default function BookLayout({ children }: LayoutProps) {
       <SidebarClient />
       <main className="flex-1 min-w-0 pt-14 md:pt-0">
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="prose">{children}</div>
+          <div className="prose">
+            <ReadingTime />
+            {children}
+          </div>
         </div>
       </main>
     </div>
