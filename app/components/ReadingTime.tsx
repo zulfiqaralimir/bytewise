@@ -1,21 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export function ReadingTime() {
+  const pathname = usePathname();
   const [stats, setStats] = useState<{ minutes: number; words: number } | null>(null);
 
   useEffect(() => {
-    // Read text from the prose article content
-    const prose = document.querySelector(".prose");
-    if (!prose) return;
+    // Double rAF ensures server-rendered children are fully in the DOM
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = document.getElementById("article-body");
+        if (!el) return;
 
-    const text = prose.textContent ?? "";
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
-    const minutes = Math.ceil(words / 200);
-
-    setStats({ minutes, words });
-  }, []);
+        const text = el.textContent ?? "";
+        const words = text.trim().split(/\s+/).filter(Boolean).length;
+        const minutes = Math.ceil(words / 200);
+        setStats({ minutes, words });
+      });
+    });
+  }, [pathname]); // re-run on every route change
 
   if (!stats) return null;
 

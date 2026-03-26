@@ -15,7 +15,7 @@ export default function BookLayout({ children }: LayoutProps) {
         <div className="max-w-4xl mx-auto px-6 py-12">
           <div className="prose">
             <ReadingTime />
-            {children}
+            <div id="article-body">{children}</div>
           </div>
         </div>
       </main>
