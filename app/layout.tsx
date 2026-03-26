@@ -15,6 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ByteWise — Programming Concepts from First Principles",
   description: "A comprehensive CS education book covering data structures, algorithms, system design, and modern engineering by Zulfiqar Ali Mir.",
+  openGraph: {
+    title: "ByteWise — Programming Concepts from First Principles",
+    description: "A comprehensive CS education book covering data structures, algorithms, system design, and modern engineering by Zulfiqar Ali Mir.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ByteWise — Programming Concepts from First Principles",
+    description: "A comprehensive CS education book covering data structures, algorithms, system design, and modern engineering by Zulfiqar Ali Mir.",
+  },
 };
 
 export default function RootLayout({
