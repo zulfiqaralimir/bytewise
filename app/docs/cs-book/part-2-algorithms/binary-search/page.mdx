@@ -389,6 +389,21 @@ A: Binary search on the answer space from 0 to $n$. For each candidate `mid`, ch
 - Iterative implementation is preferred over recursive to avoid $O(\log n)$ stack overhead.
 - Off-by-one errors cluster around `low <= high` vs `low < high` and `mid ± 1` updates — use the template that matches your predicate definition.
 
+## LeetCode Practice
+
+Drill the concepts from this chapter with these curated problems:
+
+| # | Problem | Difficulty | Pattern |
+|---|---------|------------|---------|
+| 704 | [Binary Search](https://leetcode.com/problems/binary-search/) | 🟢 Easy | The template — get the boundary conditions right here first |
+| 278 | [First Bad Version](https://leetcode.com/problems/first-bad-version/) | 🟢 Easy | Binary search on a predicate (first True in a False...True sequence) |
+| 35 | [Search Insert Position](https://leetcode.com/problems/search-insert-position/) | 🟢 Easy | Lower bound / `bisect_left` pattern |
+| 33 | [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/) | 🟡 Medium | Binary search on a non-uniformly sorted array |
+| 153 | [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) | 🟡 Medium | Identifying which half is sorted |
+| 875 | [Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) | 🟡 Medium | Binary search on the answer space — the key generalization |
+| 1011 | [Capacity to Ship Packages Within D Days](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/) | 🟡 Medium | "Find minimum X satisfying Y" pattern |
+| 4 | [Median of Two Sorted Arrays](https://leetcode.com/problems/median-of-two-sorted-arrays/) | 🔴 Hard | Binary search on partition index — O(log(min(m,n))) |
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-1-foundations/recursion", label: "Recursion" }}
   next={{ href: "/docs/cs-book/part-2-algorithms/sorting-algorithms", label: "Sorting Algorithms" }}

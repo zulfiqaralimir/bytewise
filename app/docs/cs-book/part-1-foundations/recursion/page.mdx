@@ -400,6 +400,21 @@ A: For a balanced binary tree traversal (inorder, preorder, postorder), time com
 - Recursion trades call stack space for code clarity — for deep trees or large $n$, convert to iterative with an explicit stack.
 - The trust principle: write the base case, trust that the recursive call returns the correct answer for a smaller input, and combine results. Do not mentally trace through all levels simultaneously.
 
+## LeetCode Practice
+
+Drill the concepts from this chapter with these curated problems:
+
+| # | Problem | Difficulty | Pattern |
+|---|---------|------------|---------|
+| 206 | [Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/) | 🟢 Easy | Recursive pointer reversal — great first recursive problem |
+| 509 | [Fibonacci Number](https://leetcode.com/problems/fibonacci-number/) | 🟢 Easy | Naive recursion → memoization → bottom-up DP |
+| 104 | [Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/) | 🟢 Easy | Classic tree recursion: return 1 + max(left, right) |
+| 46 | [Permutations](https://leetcode.com/problems/permutations/) | 🟡 Medium | Backtracking — build, recurse, undo |
+| 78 | [Subsets](https://leetcode.com/problems/subsets/) | 🟡 Medium | Include/exclude pattern — every leaf of the recursion tree is an answer |
+| 17 | [Letter Combinations of a Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number/) | 🟡 Medium | Backtracking over a decision tree |
+| 39 | [Combination Sum](https://leetcode.com/problems/combination-sum/) | 🟡 Medium | Backtracking with reuse — pruning by sorting |
+| 51 | [N-Queens](https://leetcode.com/problems/n-queens/) | 🔴 Hard | Backtracking with constraint propagation |
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-1-foundations/hash-tables", label: "Hash Tables" }}
   next={{ href: "/docs/cs-book/part-2-algorithms/binary-search", label: "Binary Search" }}

@@ -462,6 +462,21 @@ A: Use BFS from the source user. BFS naturally explores nodes in order of increa
 - Graphs power LinkedIn's friend recommendations, Google's crawler, npm's dependency resolution, and fraud detection at Amazon.
 - Grid problems (number of islands, maze solving, flood fill) are disguised graph traversal problems — treat each cell as a node and each adjacent cell as an edge.
 
+## LeetCode Practice
+
+Drill the concepts from this chapter with these curated problems:
+
+| # | Problem | Difficulty | Pattern |
+|---|---------|------------|---------|
+| 733 | [Flood Fill](https://leetcode.com/problems/flood-fill/) | 🟢 Easy | Grid DFS — the simplest graph traversal on a 2D array |
+| 200 | [Number of Islands](https://leetcode.com/problems/number-of-islands/) | 🟡 Medium | Connected components — BFS/DFS from every unvisited cell |
+| 994 | [Rotting Oranges](https://leetcode.com/problems/rotting-oranges/) | 🟡 Medium | Multi-source BFS — start the queue with all sources simultaneously |
+| 133 | [Clone Graph](https://leetcode.com/problems/clone-graph/) | 🟡 Medium | BFS/DFS with a visited hash map to handle cycles |
+| 207 | [Course Schedule](https://leetcode.com/problems/course-schedule/) | 🟡 Medium | Cycle detection in a directed graph (three-color DFS) |
+| 210 | [Course Schedule II](https://leetcode.com/problems/course-schedule-ii/) | 🟡 Medium | Topological sort via Kahn's algorithm |
+| 127 | [Word Ladder](https://leetcode.com/problems/word-ladder/) | 🔴 Hard | BFS on an implicit graph — shortest transformation sequence |
+| 332 | [Reconstruct Itinerary](https://leetcode.com/problems/reconstruct-itinerary/) | 🔴 Hard | Eulerian path via DFS with backtracking |
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-algorithms/sorting-algorithms", label: "Sorting Algorithms" }}
   next={{ href: "/docs/cs-book/part-2-algorithms/dynamic-programming", label: "Dynamic Programming" }}

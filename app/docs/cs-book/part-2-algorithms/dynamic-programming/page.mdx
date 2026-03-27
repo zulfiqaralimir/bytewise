@@ -440,6 +440,21 @@ A: Edit distance between strings `s1` and `s2` is the minimum number of single-c
 - DP appears in production systems: query planners, diff algorithms, translation models, delivery routing, content ranking.
 - The LCS length of two strings equals `len(s1) + len(s2) - 2 * lcs(s1, s2)` — also the minimum edit distance for insertions and deletions only.
 
+## LeetCode Practice
+
+Drill the concepts from this chapter with these curated problems:
+
+| # | Problem | Difficulty | Pattern |
+|---|---------|------------|---------|
+| 70 | [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/) | 🟢 Easy | 1D DP — Fibonacci in disguise, the canonical starter |
+| 746 | [Min Cost Climbing Stairs](https://leetcode.com/problems/min-cost-climbing-stairs/) | 🟢 Easy | 1D DP with cost — builds directly on #70 |
+| 198 | [House Robber](https://leetcode.com/problems/house-robber/) | 🟡 Medium | 1D DP with skip constraint: `dp[i] = max(dp[i-1], dp[i-2] + nums[i])` |
+| 322 | [Coin Change](https://leetcode.com/problems/coin-change/) | 🟡 Medium | Unbounded knapsack — the most important DP pattern to master |
+| 300 | [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/) | 🟡 Medium | Classic 1D DP, optimizable to O(n log n) with binary search |
+| 1143 | [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/) | 🟡 Medium | 2D DP grid — the foundation for diff algorithms and edit distance |
+| 139 | [Word Break](https://leetcode.com/problems/word-break/) | 🟡 Medium | 1D DP with string matching — great for practicing the five-step framework |
+| 72 | [Edit Distance](https://leetcode.com/problems/edit-distance/) | 🔴 Hard | 2D DP — insert/delete/replace recurrence, used in spell checkers and diff tools |
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-algorithms/graph-traversal", label: "Graph Traversal" }}
   next={{ href: "/docs/cs-book/part-3-system-design/apis-and-rest", label: "APIs and REST" }}

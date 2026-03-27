@@ -425,6 +425,20 @@ A: External merge sort. Divide the 1 billion entries into chunks that fit in mem
 - Use counting sort when elements are integers in a small, known range — it is often orders of magnitude faster.
 - Real-world systems (Spanner, MapReduce, PostgreSQL) all use merge sort variants for distributed and external sorting.
 
+## LeetCode Practice
+
+Drill the concepts from this chapter with these curated problems:
+
+| # | Problem | Difficulty | Pattern |
+|---|---------|------------|---------|
+| 88 | [Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/) | 🟢 Easy | The merge step from merge sort in isolation |
+| 75 | [Sort Colors](https://leetcode.com/problems/sort-colors/) | 🟡 Medium | Dutch National Flag — three-way partition (quicksort's core idea) |
+| 912 | [Sort an Array](https://leetcode.com/problems/sort-an-array/) | 🟡 Medium | Implement merge sort or heap sort from scratch |
+| 179 | [Largest Number](https://leetcode.com/problems/largest-number/) | 🟡 Medium | Custom comparator — the key insight behind stable sort ordering |
+| 56 | [Merge Intervals](https://leetcode.com/problems/merge-intervals/) | 🟡 Medium | Sort first, then scan — a classic two-step pattern |
+| 148 | [Sort List](https://leetcode.com/problems/sort-list/) | 🟡 Medium | Merge sort on a linked list — O(n log n) time, O(log n) space |
+| 315 | [Count of Smaller Numbers After Self](https://leetcode.com/problems/count-of-smaller-numbers-after-self/) | 🔴 Hard | Modified merge sort tracking inversions |
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-algorithms/binary-search", label: "Binary Search" }}
   next={{ href: "/docs/cs-book/part-2-algorithms/graph-traversal", label: "Graph Traversal" }}

@@ -389,6 +389,21 @@ A: As the load factor $\alpha = n/m$ increases, collision probability increases 
 - The classic interview patterns: two-sum, group anagrams, longest consecutive sequence — all reduce to $O(n)$ with hash maps.
 - When choosing between a hash map and a sorted structure: hash maps win on equality lookup; sorted structures win on range queries.
 
+## LeetCode Practice
+
+Drill the concepts from this chapter with these curated problems:
+
+| # | Problem | Difficulty | Pattern |
+|---|---------|------------|---------|
+| 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | 🟢 Easy | Classic hash map lookup — the "hello world" of hash table problems |
+| 217 | [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/) | 🟢 Easy | Set membership check in O(n) |
+| 242 | [Valid Anagram](https://leetcode.com/problems/valid-anagram/) | 🟢 Easy | Frequency counting with a hash map |
+| 49 | [Group Anagrams](https://leetcode.com/problems/group-anagrams/) | 🟡 Medium | Using sorted string as a hash key |
+| 347 | [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) | 🟡 Medium | Frequency map + heap or bucket sort |
+| 128 | [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/) | 🟡 Medium | O(n) via hash set — the key insight is skipping non-starts |
+| 560 | [Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/) | 🟡 Medium | Prefix sum stored in a hash map |
+| 146 | [LRU Cache](https://leetcode.com/problems/lru-cache/) | 🔴 Hard | Hash map + doubly linked list — the canonical O(1) cache design |
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-1-foundations/data-structures", label: "Data Structures" }}
   next={{ href: "/docs/cs-book/part-1-foundations/recursion", label: "Recursion" }}
