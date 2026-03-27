@@ -6,6 +6,12 @@ import { useState, useEffect } from "react";
 
 const chapters = [
   {
+    part: "Part 0 — How Computers Work",
+    items: [
+      { title: "Low-Level vs High-Level Programming", href: "/docs/cs-book/part-0-how-computers-work/low-high-level-programming" },
+    ],
+  },
+  {
     part: "Part 1 — Foundations",
     items: [
       { title: "Big O Notation", href: "/docs/cs-book/part-1-foundations/big-o-notation" },
@@ -137,12 +143,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/20 chapters</span>
+              <span>{readCount}/21 chapters</span>
             </div>
             <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 20) * 100}%` }}
+                style={{ width: `${(readCount / 21) * 100}%` }}
               />
             </div>
           </div>
