@@ -1,0 +1,446 @@
+export const metadata = {
+  title: "OOP Fundamentals — ByteWise CS Book",
+  description:
+    "Master Object-Oriented Programming: Encapsulation, Abstraction, Inheritance, Polymorphism, and Composition — the foundation of every design pattern.",
+  keywords: [
+    "OOP",
+    "object oriented programming",
+    "encapsulation",
+    "abstraction",
+    "inheritance",
+    "polymorphism",
+    "composition",
+    "design patterns",
+  ],
+  openGraph: {
+    title: "OOP Fundamentals — ByteWise CS Book",
+    description:
+      "The four pillars of OOP and Composition — the building blocks every design pattern is built upon.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# OOP Fundamentals
+
+## The Language Design Patterns Speak
+
+Every design pattern in this part of the book — Singleton, Factory, Observer, Strategy — is written in the language of Object-Oriented Programming. Before you can understand why a pattern works, you need to understand the vocabulary it uses.
+
+OOP is built on four pillars: **Encapsulation**, **Abstraction**, **Inheritance**, and **Polymorphism**. A fifth concept — **Composition** — is arguably more important than Inheritance in modern software design, despite not being one of the original four.
+
+Understanding these deeply is what separates engineers who copy patterns from engineers who invent them.
+
+---
+
+## Quick Reference
+
+| Concept | One-Line Definition | Real-World Analogy |
+|---------|--------------------|--------------------|
+| **Encapsulation** | Hide internal data, expose only what's needed | ATM hides its internal wiring |
+| **Abstraction** | Show only the interface, hide implementation | A car's steering wheel, not its steering rack |
+| **Inheritance** | A class reuses and extends another class | A sports car *is a* car |
+| **Polymorphism** | One interface, many implementations | A universal remote that controls any TV |
+| **Composition** | Build complex behavior by combining objects | A computer *has a* CPU, RAM, disk |
+
+---
+
+## The Four Pillars + Composition
+
+### 1. Encapsulation
+
+**Hiding internal state and requiring all interaction to go through a defined interface.**
+
+Encapsulation is not just about `private` keywords. It is about *controlling what changes together*. When you expose internal data directly, any code that reads it becomes coupled to the implementation. When the implementation changes, everything breaks.
+
+```python
+# BAD — exposing internal state directly
+class BankAccount:
+    def __init__(self):
+        self.balance = 0      # public — anyone can set account.balance = -999999
+
+account = BankAccount()
+account.balance = -999999    # no validation, no audit trail, no safety
+
+# GOOD — encapsulate with controlled access
+class BankAccount:
+    def __init__(self, owner: str):
+        self._owner = owner
+        self._balance = 0          # private by convention in Python
+        self._transactions = []
+
+    @property
+    def balance(self) -> float:
+        return self._balance       # read-only access
+
+    def deposit(self, amount: float) -> None:
+        if amount <= 0:
+            raise ValueError("Deposit must be positive")
+        self._balance += amount
+        self._transactions.append(("deposit", amount))
+
+    def withdraw(self, amount: float) -> None:
+        if amount > self._balance:
+            raise ValueError("Insufficient funds")
+        self._balance -= amount
+        self._transactions.append(("withdraw", amount))
+
+    def statement(self) -> list:
+        return list(self._transactions)   # return a copy, not the original
+
+account = BankAccount("Alice")
+account.deposit(500)
+account.withdraw(100)
+print(account.balance)       # 400 — read via property
+# account._balance = 999999  # possible but socially unacceptable in Python
+```
+
+```javascript
+// JavaScript — encapsulation with private class fields (#)
+class BankAccount {
+  #balance = 0;              // truly private — cannot be accessed outside
+  #transactions = [];
+
+  deposit(amount) {
+    if (amount <= 0) throw new Error("Deposit must be positive");
+    this.#balance += amount;
+    this.#transactions.push({ type: "deposit", amount });
+  }
+
+  withdraw(amount) {
+    if (amount > this.#balance) throw new Error("Insufficient funds");
+    this.#balance -= amount;
+    this.#transactions.push({ type: "withdraw", amount });
+  }
+
+  get balance() { return this.#balance; }          // read-only
+  get statement() { return [...this.#transactions]; } // copy, not reference
+}
+
+const acc = new BankAccount();
+acc.deposit(500);
+console.log(acc.balance);    // 500
+console.log(acc.#balance);   // SyntaxError — truly private
+```
+
+**Rule of thumb:** If you find yourself accessing `obj._something` or doing `obj.field = value` directly on another class's data, encapsulation is being violated.
+
+---
+
+### 2. Abstraction
+
+**Exposing only what is necessary, hiding implementation complexity behind a clean interface.**
+
+Abstraction and Encapsulation are related but different: Encapsulation is the *mechanism* (hiding data). Abstraction is the *goal* (simplifying the interface). An abstract class or interface defines *what* an object can do without specifying *how*.
+
+```python
+from abc import ABC, abstractmethod
+
+# Abstract class — defines the contract, not the implementation
+class Shape(ABC):
+    @abstractmethod
+    def area(self) -> float: pass
+
+    @abstractmethod
+    def perimeter(self) -> float: pass
+
+    def describe(self) -> str:           # concrete method using abstractions
+        return f"Area: {self.area():.2f}, Perimeter: {self.perimeter():.2f}"
+
+class Circle(Shape):
+    def __init__(self, radius: float):
+        self.radius = radius
+
+    def area(self) -> float:
+        import math
+        return math.pi * self.radius ** 2
+
+    def perimeter(self) -> float:
+        import math
+        return 2 * math.pi * self.radius
+
+class Rectangle(Shape):
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
+    def area(self) -> float:
+        return self.width * self.height
+
+    def perimeter(self) -> float:
+        return 2 * (self.width + self.height)
+
+# Client only needs to know about Shape — not Circle or Rectangle
+def print_shape_info(shape: Shape) -> None:
+    print(shape.describe())
+
+shapes = [Circle(5), Rectangle(4, 6)]
+for shape in shapes:
+    print_shape_info(shape)   # works for any Shape implementation
+```
+
+**Abstraction in interfaces (TypeScript):**
+
+```typescript
+// Interface = pure abstraction — no implementation, only contract
+interface PaymentGateway {
+  charge(amount: number, currency: string): Promise<boolean>;
+  refund(transactionId: string): Promise<boolean>;
+}
+
+class StripeGateway implements PaymentGateway {
+  async charge(amount: number, currency: string): Promise<boolean> {
+    console.log(`Stripe: charging ${amount} ${currency}`);
+    return true;
+  }
+  async refund(transactionId: string): Promise<boolean> {
+    console.log(`Stripe: refunding ${transactionId}`);
+    return true;
+  }
+}
+
+// Any PaymentGateway works here — caller is abstracted from implementation
+async function processPayment(gateway: PaymentGateway, amount: number) {
+  const success = await gateway.charge(amount, "USD");
+  if (!success) throw new Error("Payment failed");
+}
+```
+
+---
+
+### 3. Inheritance
+
+**A class (child) acquires the properties and behaviors of another class (parent), extending or overriding them.**
+
+Inheritance models **is-a** relationships. A `Dog` *is an* `Animal`. A `SavingsAccount` *is a* `BankAccount`. Inheritance reuses code and enables polymorphism.
+
+```python
+class Vehicle:
+    def __init__(self, make: str, model: str, year: int):
+        self.make = make
+        self.model = model
+        self.year = year
+
+    def start(self) -> str:
+        return f"{self.make} {self.model} engine started"
+
+    def fuel_type(self) -> str:
+        return "gasoline"
+
+    def __str__(self) -> str:
+        return f"{self.year} {self.make} {self.model}"
+
+class ElectricVehicle(Vehicle):
+    def __init__(self, make: str, model: str, year: int, battery_kwh: float):
+        super().__init__(make, model, year)    # call parent constructor
+        self.battery_kwh = battery_kwh
+
+    def fuel_type(self) -> str:               # override parent method
+        return "electric"
+
+    def charge_time(self) -> str:
+        hours = self.battery_kwh / 50          # assume 50kWh/hr charger
+        return f"{hours:.1f} hours to full charge"
+
+class HybridVehicle(Vehicle):
+    def fuel_type(self) -> str:
+        return "hybrid (gas + electric)"
+
+tesla = ElectricVehicle("Tesla", "Model 3", 2024, 82)
+print(tesla.start())          # inherited — Tesla Model 3 engine started
+print(tesla.fuel_type())      # overridden — electric
+print(tesla.charge_time())    # new method — 1.6 hours to full charge
+```
+
+**When NOT to use inheritance:** Inheritance for code reuse (not "is-a" relationships) creates fragile hierarchies. `Stack` should not inherit from `List` just to reuse list methods — that would expose `insert`, `remove`, and other list operations that should not be available on a stack. Use **composition** instead.
+
+---
+
+### 4. Polymorphism
+
+**The ability of different objects to respond to the same interface in their own way.**
+
+Polymorphism means *many forms*. Write code against an abstract type; at runtime, the correct implementation is called automatically — without any `if isinstance(obj, X)` checks.
+
+```python
+from abc import ABC, abstractmethod
+from typing import List
+
+class Animal(ABC):
+    def __init__(self, name: str):
+        self.name = name
+
+    @abstractmethod
+    def speak(self) -> str: pass
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self.name})"
+
+class Dog(Animal):
+    def speak(self) -> str: return "Woof!"
+
+class Cat(Animal):
+    def speak(self) -> str: return "Meow!"
+
+class Duck(Animal):
+    def speak(self) -> str: return "Quack!"
+
+# Polymorphic function — works for any Animal without knowing its type
+def make_noise(animals: List[Animal]) -> None:
+    for animal in animals:
+        print(f"{animal}: {animal.speak()}")
+
+zoo = [Dog("Rex"), Cat("Whiskers"), Duck("Donald"), Dog("Buddy")]
+make_noise(zoo)
+# Dog(Rex): Woof!
+# Cat(Whiskers): Meow!
+# Duck(Donald): Quack!
+# Dog(Buddy): Woof!
+```
+
+**Duck typing in Python** — polymorphism without inheritance:
+
+```python
+# Python's duck typing: "If it walks like a duck and quacks like a duck..."
+# No shared base class needed — just implement the same method
+
+class Robot:
+    def speak(self) -> str: return "Beep boop!"
+
+class Parrot:
+    def speak(self) -> str: return "Pieces of eight!"
+
+# Works with Dog, Cat, Duck, Robot, Parrot — any object with .speak()
+def make_noise(things) -> None:
+    for thing in things:
+        print(thing.speak())
+
+make_noise([Robot(), Parrot(), Dog("Rex")])
+```
+
+---
+
+### 5. Composition over Inheritance
+
+**Build complex behavior by combining simpler objects rather than extending class hierarchies.**
+
+This is the most important principle in modern OOP — so important that the Gang of Four stated it explicitly: *"Favor object composition over class inheritance."*
+
+**The problem with deep inheritance:**
+
+```python
+# FRAGILE inheritance hierarchy
+class Animal: pass
+class FlyingAnimal(Animal): pass
+class SwimmingAnimal(Animal): pass
+class FlyingSwimmingAnimal(FlyingAnimal, SwimmingAnimal): pass  # multiple inheritance mess
+
+# What about a running, swimming, non-flying animal?
+# A running, flying, non-swimming animal?
+# The hierarchy explodes with every new combination.
+```
+
+**Composition solution — combine behaviors:**
+
+```python
+from abc import ABC, abstractmethod
+
+# Behaviors as separate classes (or interfaces)
+class FlyBehavior(ABC):
+    @abstractmethod
+    def fly(self) -> str: pass
+
+class SwimBehavior(ABC):
+    @abstractmethod
+    def swim(self) -> str: pass
+
+class CanFly(FlyBehavior):
+    def fly(self) -> str: return "flaps wings and soars"
+
+class CannotFly(FlyBehavior):
+    def fly(self) -> str: return "cannot fly"
+
+class CanSwim(SwimBehavior):
+    def swim(self) -> str: return "paddles through water"
+
+class CannotSwim(SwimBehavior):
+    def swim(self) -> str: return "cannot swim"
+
+# Animal composes behaviors — any combination without hierarchy explosion
+class Animal:
+    def __init__(self, name: str, fly: FlyBehavior, swim: SwimBehavior):
+        self.name = name
+        self._fly = fly
+        self._swim = swim
+
+    def fly(self) -> str:  return f"{self.name} {self._fly.fly()}"
+    def swim(self) -> str: return f"{self.name} {self._swim.swim()}"
+
+duck    = Animal("Duck",    CanFly(),    CanSwim())
+penguin = Animal("Penguin", CannotFly(), CanSwim())
+eagle   = Animal("Eagle",   CanFly(),    CannotSwim())
+
+print(duck.fly())       # Duck flaps wings and soars
+print(penguin.fly())    # Penguin cannot fly
+print(penguin.swim())   # Penguin paddles through water
+```
+
+**The rule:** Use inheritance when there is a genuine **is-a** relationship and the child truly extends the parent without breaking it (LSP). Use composition when you want to **reuse behavior** across classes that do not share a true is-a relationship.
+
+---
+
+## OOP vs Functional Programming
+
+| Concept | OOP | Functional |
+|---------|-----|------------|
+| Core unit | Objects with state | Pure functions, immutable data |
+| State | Mutable, encapsulated | Immutable, explicit |
+| Code reuse | Inheritance, Composition | Higher-order functions, Composition |
+| Side effects | Encapsulated in objects | Avoided, pushed to edges |
+| Languages | Python, Java, C++, C# | Haskell, Clojure, Erlang |
+| Both | Python, JavaScript, Scala, Rust | |
+
+Modern languages are multi-paradigm. Python functions are first-class objects. JavaScript classes are syntactic sugar over prototypal inheritance. The best engineers combine both approaches — OOP for modeling domain entities, functional style for data transformation pipelines.
+
+---
+
+## How OOP Enables Design Patterns
+
+Every design pattern relies on one or more OOP pillars:
+
+| Pattern Category | OOP Pillar Used |
+|-----------------|-----------------|
+| Creational (Factory, Builder) | Abstraction — depend on interfaces, not concrete classes |
+| Structural (Adapter, Decorator) | Composition — wrap objects to add or convert behavior |
+| Behavioral (Observer, Strategy) | Polymorphism — many implementations of one interface |
+| All patterns | Encapsulation — hide implementation details |
+
+Understanding OOP deeply makes design patterns obvious rather than memorized.
+
+---
+
+## Common Mistakes
+
+**Overusing inheritance.** Deep inheritance hierarchies (5+ levels) are hard to understand and fragile. When a parent class changes, all children may break. Prefer shallow hierarchies and composition.
+
+**Getters/setters for every field.** Auto-generating `get_x()` and `set_x()` for every field is not encapsulation — it is making every field publicly writable with extra steps. Only expose what clients genuinely need.
+
+**Abstract classes with too much concrete logic.** An abstract class that does too much work locks subclasses into implementation details. Keep abstract classes thin — define the contract, not the implementation.
+
+**Confusing `is-a` with `has-a`.** A `Logger` is not a `List` just because it stores log entries. A `Car` is not an `Engine` just because it uses one. When in doubt: if you would never say "X is a Y" in natural English, use composition.
+
+---
+
+## Summary
+
+- **Encapsulation:** Hide internal state. Expose behavior through methods. Prevents invalid state and reduces coupling.
+- **Abstraction:** Define interfaces (what), hide implementations (how). Clients depend on contracts, not details.
+- **Inheritance:** Model `is-a` relationships. Reuse and extend parent behavior. Keep hierarchies shallow.
+- **Polymorphism:** One interface, many implementations. Eliminates `isinstance` conditionals — let the runtime dispatch.
+- **Composition over Inheritance:** Build complex objects by combining simpler ones. More flexible than deep hierarchies.
+- Every design pattern is built on these five concepts — understanding them makes patterns obvious.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/solid-principles", label: "SOLID Principles" }}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/creational-patterns", label: "Creational Patterns" }}
+/>

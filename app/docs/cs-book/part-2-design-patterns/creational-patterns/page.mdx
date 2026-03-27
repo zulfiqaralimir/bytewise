@@ -30,6 +30,18 @@ Creational patterns are design solutions to the question: **how should objects c
 
 The Gang of Four (Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides) catalogued five creational patterns in their 1994 book *Design Patterns*. Each solves a different creation problem.
 
+## Quick Reference
+
+| # | Pattern | Real-World Analogy | Used In |
+|---|---------|-------------------|---------|
+| 1 | **Singleton** | One president of a country | DB connection pool, Logger, Config |
+| 2 | **Factory** | Car manufacturing plant | Django ORM, React `createElement` |
+| 3 | **Abstract Factory** | Furniture store (full sets) | UI theme kits, cross-platform drivers |
+| 4 | **Builder** | Building a custom burger | SQL query builders, HTTP clients |
+| 5 | **Prototype** | Cloning a sheep | `Object.assign()`, Redux state, templates |
+
+---
+
 ## The Five Creational Patterns
 
 ### 1. Singleton
@@ -441,6 +453,6 @@ print(invoice_2.title)   # Invoice #1002
 - All five patterns decouple the *use* of objects from their *creation* — the core benefit of creational patterns.
 
 <ArticleNav
-  prev={{ href: "/docs/cs-book/part-2-design-patterns/solid-principles", label: "SOLID Principles" }}
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/oop-fundamentals", label: "OOP Fundamentals" }}
   next={{ href: "/docs/cs-book/part-2-design-patterns/structural-patterns", label: "Structural Patterns" }}
 />

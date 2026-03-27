@@ -29,6 +29,18 @@ If creational patterns are about *birth* — how objects come into existence —
 
 The challenge structural patterns address is this: as systems grow, the number of interdependencies between components grows even faster. Without deliberate structure, you end up with a tightly coupled web where changing one thing breaks ten others. Structural patterns give you principled ways to connect components — adapters that make incompatible things compatible, proxies that add behavior transparently, facades that hide complexity behind a clean surface.
 
+## Quick Reference
+
+| # | Pattern | Real-World Analogy | Used In |
+|---|---------|-------------------|---------|
+| 1 | **Adapter** | Power plug converter | API wrappers, legacy integrations |
+| 2 | **Decorator** | Adding toppings to pizza | Python `@decorators`, Express middleware |
+| 3 | **Proxy** | Bodyguard for a celebrity | Nginx, Redis cache, lazy loading |
+| 4 | **Facade** | Hotel concierge | AWS SDK, jQuery, Django `render()` |
+| 5 | **Composite** | File system (files & folders) | React component tree, DOM, JSON |
+
+---
+
 ## The Five Structural Patterns
 
 ### 1. Adapter
