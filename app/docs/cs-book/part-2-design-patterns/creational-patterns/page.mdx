@@ -1,0 +1,446 @@
+export const metadata = {
+  title: "Creational Design Patterns — ByteWise CS Book",
+  description:
+    "Master creational design patterns: Singleton, Factory Method, Abstract Factory, Builder, and Prototype — with Python and JavaScript implementations.",
+  keywords: [
+    "creational patterns",
+    "singleton pattern",
+    "factory pattern",
+    "builder pattern",
+    "prototype pattern",
+    "design patterns",
+    "low level design",
+  ],
+  openGraph: {
+    title: "Creational Design Patterns — ByteWise CS Book",
+    description:
+      "Singleton, Factory, Builder, Prototype — the five patterns that control how objects are created.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Creational Patterns
+
+## The Problem of Birth
+
+Every object in your program must be created. At first glance this seems trivial — just call `new` or the constructor. But object creation is one of the most consequential decisions in a codebase. The moment you write `db = MySQLDatabase()` inside a class, you have hardwired a dependency. The moment you scatter `new EmailService()` calls across 50 files, you have made it nearly impossible to switch to a different email provider.
+
+Creational patterns are design solutions to the question: **how should objects come into existence?** They decouple the code that *uses* an object from the code that *creates* it — making systems easier to test, extend, and reconfigure.
+
+The Gang of Four (Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides) catalogued five creational patterns in their 1994 book *Design Patterns*. Each solves a different creation problem.
+
+## The Five Creational Patterns
+
+### 1. Singleton
+
+**Intent:** Ensure a class has only one instance and provide a global access point to it.
+
+**When to use:** For resources that should exist exactly once — a configuration manager, a connection pool, a logger, a cache.
+
+**The problem it solves:** Without Singleton, every call to `DatabasePool()` creates a new pool, opening new connections and wasting resources. You want exactly one pool shared across the application.
+
+```python
+import threading
+
+class DatabasePool:
+    """
+    Thread-safe Singleton using double-checked locking.
+    Only one pool instance ever exists in the application.
+    """
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:                    # thread-safe creation
+                if cls._instance is None:      # double-check after acquiring lock
+                    cls._instance = super().__new__(cls)
+                    cls._instance._connections = []
+                    cls._instance._init_pool()
+        return cls._instance
+
+    def _init_pool(self):
+        print("Initializing connection pool (runs once)")
+        self._connections = [f"conn_{i}" for i in range(10)]
+
+    def get_connection(self) -> str:
+        return self._connections.pop() if self._connections else None
+
+# Both variables point to the exact same object
+pool_a = DatabasePool()
+pool_b = DatabasePool()
+print(pool_a is pool_b)   # True — same instance
+```
+
+```javascript
+// JavaScript Singleton using module pattern
+// ES modules are singletons by default — the most idiomatic JS approach
+class Config {
+  constructor() {
+    if (Config._instance) return Config._instance;
+    this.settings = { theme: "dark", lang: "en" };
+    Config._instance = this;
+  }
+
+  get(key) { return this.settings[key]; }
+  set(key, value) { this.settings[key] = value; }
+}
+
+const config1 = new Config();
+const config2 = new Config();
+console.log(config1 === config2);   // true
+```
+
+**Warning:** Singleton is the most overused and abused pattern. It introduces global state, makes testing hard (the singleton persists between tests), and creates hidden coupling. Use it sparingly — only when a single shared instance is a genuine requirement.
+
+---
+
+### 2. Factory Method
+
+**Intent:** Define an interface for creating an object, but let subclasses decide which class to instantiate.
+
+**When to use:** When you don't know ahead of time which exact class you need to create, or when subclasses should control what gets created.
+
+```python
+from abc import ABC, abstractmethod
+
+class Notification(ABC):
+    @abstractmethod
+    def send(self, message: str) -> None: pass
+
+class EmailNotification(Notification):
+    def send(self, message: str) -> None:
+        print(f"Email: {message}")
+
+class SMSNotification(Notification):
+    def send(self, message: str) -> None:
+        print(f"SMS: {message}")
+
+class PushNotification(Notification):
+    def send(self, message: str) -> None:
+        print(f"Push: {message}")
+
+# Factory Method — subclasses decide which Notification to create
+class NotificationFactory(ABC):
+    @abstractmethod
+    def create_notification(self) -> Notification:
+        pass
+
+    def notify(self, message: str) -> None:
+        notification = self.create_notification()  # factory method
+        notification.send(message)
+
+class EmailFactory(NotificationFactory):
+    def create_notification(self) -> Notification:
+        return EmailNotification()
+
+class SMSFactory(NotificationFactory):
+    def create_notification(self) -> Notification:
+        return SMSNotification()
+
+# Client code works with any factory — no knowledge of concrete classes
+def alert_user(factory: NotificationFactory, message: str):
+    factory.notify(message)
+
+alert_user(EmailFactory(), "Your order shipped!")
+alert_user(SMSFactory(), "Your order shipped!")
+```
+
+**Simple Factory (not GoF, but widely used):**
+
+```python
+# A simpler version — a static factory function
+def create_notification(channel: str) -> Notification:
+    channels = {
+        "email": EmailNotification,
+        "sms": SMSNotification,
+        "push": PushNotification,
+    }
+    cls = channels.get(channel)
+    if not cls:
+        raise ValueError(f"Unknown channel: {channel}")
+    return cls()
+
+notif = create_notification("email")
+notif.send("Hello!")
+```
+
+---
+
+### 3. Abstract Factory
+
+**Intent:** Provide an interface for creating families of related objects without specifying their concrete classes.
+
+**When to use:** When you need to create groups of related objects that must be used together — UI components for different operating systems, database drivers for different vendors.
+
+```python
+# Abstract Factory — create families of related UI components
+class Button(ABC):
+    @abstractmethod
+    def render(self) -> str: pass
+
+class Checkbox(ABC):
+    @abstractmethod
+    def render(self) -> str: pass
+
+# Concrete family 1 — macOS
+class MacButton(Button):
+    def render(self) -> str: return "macOS Button"
+
+class MacCheckbox(Checkbox):
+    def render(self) -> str: return "macOS Checkbox"
+
+# Concrete family 2 — Windows
+class WindowsButton(Button):
+    def render(self) -> str: return "Windows Button"
+
+class WindowsCheckbox(Checkbox):
+    def render(self) -> str: return "Windows Checkbox"
+
+# Abstract Factory
+class UIFactory(ABC):
+    @abstractmethod
+    def create_button(self) -> Button: pass
+
+    @abstractmethod
+    def create_checkbox(self) -> Checkbox: pass
+
+class MacFactory(UIFactory):
+    def create_button(self) -> Button: return MacButton()
+    def create_checkbox(self) -> Checkbox: return MacCheckbox()
+
+class WindowsFactory(UIFactory):
+    def create_button(self) -> Button: return WindowsButton()
+    def create_checkbox(self) -> Checkbox: return WindowsCheckbox()
+
+# Application uses factory — never mentions Mac or Windows directly
+class Application:
+    def __init__(self, factory: UIFactory):
+        self.button = factory.create_button()
+        self.checkbox = factory.create_checkbox()
+
+    def render(self):
+        print(self.button.render())
+        print(self.checkbox.render())
+
+import platform
+factory = MacFactory() if platform.system() == "Darwin" else WindowsFactory()
+app = Application(factory)
+app.render()
+```
+
+**Factory Method vs Abstract Factory:**
+- Factory Method creates **one** product via subclassing
+- Abstract Factory creates **families** of related products via composition
+
+---
+
+### 4. Builder
+
+**Intent:** Separate the construction of a complex object from its representation, allowing the same construction process to create different representations.
+
+**When to use:** When constructing an object requires many steps, many optional parameters, or when the same construction logic should produce different results.
+
+```python
+from dataclasses import dataclass, field
+from typing import List, Optional
+
+@dataclass
+class QueryConfig:
+    table: str
+    columns: List[str]
+    conditions: List[str]
+    order_by: Optional[str]
+    limit: Optional[int]
+    offset: int
+
+class QueryBuilder:
+    """
+    Builder for SQL queries — avoids a constructor with 10 parameters.
+    Method chaining (fluent interface) makes construction readable.
+    """
+
+    def __init__(self, table: str):
+        self._table = table
+        self._columns: List[str] = ["*"]
+        self._conditions: List[str] = []
+        self._order_by: Optional[str] = None
+        self._limit: Optional[int] = None
+        self._offset: int = 0
+
+    def select(self, *columns: str) -> "QueryBuilder":
+        self._columns = list(columns)
+        return self          # return self enables method chaining
+
+    def where(self, condition: str) -> "QueryBuilder":
+        self._conditions.append(condition)
+        return self
+
+    def order_by(self, column: str) -> "QueryBuilder":
+        self._order_by = column
+        return self
+
+    def limit(self, n: int) -> "QueryBuilder":
+        self._limit = n
+        return self
+
+    def offset(self, n: int) -> "QueryBuilder":
+        self._offset = n
+        return self
+
+    def build(self) -> str:
+        query = f"SELECT {', '.join(self._columns)} FROM {self._table}"
+        if self._conditions:
+            query += f" WHERE {' AND '.join(self._conditions)}"
+        if self._order_by:
+            query += f" ORDER BY {self._order_by}"
+        if self._limit:
+            query += f" LIMIT {self._limit}"
+        if self._offset:
+            query += f" OFFSET {self._offset}"
+        return query
+
+# Fluent interface — reads like English
+query = (
+    QueryBuilder("users")
+    .select("id", "email", "name")
+    .where("active = true")
+    .where("age > 18")
+    .order_by("created_at DESC")
+    .limit(20)
+    .offset(40)
+    .build()
+)
+print(query)
+# SELECT id, email, name FROM users WHERE active = true AND age > 18
+# ORDER BY created_at DESC LIMIT 20 OFFSET 40
+```
+
+```javascript
+// Builder in JavaScript — HTTP request builder
+class RequestBuilder {
+  constructor(url) {
+    this.url = url;
+    this.method = "GET";
+    this.headers = {};
+    this.body = null;
+    this.timeout = 30_000;
+  }
+
+  post()                  { this.method = "POST"; return this; }
+  put()                   { this.method = "PUT"; return this; }
+  header(key, value)      { this.headers[key] = value; return this; }
+  json(data)              { this.body = JSON.stringify(data); return this.header("Content-Type", "application/json"); }
+  withTimeout(ms)         { this.timeout = ms; return this; }
+
+  async send() {
+    return fetch(this.url, {
+      method: this.method,
+      headers: this.headers,
+      body: this.body,
+      signal: AbortSignal.timeout(this.timeout),
+    });
+  }
+}
+
+const response = await new RequestBuilder("https://api.example.com/users")
+  .post()
+  .header("Authorization", "Bearer token123")
+  .json({ name: "Alice", email: "alice@example.com" })
+  .withTimeout(5_000)
+  .send();
+```
+
+---
+
+### 5. Prototype
+
+**Intent:** Create new objects by copying an existing object (the prototype).
+
+**When to use:** When object creation is expensive (complex initialization, database lookups) and you need many similar objects. Clone the template instead of reconstructing from scratch.
+
+```python
+import copy
+from typing import Dict, Any
+
+class DocumentTemplate:
+    """
+    Prototype — clone pre-configured templates instead of rebuilding them.
+    Useful for reports, emails, or any object with expensive setup.
+    """
+
+    def __init__(self, title: str, styles: Dict, metadata: Dict):
+        self.title = title
+        self.styles = styles        # could be complex nested config
+        self.metadata = metadata
+        self.content = ""
+
+    def clone(self) -> "DocumentTemplate":
+        """Deep copy — all nested objects are also cloned."""
+        return copy.deepcopy(self)
+
+    def set_content(self, content: str) -> "DocumentTemplate":
+        self.content = content
+        return self
+
+# Create templates once (expensive setup)
+invoice_template = DocumentTemplate(
+    title="Invoice",
+    styles={"font": "Arial", "color": "#000", "margins": [20, 20, 20, 20]},
+    metadata={"version": "1.0", "author": "system"},
+)
+
+# Clone for each new invoice — fast, cheap
+invoice_1 = invoice_template.clone()
+invoice_1.title = "Invoice #1001"
+invoice_1.content = "Amount due: $500"
+
+invoice_2 = invoice_template.clone()
+invoice_2.title = "Invoice #1002"
+invoice_2.content = "Amount due: $750"
+
+# Each is independent — modifying one does not affect others
+print(invoice_1.title)   # Invoice #1001
+print(invoice_2.title)   # Invoice #1002
+```
+
+## Pattern Comparison
+
+| Pattern | Problem Solved | Key Mechanism |
+|---------|---------------|---------------|
+| Singleton | Only one instance needed | Private constructor + static instance |
+| Factory Method | Which class to instantiate varies | Subclass overrides creation method |
+| Abstract Factory | Families of related objects | Factory of factories |
+| Builder | Complex multi-step construction | Step-by-step methods, `build()` at end |
+| Prototype | Expensive creation, many similar objects | Clone an existing instance |
+
+## Real-World Examples
+
+- **Singleton:** Python's `logging.getLogger(name)` returns the same logger for the same name — a registry of singletons. Django's database connection pool is a singleton per process.
+- **Factory Method:** Django's `Model.objects.create()` is a factory method. React's `createElement` is a factory for component instances.
+- **Abstract Factory:** Java's `DocumentBuilderFactory` creates platform-appropriate XML parsers. CSS-in-JS libraries create theme-appropriate components.
+- **Builder:** Python's `urllib.parse.urlparse` builds URL objects. SQL query builders (SQLAlchemy, Knex.js) are classic builders.
+- **Prototype:** JavaScript's prototypal inheritance (`Object.create(proto)`) is the language-level prototype pattern. Redis's `OBJECT ENCODING` clones template configurations for similar key types.
+
+## Common Mistakes
+
+**Singleton overuse.** Singletons are global state. They make unit testing hard (state persists between tests), introduce hidden coupling (any code can access any singleton), and create concurrency issues. Consider dependency injection as an alternative — pass the shared instance rather than accessing it globally.
+
+**Forgetting deep copy in Prototype.** If your `clone()` method does a shallow copy and the object has nested mutable attributes, all clones will share the same nested objects. Changes to one affect all. Always use `copy.deepcopy()` in Python or structure your clone to recursively copy all mutable state.
+
+**Builder without validation.** A builder that lets you call `build()` with missing required fields produces invalid objects silently. Add validation in `build()`: raise an error if required fields are missing before constructing the object.
+
+## Summary
+
+- **Singleton:** One instance, global access point. Use for shared resources; avoid for application logic.
+- **Factory Method:** Delegate object creation to subclasses. Decouples client code from concrete classes.
+- **Abstract Factory:** Create families of related objects. Ensures objects from the same family are used together.
+- **Builder:** Construct complex objects step by step with a fluent interface. Eliminates telescoping constructors.
+- **Prototype:** Clone existing objects instead of constructing from scratch. Efficient when creation is expensive.
+- All five patterns decouple the *use* of objects from their *creation* — the core benefit of creational patterns.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/solid-principles", label: "SOLID Principles" }}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/structural-patterns", label: "Structural Patterns" }}
+/>

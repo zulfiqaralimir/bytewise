@@ -1,0 +1,462 @@
+export const metadata = {
+  title: "Structural Design Patterns — ByteWise CS Book",
+  description:
+    "Master structural design patterns: Adapter, Decorator, Proxy, Facade, and Composite — how to compose objects and classes into larger structures.",
+  keywords: [
+    "structural patterns",
+    "adapter pattern",
+    "decorator pattern",
+    "proxy pattern",
+    "facade pattern",
+    "composite pattern",
+    "design patterns",
+    "low level design",
+  ],
+  openGraph: {
+    title: "Structural Design Patterns — ByteWise CS Book",
+    description:
+      "Adapter, Decorator, Proxy, Facade, Composite — the five patterns that define how objects and classes fit together.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Structural Patterns
+
+## The Architecture of Relationships
+
+If creational patterns are about *birth* — how objects come into existence — structural patterns are about *relationships* — how objects fit and work together. They define the composition of classes and objects to form larger, more capable structures.
+
+The challenge structural patterns address is this: as systems grow, the number of interdependencies between components grows even faster. Without deliberate structure, you end up with a tightly coupled web where changing one thing breaks ten others. Structural patterns give you principled ways to connect components — adapters that make incompatible things compatible, proxies that add behavior transparently, facades that hide complexity behind a clean surface.
+
+## The Five Structural Patterns
+
+### 1. Adapter
+
+**Intent:** Convert the interface of a class into another interface that clients expect. Allows classes to work together that otherwise could not because of incompatible interfaces.
+
+**Analogy:** A power adapter lets a US plug work in a European socket. The underlying electricity is the same; the adapter bridges the incompatible interfaces.
+
+**When to use:** Integrating third-party libraries or legacy code with an interface different from what your system expects.
+
+```python
+# You have this old payment system you cannot modify
+class LegacyPaymentGateway:
+    def make_payment(self, amount_cents: int, card_number: str) -> bool:
+        print(f"Legacy: charging {amount_cents} cents to card {card_number[-4:]}")
+        return True
+
+# Your new system expects this interface
+class PaymentProcessor:
+    def charge(self, amount_dollars: float, token: str) -> bool:
+        raise NotImplementedError
+
+# Adapter — wraps Legacy to match the new interface
+class LegacyPaymentAdapter(PaymentProcessor):
+    def __init__(self, legacy: LegacyPaymentGateway):
+        self._legacy = legacy
+
+    def charge(self, amount_dollars: float, token: str) -> bool:
+        amount_cents = int(amount_dollars * 100)     # convert dollars → cents
+        return self._legacy.make_payment(amount_cents, token)
+
+# Client code only knows about PaymentProcessor — unaware of legacy system
+def process_order(processor: PaymentProcessor, amount: float, token: str):
+    success = processor.charge(amount, token)
+    print(f"Payment {'succeeded' if success else 'failed'}")
+
+legacy = LegacyPaymentGateway()
+adapter = LegacyPaymentAdapter(legacy)
+process_order(adapter, 49.99, "4242424242424242")
+```
+
+```javascript
+// Adapter in JavaScript — wrapping a third-party analytics SDK
+class GoogleAnalytics {
+  trackEvent(category, action, label) {
+    console.log(`GA: ${category} / ${action} / ${label}`);
+  }
+}
+
+class MixpanelAnalytics {
+  track(eventName, properties) {
+    console.log(`Mixpanel: ${eventName}`, properties);
+  }
+}
+
+// Your app uses this interface
+class Analytics {
+  log(event, data) { throw new Error("Not implemented"); }
+}
+
+// Adapters
+class GAAdapter extends Analytics {
+  constructor() { super(); this._ga = new GoogleAnalytics(); }
+  log(event, data) {
+    this._ga.trackEvent(data.category ?? "App", event, data.label ?? "");
+  }
+}
+
+class MixpanelAdapter extends Analytics {
+  constructor() { super(); this._mp = new MixpanelAnalytics(); }
+  log(event, data) { this._mp.track(event, data); }
+}
+
+// Swap analytics providers with zero changes to application code
+const analytics = process.env.ANALYTICS === "mixpanel"
+  ? new MixpanelAdapter()
+  : new GAAdapter();
+
+analytics.log("button_click", { category: "UI", label: "signup" });
+```
+
+---
+
+### 2. Decorator
+
+**Intent:** Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
+
+**Analogy:** A coffee order. You start with plain coffee and add milk, sugar, and whipped cream. Each addition wraps the previous result — you are decorating the base object, not modifying it.
+
+**When to use:** When you need to add behavior to individual objects at runtime without affecting other objects of the same class.
+
+```python
+from abc import ABC, abstractmethod
+
+class DataSource(ABC):
+    @abstractmethod
+    def write(self, data: str) -> None: pass
+
+    @abstractmethod
+    def read(self) -> str: pass
+
+# Concrete base
+class FileDataSource(DataSource):
+    def __init__(self, filename: str):
+        self._filename = filename
+
+    def write(self, data: str) -> None:
+        with open(self._filename, "w") as f:
+            f.write(data)
+        print(f"Written to {self._filename}")
+
+    def read(self) -> str:
+        with open(self._filename) as f:
+            return f.read()
+
+# Base Decorator — wraps a DataSource
+class DataSourceDecorator(DataSource):
+    def __init__(self, source: DataSource):
+        self._source = source
+
+    def write(self, data: str) -> None:
+        self._source.write(data)   # delegate to wrapped source
+
+    def read(self) -> str:
+        return self._source.read()
+
+# Concrete Decorator 1 — adds encryption
+class EncryptionDecorator(DataSourceDecorator):
+    def write(self, data: str) -> None:
+        encrypted = data[::-1]    # toy encryption — reverse string
+        super().write(encrypted)
+
+    def read(self) -> str:
+        return super().read()[::-1]   # decrypt on read
+
+# Concrete Decorator 2 — adds compression
+class CompressionDecorator(DataSourceDecorator):
+    def write(self, data: str) -> None:
+        compressed = f"[compressed]{data}"  # toy compression
+        super().write(compressed)
+
+    def read(self) -> str:
+        return super().read().replace("[compressed]", "")
+
+# Stack decorators — each wraps the previous
+source = FileDataSource("data.txt")
+encrypted_source = EncryptionDecorator(source)
+compressed_encrypted = CompressionDecorator(encrypted_source)
+
+# Write: compression → encryption → file
+compressed_encrypted.write("Hello, World!")
+# Read: file → decryption → decompression
+print(compressed_encrypted.read())
+```
+
+**Python's built-in decorator syntax** is the Decorator pattern applied to functions:
+
+```python
+import time
+import functools
+
+def timer(func):
+    """Decorator that measures function execution time."""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        print(f"{func.__name__} took {elapsed:.4f}s")
+        return result
+    return wrapper
+
+def cache(func):
+    """Decorator that memoizes function results."""
+    memo = {}
+    @functools.wraps(func)
+    def wrapper(*args):
+        if args not in memo:
+            memo[args] = func(*args)
+        return memo[args]
+    return wrapper
+
+@timer
+@cache
+def fibonacci(n: int) -> int:
+    if n <= 1: return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(30))  # fast (cached) and timed
+```
+
+---
+
+### 3. Proxy
+
+**Intent:** Provide a surrogate or placeholder for another object to control access to it.
+
+**Types of proxy:**
+- **Virtual proxy:** Delays expensive object creation until it is needed (lazy initialization)
+- **Protection proxy:** Controls access based on permissions
+- **Remote proxy:** Represents an object in a different address space (RPC/gRPC)
+- **Caching proxy:** Caches results of expensive operations
+
+```python
+from abc import ABC, abstractmethod
+import time
+
+class Database(ABC):
+    @abstractmethod
+    def query(self, sql: str) -> list: pass
+
+class RealDatabase(Database):
+    def __init__(self):
+        print("Connecting to database...")   # expensive
+        time.sleep(0.1)
+
+    def query(self, sql: str) -> list:
+        print(f"Executing: {sql}")
+        return [{"id": 1, "name": "Alice"}]  # mock result
+
+# Caching Proxy — sits in front of the real database
+class CachingDatabaseProxy(Database):
+    def __init__(self):
+        self._db: RealDatabase | None = None   # lazy init — no connection yet
+        self._cache: dict = {}
+
+    def _get_db(self) -> RealDatabase:
+        if self._db is None:
+            self._db = RealDatabase()          # connect only on first use
+        return self._db
+
+    def query(self, sql: str) -> list:
+        if sql in self._cache:
+            print(f"Cache hit: {sql}")
+            return self._cache[sql]
+
+        result = self._get_db().query(sql)
+        self._cache[sql] = result
+        return result
+
+# Client uses the proxy exactly like the real database
+db: Database = CachingDatabaseProxy()
+db.query("SELECT * FROM users")   # real query
+db.query("SELECT * FROM users")   # cache hit
+db.query("SELECT * FROM orders")  # real query
+```
+
+```javascript
+// JavaScript Proxy — language-level proxy for any object
+const handler = {
+  get(target, key) {
+    console.log(`Getting ${String(key)}`);
+    return key in target ? target[key] : `Property ${String(key)} not found`;
+  },
+  set(target, key, value) {
+    if (typeof value !== "number") throw new TypeError("Only numbers allowed");
+    target[key] = value;
+    return true;
+  },
+};
+
+const numbers = new Proxy({}, handler);
+numbers.age = 25;       // set intercepted — validates type
+console.log(numbers.age); // get intercepted — logs access
+```
+
+---
+
+### 4. Facade
+
+**Intent:** Provide a simplified interface to a complex subsystem.
+
+**Analogy:** A home theater system has a projector, speakers, receiver, Blu-ray player, and lighting. Turning on "movie mode" is a single button that orchestrates all of them — a facade hiding the complexity.
+
+**When to use:** When a subsystem has many components and clients only need a simple interface to common operations.
+
+```python
+# Complex subsystems — each with many methods and dependencies
+class VideoEncoder:
+    def encode(self, file: str, codec: str) -> str:
+        print(f"Encoding {file} with {codec}")
+        return f"{file}.{codec}"
+
+class AudioMixer:
+    def normalize(self, audio_file: str) -> str:
+        print(f"Normalizing audio: {audio_file}")
+        return audio_file
+
+class ThumbnailGenerator:
+    def generate(self, video_file: str) -> str:
+        print(f"Generating thumbnail for {video_file}")
+        return f"{video_file}_thumb.jpg"
+
+class StorageUploader:
+    def upload(self, file: str, bucket: str) -> str:
+        print(f"Uploading {file} to {bucket}")
+        return f"https://cdn.example.com/{file}"
+
+# Facade — single simple interface for the entire video pipeline
+class VideoUploadFacade:
+    def __init__(self):
+        self._encoder = VideoEncoder()
+        self._mixer = AudioMixer()
+        self._thumbnailer = ThumbnailGenerator()
+        self._uploader = StorageUploader()
+
+    def upload_video(self, raw_file: str) -> dict:
+        """One method replaces 8 subsystem calls."""
+        encoded = self._encoder.encode(raw_file, "h264")
+        audio = self._mixer.normalize(raw_file)
+        thumbnail = self._thumbnailer.generate(encoded)
+        video_url = self._uploader.upload(encoded, "videos")
+        thumb_url = self._uploader.upload(thumbnail, "thumbnails")
+        return {"video_url": video_url, "thumbnail_url": thumb_url}
+
+# Client code — one call instead of coordinating 5 subsystems
+facade = VideoUploadFacade()
+result = facade.upload_video("raw_video.mp4")
+print(result)
+```
+
+---
+
+### 5. Composite
+
+**Intent:** Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly.
+
+**When to use:** File systems (files and folders), UI component trees, organizational hierarchies — anything that forms a recursive tree structure.
+
+```python
+from abc import ABC, abstractmethod
+from typing import List
+
+class FileSystemItem(ABC):
+    def __init__(self, name: str):
+        self.name = name
+
+    @abstractmethod
+    def size(self) -> int: pass
+
+    @abstractmethod
+    def display(self, indent: int = 0) -> None: pass
+
+# Leaf — no children
+class File(FileSystemItem):
+    def __init__(self, name: str, size_bytes: int):
+        super().__init__(name)
+        self._size = size_bytes
+
+    def size(self) -> int:
+        return self._size
+
+    def display(self, indent: int = 0) -> None:
+        print(" " * indent + f"📄 {self.name} ({self._size} bytes)")
+
+# Composite — contains children (files or other folders)
+class Folder(FileSystemItem):
+    def __init__(self, name: str):
+        super().__init__(name)
+        self._children: List[FileSystemItem] = []
+
+    def add(self, item: FileSystemItem) -> None:
+        self._children.append(item)
+
+    def remove(self, item: FileSystemItem) -> None:
+        self._children.remove(item)
+
+    def size(self) -> int:
+        return sum(child.size() for child in self._children)  # recursive
+
+    def display(self, indent: int = 0) -> None:
+        print(" " * indent + f"📁 {self.name}/")
+        for child in self._children:
+            child.display(indent + 2)   # recursive — works for any depth
+
+# Build a file tree
+root = Folder("project")
+src = Folder("src")
+src.add(File("main.py", 2048))
+src.add(File("utils.py", 1024))
+
+tests = Folder("tests")
+tests.add(File("test_main.py", 512))
+
+root.add(src)
+root.add(tests)
+root.add(File("README.md", 256))
+
+root.display()
+print(f"Total size: {root.size()} bytes")  # recursive sum of all files
+```
+
+## Pattern Comparison
+
+| Pattern | Problem Solved | Key Idea |
+|---------|---------------|----------|
+| Adapter | Incompatible interfaces | Wrap one interface to match another |
+| Decorator | Add behavior at runtime | Wrap object, delegate + add behavior |
+| Proxy | Control access to an object | Same interface, different behavior |
+| Facade | Simplify a complex subsystem | One simple interface over many |
+| Composite | Treat trees uniformly | Leaf and branch share the same interface |
+
+## Real-World Examples
+
+- **Adapter:** ORMs (SQLAlchemy, Prisma) adapt database-specific SQL dialects to a unified query API.
+- **Decorator:** Python's `@property`, `@staticmethod`, `@login_required` in Django, `@cache` in React are all decorator pattern.
+- **Proxy:** Nginx and Cloudflare are reverse proxies. JavaScript's `Proxy` object. gRPC stubs are remote proxies.
+- **Facade:** AWS SDK — `s3.upload_file()` hides multipart upload, retry logic, and signature calculation behind one call. Django's `render()` shortcut is a facade over template loading and HTTP response creation.
+- **Composite:** React's component tree. The DOM itself. JSON and HTML are composite structures.
+
+## Common Mistakes
+
+**Adapter vs Facade confusion.** Adapter makes one existing interface compatible with another. Facade creates a new simplified interface over multiple existing subsystems. If you are wrapping one class to match an interface — Adapter. If you are wrapping multiple classes to simplify — Facade.
+
+**Decorator breaking the interface contract.** A decorator must implement the same interface as what it wraps. If it adds methods or changes the return type, it violates LSP and breaks interchangeability.
+
+**Overusing Proxy for caching.** A caching proxy is great for expensive, side-effect-free operations. For operations with side effects (writes, payments), caching without careful invalidation causes stale data bugs.
+
+## Summary
+
+- **Adapter:** Bridge incompatible interfaces. Wrap old/third-party code to match what your system expects.
+- **Decorator:** Add behavior dynamically by wrapping objects. Stack decorators to compose multiple behaviors.
+- **Proxy:** Control access — lazy init (virtual), permissions (protection), caching (caching proxy).
+- **Facade:** Simplify complex subsystems with a clean, unified interface.
+- **Composite:** Represent tree structures where leaves and branches are treated uniformly.
+- All structural patterns use **composition** — wrapping or containing objects — rather than inheritance to achieve their goals.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/creational-patterns", label: "Creational Patterns" }}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/behavioral-patterns", label: "Behavioral Patterns" }}
+/>

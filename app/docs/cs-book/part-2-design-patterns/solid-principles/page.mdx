@@ -1,0 +1,331 @@
+export const metadata = {
+  title: "SOLID Principles — ByteWise CS Book",
+  description:
+    "Master the five SOLID principles of object-oriented design: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.",
+  keywords: [
+    "SOLID principles",
+    "single responsibility",
+    "open closed principle",
+    "liskov substitution",
+    "dependency inversion",
+    "object oriented design",
+    "low level design",
+  ],
+  openGraph: {
+    title: "SOLID Principles — ByteWise CS Book",
+    description:
+      "The five principles that separate maintainable code from spaghetti — with Python and JavaScript examples.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# SOLID Principles
+
+## The Five Rules That Separate Good Code From Spaghetti
+
+In the early 2000s, Robert C. Martin — "Uncle Bob" — distilled decades of object-oriented programming experience into five principles. He noticed that codebases that rotted over time — that became harder to change, more fragile, more rigid — violated the same set of rules. And codebases that stayed clean, that could absorb new requirements without breaking existing features, followed them.
+
+The acronym SOLID was coined later by Michael Feathers, but the principles themselves are the closest thing software engineering has to a physics of code design. They do not tell you what to build. They tell you how to structure what you build so it can survive contact with reality: changing requirements, new teammates, scale, and time.
+
+SOLID is not about following rules for their own sake. Every principle exists because violating it has a predictable, painful consequence. Understanding the consequence is more important than memorizing the acronym.
+
+## The Five Principles
+
+### S — Single Responsibility Principle (SRP)
+
+**A class should have only one reason to change.**
+
+If a class does two things, it has two reasons to change. When either of those things needs to change, you risk breaking the other. A class that handles both user authentication and email sending will need to be touched when the authentication logic changes *and* when the email provider changes — two unrelated reasons.
+
+```python
+# WRONG — UserService has multiple responsibilities
+class UserService:
+    def create_user(self, email, password):
+        # save to database
+        self.db.insert("users", {"email": email, "password": password})
+        # send welcome email — this belongs elsewhere
+        self.smtp.send(email, "Welcome!", "Thanks for signing up")
+        # log the event — also belongs elsewhere
+        self.logger.info(f"New user: {email}")
+
+# RIGHT — split by responsibility
+class UserRepository:
+    def create(self, email, password):
+        return self.db.insert("users", {"email": email, "password": password})
+
+class EmailService:
+    def send_welcome(self, email):
+        self.smtp.send(email, "Welcome!", "Thanks for signing up")
+
+class UserService:
+    def __init__(self, repo: UserRepository, email: EmailService):
+        self.repo = repo
+        self.email = email
+
+    def register(self, email, password):
+        user = self.repo.create(email, password)
+        self.email.send_welcome(email)
+        return user
+```
+
+**The test:** Ask "what is this class responsible for?" If the answer requires the word "and", it violates SRP.
+
+---
+
+### O — Open/Closed Principle (OCP)
+
+**Software entities should be open for extension, but closed for modification.**
+
+Once a class is written and tested, you should be able to add new behavior by extending it — not by editing it. Editing existing, working code risks introducing bugs. The mechanism for extension is typically abstraction: define an interface, write concrete implementations, add new behavior by adding new implementations.
+
+```python
+# WRONG — adding a new payment type requires modifying PaymentProcessor
+class PaymentProcessor:
+    def process(self, payment_type, amount):
+        if payment_type == "credit_card":
+            self._charge_card(amount)
+        elif payment_type == "paypal":
+            self._charge_paypal(amount)
+        # Adding "crypto" means editing this method — risky
+
+# RIGHT — extend by adding new classes, not modifying existing ones
+from abc import ABC, abstractmethod
+
+class PaymentMethod(ABC):
+    @abstractmethod
+    def charge(self, amount: float) -> bool:
+        pass
+
+class CreditCard(PaymentMethod):
+    def charge(self, amount: float) -> bool:
+        print(f"Charging ${amount} to credit card")
+        return True
+
+class PayPal(PaymentMethod):
+    def charge(self, amount: float) -> bool:
+        print(f"Charging ${amount} via PayPal")
+        return True
+
+class Crypto(PaymentMethod):          # New payment type — zero changes to existing code
+    def charge(self, amount: float) -> bool:
+        print(f"Charging ${amount} in crypto")
+        return True
+
+class PaymentProcessor:
+    def process(self, method: PaymentMethod, amount: float) -> bool:
+        return method.charge(amount)  # Never needs to change
+```
+
+---
+
+### L — Liskov Substitution Principle (LSP)
+
+**Subtypes must be substitutable for their base types without altering correctness.**
+
+If you replace an object of type `Base` with an object of type `Derived`, the program should still work correctly. If it does not, the inheritance relationship is wrong. LSP violations often appear when subclasses override methods to do less than the parent promises — or throw exceptions the parent never would.
+
+```python
+# WRONG — Square inherits Rectangle but breaks its contract
+class Rectangle:
+    def set_width(self, w): self.width = w
+    def set_height(self, h): self.height = h
+    def area(self): return self.width * self.height
+
+class Square(Rectangle):
+    def set_width(self, w):
+        self.width = w
+        self.height = w   # Side effect! Violates Rectangle's contract
+
+    def set_height(self, h):
+        self.width = h    # Same unexpected side effect
+        self.height = h
+
+def print_area(rect: Rectangle):
+    rect.set_width(4)
+    rect.set_height(5)
+    print(rect.area())  # Expected 20, gets 25 for Square — LSP violated
+
+# RIGHT — don't force a Square-is-a-Rectangle hierarchy
+class Shape(ABC):
+    @abstractmethod
+    def area(self) -> float: pass
+
+class Rectangle(Shape):
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+    def area(self) -> float: return self.width * self.height
+
+class Square(Shape):
+    def __init__(self, side: float):
+        self.side = side
+    def area(self) -> float: return self.side ** 2
+```
+
+**The test:** If you find yourself checking `isinstance(obj, SubClass)` to decide behavior, LSP is probably violated.
+
+---
+
+### I — Interface Segregation Principle (ISP)
+
+**Clients should not be forced to depend on interfaces they do not use.**
+
+Fat interfaces — interfaces with many methods — force implementing classes to stub out methods they do not need. This creates tight coupling and misleads readers. Instead, split large interfaces into smaller, focused ones.
+
+```python
+# WRONG — Animal forces all subclasses to implement methods they cannot use
+class Animal(ABC):
+    @abstractmethod
+    def walk(self): pass
+
+    @abstractmethod
+    def swim(self): pass
+
+    @abstractmethod
+    def fly(self): pass
+
+class Dog(Animal):
+    def walk(self): print("Dog walks")
+    def swim(self): print("Dog swims")
+    def fly(self): raise NotImplementedError("Dogs can't fly")  # forced stub
+
+# RIGHT — split into focused interfaces
+class Walkable(ABC):
+    @abstractmethod
+    def walk(self): pass
+
+class Swimmable(ABC):
+    @abstractmethod
+    def swim(self): pass
+
+class Flyable(ABC):
+    @abstractmethod
+    def fly(self): pass
+
+class Dog(Walkable, Swimmable):       # only what dogs actually do
+    def walk(self): print("Dog walks")
+    def swim(self): print("Dog swims")
+
+class Eagle(Walkable, Flyable):       # only what eagles actually do
+    def walk(self): print("Eagle walks")
+    def fly(self): print("Eagle flies")
+```
+
+---
+
+### D — Dependency Inversion Principle (DIP)
+
+**High-level modules should not depend on low-level modules. Both should depend on abstractions.**
+
+When your business logic (`OrderService`) directly instantiates its dependencies (`MySQLDatabase`), changing the database requires changing the business logic. Instead, depend on an abstraction (`Database` interface) and inject the concrete implementation. This is the foundation of **Dependency Injection**.
+
+```python
+# WRONG — OrderService is hard-coupled to MySQLDatabase
+class MySQLDatabase:
+    def save(self, order): print(f"Saving to MySQL: {order}")
+
+class OrderService:
+    def __init__(self):
+        self.db = MySQLDatabase()  # hard dependency — cannot swap without editing
+
+    def place_order(self, order):
+        self.db.save(order)
+
+# RIGHT — depend on abstraction, inject concrete implementation
+class Database(ABC):
+    @abstractmethod
+    def save(self, data: dict) -> None: pass
+
+class MySQLDatabase(Database):
+    def save(self, data: dict) -> None:
+        print(f"Saving to MySQL: {data}")
+
+class MongoDatabase(Database):
+    def save(self, data: dict) -> None:
+        print(f"Saving to MongoDB: {data}")
+
+class OrderService:
+    def __init__(self, db: Database):   # depends on abstraction, not concrete class
+        self.db = db
+
+    def place_order(self, order: dict) -> None:
+        self.db.save(order)
+
+# Swap database with zero changes to OrderService
+mysql_service = OrderService(db=MySQLDatabase())
+mongo_service = OrderService(db=MongoDatabase())
+```
+
+**JavaScript implementation:**
+
+```javascript
+// Dependency Inversion in JavaScript using constructor injection
+class EmailNotifier {
+  send(message) { console.log(`Email: ${message}`); }
+}
+
+class SMSNotifier {
+  send(message) { console.log(`SMS: ${message}`); }
+}
+
+// OrderService depends on the notifier abstraction, not a concrete class
+class OrderService {
+  constructor(notifier) {   // inject any object with a .send() method
+    this.notifier = notifier;
+  }
+
+  placeOrder(order) {
+    // ... process order ...
+    this.notifier.send(`Order ${order.id} confirmed`);
+  }
+}
+
+const emailService = new OrderService(new EmailNotifier());
+const smsService   = new OrderService(new SMSNotifier());
+```
+
+## System Design Perspective
+
+SOLID principles map directly to system design decisions:
+
+| Principle | System Design Equivalent |
+|-----------|--------------------------|
+| SRP | Microservices — each service owns one domain |
+| OCP | Plugin architectures, feature flags, strategy pattern |
+| LSP | API versioning — new versions must not break old contracts |
+| ISP | Separate read/write APIs (CQRS), narrow interfaces between services |
+| DIP | Dependency injection containers (Spring, FastAPI's `Depends`) |
+
+## Common Mistakes
+
+**Mistake 1: Over-applying SRP to the point of fragmentation.** A class that handles one database entity is fine. Splitting it into 10 classes of one method each is over-engineering. SRP means one *reason to change*, not one *method*.
+
+**Mistake 2: Treating OCP as "never modify code."** OCP means closed to modification *for existing behavior*. Bug fixes and refactors are always allowed. The principle targets feature additions that break existing tests.
+
+**Mistake 3: Forcing inheritance to satisfy LSP.** If you cannot make a subclass fully substitute for its parent without hacks, the inheritance relationship is wrong. Prefer composition over inheritance.
+
+**Mistake 4: Creating interfaces for every class.** ISP does not mean every class needs an interface. In Python and JavaScript, duck typing often makes explicit interfaces unnecessary. Add interfaces when you have multiple implementations or need to mock in tests.
+
+**Mistake 5: Confusing DIP with Dependency Injection.** DIP is the principle (depend on abstractions). Dependency Injection is one mechanism to apply it. You can apply DIP without a DI framework by simply passing dependencies through constructors.
+
+## Interview Angle
+
+**Q: Explain the Dependency Inversion Principle and how it enables testability.**
+
+A: DIP says high-level modules should depend on abstractions, not concrete implementations. In practice: instead of `UserService` creating its own `DatabaseConnection`, it receives a `Database` interface through its constructor. For testing, you pass a `FakeDatabase` that stores data in memory — no real database needed, tests run in milliseconds. For production, you pass `PostgresDatabase`. The business logic (`UserService`) never changes regardless of what database you use. This is the foundation of unit testing in object-oriented code: inject fakes/mocks through the same abstractions the production code uses.
+
+## Summary
+
+- **S — Single Responsibility:** One class, one reason to change. Split classes that do multiple unrelated things.
+- **O — Open/Closed:** Add new behavior by adding new classes, not modifying existing ones. Use abstraction and polymorphism.
+- **L — Liskov Substitution:** Subclasses must be fully substitutable for their parent. If substitution breaks behavior, the inheritance is wrong.
+- **I — Interface Segregation:** Prefer many small focused interfaces over one large fat interface. Never force a class to implement methods it does not use.
+- **D — Dependency Inversion:** Depend on abstractions, not concretions. Inject dependencies rather than constructing them inside the class.
+- SOLID violations have predictable consequences: SRP violations cause merge conflicts; OCP violations cause regressions; LSP violations cause runtime surprises; ISP violations cause dead code; DIP violations cause untestable code.
+- In Python and JavaScript, duck typing reduces the need for explicit interface declarations — focus on the principle, not the interface syntax.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/recursion", label: "Recursion" }}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/creational-patterns", label: "Creational Patterns" }}
+/>

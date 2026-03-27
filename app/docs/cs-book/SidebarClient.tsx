@@ -21,7 +21,16 @@ const chapters = [
     ],
   },
   {
-    part: "Part 2 — Algorithms",
+    part: "Part 2 — Design Patterns (LLD)",
+    items: [
+      { title: "SOLID Principles", href: "/docs/cs-book/part-2-design-patterns/solid-principles" },
+      { title: "Creational Patterns", href: "/docs/cs-book/part-2-design-patterns/creational-patterns" },
+      { title: "Structural Patterns", href: "/docs/cs-book/part-2-design-patterns/structural-patterns" },
+      { title: "Behavioral Patterns", href: "/docs/cs-book/part-2-design-patterns/behavioral-patterns" },
+    ],
+  },
+  {
+    part: "Part 3 — Algorithms",
     items: [
       { title: "Binary Search", href: "/docs/cs-book/part-2-algorithms/binary-search" },
       { title: "Sorting Algorithms", href: "/docs/cs-book/part-2-algorithms/sorting-algorithms" },
@@ -143,12 +152,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/21 chapters</span>
+              <span>{readCount}/25 chapters</span>
             </div>
             <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 21) * 100}%` }}
+                style={{ width: `${(readCount / 25) * 100}%` }}
               />
             </div>
           </div>
