@@ -78,6 +78,8 @@ $$\text{Queue Size} \leq \text{Capacity}$$
 
 Unlike token bucket, leaky bucket guarantees a constant output rate — useful for smoothing bursty traffic before it hits downstream services.
 
+In *Designing Data-Intensive Applications* (Ch. 8: The Trouble with Distributed Systems), Kleppmann discusses **backpressure** as the systems-level equivalent of rate limiting — when a consumer cannot keep up with a producer, the system must decide whether to buffer, drop, or push back on the producer. Rate limiting is how you enforce that boundary at the API layer.
+
 ---
 
 ## Algorithm / Logic

@@ -30,6 +30,8 @@ Two years later, MIT researchers Seth Gilbert and Nancy Lynch formally proved Br
 
 The CAP theorem provoked a decade of debate and is still frequently misunderstood. It does not say "pick your favorite two and ignore the third forever." It says that during a **network partition** — when some servers cannot communicate with each other — you must choose between consistency (returning the most recent data) and availability (returning some data, even if stale). In the absence of partitions (the vast majority of the time), you can have both. Understanding this nuance separates engineers who parrot "CAP theorem" from those who can actually use it to make design decisions.
 
+The deepest treatment of this topic lives in Chapters 8 and 9 of Martin Kleppmann's *Designing Data-Intensive Applications* — Chapter 8 (*The Trouble with Distributed Systems*) catalogues every way networks and clocks fail, and Chapter 9 (*Consistency and Consensus*) builds the formal model of linearizability and consensus from first principles.
+
 ## Concept Explanation
 
 **The three properties:**
@@ -72,6 +74,8 @@ $$\exists T: \forall t > T, \; R_1(t) = R_2(t)$$
 $$\text{If Partition: } C \text{ vs } A \quad \text{Else (normal): } L \text{ (latency) vs } C \text{ (consistency)}$$
 
 Even without partitions, synchronous replication (consistency) is slower than asynchronous replication (lower latency). PACELC acknowledges this always-present tradeoff.
+
+As Kleppmann explains in Ch. 9 of *DDIA*, linearizability has a precise cost: every linearizable operation requires coordination between nodes, making it fundamentally slower than eventual consistency — not as a matter of implementation quality, but as a mathematical consequence of the model.
 
 ## Algorithm / Logic
 

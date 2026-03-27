@@ -52,6 +52,8 @@ A **message queue** is a communication buffer that enables **asynchronous**, **d
 
 **Delivery semantics — the critical tradeoff:**
 
+Martin Kleppmann's *Designing Data-Intensive Applications* (Ch. 11: Stream Processing) treats Kafka not just as a message queue but as a **distributed log** — a durable, replayable record of events that can serve as the integration layer between services, enabling change data capture, event sourcing, and stream processing pipelines from a single abstraction.
+
 | Semantic | Guarantee | Risk | Use Case |
 |----------|-----------|------|----------|
 | At-most-once | Delivered 0 or 1 times | Message loss | Logging, metrics |

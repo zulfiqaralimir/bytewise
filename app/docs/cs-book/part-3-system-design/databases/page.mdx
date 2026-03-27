@@ -84,6 +84,8 @@ Adding shards scales linearly — the core advantage of horizontal sharding over
 
 **Consistent hashing:** For $N$ nodes on a hash ring, each node is responsible for $\frac{1}{N}$ of the key space. Adding one node transfers only $\frac{1}{N+1}$ fraction of keys — minimal disruption compared to naive modulo hashing.
 
+As Martin Kleppmann details in *Designing Data-Intensive Applications* (Ch. 3: Storage and Retrieval), the choice between hash indexes, B-trees, and LSM-trees is one of the most consequential storage engine decisions — each is optimized for different read/write patterns and has fundamentally different performance characteristics under load.
+
 ## Algorithm / Logic
 
 **Query execution pipeline:**
@@ -108,6 +110,8 @@ Adding shards scales linearly — the core advantage of horizontal sharding over
 2. **Commit phase:** If all participants say "ready," coordinator sends "commit." Otherwise sends "abort."
 3. Each participant commits or rolls back based on the coordinator's decision.
 4. If the coordinator crashes after phase 1 but before phase 2, participants remain locked until recovery.
+
+Kleppmann's Chapter 7 (*Transactions*) in *Designing Data-Intensive Applications* provides the deepest treatment of isolation levels and the precise failure scenarios that 2PC is designed to prevent — including the "blocking" problem when a coordinator fails mid-protocol.
 
 ```
 -- Efficient index usage examples --

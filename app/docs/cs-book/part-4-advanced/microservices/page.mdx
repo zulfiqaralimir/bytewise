@@ -188,6 +188,8 @@ How do you split a monolith? The Domain-Driven Design (DDD) approach:
 
 **Step 5**: Choose communication style — synchronous (REST) for queries, asynchronous (events) for commands.
 
+As Kleppmann argues in *Designing Data-Intensive Applications* (Ch. 8: The Trouble with Distributed Systems), a network call between services is fundamentally different from an in-process function call — it can fail in ways that are invisible to the caller, taking arbitrarily long without returning either success or failure. This asymmetry is the root cause of most microservice reliability problems.
+
 ```
 Pseudocode: Circuit Breaker
 

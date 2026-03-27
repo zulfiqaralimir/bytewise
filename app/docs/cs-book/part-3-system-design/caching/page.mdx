@@ -52,6 +52,8 @@ A **cache** is a high-speed storage layer that stores copies of frequently acces
 4. **CDN edge cache:** Geographically distributed, tens of milliseconds from user.
 5. **Database buffer pool:** DB-managed in-memory page cache, reduces disk I/O.
 
+In *Designing Data-Intensive Applications* (Ch. 11: Stream Processing), Martin Kleppmann frames caches and materialized views as forms of **derived data** — representations of the same information in a different form, optimized for reads. This framing is useful: a cache is not separate from your data, it is a derived copy of it, and all the challenges of keeping derived data consistent with the source apply.
+
 ## Mathematical Foundation
 
 **Effective latency with cache:**

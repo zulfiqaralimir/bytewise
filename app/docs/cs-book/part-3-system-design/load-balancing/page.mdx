@@ -78,6 +78,8 @@ $$\text{keys remapped when adding one node} = \frac{1}{n+1} \cdot \text{total ke
 
 vs naive modulo hashing where adding one node remaps $\frac{n}{n+1}$ of all keys — catastrophic for caches.
 
+Kleppmann covers consistent hashing in *Designing Data-Intensive Applications* (Ch. 6: Partitioning) as the standard technique for distributing data across nodes with minimal rebalancing — the same principle applies equally to distributing traffic across cache pools and application server clusters.
+
 **Capacity planning:** For $N$ application servers each handling $C$ requests per second:
 
 $$\text{total capacity} = N \times C$$
