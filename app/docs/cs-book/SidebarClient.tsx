@@ -71,6 +71,10 @@ const chapters = [
     items: [
       { title: "Decision Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees" },
       { title: "Decision Trees and Classification Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees-classification" },
+      { title: "Regression Trees", href: "/docs/cs-book/part-6-machine-learning/regression-trees" },
+      { title: "Bias and Variance", href: "/docs/cs-book/part-6-machine-learning/bias-and-variance" },
+      { title: "Prune Regression Tree", href: "/docs/cs-book/part-6-machine-learning/prune-regression-tree" },
+      { title: "Cross Validation", href: "/docs/cs-book/part-6-machine-learning/cross-validation" },
     ],
   },
 ];
@@ -160,12 +164,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/28 chapters</span>
+              <span>{readCount}/32 chapters</span>
             </div>
             <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 28) * 100}%` }}
+                style={{ width: `${(readCount / 32) * 100}%` }}
               />
             </div>
           </div>
