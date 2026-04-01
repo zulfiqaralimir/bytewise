@@ -14,6 +14,140 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 ![Decision Trees and Classification Trees](https://substackcdn.com/image/fetch/$s_!S14_!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F33e88ca6-0130-44ad-9c99-93c39c18422f_1536x1024.png)
 
+---
+
+## Basic Decision Tree Concepts
+
+In general, a decision tree makes a statement and then makes a decision based on whether or not that statement is true or false.
+
+![Basic Decision Tree Concept](https://substackcdn.com/image/fetch/$s_!uwbI!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd6e886df-fded-474e-a768-ca76673abe04_1536x1024.png)
+
+When a decision tree classifies things into categories, it is called a **classification tree**.
+
+When a decision tree predicts numeric values, it is called a **regression tree**.
+
+![Classification vs Regression Tree](https://substackcdn.com/image/fetch/$s_!GA9o!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Feeff6dcd-b389-4521-9eff-e294b6239be9_1536x1024.png)
+
+For example, a regression tree might use diet to predict a numeric value for mouse size.
+
+For the remainder of this explanation, the focus is on **classification trees**.
+
+---
+
+## Mixing Data Types
+
+A classification tree can combine:
+
+- Numeric data
+- Yes/No data
+
+This means it is possible to mix different data types in the same tree.
+
+![Mixing Data Types](https://substackcdn.com/image/fetch/$s_!Aovt!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5fa788f0-3ca7-45b4-bcfa-8f6b03f4d817_1008x549.png)
+
+A tree may also ask about the same feature multiple times, and the numeric thresholds used for the same data may be different.
+
+Additionally, the final classifications can be repeated.
+
+---
+
+## Using a Classification Tree
+
+Classification trees are generally easy to work with.
+
+To classify something:
+
+1. Start at the top of the tree.
+2. Move down the branches.
+3. Continue moving until reaching a point where you cannot go any further.
+4. That final position determines the classification.
+
+Usually:
+
+- If a statement is **true**, you go to the **left**.
+- If a statement is **false**, you go to the **right**.
+
+Sometimes arrows are labeled True and False, and sometimes they are not.
+
+---
+
+## Terminology
+
+Several important technical terms are used in decision trees:
+
+**Root Node** — The very top of the tree is called the Root Node, or simply the Root.
+
+**Internal Nodes / Branches** — These are called Internal Nodes or Branches.
+
+**Leaf Nodes** — The final nodes are called Leaf Nodes, or simply Leaves. Leaves have arrows pointing to them but no arrows pointing away from them.
+
+---
+
+## Building a Tree from Raw Data
+
+Now that we know how to use and interpret classification trees, the next step is to learn how to build one from raw data.
+
+Consider the following dataset. It contains information about several people:
+
+- Whether someone loves popcorn
+- Whether someone loves soda
+- Their age
+- Whether they love the 1991 blockbuster *Cool as Ice* starring Vanilla Ice
+
+![Dataset](https://substackcdn.com/image/fetch/$s_!eSlG!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3906cdfb-9245-48f4-8e99-7668a6cb199f_999x465.png)
+
+Using this dataset, we want to build a classification tree that predicts whether or not someone loves *Cool as Ice*.
+
+---
+
+## Choosing the Root Question
+
+The first step is to determine which feature should appear at the very top of the tree.
+
+The possible options are:
+
+- Loves popcorn
+- Loves soda
+- Age
+
+To make this decision, we start by examining how well each feature predicts whether someone loves *Cool as Ice*.
+
+![Choosing the Root](https://substackcdn.com/image/fetch/$s_!USBZ!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F73cae700-6aea-4b78-bd42-1dc67cc40a77_1026x525.png)
+
+### Testing the Feature: Loves Popcorn
+
+To evaluate the feature *loves popcorn*, we construct a very simple tree that asks only one question:
+
+> Does the person love popcorn?
+
+We then run the dataset down this tree.
+
+![Testing Loves Popcorn](https://substackcdn.com/image/fetch/$s_!oOJG!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F16120b17-1853-44b3-b5d5-8878addddf33_993x499.png)
+
+For example:
+
+- The first person loves popcorn, so they go to the leaf on the left. Because they do not love *Cool as Ice*, we record this by placing 1 under the word "No".
+- The second person also loves popcorn, so they also go to the left leaf. Because they also do not love *Cool as Ice*, we increment "No" to 2.
+- The third person does not love popcorn, so they go to the leaf on the right. Because they love *Cool as Ice*, we record 1 under the word "Yes".
+
+We continue running the remaining rows of the dataset down the tree, keeping track of whether each person loves or does not love *Cool as Ice*.
+
+![Loves Popcorn Result](https://substackcdn.com/image/fetch/$s_!bFCN!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2d7a77ce-ca37-4410-b525-339d3233f9bb_1008x534.png)
+
+### Testing the Feature: Loves Soda
+
+Next, we repeat the exact same process for the feature *loves soda*.
+
+![Testing Loves Soda](https://substackcdn.com/image/fetch/$s_!Pu8c!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F99456f64-d635-4aa4-a34f-ce1d1d612b2f_991x463.png)
+
+We build another simple tree that asks:
+
+> Does the person love soda?
+
+Then we run the dataset down this tree and record whether each person loves or does not love *Cool as Ice* in the leaves.
+
+![Loves Soda Result](https://substackcdn.com/image/fetch/$s_!l3-0!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8b5bdb57-d800-4070-8e18-eb8e5da83dbb_533x253.png)
+
 <ArticleNav
   prev={{ title: "Decision Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees" }}
   next={null}
