@@ -70,6 +70,7 @@ const chapters = [
     part: "Part 6 — Machine Learning",
     items: [
       { title: "Decision Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees" },
+      { title: "Decision Trees and Classification Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees-classification" },
     ],
   },
 ];
@@ -159,12 +160,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/27 chapters</span>
+              <span>{readCount}/28 chapters</span>
             </div>
             <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 27) * 100}%` }}
+                style={{ width: `${(readCount / 28) * 100}%` }}
               />
             </div>
           </div>
