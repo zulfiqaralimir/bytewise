@@ -1,6 +1,7 @@
 export const metadata = {
   title: "Decision Trees and Classification Trees — ByteWise CS Book",
-  description: "A deep dive into decision trees and classification trees from first principles.",
+  description: "A deep dive into decision trees and classification trees from first principles — Gini impurity, building trees from raw data, overfitting, and pruning.",
+  keywords: ["decision tree", "classification tree", "Gini impurity", "machine learning", "overfitting", "pruning", "cross validation"],
   openGraph: {
     title: "Decision Trees and Classification Trees — ByteWise CS Book",
     description: "A deep dive into decision trees and classification trees from first principles.",
@@ -147,6 +148,266 @@ We build another simple tree that asks:
 Then we run the dataset down this tree and record whether each person loves or does not love *Cool as Ice* in the leaves.
 
 ![Loves Soda Result](https://substackcdn.com/image/fetch/$s_!l3-0!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8b5bdb57-d800-4070-8e18-eb8e5da83dbb_533x253.png)
+
+---
+
+## Observing the Leaves
+
+After evaluating both trees, we notice something important.
+
+Neither tree does a perfect job predicting who will and who will not love *Cool as Ice*.
+
+![Observing the Leaves](https://substackcdn.com/image/fetch/$s_!kcpj!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa8ccb580-2dcc-4ade-94b3-2c0d1ee6ac9c_862x553.png)
+
+Specifically, three of the leaves contain mixtures of people who do and do not love *Cool as Ice*. These leaves contain a mixture of classes — because of this mixture, these leaves are called **impure leaves**.
+
+In contrast, a leaf that contains only one category is called a **pure leaf**. For example, a leaf that contains only people who do not love *Cool as Ice* is pure.
+
+![Impure vs Pure Leaves](https://substackcdn.com/image/fetch/$s_!aGMH!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F536551e7-5f60-439d-91c7-b7d2782dd84a_873x541.png)
+
+When comparing the two trees:
+
+- Both leaves in the *loves popcorn* tree are impure
+- Only one leaf in the *loves soda* tree is impure
+
+This suggests that *loves soda* may be a better predictor. However, instead of relying only on observation, we need a way to **quantify** the impurity of the leaves — this leads to the concept of **Gini Impurity**.
+
+---
+
+## Quantifying Impurity with Gini Impurity
+
+There are several methods used to measure impurity, including Gini Impurity, Entropy, and Information Gain. In this explanation we focus on **Gini Impurity**, because it is widely used and relatively straightforward.
+
+### Calculating Gini Impurity for the "Loves Popcorn" Tree
+
+The formula for Gini Impurity is:
+
+$$\text{Gini} = 1 - P(\text{Yes})^2 - P(\text{No})^2$$
+
+Where:
+- $P(\text{Yes})$ is the probability that a randomly selected person in the leaf loves *Cool as Ice*
+- $P(\text{No})$ is the probability that a randomly selected person does not love *Cool as Ice*
+
+**Left Leaf** — 1 person loves *Cool as Ice*, 3 do not (total = 4):
+
+$$\text{Gini} = 1 - \left(\frac{1}{4}\right)^2 - \left(\frac{3}{4}\right)^2 = 1 - 0.0625 - 0.5625 = 0.375$$
+
+**Right Leaf** — 2 people love *Cool as Ice*, 1 does not (total = 3):
+
+$$\text{Gini} = 1 - \left(\frac{2}{3}\right)^2 - \left(\frac{1}{3}\right)^2 = 1 - \frac{4}{9} - \frac{1}{9} = 0.444$$
+
+![Gini Impurity Calculation](https://substackcdn.com/image/fetch/$s_!__Wm!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fef699e2a-b1db-4943-a905-31ac84f71b95_643x530.png)
+
+The two leaves contain different numbers of people, so we calculate the total Gini Impurity using a **weighted average**:
+
+$$\text{Weight(left)} = \frac{4}{7}$$
+
+![Weighted Average](https://substackcdn.com/image/fetch/$s_!fu19!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Faf80b71d-3cdc-44fa-bffa-b752ccd61be5_934x486.png)
+
+$$\text{Weight(right)} = \frac{3}{7}$$
+
+$$\text{Total Gini} = \left(\frac{4}{7} \times 0.375\right) + \left(\frac{3}{7} \times 0.444\right) = 0.405$$
+
+### Comparing with "Loves Soda"
+
+Using the same process, the Gini Impurity for *loves soda* is **0.214**.
+
+Since lower Gini Impurity means less impurity, **loves soda provides a better split** than loves popcorn.
+
+---
+
+## Numeric and Continuous Variables
+
+So far we calculated Gini Impurity for yes/no features. The feature **age** contains numeric data, which requires additional steps.
+
+### Sorting the Data by Age
+
+The first step is to sort the dataset by age from lowest to highest, to determine possible split points.
+
+![Sorted by Age](https://substackcdn.com/image/fetch/$s_!-E0A!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F986f064c-7fff-42c2-b784-64d09817b1db_921x414.png)
+
+### Calculating Candidate Thresholds
+
+After sorting the ages, we compute the average age between every pair of adjacent people in the dataset.
+
+![Candidate Thresholds](https://substackcdn.com/image/fetch/$s_!0Dr3!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca28d71d-9716-451c-9d09-634eed642158_659x458.png)
+
+These averages become **candidate thresholds**. For example:
+
+> Is age less than 9.5?
+
+If true, the data goes to the left leaf. If false, it goes to the right leaf.
+
+### Example Split: Age < 9.5
+
+![Age < 9.5 Split](https://substackcdn.com/image/fetch/$s_!iCWf!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F093f2a0a-bef8-46fc-8e37-2e9a99ba5c8c_878x480.png)
+
+Only one person satisfies this condition. This person does not love *Cool as Ice*, so the left leaf contains only one category:
+
+- Yes = 0, No = 1
+
+Because every person in this leaf belongs to the same category, the **Gini Impurity of the left leaf is 0**.
+
+![Left Leaf Pure](https://substackcdn.com/image/fetch/$s_!dNSN!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1ca30933-0d18-413c-bb0e-773919eac21c_943x560.png)
+
+### Calculating the Right Leaf
+
+Everyone with Age ≥ 9.5 goes to the right leaf. After calculating the probabilities, the **Gini Impurity of the right leaf is 0.5**.
+
+![Right Leaf](https://substackcdn.com/image/fetch/$s_!g5u2!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9745591c-88f1-4012-b6e6-70310714d364_941x559.png)
+
+After applying the weighted average, the **total Gini Impurity for this split is 0.429**.
+
+![Weighted Gini Age](https://substackcdn.com/image/fetch/$s_!Pa1A!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F31d3c27a-3adb-4c2d-ae1d-17cbaf713349_883x520.png)
+
+### Evaluating All Candidate Thresholds
+
+We repeat this process for all candidate thresholds.
+
+![All Thresholds](https://substackcdn.com/image/fetch/$s_!8Tov!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F54dbffaa-cd08-481d-9eb9-5e9d21bb73bd_591x409.png)
+
+Two candidate thresholds — **15** and **44** — produce the lowest impurity value of **0.343**. Since both give the same impurity, either can be chosen. We select **Age < 15**.
+
+---
+
+## Choosing the Root Feature
+
+Now we compare the Gini Impurity values for all features:
+
+![Feature Comparison](https://substackcdn.com/image/fetch/$s_!72oh!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9734e3a6-31db-41ce-8899-3dab4cae99bc_937x527.png)
+
+| Feature | Gini Impurity |
+|---|---|
+| Loves popcorn | 0.405 |
+| Loves soda | 0.214 |
+| Age | 0.343 |
+
+The feature with the **lowest Gini Impurity** provides the best split. Since **loves soda** has the lowest impurity, it becomes the root of the classification tree.
+
+![Loves Soda as Root](https://substackcdn.com/image/fetch/$s_!ljtw!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F43ab0e53-6d51-4bfe-b254-95599b011f9c_944x439.png)
+
+Thus:
+- People who love soda go to the **left** node.
+- People who do not love soda go to the **right** node.
+
+![Soda Split](https://substackcdn.com/image/fetch/$s_!JFmt!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F80e39681-e0b7-4ffe-a1d2-03d0ede89874_917x483.png)
+
+---
+
+## Adding Branches
+
+After selecting *loves soda* as the root, the data splits into two nodes:
+
+- People who love soda → left node (4 people: 3 love *Cool as Ice*, 1 does not)
+- People who do not love soda → right node
+
+Because the left node contains a mixture of classes, it is impure. We attempt to reduce the impurity by splitting it further using:
+
+- Loves popcorn
+- Age
+
+### Testing the Feature: Loves Popcorn
+
+Among the four people who love soda, two also love popcorn and two do not.
+
+![Loves Popcorn Sub-split](https://substackcdn.com/image/fetch/$s_!leFY!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe4792abd-eaab-4a09-8a64-0ef8a9f01343_343x396.png)
+
+After calculating the impurity of the two leaves and computing the weighted average, the total Gini Impurity for this split is **0.25**.
+
+### Testing the Feature: Age
+
+We evaluate different age thresholds, but this time only for the people who love soda. The best split found is:
+
+> Age < 12.5
+
+This split produces two leaves, both of which contain only one category — so the Gini Impurity is **0**.
+
+![Age < 12.5 Split](https://substackcdn.com/image/fetch/$s_!6W_V!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd7c928a2-5274-4740-8d23-145218942fb3_701x468.png)
+
+### Choosing the Best Split
+
+| Split | Gini Impurity |
+|---|---|
+| Loves popcorn | 0.25 |
+| Age < 12.5 | 0 |
+
+Since **0 < 0.25**, the split using **Age < 12.5** is chosen.
+
+---
+
+## Adding Leaves
+
+The split using Age < 12.5 produced two new nodes, both containing only one category. Because there is no reason to continue splitting them, these nodes become **leaf nodes**.
+
+The right node of the root contains the three people who do not love soda — all three do not love *Cool as Ice*. Since this node is also pure, it becomes a leaf node too.
+
+---
+
+## Defining Output Values
+
+After building the structure of the tree, the final step is to assign output values to each leaf node.
+
+In a classification tree, the output value of a leaf is the **majority class** — the category that appears most frequently in that leaf.
+
+![Output Values](https://substackcdn.com/image/fetch/$s_!e2-c!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff6a9002e-0595-401d-86b2-49cd9e99c991_973x505.png)
+
+- **Leaf 1** — majority do not love *Cool as Ice* → output: **Does not love Cool as Ice**
+- **Leaf 2** — majority love *Cool as Ice* → output: **Loves Cool as Ice**
+
+After assigning output values to all leaves, the classification tree is fully constructed and ready to make predictions.
+
+![Completed Tree](https://substackcdn.com/image/fetch/$s_!jp9c!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0f0dcf02-80c0-467f-bbda-9771c170d82e_1012x388.png)
+
+---
+
+## Using the Tree
+
+To classify a new example, start at the root node and follow the branches based on whether each condition is true or false.
+
+**Example Prediction** — a new person who loves soda and is 15 years old:
+
+1. Root: *Does the person love soda?* → **Yes** → go left
+2. Next: *Age < 12.5?* → **False** (age is 15) → go right
+
+**Prediction: Loves Cool as Ice**
+
+---
+
+## How to Prevent Overfitting
+
+When a leaf contains very few data points, it becomes difficult to be confident that the prediction will generalize to new data. This situation can lead to **overfitting** — when a model fits the training data too closely and fails to generalize.
+
+### Method 1: Pruning
+
+**Pruning** reduces the size of the tree by removing branches that provide little predictive value, improving generalization performance.
+
+### Method 2: Limiting Tree Growth
+
+We can require that each leaf must contain a **minimum number of data points** (e.g., minimum samples per leaf = 3). Some leaves may remain impure, but predictions become more reliable because they are based on more observations.
+
+### Using Cross Validation
+
+![Cross Validation](https://substackcdn.com/image/fetch/$s_!IBrV!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdbf42748-4776-4539-ba52-5ca717164456_492x150.png)
+
+When building a decision tree, we typically do not know the best values for parameters such as the minimum number of samples per leaf or the maximum depth of the tree. To determine the best values, we use **cross validation** — a technique that tests different parameter settings and selects the one that produces the best predictive performance on validation data.
+
+---
+
+## Conclusion
+
+A **Decision Tree** is a model that makes predictions by evaluating a sequence of conditions and following branches until reaching a leaf node. When the tree predicts categories, it is called a **Classification Tree**.
+
+The construction of a classification tree involves:
+
+- Selecting the best feature for the root node
+- Measuring impurity using **Gini Impurity**
+- Handling numeric and categorical variables
+- Splitting nodes to reduce impurity
+- Assigning output values to leaf nodes
+- Using the tree to classify new data
+- Preventing overfitting using **pruning** and **cross validation**
+
+By following this process, a classification tree can transform raw data into a predictive model.
 
 <ArticleNav
   prev={{ title: "Decision Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees" }}
