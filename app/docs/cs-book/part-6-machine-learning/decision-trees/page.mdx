@@ -1,0 +1,299 @@
+export const metadata = {
+  title: "Decision Trees — ByteWise CS Book",
+  description:
+    "Master decision trees from first principles: how they split data, measure impurity with Gini and entropy, handle overfitting, and power ensemble methods like Random Forests.",
+  keywords: [
+    "decision tree",
+    "machine learning",
+    "Gini impurity",
+    "entropy",
+    "information gain",
+    "random forest",
+    "overfitting",
+    "pruning",
+    "CART",
+    "classification",
+    "regression tree",
+  ],
+  openGraph: {
+    title: "Decision Trees — ByteWise CS Book",
+    description:
+      "Understand how decision trees split data, why they overfit, and how ensembles like Random Forests fix that — with the math made concrete.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Decision Trees
+
+## A Loan Officer Who Learned From Data
+
+Before machine learning, banks hired loan officers. An experienced officer would look at an applicant and run through a mental checklist: *Does this person have a stable job? How long? What's their debt-to-income ratio? Any prior defaults?* After thousands of applications, they developed intuitions — a set of rules that branched on specific facts.
+
+A decision tree is that loan officer, expressed as math.
+
+The insight that makes decision trees powerful is that most real-world decisions can be broken down into a sequence of yes/no questions about features. Which question to ask first, and how to ask it, is where the algorithm does all its work.
+
+---
+
+## What Is a Decision Tree?
+
+A decision tree is a flowchart-shaped model where:
+
+- Each **internal node** tests a feature (e.g., *age < 30?*)
+- Each **branch** represents the outcome of that test
+- Each **leaf node** gives a prediction (a class label or a numeric value)
+
+To classify a new example, you start at the root and follow branches based on the example's feature values until you reach a leaf.
+
+```
+                  [income > $50k?]
+                  /             \
+               Yes               No
+              /                    \
+   [credit score > 700?]       → DENY
+      /          \
+   Yes             No
+    |               |
+ → APPROVE      → REVIEW
+```
+
+This is a **classification tree** (predicting a category). When the leaf outputs a number instead of a class, it's a **regression tree**.
+
+---
+
+## Building a Tree: The Core Algorithm
+
+The algorithm is recursive and greedy:
+
+1. At the current node, consider every possible split on every feature.
+2. Pick the split that best separates the classes (maximizes *information gain*).
+3. Recurse on each child node until a stopping condition is met.
+
+The key question: **how do you measure "best separates"?**
+
+---
+
+## Measuring Impurity
+
+A node is *pure* if all examples in it belong to the same class. We want splits that produce purer children. Two standard measures:
+
+### Gini Impurity
+
+$$\text{Gini}(t) = 1 - \sum_{k=1}^{K} p_k^2$$
+
+where $p_k$ is the fraction of examples at node $t$ belonging to class $k$.
+
+- A pure node has Gini = 0 (one class, $p_k = 1$)
+- A maximally impure node (equal split across all classes) has Gini close to 1
+
+**Example:** Node with 80% Class A and 20% Class B:
+
+$$\text{Gini} = 1 - (0.8^2 + 0.2^2) = 1 - (0.64 + 0.04) = 0.32$$
+
+### Entropy (Information Gain)
+
+$$H(t) = -\sum_{k=1}^{K} p_k \log_2 p_k$$
+
+- Pure node: $H = 0$
+- Maximum uncertainty (50/50 binary split): $H = 1$ bit
+
+**Information Gain** of a split $S$ on node $t$:
+
+$$IG(t, S) = H(t) - \sum_{\text{child } c} \frac{|c|}{|t|} H(c)$$
+
+We pick the split with the highest information gain — the split that reduces uncertainty the most.
+
+**Gini vs. Entropy:** Gini is faster to compute (no log). Entropy tends to produce slightly more balanced trees. In practice, the difference is small — both are used (sklearn's default is Gini).
+
+---
+
+## Choosing the Split: A Worked Example
+
+Suppose we have 10 training examples: 6 approved loans, 4 denied. We're evaluating splitting on *income > $50k*.
+
+After split:
+- Left child (income ≤ $50k): 1 approved, 4 denied → 5 examples
+- Right child (income > $50k): 5 approved, 0 denied → 5 examples
+
+Parent entropy:
+
+$$H(\text{root}) = -\frac{6}{10}\log_2\frac{6}{10} - \frac{4}{10}\log_2\frac{4}{10} \approx 0.971$$
+
+Left child entropy:
+
+$$H_L = -\frac{1}{5}\log_2\frac{1}{5} - \frac{4}{5}\log_2\frac{4}{5} \approx 0.722$$
+
+Right child entropy:
+
+$$H_R = 0 \quad \text{(pure node — all approved)}$$
+
+Information gain:
+
+$$IG = 0.971 - \left(\frac{5}{10} \times 0.722 + \frac{5}{10} \times 0\right) = 0.971 - 0.361 = 0.610$$
+
+We'd compute this for every possible feature and threshold, then pick the split with the maximum IG.
+
+---
+
+## Continuous Features
+
+For a continuous feature like *age*, the algorithm:
+
+1. Sorts all unique values
+2. Considers every midpoint as a candidate threshold (e.g., age < 23.5, age < 31.0, ...)
+3. Evaluates information gain for each threshold
+4. Picks the best one
+
+This is why decision tree training can be slow on large datasets with many continuous features — the number of candidate splits is $O(n \cdot d)$ where $n$ is the number of examples and $d$ is the number of features.
+
+---
+
+## Overfitting: The Tree's Biggest Problem
+
+A fully grown decision tree will memorize the training data. It can keep splitting until every leaf contains exactly one example — achieving 100% training accuracy and near-zero test accuracy.
+
+This is **overfitting**: the tree learned the noise in the training data rather than the underlying pattern.
+
+**Intuition:** Imagine a decision tree trained on 1,000 loan applications. A deep tree might learn rules like *"approve if age is 34, income is $62,400, and zip code starts with 9"* — patterns that are accidents of the sample, not real signals.
+
+Two main remedies:
+
+### 1. Pre-pruning (Early Stopping)
+
+Stop growing the tree before it fully fits the data:
+
+| Hyperparameter | Effect |
+|---|---|
+| `max_depth` | Limits how deep the tree can grow |
+| `min_samples_split` | Don't split a node with fewer than N examples |
+| `min_samples_leaf` | Every leaf must have at least N examples |
+| `min_impurity_decrease` | Only split if gain exceeds threshold |
+
+### 2. Post-pruning
+
+Grow the full tree, then prune back branches that don't improve performance on a validation set. The most common method is **cost-complexity pruning** (also called weakest-link pruning), which sklearn implements via the `ccp_alpha` parameter.
+
+---
+
+## The CART Algorithm
+
+The most widely used decision tree algorithm is **CART** (Classification and Regression Trees, Breiman et al. 1984). Key properties:
+
+- Produces **binary trees** — every split has exactly two children
+- Uses **Gini impurity** for classification, **MSE** for regression
+- Supports **post-pruning** via cost-complexity
+- Handles both categorical and continuous features
+
+Other algorithms exist (ID3, C4.5, C5.0) but CART dominates in practice.
+
+---
+
+## Regression Trees
+
+When predicting a continuous value (e.g., house price), the tree works identically but:
+
+- **Split criterion:** Minimize the weighted mean squared error of children instead of impurity
+- **Leaf prediction:** The mean of all training examples in that leaf
+
+$$\text{MSE}(t) = \frac{1}{|t|} \sum_{i \in t} (y_i - \bar{y}_t)^2$$
+
+The prediction for a new example is the average target value of the training examples that fell in the same leaf.
+
+---
+
+## Feature Importance
+
+One of the most useful properties of decision trees: they naturally rank features by importance.
+
+**Feature importance** for feature $j$ is the total reduction in impurity caused by splits on $j$, weighted by the fraction of samples reaching each split:
+
+$$\text{importance}(j) = \sum_{\text{nodes } t \text{ splitting on } j} \frac{|t|}{n} \cdot \Delta\text{impurity}(t)$$
+
+Features that appear near the root and cause large impurity reductions get high scores. This is the basis of the `.feature_importances_` attribute in sklearn.
+
+**Caveat:** High-cardinality features (features with many unique values) tend to score artificially high because they offer more candidate splits. Prefer **permutation importance** when features have very different cardinalities.
+
+---
+
+## From One Tree to Many: Ensembles
+
+A single decision tree is intuitive but brittle — small changes in training data can produce very different trees. The solution is to build many trees and aggregate their predictions.
+
+### Random Forest
+
+Train $B$ trees, each on a **bootstrap sample** (random sample with replacement) of the training data. At each split, only consider a **random subset of features** (typically $\sqrt{d}$ for classification). Predict by majority vote (classification) or average (regression).
+
+The two sources of randomness — bootstrap sampling and feature subsampling — ensure the trees are **decorrelated**. Averaging decorrelated trees reduces variance without increasing bias.
+
+### Gradient Boosting
+
+Instead of training trees independently, train them **sequentially**: each tree corrects the residual errors of the ensemble so far. XGBoost, LightGBM, and CatBoost are the production-grade implementations.
+
+| Method | Bias | Variance | Speed | Interpretability |
+|---|---|---|---|---|
+| Single Tree | High | High | Fast | High |
+| Random Forest | Low | Low | Medium | Medium |
+| Gradient Boosting | Low | Low | Slow (train) | Low |
+
+---
+
+## Decision Trees vs. Neural Networks
+
+Decision trees are often the right tool when:
+
+- **Interpretability matters** — you can print the tree and explain each decision
+- **Tabular data** — trees handle mixed feature types natively
+- **Small to medium datasets** — neural networks need much more data to shine
+- **Fast training** — trees train in seconds; deep networks in hours
+
+Neural networks dominate when:
+
+- **Unstructured data** — images, text, audio
+- **Very large datasets** — they scale better
+- **Complex feature interactions** — learned representations beat hand-crafted splits
+
+In practice, **gradient boosted trees (XGBoost/LightGBM) are the go-to for tabular ML**. Decision trees are their interpretable building block.
+
+---
+
+## Implementation (Python / sklearn)
+
+```python
+from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+clf = DecisionTreeClassifier(
+    max_depth=3,           # prevent overfitting
+    min_samples_leaf=5,    # each leaf needs at least 5 examples
+    criterion="gini",      # or "entropy"
+    random_state=42,
+)
+clf.fit(X_train, y_train)
+
+print(f"Test accuracy: {clf.score(X_test, y_test):.3f}")
+print(export_text(clf, feature_names=load_iris().feature_names))
+```
+
+---
+
+## Summary
+
+- A decision tree is a sequence of feature tests; each leaf is a prediction
+- **Gini impurity** and **entropy** measure how mixed a node is — splits that reduce impurity the most are chosen first
+- **Information gain** = parent impurity − weighted average child impurity
+- Fully grown trees overfit; control depth with `max_depth`, `min_samples_leaf`, or post-pruning
+- **CART** is the dominant algorithm: binary splits, Gini/MSE criterion, post-pruning support
+- Feature importance is a free byproduct of training — features near the root with large impurity drops score highest
+- Single trees are brittle; **Random Forests** (bagging + feature subsampling) and **Gradient Boosting** fix this with ensembles
+- For tabular data, gradient boosted trees (XGBoost, LightGBM) are the industry default
+
+<ArticleNav
+  prev={{ title: "WebSockets", href: "/docs/cs-book/part-5-modern-engineering/websockets" }}
+  next={null}
+/>

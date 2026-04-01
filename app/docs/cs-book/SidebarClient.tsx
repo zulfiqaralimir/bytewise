@@ -66,6 +66,12 @@ const chapters = [
       { title: "WebSockets", href: "/docs/cs-book/part-5-modern-engineering/websockets" },
     ],
   },
+  {
+    part: "Part 6 — Machine Learning",
+    items: [
+      { title: "Decision Trees", href: "/docs/cs-book/part-6-machine-learning/decision-trees" },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) => c.items.map((i) => i.href));
@@ -153,12 +159,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/26 chapters</span>
+              <span>{readCount}/27 chapters</span>
             </div>
             <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 26) * 100}%` }}
+                style={{ width: `${(readCount / 27) * 100}%` }}
               />
             </div>
           </div>
