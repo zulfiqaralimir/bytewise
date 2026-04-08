@@ -14,6 +14,8 @@ const chapters = [
       { title: "Transport Layer (TCP & UDP)", href: "/docs/cs-book/part-0-how-computers-work/networking/transport-layer" },
       { title: "Network Layer (IP & Routing)", href: "/docs/cs-book/part-0-how-computers-work/networking/network-layer" },
       { title: "Link Layer & LANs", href: "/docs/cs-book/part-0-how-computers-work/networking/link-layer" },
+      { title: "Wireless & Mobile Networks", href: "/docs/cs-book/part-0-how-computers-work/networking/wireless-mobile-networks" },
+      { title: "Multimedia Networking", href: "/docs/cs-book/part-0-how-computers-work/networking/multimedia-networking" },
       { title: "Network Security", href: "/docs/cs-book/part-0-how-computers-work/networking/network-security" },
     ],
   },
@@ -170,12 +172,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/38 chapters</span>
+              <span>{readCount}/40 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 38) * 100}%` }}
+                style={{ width: `${(readCount / 40) * 100}%` }}
               />
             </div>
           </div>

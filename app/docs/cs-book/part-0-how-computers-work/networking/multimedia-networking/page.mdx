@@ -1,0 +1,55 @@
+export const metadata = {
+  title: "Multimedia Networking — ByteWise CS Book",
+  description:
+    "How audio, video, and real-time media are delivered over the internet — streaming, VoIP, CDNs, DASH, RTP, and the trade-offs between delay, loss, and quality.",
+  keywords: [
+    "multimedia networking",
+    "video streaming",
+    "VoIP",
+    "RTP",
+    "RTSP",
+    "DASH",
+    "CDN",
+    "jitter",
+    "delay",
+    "QoS",
+    "adaptive bitrate",
+    "Netflix",
+    "YouTube",
+  ],
+  openGraph: {
+    title: "Multimedia Networking — ByteWise CS Book",
+    description:
+      "How Netflix, YouTube, and Zoom deliver media over a best-effort internet — DASH, RTP, VoIP, and QoS explained.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Multimedia Networking
+
+## Streaming the World
+
+{/* TODO: Ch 9 — Kurose & Ross
+    Cover:
+    - Multimedia networking properties: loss-tolerant but delay-sensitive (contrast with file transfer)
+    - Types of multimedia: stored streaming (YouTube/Netflix), live streaming, real-time interactive (Zoom/VoIP)
+    - Stored video streaming: playout buffer, client-side buffering, initial playout delay
+    - DASH (Dynamic Adaptive Streaming over HTTP): manifest file, chunk-based delivery, bitrate adaptation algorithms
+    - CDNs for video: server selection strategies (geographically closest, least loaded, lowest RTT), Netflix Open Connect
+    - VoIP: digitization (sampling, quantization), compression codecs (G.711, Opus), packetization delay
+    - Real-time transport: RTP (payload type, sequence number, timestamp, SSRC), RTCP for feedback
+    - Dealing with loss and delay in VoIP: FEC, interleaving, adaptive playout, concealment
+    - SIP (Session Initiation Protocol): call setup, SIP proxies, SIP registrar
+    - Quality of Service (QoS): best-effort vs differentiated services
+    - Traffic shaping: leaky bucket, token bucket
+    - Scheduling and policing: FIFO, priority queuing, weighted fair queuing (WFQ)
+    - Diffserv: per-hop behaviors, expedited forwarding, assured forwarding
+*/}
+
+*Content coming soon — based on Chapter 9 of Computer Networking: A Top-Down Approach (Kurose & Ross).*
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/networking/wireless-mobile-networks", label: "Wireless & Mobile Networks" }}
+  next={{ href: "/docs/cs-book/part-0-how-computers-work/networking/network-security", label: "Network Security" }}
+/>
