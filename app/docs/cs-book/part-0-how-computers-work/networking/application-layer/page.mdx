@@ -1,0 +1,52 @@
+export const metadata = {
+  title: "Application Layer — ByteWise CS Book",
+  description:
+    "How applications communicate over the internet — HTTP, DNS, SMTP, and the client-server vs P2P paradigms that power the web.",
+  keywords: [
+    "application layer",
+    "HTTP",
+    "DNS",
+    "SMTP",
+    "client-server",
+    "peer-to-peer",
+    "web",
+    "cookies",
+    "web cache",
+    "CDN",
+    "socket",
+  ],
+  openGraph: {
+    title: "Application Layer — ByteWise CS Book",
+    description:
+      "HTTP, DNS, SMTP — how the apps you use every day talk to each other over the internet.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Application Layer
+
+## Where Users Meet the Network
+
+{/* TODO: Ch 2 — Kurose & Ross
+    Cover:
+    - Network application architectures: client-server vs P2P
+    - The Web and HTTP: non-persistent vs persistent connections, HTTP/1.1 vs HTTP/2 vs HTTP/3
+    - HTTP message format: request (method, URL, headers) and response (status codes, headers)
+    - Cookies and web state
+    - Web caching and conditional GET
+    - DNS: purpose, hierarchy (root → TLD → authoritative), resource records (A, NS, CNAME, MX)
+    - DNS resolution: recursive vs iterative queries, caching TTL
+    - DNS as a distributed database
+    - Email: SMTP, IMAP, mail servers, MX records
+    - P2P: BitTorrent, distributed hash tables
+    - Video streaming: DASH, CDNs, cluster selection strategies
+    - Socket programming: TCP sockets, UDP sockets
+*/}
+
+*Content coming soon — based on Chapter 2 of Computer Networking: A Top-Down Approach (Kurose & Ross).*
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/networking/internet-overview", label: "The Internet & Computer Networks" }}
+  next={{ href: "/docs/cs-book/part-0-how-computers-work/networking/transport-layer", label: "Transport Layer" }}
+/>

@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "Network Security — ByteWise CS Book",
+  description:
+    "How the internet is secured — cryptography fundamentals, TLS, firewalls, VPNs, and the attacks that motivate every security protocol.",
+  keywords: [
+    "network security",
+    "cryptography",
+    "TLS",
+    "SSL",
+    "public key",
+    "symmetric encryption",
+    "digital signature",
+    "certificate authority",
+    "firewall",
+    "VPN",
+    "DDoS",
+    "IPsec",
+  ],
+  openGraph: {
+    title: "Network Security — ByteWise CS Book",
+    description:
+      "TLS, cryptography, firewalls, and VPNs — how every layer of the network is defended against attackers.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Network Security
+
+## Defending Every Layer of the Stack
+
+{/* TODO: Ch 8 — Kurose & Ross
+    Cover:
+    - What is network security: confidentiality, integrity, authentication, availability
+    - Cryptography foundations: symmetric (AES), public-key (RSA), why both are used together
+    - Message integrity: cryptographic hash functions (SHA), HMACs
+    - Digital signatures: signing with private key, verifying with public key, non-repudiation
+    - Public-key infrastructure (PKI): certificates, certificate authorities (CAs), chain of trust
+    - TLS/SSL: handshake (certificate exchange, key agreement), record protocol, HTTPS
+    - Authentication protocols: challenge-response, nonces
+    - Email security: PGP, S/MIME
+    - Network-layer security: IPsec, AH vs ESP, VPNs
+    - Firewalls: packet filtering, stateful inspection, application gateways
+    - Intrusion detection systems (IDS)
+    - Attacks: eavesdropping, IP spoofing, denial of service (DDoS), DNS poisoning, BGP hijacking, man-in-the-middle
+*/}
+
+*Content coming soon — based on Chapter 8 of Computer Networking: A Top-Down Approach (Kurose & Ross).*
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/networking/link-layer", label: "Link Layer & LANs" }}
+  next={{ href: "/docs/cs-book/part-1-foundations/big-o-notation", label: "Big O Notation" }}
+/>

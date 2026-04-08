@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "Link Layer & LANs — ByteWise CS Book",
+  description:
+    "How data moves across a single physical link — Ethernet, MAC addresses, ARP, switches, and the protocols that connect devices on the same network.",
+  keywords: [
+    "link layer",
+    "Ethernet",
+    "MAC address",
+    "ARP",
+    "switch",
+    "VLAN",
+    "CSMA/CD",
+    "error detection",
+    "CRC",
+    "parity",
+    "LAN",
+    "spanning tree",
+  ],
+  openGraph: {
+    title: "Link Layer & LANs — ByteWise CS Book",
+    description:
+      "Ethernet, MAC addresses, ARP, and switches — how devices on the same network find and talk to each other.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Link Layer & LANs
+
+## Hop to Hop Across a Single Link
+
+{/* TODO: Ch 6 — Kurose & Ross
+    Cover:
+    - Link layer services: framing, error detection/correction, flow control, MAC
+    - Error detection: parity bits, checksums, CRC (cyclic redundancy check)
+    - Error correction: forward error correction (FEC)
+    - Multiple access protocols: channel partitioning (TDMA, FDMA), random access (CSMA/CD, CSMA/CA), taking turns (polling, token ring)
+    - MAC addresses: 48-bit, flat (not hierarchical), burned into NIC
+    - ARP: mapping IP addresses to MAC addresses, ARP tables, ARP request/reply broadcast
+    - Ethernet: frame structure (preamble, dest MAC, src MAC, type, data, CRC), CSMA/CD
+    - Switches: store-and-forward, self-learning, switch tables, vs routers
+    - VLANs: logical segmentation of a physical LAN, 802.1Q tagging
+    - Link virtualization: MPLS
+    - Data center networking: top-of-rack switches, fat-tree topology, load balancing
+    - Web request walkthrough: DNS → HTTP → ARP → Ethernet → IP → TCP all connected
+*/}
+
+*Content coming soon — based on Chapter 6 of Computer Networking: A Top-Down Approach (Kurose & Ross).*
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/networking/network-layer", label: "Network Layer" }}
+  next={{ href: "/docs/cs-book/part-0-how-computers-work/networking/network-security", label: "Network Security" }}
+/>

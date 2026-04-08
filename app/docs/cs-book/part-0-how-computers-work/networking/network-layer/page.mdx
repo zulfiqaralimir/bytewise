@@ -1,0 +1,59 @@
+export const metadata = {
+  title: "Network Layer — ByteWise CS Book",
+  description:
+    "How packets are routed across the internet — IP addressing, subnets, NAT, routing algorithms, and how routers forward billions of packets per second.",
+  keywords: [
+    "network layer",
+    "IP",
+    "IPv4",
+    "IPv6",
+    "routing",
+    "forwarding",
+    "NAT",
+    "DHCP",
+    "CIDR",
+    "subnet",
+    "BGP",
+    "OSPF",
+    "router",
+    "SDN",
+  ],
+  openGraph: {
+    title: "Network Layer — ByteWise CS Book",
+    description:
+      "IP addresses, routing algorithms, and how a packet finds its way from your laptop to a server on the other side of the world.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Network Layer
+
+## Moving Packets Across the Planet
+
+{/* TODO: Ch 4 & 5 — Kurose & Ross
+    Cover (Data Plane — Ch 4):
+    - Forwarding vs routing: data plane vs control plane
+    - Router architecture: input ports, switching fabric, output ports, routing processor
+    - IP datagram format: version, header length, TTL, protocol, checksum, src/dest IP
+    - IPv4 addressing: dotted decimal, CIDR, subnetting, subnet masks
+    - DHCP: dynamic address allocation (discover, offer, request, ACK)
+    - NAT: how a single public IP serves many private devices, NAT traversal issues
+    - IPv6: 128-bit addresses, header simplification, transition mechanisms (tunneling)
+    - Generalized forwarding: match-plus-action, OpenFlow
+
+    Cover (Control Plane — Ch 5):
+    - Routing algorithms: link-state (Dijkstra) vs distance-vector (Bellman-Ford)
+    - OSPF: intra-AS link-state routing
+    - BGP: inter-AS path-vector routing, AS paths, policy-based routing
+    - The internet as a graph of autonomous systems
+    - Software-Defined Networking (SDN): separating control plane from data plane
+    - ICMP: error reporting (TTL exceeded, destination unreachable), ping, traceroute
+*/}
+
+*Content coming soon — based on Chapters 4 & 5 of Computer Networking: A Top-Down Approach (Kurose & Ross).*
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/networking/transport-layer", label: "Transport Layer" }}
+  next={{ href: "/docs/cs-book/part-0-how-computers-work/networking/link-layer", label: "Link Layer" }}
+/>

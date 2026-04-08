@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "Transport Layer — ByteWise CS Book",
+  description:
+    "How TCP and UDP deliver data between processes — multiplexing, reliable delivery, flow control, and congestion control explained from first principles.",
+  keywords: [
+    "transport layer",
+    "TCP",
+    "UDP",
+    "reliable data transfer",
+    "congestion control",
+    "flow control",
+    "three-way handshake",
+    "multiplexing",
+    "demultiplexing",
+    "Go-Back-N",
+    "selective repeat",
+  ],
+  openGraph: {
+    title: "Transport Layer — ByteWise CS Book",
+    description:
+      "TCP vs UDP: how data moves reliably (or unreliably) between processes, and the mechanisms that make TCP the backbone of the web.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Transport Layer
+
+## Getting Data from Process to Process
+
+{/* TODO: Ch 3 — Kurose & Ross
+    Cover:
+    - Transport vs network layer: process-to-process vs host-to-host
+    - Multiplexing and demultiplexing: ports, sockets, (src IP, src port, dest IP, dest port) tuple
+    - UDP: connectionless, no guarantee, low overhead — use cases (DNS, video streaming, gaming)
+    - Reliable data transfer principles: ARQ, stop-and-wait, pipelining
+    - Go-Back-N and Selective Repeat protocols
+    - TCP: connection-oriented, full-duplex, byte stream
+    - TCP segment structure: sequence numbers, ACKs, flags, window size
+    - Three-way handshake (SYN, SYN-ACK, ACK) and four-way teardown (FIN)
+    - TCP reliable delivery: retransmission timers, fast retransmit
+    - TCP flow control: receive window, sender throttling
+    - TCP congestion control: slow start, congestion avoidance, fast recovery, AIMD
+    - TCP CUBIC and modern congestion control variants
+    - QUIC: HTTP/3's UDP-based transport with built-in reliability
+*/}
+
+*Content coming soon — based on Chapter 3 of Computer Networking: A Top-Down Approach (Kurose & Ross).*
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/networking/application-layer", label: "Application Layer" }}
+  next={{ href: "/docs/cs-book/part-0-how-computers-work/networking/network-layer", label: "Network Layer" }}
+/>

@@ -9,6 +9,12 @@ const chapters = [
     part: "Part 0 — How Computers Work",
     items: [
       { title: "Low-Level vs High-Level Programming", href: "/docs/cs-book/part-0-how-computers-work/low-high-level-programming" },
+      { title: "The Internet & Computer Networks", href: "/docs/cs-book/part-0-how-computers-work/networking/internet-overview" },
+      { title: "Application Layer (HTTP, DNS)", href: "/docs/cs-book/part-0-how-computers-work/networking/application-layer" },
+      { title: "Transport Layer (TCP & UDP)", href: "/docs/cs-book/part-0-how-computers-work/networking/transport-layer" },
+      { title: "Network Layer (IP & Routing)", href: "/docs/cs-book/part-0-how-computers-work/networking/network-layer" },
+      { title: "Link Layer & LANs", href: "/docs/cs-book/part-0-how-computers-work/networking/link-layer" },
+      { title: "Network Security", href: "/docs/cs-book/part-0-how-computers-work/networking/network-security" },
     ],
   },
   {
@@ -164,12 +170,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/32 chapters</span>
+              <span>{readCount}/38 chapters</span>
             </div>
             <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 32) * 100}%` }}
+                style={{ width: `${(readCount / 38) * 100}%` }}
               />
             </div>
           </div>
