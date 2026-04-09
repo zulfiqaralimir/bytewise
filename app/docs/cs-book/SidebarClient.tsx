@@ -50,7 +50,7 @@ const chapters = [
   {
     part: "Part 3 — System Design",
     items: [
-      { title: "System Design Overview (HLD & LLD)", href: "/docs/cs-book/part-3-system-design/system-design-overview" },
+      { title: "Complete System Design Roadmap 2025", href: "/docs/cs-book/part-3-system-design/system-design-overview" },
       { title: "APIs & REST", href: "/docs/cs-book/part-3-system-design/apis-and-rest" },
       { title: "Databases", href: "/docs/cs-book/part-3-system-design/databases" },
       { title: "Caching", href: "/docs/cs-book/part-3-system-design/caching" },
