@@ -1,0 +1,491 @@
+export const metadata = {
+  title: "10-Step Framework to Solve Any System Design Interview — ByteWise CS Book",
+  description:
+    "A structured 10-step framework used by senior engineers to ace system design interviews — covering requirements, scale estimation, API design, architecture, databases, caching, and more.",
+  keywords: [
+    "system design interview",
+    "system design framework",
+    "HLD interview",
+    "scale estimation",
+    "API design",
+    "distributed systems interview",
+    "senior engineer interview",
+    "system design steps",
+  ],
+  twitter: {
+    card: "summary_large_image",
+    title: "10-Step Framework to Solve Any System Design Interview — ByteWise CS Book",
+    description:
+      "A structured framework used by senior engineers to design systems like Netflix, Uber, and WhatsApp in interviews.",
+    images: ["https://bytewise-one.vercel.app/og/system-design-interview-framework.png"],
+  },
+  openGraph: {
+    title: "10-Step Framework to Solve Any System Design Interview — ByteWise CS Book",
+    description:
+      "A structured framework used by senior engineers to design systems like Netflix, Uber, and WhatsApp in interviews.",
+    type: "article",
+    images: [
+      {
+        url: "https://bytewise-one.vercel.app/og/system-design-interview-framework.png",
+        width: 1200,
+        height: 630,
+        alt: "10-Step Framework to Solve Any System Design Interview",
+      },
+    ],
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 10-Step Framework to Solve Any System Design Interview
+
+A structured approach used by senior engineers to design large-scale systems like **Netflix, Uber, WhatsApp, and Instagram** during system design interviews.
+
+System design interviews are open-ended by design. There is no single correct answer, and that is exactly what makes them hard. The interviewer is not looking for a perfect system — they are evaluating how you *think*: how you break down ambiguity, reason about tradeoffs, and communicate complex ideas under pressure.
+
+This 10-step framework gives you a repeatable structure so you never stare at a blank whiteboard again. Follow it in sequence, and you will cover everything an interviewer expects to see.
+
+---
+
+## Step 1 — Clarify the Requirements
+
+First, clearly understand **what needs to be built**. Never start drawing boxes until you know what problem you are solving.
+
+Ask questions such as:
+
+- Who are the users? (consumers, businesses, internal engineers?)
+- What are the core features?
+- What scale should the system support?
+- Are there any explicit constraints? (latency, cost, geography)
+
+Interviewers intentionally leave the problem vague. Asking smart clarifying questions signals senior-level thinking.
+
+**Example — Design WhatsApp:**
+
+### Functional Requirements
+- Send and receive text messages between users
+- Show delivery status (sent → delivered → read)
+- Support group messaging
+- Store chat history
+
+### Non-Functional Requirements
+- Low latency: messages delivered in under 500ms
+- High availability: 99.99% uptime
+- End-to-end encryption
+- Horizontally scalable to billions of messages per day
+
+**What to avoid:** Do not start designing immediately. Spend 2–3 minutes on requirements. It shows maturity and prevents designing the wrong system.
+
+---
+
+## Step 2 — Estimate the Scale
+
+Estimate the **size of the system** so your architecture choices are grounded in reality, not guesswork. Back-of-envelope calculations are a standard expectation in senior interviews.
+
+Typical calculations:
+
+- **Daily Active Users (DAU)** and **Monthly Active Users (MAU)**
+- **Requests per second (RPS)** at peak
+- **Storage requirements** per day, per year
+- **Network bandwidth** in and out
+
+**Example — WhatsApp scale estimation:**
+
+```
+Users:        2 billion registered, 500 million DAU
+Messages:     Each user sends ~40 messages/day
+              → 500M × 40 = 20 billion messages/day
+              → 20B / 86,400s ≈ 230,000 messages/second (avg)
+              → ~700,000 messages/second (peak, 3× average)
+
+Storage:      Average message = 100 bytes (text)
+              20B messages × 100 bytes = 2 TB/day
+              Media (images, video): ~10× text = 20 TB/day
+              Total: ~22 TB/day → ~8 PB/year
+
+Bandwidth:    22 TB/day inbound ≈ 2 Gbps average ingress
+```
+
+These numbers force concrete decisions: you cannot store 22 TB/day in a single PostgreSQL instance. You will need distributed storage, sharding, and tiered archival.
+
+**Useful approximations to memorize:**
+
+| Metric | Value |
+|---|---|
+| Seconds in a day | ~86,400 |
+| Seconds in a month | ~2.5 million |
+| 1 million requests/day | ~12 requests/second |
+| 1 billion requests/day | ~12,000 requests/second |
+| 1 char (UTF-8) | 1–4 bytes |
+| Average tweet | ~140 bytes |
+| HD photo | ~3–5 MB |
+| 1 minute HD video | ~100–200 MB |
+
+---
+
+## Step 3 — Define the API Design
+
+Before drawing architecture, define **what the API looks like**. APIs are the contract between clients and your system — getting them right before designing internals prevents rework.
+
+For each core feature, define:
+- The HTTP method and endpoint
+- Request parameters and body
+- Response shape
+- Authentication mechanism
+
+**Example — WhatsApp API design:**
+
+```
+// Send a message
+POST /v1/messages
+Authorization: Bearer <jwt>
+{
+  "to":         "user_id_456",
+  "type":       "text",
+  "content":    "Hello!",
+  "client_msg_id": "uuid-abc123"   // idempotency key
+}
+→ 201 Created
+{
+  "message_id": "msg_xyz789",
+  "status":     "sent",
+  "timestamp":  1712345678
+}
+
+// Get conversation history (cursor-based pagination)
+GET /v1/conversations/{conversation_id}/messages?before=msg_xyz789&limit=50
+→ 200 OK
+{
+  "messages": [...],
+  "next_cursor": "msg_abc111"
+}
+
+// Update delivery status (internal service call)
+PATCH /v1/messages/{message_id}/status
+{ "status": "delivered" }  // or "read"
+```
+
+**Key API design principles to mention:**
+
+- **Idempotency keys** prevent duplicate messages if the client retries
+- **Cursor-based pagination** instead of offset — stable even as new messages arrive
+- **Versioning** (`/v1/`) ensures backward compatibility when the API evolves
+- **Consistent error format:** always return `{ "error": { "code": "...", "message": "..." } }`
+
+---
+
+## Step 4 — Design the High-Level Architecture
+
+Now draw the **overall system architecture**. This is the heart of the HLD — identify the major components and how they connect.
+
+Start with the simplest possible architecture, then evolve it as requirements demand.
+
+**Core components to consider:**
+
+```
+[Mobile/Web Client]
+        ↓
+[API Gateway]          ← auth, rate limiting, routing
+        ↓
+[Load Balancer]        ← distribute traffic across servers
+        ↓
+[Application Servers]  ← stateless, horizontally scalable
+        ↓
+[Message Queue]        ← async processing (Kafka / RabbitMQ)
+        ↓
+[Database(s)]          ← primary storage
+        ↓
+[Cache Layer]          ← Redis for hot data
+        ↓
+[CDN]                  ← static assets, media
+```
+
+**Example — WhatsApp high-level architecture:**
+
+```
+[Client A] ──WebSocket──→ [Chat Server A]
+                                  ↓
+                          [Message Queue (Kafka)]
+                                  ↓
+                          [Message Delivery Service]
+                                  ↓
+                         [Chat Server B] ──WebSocket──→ [Client B]
+
+Storage:
+  Chat Server → [Message DB (Cassandra)]   ← append-heavy, time-series
+  User profiles → [User DB (PostgreSQL)]   ← relational, ACID
+  Media files → [Object Storage (S3)]      ← large blobs
+  Sessions → [Redis]                        ← sub-millisecond lookups
+```
+
+**What to highlight in an interview:**
+
+- Why **WebSockets** instead of HTTP polling: persistent bidirectional connection, no request overhead per message
+- Why **Kafka** between servers: decouples delivery from receipt; if the recipient's server is busy, messages queue up without blocking the sender
+- Why **Cassandra** for messages: write-optimized, time-series access pattern, horizontal scaling with no single point of failure
+
+---
+
+## Step 5 — Design the Database Schema
+
+Choose your **database(s) and define the data model**. This step bridges HLD and LLD.
+
+For each entity, decide:
+- Which database type fits the access pattern
+- The schema (fields, types, indexes)
+- The sharding/partitioning strategy at scale
+
+**Example — WhatsApp schema:**
+
+```sql
+-- Users (PostgreSQL — relational, ACID)
+CREATE TABLE users (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  phone       VARCHAR(20) UNIQUE NOT NULL,
+  name        VARCHAR(100) NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX idx_users_phone ON users(phone);
+
+-- Conversations
+CREATE TABLE conversations (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type          VARCHAR(10) NOT NULL,  -- 'direct' or 'group'
+  created_at    TIMESTAMPTZ DEFAULT now()
+);
+
+-- Conversation members
+CREATE TABLE conversation_members (
+  conversation_id UUID REFERENCES conversations(id),
+  user_id         UUID REFERENCES users(id),
+  joined_at       TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (conversation_id, user_id)
+);
+```
+
+```
+-- Messages (Cassandra — high write throughput, time-series)
+-- Partition key: conversation_id → all messages for a chat on same node
+-- Clustering key: created_at DESC → newest messages first, efficient range scans
+
+CREATE TABLE messages (
+  conversation_id  UUID,
+  message_id       TIMEUUID,
+  sender_id        UUID,
+  content          TEXT,
+  type             TEXT,     -- 'text', 'image', 'video'
+  status           TEXT,     -- 'sent', 'delivered', 'read'
+  created_at       TIMESTAMP,
+  PRIMARY KEY (conversation_id, message_id)
+) WITH CLUSTERING ORDER BY (message_id DESC);
+```
+
+**Decision rationale to explain:**
+
+- PostgreSQL for users and conversations: small tables, complex relationships, ACID needed
+- Cassandra for messages: write-heavy (billions/day), append-only, time-series access — exactly what Cassandra is optimized for
+- Shard messages by `conversation_id` — all messages for a chat live on one Cassandra node, enabling efficient sequential reads
+
+---
+
+## Step 6 — Design Core Components In Depth
+
+Drill into the **most critical component** of the system. This is where interviewers distinguish good candidates from great ones.
+
+Pick the component that makes the problem hard and explain its internals:
+
+**Example — Message delivery flow (WhatsApp):**
+
+```
+1. Client A sends message via WebSocket to Chat Server A
+2. Chat Server A:
+   a. Assigns a message_id (ULID — sortable, unique)
+   b. Persists to Cassandra (durable before ACK)
+   c. Returns ACK to Client A (single tick ✓)
+   d. Publishes to Kafka topic: messages.deliver
+
+3. Message Delivery Service consumes from Kafka:
+   a. Looks up which Chat Server hosts Client B (via Redis: user_id → server_id)
+   b. Pushes to Chat Server B
+
+4. Chat Server B:
+   a. Delivers to Client B via WebSocket
+   b. Client B ACKs receipt → updates status to "delivered"
+   c. Publishes delivery receipt back through Kafka
+
+5. Chat Server A receives delivery receipt:
+   a. Updates Cassandra: status = 'delivered'
+   b. Pushes double-tick (✓✓) to Client A
+
+6. When Client B opens the message:
+   a. Client B sends "read" event
+   b. Status updated to 'read', blue ticks (✓✓ blue) pushed to Client A
+```
+
+**What to highlight:**
+
+- **Persist before ACK:** message is durable in Cassandra before the sender sees a single tick — no message loss if a server crashes after ACK
+- **Kafka decouples the critical path:** sender gets their ACK immediately; delivery is asynchronous
+- **Redis for presence routing:** O(1) lookup of which server a user is connected to
+
+---
+
+## Step 7 — Identify and Resolve Bottlenecks
+
+Ask yourself: **where does this system break under load?** Proactively surfacing and resolving bottlenecks shows senior-level thinking.
+
+**Common bottlenecks and solutions:**
+
+| Bottleneck | Symptom | Solution |
+|---|---|---|
+| Single database | Write latency grows with scale | Sharding, read replicas |
+| Hot shard | One shard gets disproportionate traffic | Consistent hashing, virtual nodes |
+| No caching | Database overwhelmed by repeated reads | Redis for hot data (recent messages, user profiles) |
+| Fan-out at scale | Celebrity with 10M followers: one post triggers 10M writes | Hybrid push/pull: push to active users, pull for inactive |
+| Single Chat Server | One server handles all messages: SPOF | Consistent hashing routes user to server; Redis tracks which server |
+| Media storage | Millions of images/videos in a filesystem | Object storage (S3) + CDN for delivery |
+| No rate limiting | Spam or DDoS overwhelms API Gateway | Token bucket rate limiter per user/IP |
+
+**For WhatsApp specifically:**
+
+- **Online/offline handling:** If Client B is offline, the message stays in Kafka. When Client B reconnects, the delivery service replays undelivered messages. Cassandra stores the message durably so nothing is lost.
+- **Message ordering:** ULID (Universally Unique Lexicographically Sortable Identifier) ensures messages within a conversation are time-ordered without a central sequence generator.
+- **Group messages:** Fan out to each member's delivery queue independently. For large groups (256 members), this is 256 parallel writes to Kafka — acceptable. For broadcast channels with millions of subscribers, switch to a pull model.
+
+---
+
+## Step 8 — Plan for Fault Tolerance and High Availability
+
+Design the system to **survive failures gracefully**. Distributed systems fail — the question is how your system behaves when they do.
+
+**Key failure scenarios to address:**
+
+**Chat Server crashes:**
+- WebSocket clients detect disconnection (heartbeat timeout ~30s)
+- Clients reconnect via load balancer to any available server
+- Consistent hashing routes them back; Redis session store provides continuity
+- In-flight messages in Kafka are reprocessed — idempotency keys prevent duplicates
+
+**Cassandra node failure:**
+- Cassandra replicates data across N nodes (replication factor = 3)
+- With quorum writes (W=2) and quorum reads (R=2), the system tolerates one node failure with no data loss
+- CAP tradeoff: Cassandra prioritizes availability — reads/writes succeed even during partition
+
+**Kafka broker failure:**
+- Kafka partitions are replicated across brokers (replication factor = 3)
+- Leader election is automatic; producers and consumers reconnect transparently
+- Messages are not lost — durability is guaranteed once the write is acknowledged
+
+**Entire data center outage:**
+- Multi-region deployment with active-active or active-passive configuration
+- DNS failover routes traffic to the secondary region
+- Cassandra supports multi-datacenter replication natively
+
+**Circuit breaker pattern:**
+- If the Notification Service is slow (>500ms), the circuit trips and message delivery continues without push notifications — graceful degradation
+- Better to deliver the message without a push notification than to block delivery entirely
+
+---
+
+## Step 9 — Address Security
+
+Security must be designed in, not bolted on. Cover the relevant security mechanisms for the system:
+
+**Authentication and Authorization:**
+
+```
+1. User registers with phone number
+2. Server sends OTP via SMS (Twilio)
+3. User submits OTP → server issues JWT (access token, 1hr TTL)
+   + refresh token (stored in Redis, 30-day TTL)
+4. Every API request carries Authorization: Bearer <jwt>
+5. API Gateway validates JWT signature (no DB lookup needed — stateless)
+6. Refresh token rotation: new refresh token issued on each use
+```
+
+**End-to-End Encryption (E2EE):**
+- Signal Protocol: each client generates a public/private key pair
+- The server stores only public keys — it can never decrypt messages
+- Key exchange uses Diffie-Hellman; messages are encrypted on-device before transmission
+- Even if WhatsApp's servers are compromised, message content is unreadable
+
+**Transport Security:**
+- TLS 1.3 for all client-server communication
+- Certificate pinning in the mobile app prevents MITM attacks on compromised networks
+
+**Rate Limiting:**
+- 100 messages/second per user (prevents spam bots)
+- 10 registration attempts/hour per phone number (prevents OTP brute force)
+- Implemented at API Gateway using Redis token bucket: O(1) per check
+
+**Data at Rest:**
+- AES-256 encryption for all stored data
+- Encryption keys managed by AWS KMS (or equivalent) — rotated annually
+- Database backups encrypted with a separate key
+
+---
+
+## Step 10 — Review, Optimize, and Summarize
+
+Close the interview by **reviewing the design end-to-end**, identifying remaining weaknesses, and summarizing the key decisions and tradeoffs.
+
+**Review checklist:**
+
+| Requirement | Solution | Tradeoff |
+|---|---|---|
+| Low latency | WebSockets + Redis routing | Stateful connections (harder to scale than stateless HTTP) |
+| High availability | Kafka decoupling + Cassandra replication | Eventual consistency for delivery status |
+| Scalability | Horizontal chat servers + Cassandra sharding | Operational complexity of distributed system |
+| Durability | Persist to Cassandra before ACK | Slight latency increase (one DB write on critical path) |
+| Security | E2EE (Signal Protocol) + JWT auth | Server cannot provide message moderation |
+| Message ordering | ULID-based message IDs | Requires client-side merge for concurrent messages |
+
+**What to say in the interview:**
+
+> "Let me highlight the key tradeoffs. By choosing Cassandra over PostgreSQL for messages, we gained linear write scalability and built-in replication, but we gave up cross-table joins and strict ACID transactions. By using WebSockets instead of long polling, we reduced latency and server overhead, but we introduced statefulness that complicates horizontal scaling — which we solve with Redis session routing. And by making delivery asynchronous through Kafka, we improved throughput and resilience, at the cost of eventual (rather than immediate) delivery status updates."
+
+**Potential improvements to mention:**
+
+- **Search:** Index messages in Elasticsearch for full-text search across chat history
+- **Analytics:** Stream events from Kafka to a data warehouse (Snowflake, BigQuery) for business intelligence
+- **Spam detection:** ML classifier on the message delivery path, running asynchronously so it never blocks delivery
+- **Compliance / legal holds:** Encrypted audit log for enterprise customers
+
+---
+
+## The Framework at a Glance
+
+| Step | Action | Time (45-min interview) |
+|---|---|---|
+| 1 | Clarify requirements | 3–5 min |
+| 2 | Estimate scale | 3–5 min |
+| 3 | Define API | 3–5 min |
+| 4 | High-level architecture | 8–10 min |
+| 5 | Database schema | 5–7 min |
+| 6 | Core component deep dive | 5–7 min |
+| 7 | Bottlenecks | 3–5 min |
+| 8 | Fault tolerance | 2–3 min |
+| 9 | Security | 2–3 min |
+| 10 | Review and summarize | 2–3 min |
+
+**The golden rule:** Always think out loud. The interviewer is evaluating your reasoning, not just your final diagram. A candidate who articulates tradeoffs clearly and acknowledges limitations will outscore one who produces a "perfect" diagram in silence.
+
+---
+
+## Summary
+
+- **Step 1 — Requirements:** Separate functional (what it does) from non-functional (how it behaves). Never skip this.
+- **Step 2 — Scale estimation:** Back-of-envelope math grounds your architecture. 700K msg/sec demands different choices than 100 msg/sec.
+- **Step 3 — API design:** Define the contract before the internals. Include idempotency keys and versioning.
+- **Step 4 — High-level architecture:** Draw the major components and their connections. Start simple, then evolve.
+- **Step 5 — Database schema:** Choose the right database for each access pattern. Match storage engine to workload.
+- **Step 6 — Core component deep dive:** Go deep on the hardest part. This is where you demonstrate senior-level knowledge.
+- **Step 7 — Bottlenecks:** Proactively identify where the system breaks and propose solutions before the interviewer asks.
+- **Step 8 — Fault tolerance:** Design for failure. Cover SPOF elimination, replication, and graceful degradation.
+- **Step 9 — Security:** Authentication, authorization, encryption in transit and at rest, rate limiting.
+- **Step 10 — Review:** Summarize tradeoffs clearly. Mention what you would improve with more time.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-overview", label: "Complete System Design Roadmap 2025" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/apis-and-rest", label: "APIs & REST" }}
+/>

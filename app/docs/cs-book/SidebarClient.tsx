@@ -51,6 +51,7 @@ const chapters = [
     part: "Part 3 — System Design",
     items: [
       { title: "Complete System Design Roadmap 2025", href: "/docs/cs-book/part-3-system-design/system-design-overview" },
+      { title: "10-Step System Design Interview Framework", href: "/docs/cs-book/part-3-system-design/system-design-interview-framework" },
       { title: "APIs & REST", href: "/docs/cs-book/part-3-system-design/apis-and-rest" },
       { title: "Databases", href: "/docs/cs-book/part-3-system-design/databases" },
       { title: "Caching", href: "/docs/cs-book/part-3-system-design/caching" },
@@ -173,12 +174,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/41 chapters</span>
+              <span>{readCount}/42 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 41) * 100}%` }}
+                style={{ width: `${(readCount / 42) * 100}%` }}
               />
             </div>
           </div>
