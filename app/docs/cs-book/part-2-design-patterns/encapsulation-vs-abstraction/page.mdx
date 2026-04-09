@@ -1,0 +1,386 @@
+export const metadata = {
+  title: "Encapsulation vs Abstraction — ByteWise CS Book",
+  description:
+    "Understand the difference between Encapsulation and Abstraction in OOP — with Python examples, a Payment System walkthrough, class hierarchy design, and interview tips.",
+  keywords: [
+    "encapsulation",
+    "abstraction",
+    "OOP",
+    "object-oriented programming",
+    "Python OOP",
+    "encapsulation vs abstraction",
+    "abstract class",
+    "LLD interview",
+  ],
+  twitter: {
+    card: "summary_large_image",
+    title: "Encapsulation vs Abstraction — ByteWise CS Book",
+    description:
+      "Encapsulation hides data. Abstraction hides complexity. Learn the difference with Python examples and a Payment System design.",
+    images: ["https://bytewise-one.vercel.app/og/encapsulation-vs-abstraction.png"],
+  },
+  openGraph: {
+    title: "Encapsulation vs Abstraction — ByteWise CS Book",
+    description:
+      "Encapsulation hides data. Abstraction hides complexity. Learn the difference with Python examples and a Payment System design.",
+    type: "article",
+    images: [
+      {
+        url: "https://bytewise-one.vercel.app/og/encapsulation-vs-abstraction.png",
+        width: 1200,
+        height: 630,
+        alt: "Encapsulation vs Abstraction",
+      },
+    ],
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Encapsulation vs Abstraction
+
+Encapsulation and Abstraction are two of the four pillars of Object-Oriented Programming. Both involve hiding details — but they hide *different* things for *different* reasons. Confusing the two is one of the most common OOP mistakes, including in interviews.
+
+The one-sentence distinction:
+
+> **Encapsulation** hides *data* — it protects the internal state of an object.
+> **Abstraction** hides *complexity* — it exposes only what the outside world needs to know.
+
+A bank vault illustrates both. The vault **encapsulates** your money: it is locked away and only accessible through a controlled interface (a teller, a PIN). The ATM **abstracts** the vault: you press "Withdraw £100" without knowing anything about how cash is counted, authenticated, or dispensed.
+
+---
+
+## Encapsulation
+
+### Definition
+
+Encapsulation is the process of **bundling data and the methods that operate on it inside a class, and restricting direct access to the internal data**.
+
+It ensures the object's state can only be changed through controlled pathways — the methods you deliberately expose. Direct mutation from outside is prevented.
+
+### Key idea
+
+**Hide the internal state. Expose a controlled interface.**
+
+### Python Example
+
+```python
+class BankAccount:
+    def __init__(self, balance: float):
+        self.__balance = balance   # private — name-mangled to _BankAccount__balance
+
+    def deposit(self, amount: float) -> None:
+        if amount <= 0:
+            raise ValueError("Deposit amount must be positive")
+        self.__balance += amount
+
+    def withdraw(self, amount: float) -> None:
+        if amount > self.__balance:
+            raise ValueError("Insufficient funds")
+        self.__balance -= amount
+
+    def get_balance(self) -> float:
+        return self.__balance
+
+
+account = BankAccount(1000)
+account.deposit(500)
+account.withdraw(200)
+print(account.get_balance())   # 1300
+
+# Direct access is blocked:
+# account.__balance = 9999    ← AttributeError
+# account._BankAccount__balance = 9999  ← technically works but is a deliberate violation
+```
+
+### Why it matters
+
+Without encapsulation, any part of the codebase can corrupt an object's state:
+
+```python
+# Without encapsulation — nothing stops this
+account.balance = -50000   # now the account is in an invalid state
+```
+
+With encapsulation, the class is the only authority over its own data. The `withdraw` method enforces the "you cannot overdraw" invariant. No caller can bypass it.
+
+### Access levels in Python
+
+Python uses naming conventions rather than hard keywords:
+
+| Convention | Meaning | Example |
+|---|---|---|
+| `name` | Public — accessible anywhere | `self.balance` |
+| `_name` | Protected — convention only, not enforced | `self._balance` |
+| `__name` | Private — name-mangled by Python to `_ClassName__name` | `self.__balance` |
+
+---
+
+## Abstraction
+
+### Definition
+
+Abstraction is the process of **exposing only the relevant interface and hiding the implementation details behind it**.
+
+Where encapsulation is about *who can touch the data*, abstraction is about *what callers need to know to use the system*. A caller should be able to use an object without knowing how it works internally.
+
+### Key idea
+
+**Hide the complexity. Expose only what is necessary.**
+
+### Python Example
+
+Python's `abc` module provides `ABC` (Abstract Base Class) and `@abstractmethod` to define contracts:
+
+```python
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    """Abstract base class — defines the interface, not the implementation."""
+
+    @abstractmethod
+    def area(self) -> float:
+        """Every shape must implement this."""
+        ...
+
+    @abstractmethod
+    def perimeter(self) -> float:
+        ...
+
+
+class Circle(Shape):
+    def __init__(self, radius: float):
+        self.radius = radius
+
+    def area(self) -> float:
+        import math
+        return math.pi * self.radius ** 2
+
+    def perimeter(self) -> float:
+        import math
+        return 2 * math.pi * self.radius
+
+
+class Rectangle(Shape):
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
+    def area(self) -> float:
+        return self.width * self.height
+
+    def perimeter(self) -> float:
+        return 2 * (self.width + self.height)
+
+
+# Caller only knows about the Shape interface — not Circle or Rectangle internals
+def print_shape_info(shape: Shape) -> None:
+    print(f"Area: {shape.area():.2f}, Perimeter: {shape.perimeter():.2f}")
+
+print_shape_info(Circle(5))       # Area: 78.54, Perimeter: 31.42
+print_shape_info(Rectangle(4, 6)) # Area: 24.00, Perimeter: 20.00
+
+# You cannot instantiate an abstract class:
+# Shape()  ← TypeError: Can't instantiate abstract class
+```
+
+The `print_shape_info` function knows nothing about circles or rectangles. It only calls `.area()` and `.perimeter()`. That is abstraction — the complexity of each shape's geometry is hidden behind a common interface.
+
+---
+
+## Side-by-Side Comparison
+
+| | Encapsulation | Abstraction |
+|---|---|---|
+| **Hides** | Internal data (state) | Internal complexity (implementation) |
+| **Achieved via** | Private variables + public methods | Abstract classes / interfaces |
+| **Who benefits** | The class itself (protects invariants) | The caller (simplified interface) |
+| **Python tool** | `__name` naming convention | `ABC` + `@abstractmethod` |
+| **Example** | `__balance` in BankAccount | `Shape` abstract class |
+| **Violation looks like** | Direct attribute mutation | Caller depending on implementation details |
+
+---
+
+## Using Both Together — Payment System
+
+Real systems use encapsulation and abstraction simultaneously. Here is a minimal Payment System that demonstrates both working together.
+
+### Step 1 — Abstraction: define the contract
+
+```python
+from abc import ABC, abstractmethod
+
+class PaymentMethod(ABC):
+    """
+    Abstraction: defines what all payment methods must do.
+    Callers only interact with this interface — never with concrete implementations.
+    """
+
+    @abstractmethod
+    def pay(self, amount: float) -> bool:
+        """Process a payment. Returns True on success, False on failure."""
+        ...
+
+    @abstractmethod
+    def get_balance(self) -> float:
+        """Return current available balance."""
+        ...
+```
+
+The `PaymentMethod` class declares a **contract**: any payment method must implement `pay()` and `get_balance()`. It says nothing about how payments are processed — that is the point.
+
+### Step 2 — Encapsulation: protect the internal data
+
+```python
+class CreditCardPayment(PaymentMethod):
+    """
+    Encapsulation: __balance is private.
+    Only accessible through the methods defined above.
+    """
+
+    def __init__(self, balance: float):
+        self.__balance = balance         # private — callers cannot touch this directly
+        self.__transaction_count = 0     # private internal counter
+
+    def pay(self, amount: float) -> bool:
+        if amount <= 0:
+            raise ValueError("Payment amount must be positive")
+        if amount > self.__balance:
+            print(f"Insufficient balance. Have £{self.__balance:.2f}, need £{amount:.2f}")
+            return False
+        self.__balance -= amount
+        self.__transaction_count += 1
+        print(f"Credit card payment of £{amount:.2f} successful")
+        return True
+
+    def get_balance(self) -> float:
+        return self.__balance
+
+
+class UpiPayment(PaymentMethod):
+    """A different implementation of the same interface."""
+
+    def __init__(self, linked_balance: float):
+        self.__balance = linked_balance
+
+    def pay(self, amount: float) -> bool:
+        if amount > self.__balance:
+            print("UPI payment failed — insufficient funds")
+            return False
+        self.__balance -= amount
+        print(f"UPI payment of £{amount:.2f} processed via linked bank account")
+        return True
+
+    def get_balance(self) -> float:
+        return self.__balance
+```
+
+### Step 3 — Using the system
+
+```python
+def checkout(payment: PaymentMethod, cart_total: float) -> None:
+    """
+    This function only knows about PaymentMethod (the abstraction).
+    It does not know if the user is paying by card, UPI, or anything else.
+    """
+    print(f"Cart total: £{cart_total:.2f}")
+    success = payment.pay(cart_total)
+    if success:
+        print(f"Remaining balance: £{payment.get_balance():.2f}")
+    print()
+
+
+card = CreditCardPayment(1000)
+upi  = UpiPayment(500)
+
+checkout(card, 200)   # Credit card payment of £200.00 successful
+checkout(upi,  150)   # UPI payment of £150.00 processed
+checkout(card, 900)   # Insufficient balance — have £800.00, need £900.00
+```
+
+### Where each concept appears
+
+| Code | Concept |
+|---|---|
+| `PaymentMethod(ABC)` | Abstraction — defines the interface |
+| `@abstractmethod def pay(...)` | Abstraction — enforces the contract |
+| `self.__balance` | Encapsulation — private data |
+| `self.__transaction_count` | Encapsulation — private internal state |
+| `CreditCardPayment` and `UpiPayment` both implement `pay()` | Polymorphism — same interface, different behavior |
+
+---
+
+## Class Hierarchy Diagram
+
+This is the pattern interviewers at Amazon, Google, and Uber expect you to sketch during LLD rounds:
+
+```
+        PaymentMethod          ← Abstract class (Abstraction)
+        [pay(), get_balance()]
+               |
+    ┌──────────┴──────────┐
+    |                     |
+CreditCardPayment      UpiPayment
+[__balance]            [__balance]     ← Private data (Encapsulation)
+[pay()]                [pay()]         ← Concrete implementations
+```
+
+This same pattern appears in production payment infrastructure:
+
+```
+        PaymentProcessor       ← Interface / Abstract class
+               |
+    ┌──────────┼──────────┐
+    |          |          |
+  Stripe    PayPal    Razorpay
+```
+
+Each provider implements the same interface. The calling service — an e-commerce checkout, a subscription billing engine — only depends on `PaymentProcessor`. Swapping from Stripe to PayPal requires zero changes to the calling code.
+
+---
+
+## Common Mistakes
+
+**Mistake 1: Treating `_name` (single underscore) as truly private.**
+A single underscore is a convention, not enforced by Python. Other code can still read and write `obj._balance`. Use `__name` (double underscore) for genuine encapsulation.
+
+**Mistake 2: Confusing abstraction with abstract classes.**
+Abstraction is a design principle. Abstract classes are one way to implement it in Python. You can also achieve abstraction with duck typing, protocols (`typing.Protocol`), or simply keeping implementation details inside a function.
+
+**Mistake 3: Adding `@abstractmethod` to every method.**
+Only methods that every subclass *must* implement should be abstract. Helper methods with sensible defaults belong in the base class as regular methods.
+
+**Mistake 4: Over-encapsulating.**
+Making every attribute private and creating a getter and setter for each one (Java-style) is unnecessary in Python and produces boilerplate noise. Encapsulate when the invariant matters — when uncontrolled mutation would corrupt state.
+
+---
+
+## Interview Angle
+
+**Q: What is the difference between encapsulation and abstraction?**
+
+A: Encapsulation is about *protecting data* — bundling state inside a class and preventing external code from directly modifying it, ensuring invariants are always maintained. Abstraction is about *simplifying the interface* — hiding implementation complexity so that callers only see what they need to use the system. In a payment system, `__balance` being private is encapsulation; the `PaymentMethod` abstract class defining `pay()` is abstraction. Both improve maintainability: encapsulation localizes state changes; abstraction decouples callers from implementations.
+
+**Q: Can you have one without the other?**
+
+A: Yes. A class can encapsulate its data (private fields, accessor methods) without defining any abstract interface — that is encapsulation alone. Conversely, an abstract class can expose a clean interface without any private state — that is abstraction alone. In practice, production systems use both together: abstract interfaces for flexibility, private data for correctness.
+
+**Q: How does this apply in LLD interviews?**
+
+A: When asked to design a system — parking lot, notification system, chess game — identify the entities and their relationships. Use abstract classes (or interfaces) to define contracts between components: this is abstraction. Make sensitive fields (balance, password hash, internal counters) private and expose only the operations that make sense: this is encapsulation. Polymorphism follows naturally from the abstract interfaces.
+
+---
+
+## Summary
+
+- **Encapsulation** bundles data and methods together and restricts direct access to internal state using private attributes (`__name`). It protects invariants.
+- **Abstraction** defines an interface and hides implementation details behind it. Callers interact with the interface, not the internals.
+- In Python, encapsulation uses `__name` convention; abstraction uses `ABC` + `@abstractmethod`.
+- Both are used together in real systems: abstract classes define contracts (abstraction), concrete classes protect their state (encapsulation).
+- The one-line interview answer: **abstraction hides complexity, encapsulation hides data**.
+- Every major design pattern — Factory, Strategy, Observer — relies on both principles to achieve flexibility and correctness.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/oop-fundamentals", label: "OOP Fundamentals" }}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/creational-patterns", label: "Creational Patterns" }}
+/>

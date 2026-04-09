@@ -33,6 +33,7 @@ const chapters = [
     items: [
       { title: "SOLID Principles", href: "/docs/cs-book/part-2-design-patterns/solid-principles" },
       { title: "OOP Fundamentals", href: "/docs/cs-book/part-2-design-patterns/oop-fundamentals" },
+      { title: "Encapsulation vs Abstraction", href: "/docs/cs-book/part-2-design-patterns/encapsulation-vs-abstraction" },
       { title: "Creational Patterns", href: "/docs/cs-book/part-2-design-patterns/creational-patterns" },
       { title: "Structural Patterns", href: "/docs/cs-book/part-2-design-patterns/structural-patterns" },
       { title: "Behavioral Patterns", href: "/docs/cs-book/part-2-design-patterns/behavioral-patterns" },
@@ -174,12 +175,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/42 chapters</span>
+              <span>{readCount}/43 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 42) * 100}%` }}
+                style={{ width: `${(readCount / 43) * 100}%` }}
               />
             </div>
           </div>
