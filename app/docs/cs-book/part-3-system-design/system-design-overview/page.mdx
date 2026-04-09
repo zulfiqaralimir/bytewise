@@ -1,0 +1,432 @@
+export const metadata = {
+  title: "System Design Overview (HLD & LLD) — ByteWise CS Book",
+  description:
+    "A complete guide to System Design: High Level Design (HLD) and Low Level Design (LLD) — covering architecture, scalability, databases, caching, microservices, and interview preparation.",
+  keywords: [
+    "system design",
+    "HLD",
+    "LLD",
+    "high level design",
+    "low level design",
+    "scalability",
+    "distributed systems",
+    "microservices",
+    "CAP theorem",
+    "system design interview",
+  ],
+  openGraph: {
+    title: "System Design Overview (HLD & LLD) — ByteWise CS Book",
+    description:
+      "Learn system design end-to-end: architecture decisions, scalability patterns, HLD vs LLD, and how to design systems like Netflix, WhatsApp, and Uber.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# System Design Overview (HLD & LLD)
+
+## Why System Design Matters
+
+In 1994, Amazon was a single server running a Perl script that sent order confirmations by email. By 2023, Amazon processed over 37,000 orders *per second* during peak shopping events. The gap between a single server and a globally distributed system handling 37,000 concurrent transactions is not solved by writing better Perl — it is solved by system design.
+
+System design is one of the most consequential skills a software engineer develops. It is the domain where decisions made on a whiteboard determine whether a product can serve 1,000 users or 1,000,000,000. It is also the domain that separates engineers who implement features from engineers who architect systems.
+
+This matters at every level of seniority. For an SD-2 engineer, it means reasoning about database choices and API contracts. For a Tech Lead, it means designing services that decompose cleanly and fail gracefully. For a CTO, it means ensuring the architecture can absorb the next order-of-magnitude of growth without a rewrite.
+
+Before learning system design, having hands-on development experience is strongly recommended. Without practical exposure to how systems actually behave under load, many concepts remain theoretical.
+
+## What Is System Design?
+
+System design is the process of defining the architecture, components, and data flows of a software system to satisfy specified requirements.
+
+In practice, it answers questions like:
+
+- How do 10 million users watch Netflix simultaneously without buffering?
+- How does WhatsApp deliver a message in under a second to someone on the other side of the world?
+- How does Uber match a driver to a rider in under 30 seconds across a city?
+
+These problems are not solved by clever algorithms — they are solved by carefully chosen architectures. System design encompasses the full stack of decisions: which databases to use, how to partition data, where to add caches, how services communicate, and how to handle failures.
+
+In system design interviews, engineers are asked to design systems like YouTube, Uber, Instagram, or WhatsApp from scratch. The interviewer is evaluating not just the final architecture, but the engineer's ability to identify requirements, reason through tradeoffs, and incrementally refine a design.
+
+## High Level Design (HLD)
+
+High Level Design focuses on the **overall architecture** of a system — the blueprint before the bricks.
+
+Instead of writing code, HLD identifies the major system components and how they interact. For a messaging system like WhatsApp, HLD answers questions like:
+
+- Which database stores messages — SQL or NoSQL?
+- Should a message queue decouple sends from delivers?
+- Is a cache needed for recent conversations?
+- How does data flow from sender to recipient?
+
+HLD produces an **architectural diagram** showing services, data stores, queues, CDNs, and load balancers — and the communication paths between them.
+
+The HLD process for any system starts with two categories of requirements:
+
+**Functional Requirements** define what the system *does* — the features a user interacts with:
+
+- Users can register and log in
+- Users can send and receive messages
+- Users can see message delivery status (single tick, double tick, blue tick)
+
+**Non-Functional Requirements** define how the system *behaves* at scale:
+
+- **Scalability:** Handle 100M daily active users
+- **Availability:** 99.99% uptime (less than 53 minutes of downtime per year)
+- **Latency:** Message delivered in under 500ms in normal conditions
+- **Security:** End-to-end encryption; only intended recipients can read messages
+
+The tension between non-functional requirements drives most of the interesting tradeoffs in system design.
+
+## Low Level Design (LLD)
+
+Low Level Design focuses on **implementation details** — how individual components are actually built.
+
+Where HLD asks "what services exist?", LLD asks "how is each service structured internally?" LLD covers:
+
+- **Machine coding:** Implementing data structures and algorithms for the component
+- **API design:** Defining endpoints, request/response schemas, versioning
+- **Class diagrams:** Modeling entities, relationships, and responsibilities
+- **Data models:** Schema design, field types, indexing strategy
+
+LLD tests the ability to write clean, structured, maintainable code. It bridges the gap between architecture and implementation.
+
+A classic LLD interview problem: "Design the backend for a chess game." The answer involves class hierarchies for pieces, a board representation, move validation logic, a game state machine — not distributed systems at all. LLD operates at the component level; HLD operates at the system level.
+
+## HLD: Core Concepts
+
+### Serverless vs Serverful
+
+When deploying on cloud platforms, two approaches exist:
+
+**Serverful (AWS EC2, GCP Compute Engine):** The team manages virtual machines. You provision instances, configure scaling groups, patch operating systems, and reason about capacity. You pay for running instances regardless of traffic.
+
+**Serverless (AWS Lambda, Google Cloud Functions):** The cloud provider manages infrastructure entirely. Code runs in response to events; capacity scales automatically; billing is per-invocation. Operational overhead is minimal, but cold start latency (100ms–2s for first invocation) and execution time limits apply.
+
+Neither is universally better. The right choice depends on traffic patterns (spiky vs steady), latency requirements, team operational capacity, and cost at scale.
+
+### Vertical vs Horizontal Scaling
+
+**Vertical scaling** increases the capacity of a single server: more RAM, faster CPU, larger disk. It is simple — no changes to the application — but has hard limits. The biggest EC2 instance AWS offers has 24TB of RAM. You cannot go higher.
+
+**Horizontal scaling** adds more servers and distributes load across them. It has no theoretical upper bound — if you need more capacity, add more servers. But it requires the application to be stateless (or to move state to a shared store), and it typically requires a load balancer to distribute traffic.
+
+Most internet-scale systems combine both: vertically scale individual servers to a practical limit, then horizontally scale by adding more of those servers.
+
+### Databases
+
+At the core of every system is data: stored, transferred, and manipulated. Database choices are among the most consequential in HLD.
+
+The primary division is **SQL vs NoSQL**:
+
+| | SQL (Relational) | NoSQL |
+|---|---|---|
+| **Model** | Tables, rows, columns | Documents, key-value, columns, graphs |
+| **Schema** | Fixed, enforced | Flexible, schemaless |
+| **Consistency** | ACID transactions | Eventual or configurable |
+| **Scaling** | Vertical + read replicas | Horizontal sharding |
+| **Examples** | PostgreSQL, MySQL | MongoDB, Cassandra, Redis, Neo4j |
+
+Beyond the SQL/NoSQL split, three storage patterns appear frequently in HLD:
+
+**In-memory databases (Redis):** Data lives in RAM. Reads take microseconds instead of milliseconds. Used for caches, session stores, leaderboards, and rate-limiting counters. Data can be persisted to disk but the primary interface is memory.
+
+**Data partitioning and sharding:** Sharding is horizontal partitioning — splitting one large table across multiple database servers. A shard key (e.g., `user_id % N`) determines which shard stores each row. Sharding enables linear write scaling but eliminates cross-shard joins and complicates transactions.
+
+**Data replication:** Maintaining multiple copies of data across servers. A primary accepts writes; replicas serve reads. Replication improves read throughput and fault tolerance at the cost of replication lag — replicas may be milliseconds behind the primary.
+
+### Consistency and Availability
+
+Distributed systems must navigate the fundamental tension between consistency and availability, formalized by the **CAP Theorem**:
+
+> In the presence of a network partition, a distributed system must choose between **Consistency** (all nodes see the same data at the same time) and **Availability** (every request receives a response, even if not the most recent data).
+
+This shapes real architecture decisions:
+
+- **Payment systems** choose consistency. If a user's balance is $100, every node must agree it is $100 before authorizing a charge. Serving stale data could allow double-spending. Accept higher latency if necessary.
+
+- **Messaging systems like WhatsApp** choose availability. Deliver messages quickly even if the double-tick status is momentarily inconsistent across servers. Fix it in the background.
+
+Beyond CAP, systems offer multiple **consistency levels**:
+
+- **Eventual consistency:** All replicas converge to the same value eventually. Fastest reads; stale data possible.
+- **Causal consistency:** Operations that are causally related are seen in order. "See your own writes" is guaranteed.
+- **Quorum consistency:** A read/write is acknowledged only after a majority of replicas confirm it. Balances performance and correctness.
+- **Linearizability:** Every operation appears to take effect instantaneously at some point between its start and end. Strongest guarantee; highest cost.
+
+### Caching
+
+A cache stores frequently accessed data in fast storage to avoid re-fetching from the slower authoritative source.
+
+**Why caching works:** In most systems, roughly 20% of the data is accessed 80% of the time. Cache that hot 20%, and 80% of requests are served from fast memory rather than slow disk.
+
+Common caching systems:
+- **Redis:** In-memory, persistent, supports data structures (sorted sets, hashes, pub/sub)
+- **Memcached:** In-memory, simpler, purpose-built for caching
+
+**Cache write policies:**
+
+- **Write-through:** Write to cache and database simultaneously. Always consistent; writes are slower.
+- **Write-back (write-behind):** Write to cache only; flush to database asynchronously. Fastest writes; risk of data loss if cache fails before flush.
+- **Write-around:** Write directly to database, bypassing cache. Cache is populated on read. Good for write-once, read-rarely data.
+
+**Cache eviction policies** determine what is removed when cache is full:
+
+- **LRU (Least Recently Used):** Evict the item that hasn't been accessed the longest. $O(1)$ with a hash map + doubly linked list.
+- **LFU (Least Frequently Used):** Evict the item accessed the fewest times. Better for skewed access patterns.
+- **Segmented LRU:** Divide cache into probationary and protected segments to handle scan resistance.
+
+**Content Delivery Networks (CDNs)** extend caching to the network edge. Static content (images, videos, JavaScript) is cached at CDN nodes physically close to users, reducing latency from 200ms (cross-ocean) to 20ms (nearest edge). When a Netflix show is released globally, CDN nodes pre-cache episodes at the edge during off-peak hours so they are already physically close to viewers.
+
+### Networking
+
+Networking is the connective tissue of distributed systems. Key protocols for HLD:
+
+- **TCP vs UDP:** TCP guarantees ordered, reliable delivery (HTTP, databases). UDP sacrifices reliability for speed (video streaming, DNS, gaming).
+- **HTTP/1.1:** One request per connection (with keep-alive). Persistent connections but head-of-line blocking.
+- **HTTP/2:** Multiplexes multiple streams over a single connection. Eliminates head-of-line blocking at the HTTP level.
+- **HTTP/3 (QUIC):** Built on UDP instead of TCP. Faster connection establishment, better performance on lossy networks.
+- **WebSockets:** Full-duplex communication over a persistent TCP connection. Essential for real-time features like chat, live notifications, and collaborative editing.
+- **WebRTC:** Peer-to-peer communication with native support for video/audio. Used by Google Meet, Discord, and any browser-based video calling.
+
+### Load Balancers
+
+Load balancers distribute incoming traffic across a pool of servers, preventing any single server from becoming a bottleneck.
+
+**Load balancing algorithms:**
+- **Round Robin:** Distribute requests evenly in sequence. Simple; ignores server load.
+- **Least Connections:** Route to the server with fewest active connections. Better for variable-duration requests.
+- **IP Hash:** Route based on client IP hash. Ensures the same client always hits the same server (sticky sessions).
+- **Consistent Hashing:** Distribute requests across a ring of virtual nodes. Adding or removing servers redistributes only $\frac{1}{N+1}$ of keys — minimal disruption.
+
+**Layer 4 vs Layer 7:**
+- **L4 load balancers** operate at the transport layer (TCP/UDP). They route based on IP and port without inspecting the payload. Extremely fast.
+- **L7 load balancers** operate at the application layer (HTTP). They can route based on URL path, headers, and cookies. More flexible; slightly more overhead.
+
+**Rate limiting** is often implemented at the load balancer. It protects systems from DDoS attacks and abuse by capping request frequency per client — for example, limiting an API key to 1,000 requests per minute.
+
+### Message Queues
+
+Message queues enable **asynchronous processing** — decoupling the component that produces work from the component that processes it.
+
+When a user sends a WhatsApp message:
+- Delivering the message is **critical** and happens synchronously.
+- Updating the double-tick delivery indicator is **non-critical** and can happen asynchronously via a queue.
+
+This decoupling provides three benefits:
+1. **Resilience:** If the consumer is slow or temporarily down, messages queue up rather than being lost.
+2. **Throughput:** The producer is not blocked waiting for the consumer to finish.
+3. **Scalability:** Multiple consumers can process the queue in parallel.
+
+Common message queue systems:
+- **Kafka:** Distributed log designed for high-throughput event streaming. Messages are retained and replayable. Used by LinkedIn (for activity feeds), Uber (for analytics), and most data pipelines.
+- **RabbitMQ:** Traditional message broker supporting multiple exchange types (direct, fanout, topic). Better for task queues; lower throughput than Kafka.
+
+Both typically follow a **Publisher-Subscriber (pub/sub)** model: publishers send messages to topics; multiple subscribers independently consume from those topics.
+
+### Monoliths vs Microservices
+
+**Monolithic architecture:** All application code runs in a single deployable unit. The entire application — authentication, payments, notifications, search — is one process.
+
+Monoliths are not inherently bad. They are simpler to develop, test, and deploy for small teams. Most successful companies (including Amazon and Netflix) started as monoliths.
+
+**Microservices architecture:** The application is decomposed into small, independently deployable services, each owning a specific business domain. The payments service is separate from the notifications service, which is separate from the search service.
+
+Microservices enable independent scaling, independent deployment, and organizational alignment (one team per service). But they introduce complexity: service discovery, distributed tracing, inter-service latency, and **cascading failures** (one service's failure propagating to others through synchronous calls).
+
+Key patterns for reliable microservices:
+- **Circuit breaker:** Stop calling a failing service; return a fallback response.
+- **Bulkhead:** Isolate thread pools per service so one slow service doesn't exhaust shared resources.
+- **Sidecar/service mesh:** Inject networking concerns (retries, observability, mTLS) as a sidecar proxy rather than application code.
+- **Containerization (Docker + Kubernetes):** Package each service with its dependencies; orchestrate deployment, scaling, and health checking.
+
+### Monitoring and Logging
+
+You cannot fix what you cannot see. Monitoring and logging are what make production systems observable.
+
+**Logging** captures events and errors: "User 123 attempted to pay; payment service returned 503." Structured logs (JSON, not free-form text) enable downstream analysis. Centralized log aggregation (ELK stack, Splunk, Datadog) lets engineers search across thousands of servers.
+
+**Monitoring** tracks metrics over time: request rate, error rate, latency percentiles (p50, p95, p99), database query time, cache hit rate. Tools include:
+- **Prometheus:** Time-series metric collection and alerting
+- **Grafana:** Visualization dashboards for Prometheus data
+- **AWS CloudWatch:** Managed monitoring for AWS infrastructure
+
+**Anomaly detection** automatically identifies abnormal behavior — a sudden spike in 500 errors, a database latency increase from 20ms to 200ms — and pages on-call engineers before users notice.
+
+### Security
+
+Security is not an afterthought; it is a design constraint. Key mechanisms:
+
+- **Authentication:** Verifying identity. Token-based (JWT), session cookies, or mutual TLS.
+- **Authorization:** Verifying permission. OAuth 2.0 for third-party access delegation. ACLs (Access Control Lists) for resource-level permissions. Role-based access control (RBAC) for coarser control.
+- **SSO (Single Sign-On):** Users authenticate once with an identity provider (Google, Okta) and are granted access to multiple services without re-authenticating.
+- **Encryption:** TLS in transit; AES-256 at rest for sensitive data. End-to-end encryption (WhatsApp, Signal) means even the platform cannot read messages.
+
+### System Design Tradeoffs
+
+System design has no single correct answer. The same system can be designed a hundred different ways, each with different performance characteristics, operational complexity, and cost profiles.
+
+The most important tradeoffs:
+
+| Decision | Option A | Option B | When to choose A |
+|---|---|---|---|
+| **Architecture** | Push (fan-out on write) | Pull (fan-out on read) | Low follower counts, low write volume |
+| **Consistency** | Strong consistency | Eventual consistency | Financial data, inventory |
+| **Storage** | SQL | NoSQL | Complex relationships, ACID needed |
+| **Latency** | In-memory (fast) | Disk (slow, cheap) | Hot data, real-time access |
+| **Throughput vs latency** | Batch processing | Stream processing | Offline analytics vs real-time alerts |
+| **Accuracy vs speed** | Exact counts | Approximate (HyperLogLog) | Unique visitor counts at scale |
+
+The famous engineering principle that emerges from this:
+
+> **It is better to satisfy some users than to disappoint all of them.**
+
+A system that gracefully degrades under load — serving 80% of users perfectly while 20% see a simplified experience — is better than one that fails completely for everyone.
+
+## LLD: Core Concepts
+
+### Object-Oriented Design
+
+LLD begins with object-oriented fundamentals. The four pillars:
+
+- **Encapsulation:** Bundle data and the methods that operate on it. Hide implementation details behind a stable interface.
+- **Inheritance:** Model "is-a" relationships. A `RookPiece` inherits from `ChessPiece`.
+- **Polymorphism:** The same interface, different implementations. `piece.validMoves()` works for every piece type.
+- **Abstraction:** Expose what is necessary; hide what is not. A `PaymentProcessor` interface hides whether you are calling Stripe or PayPal.
+
+**SOLID principles** guide class design:
+
+- **S**ingle Responsibility: One class, one reason to change.
+- **O**pen/Closed: Open for extension, closed for modification. Add behavior by adding classes, not editing existing ones.
+- **L**iskov Substitution: Subtypes must be substitutable for their base types without breaking correctness.
+- **I**nterface Segregation: Prefer small, focused interfaces over large ones.
+- **D**ependency Inversion: Depend on abstractions, not concretions.
+
+### Design Patterns
+
+Design patterns are reusable solutions to recurring problems. They appear constantly in LLD interviews:
+
+**Creational patterns** — how objects are created:
+- **Singleton:** One instance, globally accessible. Used for configuration objects, connection pools.
+- **Factory:** Create objects without specifying the exact class. `VehicleFactory.create("car")`.
+- **Builder:** Construct complex objects step by step. Avoids constructors with dozens of parameters.
+
+**Structural patterns** — how objects are composed:
+- **Adapter:** Wrap an incompatible interface to make it compatible.
+- **Decorator:** Add behavior to objects dynamically without subclassing.
+- **Composite:** Treat individual objects and compositions uniformly. A file system where files and directories share an interface.
+
+**Behavioral patterns** — how objects communicate:
+- **Observer:** Notify subscribers when state changes. Event systems, MVC's view updates.
+- **Strategy:** Swap algorithms at runtime. `SortStrategy` with `QuickSort` or `MergeSort`.
+- **Command:** Encapsulate a request as an object. Supports undo/redo.
+
+### Concurrency and Thread Safety
+
+When multiple threads access shared resources simultaneously, correctness requires explicit coordination:
+
+- **Race conditions:** Two threads read a shared counter, both increment locally, both write back — one increment is lost.
+- **Deadlocks:** Thread A holds lock 1 and waits for lock 2; Thread B holds lock 2 and waits for lock 1. Both wait forever.
+- **Locking mechanisms:** Mutex (exclusive access), ReadWriteLock (multiple readers, exclusive writers), Semaphore (N concurrent accessors).
+- **Producer-Consumer model:** Producers add items to a bounded buffer; consumers take items. Coordination via condition variables or blocking queues.
+
+These concepts are foundational for implementing thread-safe caches, connection pools, and task queues in LLD.
+
+### APIs
+
+API design is where HLD and LLD meet. A well-designed API:
+
+- **Is versioned:** `/api/v1/users` ensures breaking changes do not affect existing clients.
+- **Uses consistent naming:** Resources are nouns, actions are HTTP methods. `GET /users/{id}` not `GET /getUser?id=`.
+- **Returns appropriate status codes:** 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Internal Server Error.
+- **Is extensible without breakage:** Adding optional fields to responses is backward-compatible. Removing required fields is not.
+
+LLD clean code principles apply here: DRY (Don't Repeat Yourself), Single Responsibility for each endpoint, and avoiding "God objects" (classes that do everything).
+
+### Common LLD Interview Problems
+
+LLD interview problems involve designing smaller, self-contained systems with a focus on code structure:
+
+| Problem | Key Design Elements |
+|---|---|
+| **Tic Tac Toe** | Board, Player, GameEngine, WinChecker |
+| **Chess** | Piece hierarchy, Board, MoveValidator, GameState |
+| **URL Shortener** | UrlMapping, HashGenerator, RedirectService |
+| **Notification System** | Channel (Email/SMS/Push), Subscriber, NotificationService |
+| **Parking Lot** | Spot (Compact/Large/Handicap), Vehicle, ParkingLot, TicketSystem |
+| **Library Management** | Book, Member, BorrowRecord, SearchService |
+
+Unlike HLD, which emphasizes distributed components, LLD emphasizes clean class hierarchies, appropriate patterns, and maintainable code.
+
+## Putting It Together: Netflix
+
+A Netflix-like system combines many of the above components:
+
+```
+[User] 
+  → [DNS → CDN Edge]        (static assets, cached video chunks)
+  → [API Gateway]            (auth, rate limiting, routing)
+  → [Microservices]
+      ├── Auth Service        (JWT, OAuth, session management)
+      ├── Catalog Service     (movie/show metadata, PostgreSQL)
+      ├── Streaming Service   (manifest generation, video delivery)
+      ├── Recommendation      (ML models, read from feature store)
+      └── Billing Service     (payment processing, strong consistency)
+  → [Message Queues (Kafka)] (analytics events, notification triggers)
+  → [Databases]
+      ├── PostgreSQL          (user accounts, billing — ACID)
+      ├── Cassandra           (viewing history — high write throughput)
+      └── Redis               (session cache, feature flags)
+  → [CDN (Open Connect)]     (pre-cached video content at edge nodes)
+  → [Monitoring]
+      ├── Prometheus + Grafana (metrics)
+      └── Distributed tracing  (request traces across services)
+```
+
+Each component reflects a deliberate tradeoff. Cassandra for viewing history because it is write-heavy and append-only — perfect for log-structured storage. Redis for sessions because session lookups must be sub-millisecond. CDN for video because the same bytes should never cross the ocean twice.
+
+## Practice Problems
+
+Mastering system design requires designing systems repeatedly until the component selection becomes intuitive:
+
+| System | Primary Challenges |
+|---|---|
+| **YouTube** | Video storage/transcoding, CDN, view count at scale |
+| **Twitter** | Fan-out for timelines, hot users (celebrities), tweet search |
+| **WhatsApp** | Message delivery guarantees, end-to-end encryption, presence |
+| **Uber** | Geospatial indexing, real-time matching, surge pricing |
+| **Amazon** | Inventory consistency, cart, order pipeline, recommendation |
+| **Dropbox** | Chunked uploads, sync, conflict resolution, deduplication |
+| **Instagram** | Feed generation (fan-out), media storage, Discovery |
+| **Zoom** | WebRTC signaling, recording, screen share, low-latency audio |
+| **Booking.com** | Availability search, reservation consistency, concurrency |
+
+Each problem exercises different tradeoffs. YouTube is a CDN and transcoding problem. WhatsApp is a consistency and delivery guarantee problem. Uber is a geospatial and real-time matching problem.
+
+The questions to ask yourself when designing each:
+- When should I use a message queue?
+- When is caching appropriate?
+- Should this be SQL or NoSQL?
+- Do I need strong consistency here, or is eventual consistency acceptable?
+- Where are the single points of failure?
+
+## Summary
+
+- **System design** is the process of defining architecture, components, and data flows for scalable, reliable systems.
+- **HLD** defines the overall architecture: services, databases, queues, CDNs, load balancers, and how they interact.
+- **LLD** defines the implementation: class hierarchies, APIs, data models, and thread safety.
+- **Functional requirements** specify what the system does. **Non-functional requirements** specify how it behaves at scale.
+- **Horizontal scaling** adds servers; **vertical scaling** upgrades a single server. Production systems combine both.
+- **CAP Theorem:** During network partitions, choose between consistency (correct data) and availability (responsive system). Payment systems choose consistency; messaging systems choose availability.
+- **Caching** (Redis, CDN) reduces load on databases by serving hot data from fast memory.
+- **Message queues** (Kafka, RabbitMQ) decouple producers from consumers and enable asynchronous processing.
+- **Microservices** enable independent scaling and deployment but add operational complexity and failure modes.
+- **System design tradeoffs** are the heart of the discipline — every architectural decision involves trading one property for another.
+- **LLD** relies on OOP fundamentals, SOLID principles, design patterns, and concurrency primitives.
+- Consistent practice designing real systems is the only path to fluency.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/dynamic-programming", label: "Dynamic Programming" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/apis-and-rest", label: "APIs & REST" }}
+/>
