@@ -1,0 +1,520 @@
+export const metadata = {
+  title: "Agentic AI — ByteWise CS Book",
+  description: "Understand Agentic AI — how LLMs move beyond single responses to plan, use tools, and complete multi-step tasks autonomously.",
+  keywords: ["agentic AI", "AI agents", "LLM agents", "ReAct", "tool use", "autonomous AI", "multi-agent systems"],
+  openGraph: {
+    title: "Agentic AI — ByteWise CS Book",
+    description: "How LLMs move beyond single responses to plan, use tools, and complete multi-step tasks autonomously.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Agentic AI: When Models Start Taking Actions
+
+## The Chatbot Ceiling
+
+In 2023, a law firm tried using ChatGPT to research case precedents. The model was brilliant at summarizing text it had already seen — but it couldn't open a browser, query a database, or file a court document. Every "here's what you should do" had to be manually executed by a human. The AI was an advisor trapped in a box.
+
+That box is what the agentic AI movement is trying to break.
+
+The shift from *language model* to *agent* is the difference between a consultant who gives advice and one who actually does the work. An agent doesn't just respond — it **perceives, plans, acts, and observes** in a loop until a goal is achieved. It can call a weather API, write and run code, search the web, send an email, or spawn other agents — all without a human in the loop for each step.
+
+This is the most significant architectural evolution in applied AI since the transformer itself.
+
+---
+
+## What Is an Agent?
+
+An **AI agent** is a system that uses an LLM as its reasoning core and wraps it with the ability to take actions in the world — through tools, APIs, code execution, or other agents.
+
+The classic definition from AI research:
+
+> An agent perceives its **environment** through **sensors**, processes that perception with a **reasoning engine**, and acts on the environment through **actuators**.
+
+For LLM-based agents:
+- **Environment** = the task context, conversation history, tool results
+- **Sensors** = the text that comes into the model's context window
+- **Reasoning engine** = the LLM itself
+- **Actuators** = tool calls (web search, code execution, file writes, API calls)
+
+```
+┌────────────────────────────────────────────────────┐
+│                    AGENT LOOP                      │
+│                                                    │
+│   Perception → Reasoning → Action → Observation   │
+│        ↑                                  │        │
+│        └──────────────────────────────────┘        │
+└────────────────────────────────────────────────────┘
+```
+
+---
+
+## Core Concepts
+
+### The ReAct Pattern
+
+The dominant pattern for single-step agent reasoning is **ReAct** (Reasoning + Acting), introduced by Yao et al. (2022). The model interleaves "thoughts" and "actions" in its output:
+
+```
+Thought: I need to find the current population of Tokyo.
+Action: web_search("Tokyo population 2024")
+Observation: Tokyo metropolitan area population is approximately 37.4 million.
+Thought: I have the answer. I'll now calculate the population density.
+Action: calculator("37400000 / 2194")
+Observation: 17047 people per km²
+Thought: I have both numbers. I can now write the answer.
+Answer: Tokyo has ~37.4 million people with a density of ~17,000 people/km².
+```
+
+Each step is visible and inspectable. This is also called **Chain-of-Thought with tool use**.
+
+### Tool Use
+
+Tools are functions the LLM can call. The model outputs a structured tool call; the runtime executes it and feeds the result back into context.
+
+```json
+// Model outputs this (structured JSON)
+{
+  "tool": "web_search",
+  "parameters": {
+    "query": "Tesla Q3 2024 earnings"
+  }
+}
+
+// Runtime executes the search, returns:
+{
+  "result": "Tesla reported Q3 2024 revenue of $25.18B..."
+}
+
+// Result is injected back into the model's context
+```
+
+Modern frontier models (GPT-4o, Claude 3.5, Gemini 1.5) are natively trained for tool use — they don't need prompt tricks to call tools reliably.
+
+### Memory Types
+
+Agents have four types of memory, analogous to human cognition:
+
+| Memory Type | What It Is | Implementation |
+|-------------|------------|----------------|
+| **In-context** | The active conversation window | The model's context (32K–200K tokens) |
+| **External** | Long-term knowledge store | Vector DB (Pinecone, Weaviate), SQL |
+| **Episodic** | History of past agent runs | Stored summaries, event logs |
+| **Procedural** | How to do things | System prompts, few-shot examples |
+
+The critical limitation: context windows fill up. A long multi-step task will exhaust even a 200K-token window. Well-designed agents compress, summarize, and evict memory actively.
+
+### Planning
+
+Complex tasks require planning before acting. Two dominant approaches:
+
+**Single-plan (ToT / Plan-then-Execute):**
+```
+Goal → [LLM generates full plan] → [Execute each step]
+```
+
+**Dynamic re-planning (ReAct style):**
+```
+Goal → Step 1 → Observe result → Revise plan → Step 2 → ...
+```
+
+Dynamic re-planning handles unexpected results better. Single-plan is faster and cheaper. Most production agents use a hybrid: plan up front, re-plan only on failure.
+
+---
+
+## Mathematical Foundation
+
+### The Agent as a Policy
+
+Formally, an agent implements a **policy** $\pi$:
+
+$$a_t = \pi(s_t)$$
+
+Where:
+- $s_t$ is the **state** at timestep $t$ (all context: goal, history, tool results)
+- $a_t$ is the **action** taken (tool call, text response, or "done")
+- $\pi$ is the policy — in our case, the LLM
+
+The agent runs until it reaches a terminal state (task complete, max steps exceeded, or error).
+
+### Context Window as a Resource
+
+At each step, the agent's context grows:
+
+$$|s_t| = |s_0| + \sum_{i=1}^{t} (|a_i| + |o_i|)$$
+
+Where $|a_i|$ is the token cost of action $i$ and $|o_i|$ is the token cost of observation $i$.
+
+This means agents have a hard **horizon limit**:
+
+$$t_{\max} = \frac{C - |s_0|}{E[|a_i| + |o_i|]}$$
+
+Where $C$ is the context window size. For a 128K context with a 2K initial prompt and average 500-token action/observation pairs, you get roughly 252 steps — plenty for most tasks, but not infinite.
+
+### Token Cost of an Agent Run
+
+Unlike a single LLM call, an agent run costs:
+
+$$\text{Total Cost} = \sum_{t=1}^{T} \left( \text{InputTokens}_t \times P_{\text{in}} + \text{OutputTokens}_t \times P_{\text{out}} \right)$$
+
+Where $\text{InputTokens}_t$ grows with every step (the context accumulates). A 10-step agent run on GPT-4o costs roughly 10–50× more than a single call. Cost management is a first-class concern in agentic system design.
+
+---
+
+## Agent Architectures
+
+### Single Agent
+
+The simplest architecture: one LLM with a set of tools.
+
+```
+User Goal
+    │
+    ▼
+┌─────────────────────────────────┐
+│           LLM Agent             │
+│                                 │
+│  [web_search] [code_exec]       │
+│  [file_read]  [send_email]      │
+└─────────────────────────────────┘
+    │
+    ▼
+Final Answer
+```
+
+Good for: tasks that fit in a single context window, clear tools, bounded scope.
+
+### Orchestrator + Subagents
+
+For complex tasks, a **supervisor agent** decomposes the goal and delegates to specialized subagents:
+
+```
+User Goal
+    │
+    ▼
+┌──────────────────────────────┐
+│       Orchestrator Agent     │
+│  "Plan and delegate tasks"   │
+└──────┬──────────┬────────────┘
+       │          │
+       ▼          ▼
+┌──────────┐  ┌──────────────┐
+│ Research │  │  Code Writer │
+│  Agent   │  │    Agent     │
+└──────────┘  └──────────────┘
+```
+
+OpenAI's "Swarm," LangGraph, and Anthropic's agent patterns all implement variants of this.
+
+### Parallel Agents
+
+For tasks with independent subtasks, agents run in parallel and results are merged:
+
+```
+                 Goal
+                  │
+         ┌────────┼────────┐
+         ▼        ▼        ▼
+     [Agent A] [Agent B] [Agent C]
+         │        │        │
+         └────────┼────────┘
+                  ▼
+             [Aggregator]
+                  │
+                  ▼
+              Final Answer
+```
+
+Example: research 5 competitors simultaneously → synthesize findings.
+
+---
+
+## Programming Implementation
+
+### Building a Simple ReAct Agent (Python)
+
+```python
+import anthropic
+import json
+from typing import Any
+
+client = anthropic.Anthropic()
+
+# Define tools the agent can use
+tools = [
+    {
+        "name": "web_search",
+        "description": "Search the web for current information.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "The search query"}
+            },
+            "required": ["query"],
+        },
+    },
+    {
+        "name": "calculator",
+        "description": "Evaluate a mathematical expression.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "expression": {"type": "string", "description": "Math expression to evaluate"}
+            },
+            "required": ["expression"],
+        },
+    },
+]
+
+
+def execute_tool(name: str, inputs: dict[str, Any]) -> str:
+    """Execute a tool and return its result as a string."""
+    if name == "web_search":
+        # In production: call a real search API (Serper, Brave, Exa)
+        return f"[Search results for '{inputs['query']}': ...]"
+    elif name == "calculator":
+        try:
+            result = eval(inputs["expression"])  # noqa: S307 — sandbox in prod
+            return str(result)
+        except Exception as e:
+            return f"Error: {e}"
+    return f"Unknown tool: {name}"
+
+
+def run_agent(goal: str, max_steps: int = 10) -> str:
+    """Run a ReAct agent until it completes the goal or hits max_steps."""
+    messages = [{"role": "user", "content": goal}]
+
+    for step in range(max_steps):
+        response = client.messages.create(
+            model="claude-opus-4-6",
+            max_tokens=4096,
+            tools=tools,
+            messages=messages,
+        )
+
+        # Append assistant's response to history
+        messages.append({"role": "assistant", "content": response.content})
+
+        # If no tool calls, the agent has finished
+        if response.stop_reason == "end_turn":
+            # Extract final text response
+            for block in response.content:
+                if hasattr(block, "text"):
+                    return block.text
+            return "Task complete."
+
+        # Process tool calls
+        tool_results = []
+        for block in response.content:
+            if block.type == "tool_use":
+                result = execute_tool(block.name, block.input)
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": block.id,
+                    "content": result,
+                })
+                print(f"  Step {step + 1}: {block.name}({block.input}) → {result[:80]}")
+
+        # Feed tool results back to the agent
+        messages.append({"role": "user", "content": tool_results})
+
+    return "Max steps reached without completing the task."
+
+
+# Example usage
+result = run_agent(
+    "What is the GDP per capita of Singapore, and how does it compare to the US?"
+)
+print(result)
+```
+
+### Multi-Agent Orchestration
+
+```python
+import anthropic
+from dataclasses import dataclass
+
+client = anthropic.Anthropic()
+
+
+@dataclass
+class AgentResult:
+    agent_name: str
+    output: str
+
+
+def run_subagent(name: str, system_prompt: str, task: str) -> AgentResult:
+    """Run a specialized subagent for a specific task."""
+    response = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=2048,
+        system=system_prompt,
+        messages=[{"role": "user", "content": task}],
+    )
+    output = response.content[0].text
+    return AgentResult(agent_name=name, output=output)
+
+
+def orchestrate(goal: str) -> str:
+    """
+    Orchestrator: decompose a goal, delegate to subagents, synthesize.
+    """
+    # Step 1: Orchestrator creates a plan
+    plan_response = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        system="You are a task planner. Given a goal, output a JSON list of subtasks to delegate to specialist agents.",
+        messages=[{"role": "user", "content": f"Goal: {goal}\n\nOutput a JSON array of subtask strings."}],
+    )
+    subtasks = json.loads(plan_response.content[0].text)
+
+    # Step 2: Delegate to subagents (could run in parallel with asyncio)
+    results = []
+    for i, subtask in enumerate(subtasks):
+        result = run_subagent(
+            name=f"agent_{i}",
+            system_prompt="You are a specialist assistant. Complete the given subtask thoroughly.",
+            task=subtask,
+        )
+        results.append(result)
+        print(f"  Subagent {result.agent_name}: {subtask[:60]}... ✓")
+
+    # Step 3: Orchestrator synthesizes results
+    synthesis_input = "\n\n".join(
+        f"**{r.agent_name}**:\n{r.output}" for r in results
+    )
+    final = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=2048,
+        system="You are a synthesis agent. Combine the following subagent outputs into a coherent final answer.",
+        messages=[{"role": "user", "content": f"Original goal: {goal}\n\nSubagent results:\n{synthesis_input}"}],
+    )
+    return final.content[0].text
+```
+
+---
+
+## System Design Perspective
+
+### Reliability Challenges
+
+Agents fail in ways that single LLM calls don't. The key failure modes:
+
+**1. Tool call errors** — The API returns an error, times out, or returns malformed data. Every tool must have error handling, retries, and graceful degradation.
+
+**2. Hallucinated tool calls** — The model invents tool arguments that don't exist. Strict JSON schema validation catches this before execution.
+
+**3. Infinite loops** — The agent keeps calling tools without making progress. Implement max_steps and detect repeated actions.
+
+**4. Context overflow** — The conversation grows too long. Compress intermediate results to summaries; don't keep raw API responses in context if a 3-sentence summary suffices.
+
+**5. Cascading errors** — A wrong decision in step 2 compounds into a completely wrong result by step 8. Add checkpoints where human review or confidence thresholds gate continuation.
+
+### Production Architecture
+
+```
+User Request
+     │
+     ▼
+┌─────────────┐
+│   Gateway   │  ← Auth, rate limiting, cost tracking
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Planner    │  ← Decomposes goal, selects agent type
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐     ┌─────────────┐
+│ Agent Pool  │────▶│ Tool Layer  │  ← Sandboxed execution
+└──────┬──────┘     └─────────────┘
+       │
+       ▼
+┌─────────────┐
+│  Memory     │  ← Vector DB + conversation store
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Auditor    │  ← Log every action for safety + debugging
+└──────┬──────┘
+       │
+       ▼
+   Response
+```
+
+**Key design principles:**
+- **Idempotency**: Tools should be safe to call twice (or mark non-idempotent tools as requiring confirmation)
+- **Sandboxing**: Code execution must be isolated — never run agent-generated code on the host machine
+- **Observability**: Log every thought, action, and observation — debugging agent failures without traces is nearly impossible
+- **Human-in-the-loop gates**: For irreversible actions (send email, deploy code, make a purchase), require explicit human approval
+
+---
+
+## Real-World Examples
+
+**Devin (Cognition AI)**: A software engineering agent that takes a GitHub issue and produces a working pull request. It writes code, runs tests, reads error output, and iterates — completing tasks that previously took a junior engineer hours.
+
+**Cursor / GitHub Copilot Workspace**: Code editors with embedded agents that understand your entire codebase, run tests, and make multi-file edits in response to a natural language goal.
+
+**OpenAI Operator**: An agent that controls a web browser — clicking buttons, filling forms, navigating sites — to complete tasks like booking flights or filling out government forms.
+
+**Anthropic Claude Code (this tool)**: An agentic coding assistant that reads files, runs shell commands, edits code, and runs tests across a multi-file project in response to high-level goals.
+
+**AutoGPT / BabyAGI (early pioneers)**: The 2023 open-source experiments that first demonstrated the potential — and failure modes — of fully autonomous LLM agents running indefinitely.
+
+---
+
+## Common Mistakes
+
+**1. No max steps limit.** An agent with no upper bound on steps will run forever if it gets stuck. Always implement a circuit breaker.
+
+**2. Trusting tool output blindly.** LLMs will incorporate incorrect tool results into their reasoning without questioning them. Add validation: check that web search results are from credible sources, that code output matches expected format.
+
+**3. Giving agents too many tools.** More tools = more choice = more hallucination. Give agents only the tools they need for the task. A research agent doesn't need a "send email" tool.
+
+**4. Storing raw API responses in context.** A JSON API response might be 10,000 tokens. Extract only what's needed, or summarize. Context is your most scarce resource.
+
+**5. Not logging intermediate steps.** When an agent produces a wrong answer after 15 steps, you need the full trace to debug it. Log every thought-action-observation triple from the start.
+
+**6. Synchronous tool calls on slow APIs.** A 2-second API call inside an agent loop becomes 20 seconds for a 10-step task. Use async execution and parallelize independent tool calls.
+
+---
+
+## Interview Angle
+
+**Q: What is the difference between an LLM and an AI agent?**
+
+> An LLM is a model that takes text in and produces text out — a single inference call. An AI agent wraps an LLM with a loop: it can take actions (tool calls), observe results, and reason across multiple steps to complete a goal. The LLM is the reasoning engine; the agent is the architecture around it that enables autonomous task completion. A chatbot that answers questions is an LLM. A system that receives a ticket, writes code to fix it, runs the tests, and opens a PR is an agent.
+
+**Q: How do you prevent an agent from causing unintended side effects?**
+
+> Three layers of defense. First, tool design: separate read-only tools (search, read file) from write tools (send email, execute code), and make agents prefer read-only actions by default. Second, confirmation gates: for irreversible actions, require explicit human approval before execution — the agent surfaces the intended action and waits. Third, sandboxing: run code execution and browser control in isolated environments with no access to production systems or credentials unless explicitly granted. Additionally, log every action with enough context to audit or reverse it.
+
+**Q: How do multi-agent systems differ from single agents?**
+
+> A single agent has one context window, one set of tools, and runs sequentially. Multi-agent systems decompose a goal across specialized agents that can run in parallel. An orchestrator agent manages delegation: it receives the goal, creates a plan, assigns subtasks to specialist agents (a researcher, a coder, a writer), and synthesizes their results. This allows parallelism (multiple subagents run simultaneously), specialization (each agent has a focused system prompt and tool set), and handling of tasks too large for a single context window by splitting across agents.
+
+---
+
+## Summary
+
+- An **AI agent** uses an LLM as its reasoning core, wrapping it with a **perceive → reason → act → observe** loop
+- The **ReAct pattern** interleaves thinking and tool calls, making reasoning transparent and debuggable
+- **Tools** are the agent's hands — structured functions for web search, code execution, file I/O, API calls
+- Agents have four memory types: **in-context**, **external** (vector DB), **episodic**, and **procedural**
+- Context windows are a hard resource limit — agents must actively manage and compress memory
+- **Single agent** architectures suit bounded tasks; **orchestrator + subagents** handle complex, parallelizable goals
+- Key reliability challenges: tool errors, hallucinated calls, infinite loops, context overflow, and cascading errors
+- Production agents require **sandboxing**, **max step limits**, **full observability**, and **human-in-the-loop gates** for irreversible actions
+- Agent runs cost significantly more than single LLM calls — cost tracking is a first-class concern
+- The shift from LLM to agent is the difference between a consultant who advises and one who actually does the work
+
+<ArticleNav
+  prev={{ title: "Cross Validation", href: "/docs/cs-book/part-6-machine-learning/cross-validation" }}
+  next={null}
+/>
