@@ -162,6 +162,10 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-6 py-8 text-center text-sm text-gray-500">
           <p className="font-semibold text-gray-700 mb-1">ByteWise</p>
           <p>By Zulfiqar Ali Mir · Programming Concepts Explained from First Principles</p>
+          <div className="mt-3 flex justify-center gap-6">
+            <Link href="/docs/cs-book" className="hover:text-gray-700 transition-colors">CS Book</Link>
+            <Link href="/blog" className="hover:text-gray-700 transition-colors">Blog</Link>
+          </div>
         </div>
       </footer>
     </main>
