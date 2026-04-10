@@ -1,0 +1,173 @@
+export const metadata = {
+  title: "Agentic AI in Retail Merchandising — ByteWise CS Book",
+  description: "A real-world case study on how agentic AI is transforming retail merchandising — from dashboard overload to proactive, AI-driven decisions.",
+  keywords: ["agentic AI", "retail AI", "merchandising AI", "AI case study", "retail technology"],
+  openGraph: {
+    title: "Agentic AI in Retail Merchandising — ByteWise CS Book",
+    description: "How agentic AI is transforming retail merchandising — from dashboard overload to proactive, AI-driven decisions.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Case Study: Agentic AI in Retail Merchandising
+
+## From Dashboards to Decisions
+
+Retail has always been a data-heavy industry. Merchants constantly analyze pricing trends, inventory levels, customer demand, and competitive movements. Yet despite having vast amounts of data, many retail decisions still rely on manual analysis and fragmented dashboards.
+
+Today, agentic AI — the same architecture covered in the [previous chapter](/docs/cs-book/part-7-ai-and-llms/agentic-ai) — is transforming how merchandising teams operate. Rather than simply displaying data, AI agents can **interpret information, generate recommendations, and even automate parts of the decision-making process**.
+
+This case study examines what that transformation looks like in practice.
+
+---
+
+## Why Retail Is a Strong Fit for Agentic AI
+
+Retail is uniquely positioned to benefit from agentic AI because of three core characteristics:
+
+1. **Massive data volumes** generated from sales, supply chains, and customer interactions
+2. **Frequent operational decisions**, such as pricing, promotions, and assortment planning
+3. **Highly repetitive workflows** that are well suited for automation
+
+Because of these factors, AI agents can analyze data faster than humans and generate actionable insights continuously.
+
+Research suggests that **retail merchants could reclaim up to 40% of their time** by delegating repetitive tasks to AI agents, allowing them to focus on strategy, creativity, and customer experience.
+
+---
+
+## The Problem With Traditional Dashboards
+
+Most retail organizations rely heavily on analytics dashboards. While dashboards provide valuable information, they come with several limitations:
+
+### 1. Information Overload
+
+Merchants often start their week reviewing dozens of dashboards across multiple systems — pricing tools, sales reports, inventory data, and supplier performance metrics. Instead of clarifying decisions, this abundance of data often creates confusion.
+
+### 2. Manual Analysis
+
+Identifying trends and root causes requires significant manual effort. Teams must extract data, compare spreadsheets, and cross-check information across platforms.
+
+### 3. Slow Decision Cycles
+
+By the time insights are discovered, the business environment may have already changed. Retail moves fast, and delayed insights often lead to missed opportunities.
+
+### 4. Fragmented Systems
+
+Data frequently lives across multiple systems, forcing merchants to combine information manually.
+
+The result is what many retail professionals describe as **"dashboard overload."**
+
+---
+
+## The Agentic Alternative
+
+With agentic AI, the workflow looks very different. Instead of searching for insights, merchants receive **pre-analyzed summaries and recommendations**.
+
+For example, an AI agent might generate a morning brief saying:
+
+- Sales declined in a specific region due to a competitor's price cut
+- Inventory shortages caused missed revenue opportunities in two categories
+- A promotional campaign performed 18% above expectations
+- A supplier negotiation opportunity exists based on volume trends
+
+These insights are delivered **proactively**, allowing merchants to act immediately rather than spend hours finding the problem.
+
+Mapping this to the ReAct loop from the previous chapter:
+
+```
+Perception:  Pull last 24h of sales, inventory, competitor pricing data
+Reasoning:   Identify anomalies, compare to targets, rank by impact
+Action:      Generate prioritized merchant brief + recommended actions
+Observation: Merchant feedback (accepted / rejected / modified)
+             ↑ feeds back into agent's future reasoning
+```
+
+---
+
+## Practical Applications
+
+### Pricing Optimization
+
+AI agents monitor competitor pricing, demand signals, and margin targets continuously. They recommend price adjustments, discount strategies, and dynamic promotions — decisions that previously required a pricing analyst and a 2-day turnaround now happen in minutes.
+
+### Assortment Planning
+
+Agents analyze customer demand patterns, regional preferences, and inventory performance to recommend which products to stock, cut, or expand. Merchants can optimize assortment at a SKU level across hundreds of categories simultaneously.
+
+### Promotion Effectiveness
+
+After a promotional campaign, agents automatically evaluate sales uplift, margin impact, and cannibalization effects — surfacing which promotions worked and which didn't, before the next planning cycle.
+
+### Supplier Negotiations
+
+Agents analyze historical pricing trends, identify negotiation windows, and model pricing scenarios — so merchants enter supplier meetings with data-backed positions rather than intuition.
+
+---
+
+## Where the Agent Architecture Shows Up
+
+Each application above maps directly to the agentic AI patterns from the previous chapter:
+
+| Retail Task | Agent Pattern |
+|-------------|---------------|
+| Morning performance brief | Single agent, scheduled trigger, read-only tools |
+| Pricing recommendation | ReAct loop with competitor price API + margin calculator |
+| Promotion analysis | Parallel agents per campaign, results merged by orchestrator |
+| Supplier scenario modeling | Plan-then-execute with financial modeling tools |
+
+The key difference from the CS-level view: in retail, **the tools are domain-specific APIs** — inventory management systems, ERP platforms, competitor intelligence feeds — rather than generic web search or code execution.
+
+---
+
+## Organizational Realities
+
+### Change Management Matters More Than Technology
+
+Many AI initiatives in retail fail because organizations treat them purely as technology projects. Implementing agentic AI requires rethinking workflow design, team roles, skill requirements, and decision-making processes. Employees must learn how to collaborate with AI systems effectively.
+
+Successful adoption depends as much on **people and culture** as on the technology.
+
+### Building Merchant Trust
+
+Merchants carry significant P&L responsibility, making them cautious about new tools. For AI adoption to succeed, the agent must:
+
+- Show its reasoning, not just its recommendation
+- Allow merchants to override and give feedback
+- Improve visibly over time as it incorporates corrections
+
+This is the human-in-the-loop gate pattern applied to a business context — the same principle that governs irreversible actions in production agent systems.
+
+### The Technical Translator Role
+
+A new role is emerging: the **technical translator** — someone who bridges business teams, data scientists, and AI engineers. They ensure the agent's tools, prompts, and outputs align with real merchandising workflows, not just what's technically possible.
+
+---
+
+## What AI Handles vs. What Merchants Keep
+
+| Automated by Agent | Kept by Merchant |
+|--------------------|------------------|
+| Data collection and aggregation | Brand positioning strategy |
+| Anomaly detection and alerting | Trend forecasting and intuition |
+| Report generation | Customer experience decisions |
+| Scenario modeling | Competitive differentiation |
+| Routine pricing adjustments | High-stakes negotiations |
+
+This division mirrors the broader principle: agents automate **routine, high-frequency, data-driven tasks** while humans focus on **judgment, creativity, and strategy**.
+
+---
+
+## Key Takeaways
+
+- Retail is an ideal domain for agentic AI: high data volume, frequent decisions, repetitive workflows
+- The shift from dashboards to agents means moving from **reactive reporting to proactive intelligence**
+- Every retail use case (pricing, assortment, promotions, suppliers) maps to a specific agent architecture pattern
+- Organizational change and merchant trust are as critical as the technical implementation
+- AI augments merchants — it handles the analytical load so humans can focus on strategy
+
+<ArticleNav
+  prev={{ title: "Agentic AI", href: "/docs/cs-book/part-7-ai-and-llms/agentic-ai" }}
+  next={null}
+/>
