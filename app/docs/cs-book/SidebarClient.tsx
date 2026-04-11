@@ -88,6 +88,14 @@ const chapters = [
       { title: "Cross Validation", href: "/docs/cs-book/part-6-machine-learning/cross-validation" },
     ],
   },
+  {
+    part: "Part 7 — AI & LLMs",
+    items: [
+      { title: "Agentic AI", href: "/docs/cs-book/part-7-ai-and-llms/agentic-ai" },
+      { title: "Case Study: Agentic AI in Retail Merchandising", href: "/docs/cs-book/part-7-ai-and-llms/agentic-ai-retail-case-study" },
+      { title: "Palantir: Data Analytics & AI", href: "/docs/cs-book/part-7-ai-and-llms/palantir-data-analytics-ai" },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) => c.items.map((i) => i.href));
@@ -175,12 +183,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/43 chapters</span>
+              <span>{readCount}/46 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 43) * 100}%` }}
+                style={{ width: `${(readCount / 46) * 100}%` }}
               />
             </div>
           </div>
