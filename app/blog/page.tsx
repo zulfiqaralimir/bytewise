@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "mastering-ai-system-design",
+    title: "Mastering AI System Design: Lessons from Open Claw Architecture",
+    description:
+      "Learn how modern AI systems work through Open Claw architecture. A practical guide to event-driven design, agents, tools, and automation.",
+    date: "April 19, 2026",
+    tag: "AI System Design",
+  },
+  {
     slug: "agentic-ai-retail-merchandising",
     title: "From Dashboards to Decisions: How Agentic AI Is Transforming Retail Merchandising",
     description:
