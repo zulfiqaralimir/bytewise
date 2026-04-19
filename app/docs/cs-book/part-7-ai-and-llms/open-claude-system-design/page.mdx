@@ -1,0 +1,314 @@
+export const metadata = {
+  title: "Case Study: Mastering AI System Design — Open Claude Architecture — ByteWise CS Book",
+  description: "A deep-dive case study on the Open Claude architecture — event-driven design, multi-agent systems, tool calling, and automation engines.",
+  keywords: ["AI system design", "Open Claude", "event-driven architecture", "multi-agent systems", "AI agents case study"],
+  openGraph: {
+    title: "Case Study: Mastering AI System Design — Open Claude Architecture — ByteWise CS Book",
+    description: "A deep-dive case study on the Open Claude architecture — event-driven design, multi-agent systems, tool calling, and automation engines.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Case Study: Mastering AI System Design — Lessons from Open Claude Architecture
+
+The rise of AI tools has been explosive. From chatbots to autonomous agents, we're surrounded by systems that can write, analyze, and even automate tasks for us. But here's the catch—most people use these tools without understanding how they actually work behind the scenes.
+
+When I explored the Open Claude-style system, it became clear that the real magic isn't just the AI model—it's the **system design** powering everything.
+
+This case study breaks down that architecture in a simple, practical way so you can not only understand it—but potentially build something similar yourself.
+
+---
+
+## 🚀 Why Open Claude Matters
+
+Unlike traditional chatbots, Open Claude isn't just about conversation. It's an **AI-powered automation system**.
+
+It connects:
+
+- Messaging platforms (Telegram, WhatsApp, etc.)
+- AI models (like GPT or Gemini)
+- External tools (email, browser, APIs)
+
+**The key idea:**
+
+> 👉 It's not a single AI—it's a coordinated system of components working together.
+
+---
+
+## 🧩 The Big Picture: Event-Driven AI Architecture
+
+At its core, Open Claude follows an **event-driven architecture**.
+
+### What does that mean?
+
+- Something happens (an event)
+- That event triggers an action
+- That action may trigger more actions
+
+Think of it like notifications on your phone:
+
+> You get a message → you open it → you reply → another notification is triggered
+
+AI systems like this operate the same way—but at a much larger and automated scale.
+
+---
+
+## ⚙️ Core Components of the Architecture
+
+Let's break down the system into its key building blocks.
+
+---
+
+### 📥 1. Input Layer — Where Everything Begins
+
+Inputs are not just user messages.
+
+They can come from:
+
+- Telegram or WhatsApp messages
+- Webhooks (external triggers)
+- Cron jobs (scheduled tasks)
+- Heartbeats (continuous system signals)
+
+💡 **Insight:**
+An AI system becomes powerful when it listens to **multiple types of inputs**, not just users.
+
+---
+
+### 🧠 2. Gateway — The Central Coordinator
+
+The gateway is the **heart of the system**.
+
+It:
+
+- Receives all inputs
+- Decides what to do next
+- Sends tasks to agents
+
+**Important distinction:**
+
+> 👉 The gateway does NOT perform tasks—it **orchestrates them**.
+
+---
+
+### 📊 3. Queue System — Handling Scale Smoothly
+
+Imagine 100 users sending requests at the same time.
+
+- Without a queue → Chaos
+- With a queue → Organized processing
+
+The queue:
+
+- Stores incoming tasks
+- Processes them one by one (or in batches)
+- Prevents overload
+
+> Tools like Redis are commonly used here.
+
+---
+
+### 🤖 4. Agents — The Real Workers
+
+Agents are where the actual work happens.
+
+They:
+
+- Process tasks
+- Interact with AI models
+- Use tools to perform actions
+
+**Even more interesting:**
+
+> 👉 Agents can call other agents
+
+This creates a **multi-agent system**, where tasks are broken down and handled collaboratively.
+
+---
+
+### 🛠️ 5. Tools — Making AI Actionable
+
+Without tools, AI can only "talk."
+
+With tools, AI can:
+
+- Send emails
+- Read messages
+- Deploy websites
+- Interact with APIs
+
+This concept is called **tool calling**.
+
+💡 **Insight:**
+Tools transform AI from a chatbot into an **action-taking system**.
+
+---
+
+### 🧾 6. Memory — Lightweight but Effective
+
+Instead of complex databases, this system uses:
+
+- Markdown files
+- Simple text summaries
+
+This memory:
+
+- Stores past actions
+- Helps agents maintain context
+
+**Trade-off:**
+
+- ✅ Simple and fast
+- ❌ Not ideal for large-scale systems
+
+---
+
+## 🔄 Automation Engines Inside the System
+
+This architecture becomes truly powerful because of automation.
+
+---
+
+### 🔔 Hooks — Reactive Automation
+
+Hooks are triggered by events.
+
+**Example:**
+
+- New email arrives → trigger AI response
+
+They make the system **reactive**.
+
+---
+
+### ⏰ Cron Jobs — Scheduled Tasks
+
+These run at fixed times.
+
+**Examples:**
+
+- Daily reports
+- Morning notifications
+
+Simple—but incredibly effective.
+
+---
+
+### 💓 Heartbeats — Keeping the System Alive
+
+Heartbeats are periodic signals.
+
+They:
+
+- Check if tasks are pending
+- Trigger background processes
+- Keep the system responsive
+
+Think of them as a system's **pulse**.
+
+---
+
+## 🧪 Real Example: AI Builds & Deploys a Website
+
+Let's walk through a real scenario:
+
+1. You send a message:
+   *"Build and deploy a dark-themed website."*
+
+2. Gateway receives it
+3. Task is added to the queue
+4. An agent picks it up
+
+5. The agent:
+   - Uses a design tool
+   - Generates code
+   - Calls another agent (deployment)
+
+6. Website gets deployed
+
+💡 **Key Insight:**
+
+> This is not one AI doing everything—
+> It's a **team of AI agents collaborating**
+
+---
+
+## ✅ Strengths of This Architecture
+
+- Modular and flexible
+- Scales easily with queues
+- Supports multiple input sources
+- Highly extensible with tools
+- Encourages automation-first design
+
+---
+
+## ⚠️ Limitations & Risks
+
+Let's be realistic—this system isn't perfect.
+
+- Installation can be complex
+- Dependency issues are common
+- Security risks (API keys, access control)
+- Tasks may fail midway
+- Not fully autonomous yet
+
+> 👉 It's powerful—but still evolving
+
+---
+
+## 🛠️ How You Can Build Something Similar
+
+You don't need to build everything at once.
+
+### Start small:
+
+- One input (e.g., Telegram bot)
+- One agent
+- One tool
+
+### Then expand:
+
+- Add a queue
+- Add automation (cron, hooks)
+- Introduce multiple agents
+
+💡 **Mindset shift:**
+
+> Focus on **flow and architecture**, not just code
+
+---
+
+## 🔑 Key Takeaways
+
+- AI systems are about **architecture, not just models**
+- Event-driven design unlocks automation
+- Simple components can build powerful systems
+- Multi-agent workflows are the future
+- You can build this—step by step
+
+---
+
+## 🎯 Conclusion
+
+Understanding AI at a deeper level changes how you approach technology.
+
+Instead of just using tools, you start thinking:
+
+- How are they built?
+- How can I build my own?
+
+Open Claude-style systems show us that the future isn't just smarter AI—it's **better-designed systems around AI**.
+
+---
+
+### Final Thought
+
+> 👉 Build something. Break it. Improve it. Repeat.
+
+<ArticleNav
+  prev={{ title: "Agentic AI in Retail Merchandising", href: "/docs/cs-book/part-7-ai-and-llms/agentic-ai-retail-case-study" }}
+  next={null}
+/>
