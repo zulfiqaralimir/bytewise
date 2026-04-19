@@ -96,7 +96,7 @@ const chapters = [
       { title: "Palantir: Data Analytics & AI", href: "/docs/cs-book/part-7-ai-and-llms/palantir-data-analytics-ai" },
       { title: "Palantir Gotham", href: "/docs/cs-book/part-7-ai-and-llms/palantir-gotham" },
       { title: "Palantir Foundry", href: "/docs/cs-book/part-7-ai-and-llms/palantir-foundry" },
-      { title: "Case Study: Open Claude System Design", href: "/docs/cs-book/part-7-ai-and-llms/open-claude-system-design" },
+      { title: "Case Study: Open Claw System Design", href: "/docs/cs-book/part-7-ai-and-llms/open-claude-system-design" },
     ],
   },
 ];
