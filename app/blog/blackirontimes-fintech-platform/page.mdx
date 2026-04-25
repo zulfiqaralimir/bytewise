@@ -1,0 +1,379 @@
+export const metadata = {
+  title: "From Zero to 100K Requests: Engineering a Scalable Bloomberg-Style Fintech Platform — ByteWise",
+  description: "How one developer built a Bloomberg-meets-Forbes financial intelligence platform using Next.js, Supabase, and Cloudflare R2 — a deep dive into ISR, force-dynamic trade-offs, and zero-to-100K request architecture.",
+  keywords: ["fintech platform", "Next.js ISR", "Supabase", "Cloudflare R2", "system design", "scalable architecture", "Bloomberg Terminal", "Next.js App Router"],
+  openGraph: {
+    title: "From Zero to 100K Requests: Engineering a Scalable Bloomberg-Style Fintech Platform",
+    description: "Deep dive into ISR, force-dynamic trade-offs, and the architecture behind a financial intelligence platform built on free-tier infrastructure.",
+    type: "article",
+  },
+};
+
+# From Zero to 100K Requests: Engineering a Scalable Bloomberg-Style Fintech Platform
+
+## Built with Next.js, Supabase & Cloudflare R2 — Deep Dive into Architecture, ISR, and force-dynamic Trade-offs
+
+---
+
+## 🚀 The Core Question
+
+> *What if a single developer could build a Bloomberg-meets-Forbes platform — complete with financial news, research reports, live dashboards, and AI-generated insights — all on a free-tier hosting budget?*
+
+That question defines the foundation of **BlackIronTimes** — a full-stack financial intelligence platform designed to deliver institutional-grade insights using modern web infrastructure.
+
+Financial data platforms such as Bloomberg Terminal and Refinitiv are powerful but inaccessible to most individuals due to cost and complexity. At the same time, the open web lacks deeply integrated platforms that combine:
+
+- Financial journalism
+- Data visualization
+- Research-grade analysis
+- AI-assisted insights
+
+BlackIronTimes attempts to bridge that gap — not by replicating institutional systems directly, but by rethinking architecture under constraints:
+
+- **Free-tier infrastructure**
+- **Serverless execution limits**
+- **Global content delivery requirements**
+- **Scalability from day one**
+
+---
+
+## 🏗️ What Is BlackIronTimes?
+
+BlackIronTimes is structured around two core pillars: a **live publishing platform** and a **planned AI research engine**.
+
+---
+
+### 🔹 Pillar 1 — Publishing Platform (Live System)
+
+The current system operates as a financial media platform covering:
+
+- Global financial markets
+- Macroeconomic trends
+- Energy and geopolitics
+- Technology and innovation
+- Regional markets including the Pakistan Stock Exchange
+
+It combines traditional publishing with data-driven features:
+
+#### Key Capabilities
+
+- Long-form research reports (consulting-style analysis)
+- Live dashboards (indices, commodities, macro indicators)
+- Category-based news aggregation
+- Markdown-based CMS for structured content creation
+
+#### Content Workflow
+
+- Articles are written in **Markdown (MDX-compatible)**
+- Images are uploaded to object storage
+- Metadata is stored in a relational database
+- Pages are statically served with revalidation
+
+#### Multilingual Support
+
+- English ↔ Urdu
+- English ↔ Arabic
+
+---
+
+### 🔹 Pillar 2 — AI Research Engine (Planned)
+
+#### Planned Pipeline
+
+- **Market Agent** → monitors financial signals
+- **News Agent** → aggregates global developments
+- **Research Agent** → synthesizes structured analysis
+- **Visualization Agent** → generates charts
+- **Publishing Agent** → prepares content for editorial review
+
+#### Capabilities
+
+- Multi-agent orchestration
+- Stateful workflows
+- Automated research generation
+- Vector search for semantic retrieval
+
+---
+
+## ⚙️ Technology Stack (And Why It Matters)
+
+### Frontend & Rendering
+
+- **Next.js (App Router)** — Server Components, ISR, Edge-ready rendering
+
+### Hosting & Deployment
+
+- **Vercel** — Global CDN, Serverless + ISR support
+
+### Database
+
+- **Supabase (PostgreSQL)**
+
+### Storage
+
+- **Cloudflare R2** — S3-compatible, zero egress fees
+
+### Additional Tools
+
+- Charts: Apache ECharts + Recharts
+- Animation: Framer Motion
+- AI: Claude Haiku + LangGraph
+- Languages: TypeScript + Python
+
+### Architectural Philosophy
+
+- Static-first rendering
+- Aggressive caching
+- Minimize per-request compute
+- Decouple storage and compute
+
+---
+
+## 🧩 System Architecture
+
+### Request Flow
+
+```
+User Request
+     │
+     ▼
+Vercel Edge CDN
+     │
+     ├── Cache HIT → Serve static HTML instantly
+     │
+     └── Cache MISS
+              │
+              ▼
+        Next.js Server
+              │
+              ├── Static pages (ISR) → Supabase fetch → Render → Cache
+              │
+              └── Dynamic pages (force-dynamic) → Supabase fetch → Render (no cache)
+```
+
+---
+
+## ⚡ The Core Trade-off: ISR vs `force-dynamic`
+
+This is the most consequential architectural decision in the platform.
+
+### ISR (Incremental Static Regeneration)
+
+ISR pre-renders pages at build time and re-renders them in the background after a configurable TTL.
+
+```ts
+// app/articles/[slug]/page.tsx
+export const revalidate = 3600; // re-render after 1 hour
+
+export default async function ArticlePage({ params }) {
+  const article = await getArticle(params.slug);
+  return <ArticleView article={article} />;
+}
+```
+
+**When to use ISR:**
+- Article pages (content changes infrequently)
+- Research reports
+- Category archive pages
+
+**Benefits:**
+- Near-zero TTFB — CDN serves cached HTML
+- Supabase query runs only on cache miss
+- Scales to 100K+ requests with minimal compute cost
+
+---
+
+### `force-dynamic` (Server-Side Rendering)
+
+`force-dynamic` disables all caching — every request triggers a fresh Supabase query and a full server render.
+
+```ts
+// app/dashboard/page.tsx
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const prices = await getLivePrices(); // always fresh
+  return <LiveDashboard prices={prices} />;
+}
+```
+
+**When to use `force-dynamic`:**
+- Live market dashboards (prices change every second)
+- Personalized user feeds
+- Real-time indicators
+
+**Cost:** every request hits Supabase, higher compute usage, higher latency vs ISR.
+
+---
+
+### The Decision Matrix
+
+| Page Type | Strategy | Revalidation | Freshness |
+|-----------|----------|-------------|-----------|
+| Article | ISR | 1 hour | Acceptable stale |
+| Research Report | ISR | 6 hours | Acceptable stale |
+| Category Page | ISR | 30 minutes | Near-fresh |
+| Live Dashboard | force-dynamic | None | Always fresh |
+| User Feed | force-dynamic | None | Always fresh |
+
+The rule: **if the user can tolerate data that is X minutes old, use ISR with TTL = X**. If they cannot, use `force-dynamic`.
+
+---
+
+## 🗄️ Database Design — Supabase
+
+Supabase provides managed PostgreSQL with a PostgREST API layer, real-time subscriptions, and Row-Level Security (RLS).
+
+### Core Tables
+
+```sql
+-- Articles
+CREATE TABLE articles (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug        TEXT UNIQUE NOT NULL,
+  title       TEXT NOT NULL,
+  body_md     TEXT,
+  category    TEXT,
+  language    TEXT DEFAULT 'en',
+  published   BOOLEAN DEFAULT false,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- Market Data Snapshots
+CREATE TABLE market_snapshots (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  symbol      TEXT NOT NULL,
+  price       NUMERIC,
+  change_pct  NUMERIC,
+  captured_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+### Why Supabase Over a Custom Database?
+
+- **Free tier** is generous (500 MB database, 2 GB bandwidth)
+- **PostgREST** auto-generates a REST API from the schema
+- **RLS** enforces per-row security without middleware
+- **Realtime** subscriptions power live dashboard updates
+
+---
+
+## 🪣 Storage Design — Cloudflare R2
+
+Images, PDFs, and research attachments are stored in Cloudflare R2 — an S3-compatible object store with **zero egress fees**.
+
+### Why R2 Over S3?
+
+| Feature | AWS S3 | Cloudflare R2 |
+|---------|--------|---------------|
+| Egress cost | $0.09/GB | $0.00/GB |
+| Storage cost | $0.023/GB | $0.015/GB |
+| S3 compatibility | Native | Full |
+| CDN integration | CloudFront (extra cost) | Cloudflare CDN (included) |
+
+For a media-heavy platform serving global users, zero egress is a structural cost advantage.
+
+### Upload Flow
+
+```
+Editor uploads image
+        │
+        ▼
+Next.js Route Handler (presigned URL generation)
+        │
+        ▼
+Cloudflare R2 (direct browser upload via presigned URL)
+        │
+        ▼
+R2 public URL stored in Supabase articles table
+```
+
+This pattern keeps image uploads off the Next.js server — the browser uploads directly to R2, and only the resulting URL touches the database.
+
+---
+
+## 🌍 Multilingual Architecture
+
+### Data Model
+
+```sql
+CREATE TABLE article_translations (
+  article_id  UUID REFERENCES articles(id),
+  language    TEXT NOT NULL,  -- 'en', 'ur', 'ar'
+  title       TEXT,
+  body_md     TEXT,
+  PRIMARY KEY (article_id, language)
+);
+```
+
+### Rendering
+
+Next.js `[lang]` route segments handle locale routing:
+
+```
+/en/articles/[slug]  → English
+/ur/articles/[slug]  → Urdu (RTL layout)
+/ar/articles/[slug]  → Arabic (RTL layout)
+```
+
+RTL languages use `dir="rtl"` on the root element. Tailwind CSS handles mirrored layouts with the `rtl:` variant prefix.
+
+---
+
+## 📊 Scalability Analysis — Zero to 100K Requests
+
+### Phase 1 — 0 to 10K requests/day (Free Tier)
+
+| Component | Limit | Usage |
+|-----------|-------|-------|
+| Vercel (Hobby) | 100 GB bandwidth | ~5 GB/day |
+| Supabase (Free) | 500 MB DB, 2 GB bandwidth | Well within |
+| Cloudflare R2 (Free) | 10 GB storage, 10M reads | Well within |
+
+ISR means **most requests never reach Supabase** — they are served from Vercel's CDN cache. At 10K daily requests, Supabase might see only ~200 actual queries.
+
+### Phase 2 — 10K to 100K requests/day
+
+At this scale, ISR continues to absorb the load:
+
+- **Cache hit rate target: 95%+**
+- **Supabase actual queries: ~5K/day** (1K articles × 5 revalidations)
+- **Vercel bandwidth: ~50 GB/day**
+
+The `force-dynamic` dashboard pages are the pressure point. If the live dashboard gets 10K daily views, that is 10K Supabase queries. Solution: **cache the market data fetch at the application layer** with a 60-second TTL using `unstable_cache`:
+
+```ts
+import { unstable_cache } from "next/cache";
+
+const getCachedPrices = unstable_cache(
+  async () => fetchMarketPrices(),
+  ["market-prices"],
+  { revalidate: 60 }
+);
+```
+
+This collapses 10K daily dashboard requests into ~1,440 Supabase queries (one per minute).
+
+---
+
+## 🤖 The AI Research Engine — Architecture Preview
+
+The planned AI pipeline uses multi-agent orchestration:
+
+```
+Market Agent ──────┐
+News Agent ────────┼──→ Research Agent ──→ Visualization Agent ──→ Publishing Agent
+Macro Agent ───────┘
+```
+
+Each agent is stateless — state is persisted to Supabase between steps. LangGraph manages the workflow graph, and Claude Haiku handles synthesis steps. Past research reports are embedded and stored in **pgvector** (a Supabase extension), allowing the Research Agent to retrieve semantically similar prior analyses before generating new content.
+
+---
+
+## 🧠 Key Lessons
+
+1. **ISR is the most powerful scaling primitive in Next.js** — use it aggressively for any content that tolerates staleness
+2. **`force-dynamic` is expensive at scale** — always ask whether `unstable_cache` can absorb the query load
+3. **Zero egress fees change the economics** — R2 makes media-heavy platforms viable on a startup budget
+4. **Decouple storage from compute** — direct browser-to-R2 uploads keep the server thin
+5. **Supabase RLS replaces middleware auth** — fewer moving parts, same security guarantees

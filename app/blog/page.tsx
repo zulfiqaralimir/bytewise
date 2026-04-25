@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "blackirontimes-fintech-platform",
+    title: "From Zero to 100K Requests: Engineering a Scalable Bloomberg-Style Fintech Platform",
+    description:
+      "How one developer built a Bloomberg-meets-Forbes financial intelligence platform using Next.js, Supabase, and Cloudflare R2 — a deep dive into ISR, force-dynamic trade-offs, and scalable architecture.",
+    date: "April 25, 2026",
+    tag: "System Design",
+  },
+  {
     slug: "mastering-ai-system-design",
     title: "Mastering AI System Design: Lessons from Open Claw Architecture",
     description:
