@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "social-accounting-matrix",
+    title: "Social Accounting Matrix: A Complete Guide",
+    description:
+      "From first principles to Pakistan's 2007-08 economy — covering double-entry accounting, factor decomposition, household income distribution, and SAM multiplier analysis.",
+    date: "May 7, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "blackirontimes-fintech-platform",
     title: "From Zero to 100K Requests: Engineering a Scalable Bloomberg-Style Fintech Platform",
     description:

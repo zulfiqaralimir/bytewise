@@ -1,0 +1,726 @@
+export const metadata = {
+  title: "Social Accounting Matrix: A Complete Guide — ByteWise",
+  description: "A comprehensive guide to SAM from first principles, using Pakistan's 2007-08 economy — covering double-entry accounting, factor decomposition, household income distribution, and multiplier analysis.",
+  keywords: ["social accounting matrix", "SAM economics", "Pakistan economy", "CGE model", "macroeconomic modeling", "income distribution", "SAM multipliers"],
+  openGraph: {
+    title: "Social Accounting Matrix: A Complete Guide",
+    description: "A comprehensive guide to SAM from first principles, using Pakistan's 2007-08 economy — covering double-entry accounting, factor decomposition, household income distribution, and multiplier analysis.",
+    type: "article",
+  },
+};
+
+# Social Accounting Matrix: A Complete Guide
+
+**From First Principles to Pakistan's Economy**
+
+> *Economics · Macroeconomic Modeling · Policy Analysis*
+> *Data: Pakistan SAM 2007-08 · All values in billions of Pakistan Rupees (PKR)*
+
+---
+
+## Table of Contents
+
+1. [What Is a Social Accounting Matrix?](#1-what-is-a-social-accounting-matrix)
+2. [Why Does It Matter?](#2-why-does-it-matter)
+3. [The Double-Entry Principle](#3-the-double-entry-principle)
+4. [The Accounts: Who Sits in the SAM?](#4-the-accounts-who-sits-in-the-sam)
+5. [Reading the Matrix: Rows, Columns & Cells](#5-reading-the-matrix-rows-columns--cells)
+6. [Pakistan SAM 2007-08: Structure and Aggregation](#6-pakistan-sam-2007-08-structure-and-aggregation)
+7. [The Activities Account](#7-the-activities-account)
+8. [The Commodities Account](#8-the-commodities-account)
+9. [Factor Accounts: Land, Labor & Capital](#9-factor-accounts-land-labor--capital)
+10. [The Household Account](#10-the-household-account)
+11. [The Government Account](#11-the-government-account)
+12. [The Saving-Investment Account](#12-the-saving-investment-account)
+13. [The Rest of the World Account](#13-the-rest-of-the-world-account)
+14. [The Aggregated SAM: Pakistan 2007-08 Numbers](#14-the-aggregated-sam-pakistan-2007-08-numbers)
+15. [Structure of the Economy](#15-structure-of-the-economy)
+16. [Value Added Decomposition by Factor](#16-value-added-decomposition-by-factor)
+17. [Household Income Distribution](#17-household-income-distribution)
+18. [SAM Multipliers & Policy Simulation](#18-sam-multipliers--policy-simulation)
+19. [Limitations of the SAM](#19-limitations-of-the-sam)
+20. [Conclusion](#20-conclusion)
+
+---
+
+## 1. What Is a Social Accounting Matrix?
+
+Every economic policy has unintended consequences. A fuel subsidy does not just help energy consumers — it ripples through transport costs, manufacturing margins, household budgets, and the government's fiscal balance simultaneously. Standard economic tools handle these linkages one at a time. The **Social Accounting Matrix (SAM)** handles them all at once.
+
+A **Social Accounting Matrix (SAM)** is a comprehensive, economy-wide data framework that records *all* monetary transactions between economic agents — producers, consumers, the government, and the rest of the world — within a single square matrix, over a defined accounting period (usually one year).
+
+Think of it as an extended national accounts system. Where conventional national accounts present GDP and its components as summary statistics, the SAM unpacks the entire **circular flow of income**, showing not just what was produced and consumed, but *who earned what, who spent what, and how income traveled from production to final demand.*
+
+> **Core Idea:** Every payment in an economy has a payer and a receiver. The SAM records every such payment systematically, ensuring that total income equals total expenditure for every account — simultaneously.
+
+The SAM was developed in the 1960s and 1970s, with foundational contributions from **Sir Richard Stone** (Nobel Prize in Economics, 1984) and **Graham Pyatt**. It sits at the intersection of input-output economics and national accounts, and forms the backbone of Computable General Equilibrium (CGE) models used for policy simulation worldwide.
+
+---
+
+## 2. Why Does It Matter?
+
+The SAM matters because economic policy is deeply interconnected. Standard partial-equilibrium tools — supply-demand analysis, sectoral models, budget arithmetic — cannot capture simultaneous economy-wide linkages. The SAM can. Its six core uses are:
+
+**Policy Simulation**
+Estimate the economy-wide impact of tax reforms, tariff changes, subsidy removal, or cash transfers *before* implementing them. Policy makers can run scenarios without touching the real economy.
+
+**Income Distribution**
+Trace how factor income flows to different household groups. This is the essential tool for poverty and inequality analysis — it connects production structure to the welfare of the poor.
+
+**CGE Foundation**
+Provides the calibration dataset for Computable General Equilibrium models — the standard workhorse for medium-run economic policy analysis. Without a SAM, a CGE model cannot be built.
+
+**Structural Diagnosis**
+Reveals the production structure, sectoral interdependencies, and trade patterns of an economy in a single consistent framework. One matrix tells you more about an economy than a shelf of sectoral reports.
+
+**SAM Multipliers**
+Compute economy-wide income and employment effects of any exogenous injection of demand — a new road, an export order, a cash transfer program.
+
+**Consistency Discipline**
+The row-column balance requirement forces consistency in national statistics, uncovering discrepancies in raw data that would otherwise go unnoticed.
+
+---
+
+## 3. The Double-Entry Principle
+
+The SAM is governed by one iron rule, borrowed from accounting:
+
+> **For every account *i* in the matrix:**
+> **Row Total (i) = Column Total (i)**
+>
+> Total receipts of account *i* = Total expenditures of account *i*.
+>
+> This must hold for every single account — activities, commodities, factors, households, government, saving-investment, and rest of the world.
+
+This is not an assumption — it is an **accounting identity**. If account *i* receives PKR 1,000 billion from all sources, it must also spend PKR 1,000 billion across all destinations. Any residual is forced into a balancing item such as savings or a statistical discrepancy.
+
+**Formally:**
+
+```
+Row Sum Constraint:
+  Σⱼ T(i,j) = Σⱼ T(j,i)    for all i
+
+Where:
+  T(i,j)  = payment FROM account j TO account i
+             (column j pays into row i)
+
+  Row i total    = total income received by account i
+  Column i total = total expenditure by account i
+```
+
+Because every transaction appears twice — once as income (in a row) and once as expenditure (in a column) — the SAM is a formal extension of **double-entry bookkeeping** to the entire national economy.
+
+---
+
+## 4. The Accounts: Who Sits in the SAM?
+
+A standard SAM contains the following accounts, each represented as both a row and a column. The rows record income; the columns record expenditure.
+
+**01 · Activities**
+Production units — farms, factories, service firms. They receive revenue from selling output and spend it on intermediate inputs and factor payments. An "activity" is a production process, not a legal entity.
+
+**02 · Commodities**
+Goods and services as traded products. Distinct from activities: one activity can produce multiple commodities; one commodity can be sourced from multiple activities and from imports. The activities-commodities split is what allows the SAM to capture multi-product firms and commodity-specific taxes.
+
+**03 · Factors of Production**
+Land, Labor, Capital — and their sub-categories. They receive value added from activities and distribute it to households and institutions. Factors are the bridge between production and distribution.
+
+**04 · Households**
+Differentiated by income class, rural/urban status, or farm type. They receive factor income and transfers, and spend on consumption and savings. The degree of household disaggregation determines how much distributional detail the SAM can capture.
+
+**05 · Government**
+Collects taxes (direct and indirect), makes transfers, buys public goods, and carries a budget surplus or deficit.
+
+**06 · Saving-Investment (Capital Account)**
+The macroeconomic balancing account. Collects savings from households, government, and foreigners; channels them into fixed investment and stock changes. Enforces the identity S = I at the national level.
+
+**07 · Rest of the World (ROW)**
+Records all transactions with foreign entities: exports, imports, remittances, foreign aid, dividend repatriation, and net foreign borrowing.
+
+> The Pakistan SAM 2007-08 follows exactly this architecture, with **51 activity types**, **27 factor categories**, and **19 household groups** at the most disaggregated level — then aggregated for analysis into 6 sectors, 3 factors, and 9 household groups.
+
+---
+
+## 5. Reading the Matrix: Rows, Columns & Cells
+
+The SAM is always read with a consistent convention:
+
+> **Cell T(i, j)** in row *i*, column *j* records a payment **FROM account *j* TO account *i*.**
+>
+> - Reading across a **row** → all income sources of that account
+> - Reading down a **column** → all expenditure destinations of that account
+
+For example:
+- Cell (Labor row, Agriculture column) = wage bill paid by agriculture to labor
+- Cell (Household row, Labor column) = labor income flowing to households
+
+**Basic Structure of the Pakistan SAM 2007-08 (Table 5.1)**
+
+| Account | Activities (1) | Commodities (2) | Factors (3–5) | Household (6) | Government (7) | S-I (9) | ROW (10) | **Row Total** |
+|---|---|---|---|---|---|---|---|---|
+| **Activities** | — | Supply Matrix | — | — | — | — | — | Gross Output |
+| **Commodities** | Intermediate Consumption | — | — | Private Consumption | Public Consumption | Fixed Investment | Exports | Aggregate Demand |
+| **Land** | VA by Land | — | — | — | — | — | — | Land Income |
+| **Labor** | VA by Labor | — | — | — | — | — | — | Labor Income |
+| **Capital** | VA by Capital | — | — | — | — | — | — | Capital Income |
+| **Household** | — | — | Factor Income → HH | — | Govt Transfers | — | Remittances | HH Income |
+| **Government** | — | Sales/Import Tax | Capital → Govt | Direct Taxes | — | — | Foreign Grants | Govt Revenue |
+| **S-I** | — | — | — | HH Savings | Govt Savings | — | Foreign Savings | Total Investment |
+| **ROW** | — | Imports | Dividend Repatriation | — | Govt Payments Abroad | — | — | FX Outflow |
+| **Col Total** | Cost of Production | Aggregate Supply | Factor Expenditure | HH Expenditure | Govt Expenditure | FX Inflow | Investment | — |
+
+*Source: Table 5.1 — Pakistan SAM 2007-08 Basic Structure. Each cell label describes the economic transaction flowing from the column account to the row account.*
+
+---
+
+## 6. Pakistan SAM 2007-08: Structure and Aggregation
+
+The Pakistan SAM 2007-08 was constructed to capture the structure of Pakistan's economy at a moment of above-5% GDP growth, but also rising inflation and a widening current account deficit. It draws from national accounts, the Household Income and Expenditure Survey (HIES), the Pakistan Rural Household Survey (PRHS), enterprise surveys, and trade data.
+
+The full SAM has 51 activity accounts, 27 factor accounts, and 19 household groups. For tractable analysis, these were aggregated as follows.
+
+### Activity Aggregation (Table 5.2)
+
+| Code | Sector | Original Activities Included |
+|---|---|---|
+| A-AGRI | Agriculture | Wheat (irrigated & non-irrigated), Rice (IRRI & Basmati), Cotton, Sugar Cane, Horticulture, Livestock, Poultry, Forestry, Fishing — 12 activities |
+| A-MINE | Mining | Mining & Quarrying — 1 activity |
+| A-FMAN | Food Manufacturing | Vegetable oils, Wheat milling, Rice milling (IRRI & Basmati), Sugar, Other food — 5 activities |
+| A-MANF | Other Manufacturing | Cotton ginning, Spinning, Weaving, Knitwear, Garments, Leather, Wood, Chemicals, Fertilizer, Cement, Petroleum refining, Other mfg, Construction — 14 activities |
+| A-ENRG | Energy | Electricity, Gas, Water distribution — 1 activity |
+| A-SERV | Services | Trade (wholesale/retail/other), Transport (rail/road/water/air), Housing, Business Services, Health, Education, Public Services, Finance, Insurance — 18 activities |
+
+### Factor Aggregation (Table 5.5)
+
+| Code | Factor | Sub-Categories |
+|---|---|---|
+| LA | Labor | Own-farm labor (large/medium/small), Agricultural wage labor, Non-agriculture unskilled, Non-agriculture skilled |
+| LN | Land | Large farm (Sindh/Punjab/Other), Irrigated medium/small farms, Non-irrigated small farms — across three provinces |
+| K | Capital | Water capital, Livestock capital, Agricultural capital, Formal capital, Informal capital |
+
+### Household Aggregation (Table 5.7)
+
+| Code | Group |
+|---|---|
+| H-LF | Large farm households (Sindh, Punjab, Other) |
+| H-MF | Medium farm households |
+| H-SF | Small farm households |
+| H-OF | Landless farmer households |
+| H-AGW | Rural agricultural landless workers |
+| H-NFNP | Rural non-farm non-poor |
+| H-NFP | Rural non-farm poor |
+| H-URNP | Urban non-poor |
+| H-URPR | Urban poor |
+
+---
+
+## 7. The Activities Account
+
+The Activities account represents *production*. An activity is a production process — a wheat farm, a cotton mill, a bank branch. It is conceptually distinct from the commodity it produces.
+
+### What Does an Activity Receive? (Row)
+
+Activities receive revenue from the **Commodities account** via the *Supply Matrix* (cell A1.2). This is the value of output delivered to the commodity market. The row total for activities equals **Gross Output** — the total value of all production at producer prices.
+
+### What Does an Activity Spend? (Column — Cost of Production)
+
+The cost of production column has four components:
+
+1. **Intermediate Inputs (A2.1)** — purchased from the Commodities account. Agriculture buys fertilizers, pesticides, and energy; manufacturing buys raw materials and semi-processed inputs.
+2. **Value Added by Land (A3.1)** — land rent paid to the Land factor.
+3. **Value Added by Labor (A4.1)** — wages and salaries paid to the Labor factor.
+4. **Value Added by Capital (A5.1)** — profit, interest, and depreciation paid to the Capital factor.
+
+> The Activities column essentially reports the **Input-Output structure** of the economy plus factor payments — the entire production side of national accounts in one column per sector.
+
+**Gross Output by Sector — Pakistan Aggregated SAM (PKR billion)**
+
+| Sector | Gross Output (PKR bn) |
+|---|---|
+| Agriculture (A-AGRI) | 5,118 |
+| Mining (A-MINE) | 607 |
+| Textiles (A-TEXT) | 2,004 |
+| Other Manufacturing (A-MANF) | 6,066 |
+| Services (A-SERV) | 9,459 |
+
+---
+
+## 8. The Commodities Account
+
+The Commodities account captures *demand-side transactions*. A commodity is a good or service as consumed — it can be sourced from domestic activities or from imports. The distinction between Activities and Commodities is what allows the SAM to handle multi-product production and commodity-specific taxes cleanly.
+
+### Demand Sources (Row — Aggregate Demand)
+
+| Cell | Source | Description |
+|---|---|---|
+| A2.1 | Activities | Intermediate consumption — inputs used in production |
+| A2.6 | Households | Final private consumption expenditure |
+| A2.7 | Government | Final public consumption — health, education, defense delivery |
+| A2.8 | Change in Stocks | Inventory accumulation (positive or negative) |
+| A2.9 | Saving-Investment | Gross fixed capital formation — new machinery, buildings, infrastructure |
+| A2.10 | Rest of World | Exports — demand from foreign buyers |
+
+Row total for Commodities = **Aggregate Demand** = GDP + Imports (at purchaser prices).
+
+### Supply Sources (Column — Aggregate Supply)
+
+1. Domestic production from Activities via the Supply Matrix
+2. Trade and transport margins (TRC) — the cost of moving goods from producer to consumer
+3. Imports from ROW (A10.2)
+4. Sales and import taxes paid to Government (A7.2)
+
+> The identity *Aggregate Supply = Aggregate Demand* must hold for every commodity. This is Walras' Law operating at the commodity level — the market-clearing condition embedded in the SAM's accounting structure.
+
+---
+
+## 9. Factor Accounts: Land, Labor & Capital
+
+Factor accounts act as a **distribution channel**. They collect value added from production activities and pass it on to households and institutions who own those factors. The factor accounts are the SAM's mechanism for connecting the production side of the economy to the income distribution side.
+
+### Factor Income (Row)
+
+Each factor receives *only* from Activities. There is no other source of primary factor income in the SAM. The row total is the **national factor payment** — total wages, total land rent, total capital return.
+
+**Factor Income Totals — Pakistan SAM 2007-08**
+
+| Factor | Total Income (PKR bn) |
+|---|---|
+| Labor | 2,408 |
+| Land | 474 |
+| Water | 102 |
+| Capital | 6,937 |
+| **Total Factor Income** | **9,921** |
+
+### Factor Distribution (Column)
+
+Factor income flows primarily to **Households** (cells A6.3, A6.4, A6.5). Some capital income flows to the **Government** from state-owned enterprises (cell A7.5 — PKR 442 billion in 2007-08).
+
+This is where the SAM becomes essential for **income distribution analysis**. By knowing which household group owns which factor in what proportion, we can trace the distributional consequences of any shock that changes factor prices.
+
+> If agricultural productivity rises, land rents increase → large farm households (who own most of the land) benefit disproportionately. If manufacturing wages rise, urban non-poor households benefit because skilled labor is concentrated in that group. The SAM's factor accounts make these transmission channels visible and quantifiable.
+
+---
+
+## 10. The Household Account
+
+Households are the central distributional account in the SAM. They are simultaneously income recipients and final consumers. Disaggregating households is what transforms the SAM from a production-accounting framework into an instrument of **poverty and distributional analysis**.
+
+### Household Income Sources (Row)
+
+| Cell | Source |
+|---|---|
+| A6.3 | Land income from Land factor |
+| A6.4 | Labor income from Labor factor |
+| A6.5 | Capital income from Capital factor |
+| A6.7 | Government transfers — pensions, BISP, fuel subsidies, ration schemes |
+| A6.10 | Remittances from abroad (Rest of World) |
+
+### Household Expenditure Destinations (Column)
+
+| Cell | Destination | Description |
+|---|---|---|
+| A2.6 | Commodities | Final consumption of goods and services |
+| A7.6 | Government | Direct taxes on income |
+| A9.6 | Saving-Investment | Household savings — channeled into investment |
+
+Total household income in the Pakistan SAM 2007-08: **PKR 10,605 billion**, of which PKR 4,085 billion flows to urban non-poor households — the single largest household group by income.
+
+---
+
+## 11. The Government Account
+
+The Government account records the complete fiscal sector — all tax collection, public expenditure, transfers, and the resulting budget balance.
+
+### Government Revenue (Row)
+
+| Cell | Revenue Source | PKR bn |
+|---|---|---|
+| A7.2 | Sales tax and import duties on commodities | (embedded in commodity prices) |
+| A7.5 | Capital income from public enterprises | 442 |
+| A7.6 | Direct taxes from households | (via Tax account) |
+| A7.10 | Foreign grants and aid | 27 |
+| **Total Government Revenue** | | **1,181** |
+
+### Government Expenditure (Column)
+
+| Cell | Destination | Description |
+|---|---|---|
+| A2.7 | Commodities | Government final consumption — public service delivery |
+| A6.7 | Households | Social transfers — pensions, BISP, subsidies |
+| A10.7 | ROW | Payments abroad — external debt service |
+| A9.7 | Saving-Investment | Government savings (positive) or dissavings (negative) |
+
+**Key finding:** In the Pakistan SAM 2007-08, government savings (cell A9.7) = **PKR −777 billion** — a large fiscal deficit. This reflects the period when energy subsidies, security expenditure, and public sector wage bills were running far ahead of tax revenues. The deficit had to be financed by foreign borrowing (foreign savings in the S-I account) and domestic debt.
+
+---
+
+## 12. The Saving-Investment Account
+
+The Saving-Investment (S-I) account is the **macroeconomic balancing account** of the SAM. It enforces the national identity S = I by collecting savings from all sources and channeling them into investment.
+
+### Savings Pool (Row)
+
+| Source | PKR bn |
+|---|---|
+| Household savings (A9.6) | 2,168 |
+| Government savings (A9.7) | −777 (fiscal deficit) |
+| Foreign savings / current account deficit (A9.10) | 868 |
+| **Total Investment Financed** | **2,259** |
+
+### Investment Expenditure (Column)
+
+- **Fixed investment (A2.9)** — purchase of new capital goods (machinery, equipment, construction)
+- **Change in stocks (A8.9)** — inventory investment: PKR 164 billion
+
+> **The S-I Account enforces S = I:**
+> Household savings + Government savings + Foreign savings = Fixed Investment + Change in Stocks
+> 2,168 + (−777) + 868 = 2,259 ✓
+>
+> The current account deficit (PKR 868 bn) represents **foreign savings** flowing into Pakistan — the capital inflow that financed the domestic investment gap left by the fiscal deficit.
+
+---
+
+## 13. The Rest of the World Account
+
+The Rest of the World (ROW) account records Pakistan's complete external sector — every transaction between the domestic economy and foreign entities.
+
+### ROW Income (Row — Foreign Exchange Outflow)
+
+ROW "receives" income when Pakistan pays foreigners:
+
+| Cell | Transaction | PKR bn |
+|---|---|---|
+| A10.2 | Imports of all commodities | (see commodity rows) |
+| A10.5 | Dividend and profit repatriation to foreign investors | 254 |
+| A10.7 | Government debt service payments abroad | 63 |
+
+### ROW Expenditure (Column — Foreign Exchange Inflow)
+
+ROW "spends" when foreigners pay Pakistan:
+
+| Cell | Transaction | PKR bn |
+|---|---|---|
+| A2.10 | Exports — foreign buyers purchase Pakistani commodities | (see commodity rows) |
+| A6.10 | Remittances from diaspora to Pakistani households | 763 |
+| A7.10 | Foreign grants and official development assistance | 27 |
+| A9.10 | Net foreign borrowing (financing the current account deficit) | 868 |
+| **Total ROW Column** | | **3,160** |
+
+**Remittances (PKR 763 billion)** deserve special attention. For many rural agricultural and landless households, diaspora remittances represent a larger income share than formal wages or capital returns — a structural feature of Pakistan's economy that the SAM captures precisely and that standard national accounts frequently understate.
+
+---
+
+## 14. The Aggregated SAM: Pakistan 2007-08 Numbers
+
+The table below is the actual aggregated SAM (Table 5.18) — 21 accounts, values in **billions of Pakistan Rupees**. Read rows as income received; read columns as expenditure paid out. Every row total equals its corresponding column total.
+
+| # | Account | A-AGRI | A-MINE | A-TEXT | A-MANF | A-SERV | C-AGRI | C-MINE | C-TEXT | C-MANF | C-SERV | TRC | LABOR | LAND | WATER | CAPITAL | HH | GOV | TAX | S-I | DSTK | ROW | **TOTAL** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | A-AGRI | — | — | — | — | — | 5,118 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | **5,118** |
+| 2 | A-MINE | — | — | — | — | — | — | 607 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | **607** |
+| 3 | A-TEXT | — | — | — | — | — | — | — | 2,004 | — | — | — | — | — | — | — | — | — | — | — | — | — | **2,004** |
+| 4 | A-MANF | — | — | — | — | — | — | — | — | 6,066 | — | — | — | — | — | — | — | — | — | — | — | — | **6,066** |
+| 5 | A-SERV | — | — | — | — | — | — | — | — | — | 9,459 | — | — | — | — | — | — | — | — | — | — | — | **9,459** |
+| 6 | C-AGRI | 1,503 | 11 | 185 | 974 | 138 | — | — | — | — | — | — | — | — | — | — | 4,004 | 0.09 | — | 0.52 | 45 | 175 | **7,035** |
+| 7 | C-MINE | 0.21 | — | — | 915 | 2.76 | — | — | — | — | — | — | — | — | — | — | — | — | — | 61 | 0.03 | 0.01 | **979** |
+| 8 | C-TEXT | 112 | — | 696 | 17 | 23 | — | — | — | — | — | — | — | — | — | — | 869 | — | — | 3 | 51 | 563 | **2,334** |
+| 9 | C-MANF | 477 | 63 | 128 | 1,869 | 2,720 | — | — | — | — | — | — | — | — | — | — | 2,031 | — | — | 2,030 | 68 | 296 | **9,682** |
+| 10 | C-SERV | 144 | 232 | 778 | 1,016 | 1,329 | — | — | — | — | — | 4,418 | — | — | — | — | 1,141 | 1,278 | — | — | — | 468 | **10,804** |
+| 11 | TRC | — | — | — | — | — | 1,599 | 56 | 188 | 1,915 | 659 | — | — | — | — | — | — | — | — | — | — | — | **4,418** |
+| 12 | LABOR | 399 | 217 | 87 | 304 | 1,401 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | **2,408** |
+| 13 | LAND | 474 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | **474** |
+| 14 | WATER | 102 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | **102** |
+| 15 | CAPITAL | 1,907 | 84 | 131 | 970 | 3,845 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | **6,937** |
+| 16 | HH | — | — | — | — | — | — | — | — | — | — | — | 2,408 | 474 | 102 | 6,241 | — | 617 | — | — | — | 763 | **10,605** |
+| 17 | GOV | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 442 | — | — | 713 | — | — | 27 | **1,181** |
+| 18 | TAX | — | — | — | — | — | 47 | 12 | 23 | 147 | 93 | — | — | — | — | — | 391 | — | — | — | — | — | **713** |
+| 19 | S-I | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 2,168 | −777 | — | — | — | 868 | **2,259** |
+| 20 | DSTK | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 164 | — | — | **164** |
+| 21 | ROW | — | — | — | — | — | 271 | 305 | 120 | 1,555 | 593 | — | — | — | — | 254 | — | 63 | — | — | — | — | **3,160** |
+| **TOTAL** | | **5,118** | **607** | **2,004** | **6,066** | **9,459** | **7,035** | **979** | **2,334** | **9,682** | **10,804** | **4,418** | **2,408** | **474** | **102** | **6,937** | **10,605** | **1,181** | **713** | **2,259** | **164** | **3,160** | **86,508** |
+
+*Source: Pakistan SAM 2007-08, Table 5.18. Values in billions of PKR. Grand total = PKR 86,508 billion. Every row total equals its column total — the double-entry identity holds throughout.*
+
+---
+
+## 15. Structure of the Economy
+
+Table 5.3 from the Pakistan SAM 2007-08 provides key structural indicators by sector. The economy in 2007-08 was services-dominated in value added but manufacturing-led in trade orientation.
+
+| Sector | Output (%) | Value Added (%) | Export Share (%) | Import Share (%) | Export Intensity | Import Penetration |
+|---|---|---|---|---|---|---|
+| **Agriculture** | **12.1** | **20.3** | **1.6** | **3.0** | **0.9%** | **2.9%** |
+| — Crops | 5.7 | 8.9 | 0.8 | 2.8 | 0.9% | 5.7% |
+| — Livestock | 5.9 | 10.6 | 0.2 | 0.2 | 0.2% | 0.4% |
+| — Fishing | 0.4 | 0.5 | 0.7 | — | 12.5% | — |
+| **Industry** | **47.3** | **26.8** | **67.2** | **76.2** | **9.2%** | **17.8%** |
+| — Manufacturing | 38.9 | 19.7 | 67.2 | 65.5 | 11.2% | 18.8% |
+| — Mining | 2.6 | 3.0 | 0.0 | 10.7 | 0.0% | 33.4% |
+| — Energy | 1.2 | 1.5 | — | — | — | — |
+| — Construction | 4.6 | 2.6 | — | — | — | — |
+| **Services** | **40.7** | **52.9** | **31.1** | **20.8** | **4.9%** | **6.2%** |
+| — Wholesale & Retail | 10.3 | 18.4 | 0.1 | 0.6 | 0.1% | 0.7% |
+| — Transport & Comm. | 14.0 | 11.7 | 14.9 | — | 6.8% | — |
+| — Social & Private Svcs | 6.7 | 9.4 | 16.1 | 20.2 | 15.6% | 30.5% |
+| — Financial Services | 2.5 | 5.6 | — | — | — | — |
+| **Total** | **100** | **100** | **100** | **100** | **6.5%** | **11.6%** |
+
+*Source: Pakistan SAM 2007-08, Table 5.3.*
+
+### Four Structural Findings
+
+**1. Agriculture's hidden importance.**
+Agriculture accounts for only 12.1% of gross output but 20.3% of value added. This gap — 8 percentage points — indicates that agriculture uses few intermediate inputs relative to its production value. Crops use land, water, and labor intensively, generating high value added per rupee of output. This structural feature means agriculture remains critical to rural incomes even as its GDP share declines.
+
+**2. Mining's import dependence.**
+Mining has an import penetration rate of 33.4% — the highest in the economy. Pakistan was importing a third of its mining and minerals consumption in 2007-08. This structural vulnerability in energy and mineral supply became more acute in subsequent years and remains a central driver of balance-of-payments pressure.
+
+**3. Services dominate value added, not output.**
+Services generate 52.9% of value added but only 40.7% of gross output. The 12-percentage-point gap reflects the low intermediate input intensity of service industries — a doctor's visit uses almost no physical inputs, yet generates 100% value added. This structure means services productivity growth translates directly and efficiently into national income growth.
+
+**4. Manufacturing drives trade.**
+Manufacturing accounts for 67.2% of exports at an 11.2% export intensity rate. This export base is almost entirely cotton-textile-driven — the concentration that has made Pakistan simultaneously a major global textile exporter and highly vulnerable to cotton price and demand shocks.
+
+---
+
+## 16. Value Added Decomposition by Factor
+
+Table 5.4 answers a key distributional question: of every rupee of value added earned in each sector, how much flows to land, labor, and capital? This decomposition is the analytical link between production structure and income distribution.
+
+| Sector | Land (%) | Labor (%) | Livestock (%) | Formal Capital (%) | Other Capital (%) | Total VA (PKR bn) |
+|---|---|---|---|---|---|---|
+| **Agriculture (total)** | **28.6** | **15.9** | **37.8** | **11.4** | **6.3** | **1,987** |
+| — Crops | 63.5 | 27.0 | 0 | 0 | 9.5 | 883 |
+| — Livestock | 0 | 6.7 | 72.6 | 20.7 | 0 | 1,051 |
+| — Fishing | 0 | 18.3 | 0 | 23.4 | 58.4 | 52 |
+| — Forestry | 50.0 | 5.7 | 0 | 0 | 44.3 | 30 |
+| **Industry (total)** | **0** | **25.9** | **0** | **60.7** | **13.5** | **2,658** |
+| — Manufacturing | 0 | 16.9 | 0 | 68.4 | 14.7 | 1,951 |
+| — Mining | 0 | 72.0 | 0 | 28.0 | 0 | 302 |
+| — Energy | 0 | 15.6 | 0 | 84.4 | 0 | 146 |
+| — Construction | 0 | 45.4 | 0 | 27.3 | 27.3 | 260 |
+| **Services (total)** | **0** | **26.7** | **0** | **24.6** | **48.6** | **5,246** |
+| — Wholesale & Retail | 0 | 8.9 | 0 | 27.3 | 63.8 | 1,830 |
+| — Transport & Comm. | 0 | 24.2 | 0 | 22.7 | 53.1 | 1,156 |
+| — Public Admin. | 0 | 64.2 | 0 | 35.8 | 0 | 530 |
+| — Financial Services | 0 | 23.7 | 0 | 22.9 | 53.4 | 557 |
+
+*Source: Pakistan SAM 2007-08, Table 5.4.*
+
+### Policy Implications of the Factor Decomposition
+
+**Crop agriculture is land-rent dominated (63.5%).**
+A wheat support price increase, an irrigation expansion, or a crop yield improvement flows 63 cents out of every rupee directly to landowners — disproportionately benefiting large-farm households who own most of the land. Farm laborers receive only 27% of crop value added despite providing the physical labor. This asymmetry is the structural basis of rural inequality.
+
+**Manufacturing is formal-capital dominated (68.4%).**
+Nearly 70 cents of every rupee of manufacturing value added flows to formal capital — corporate profits, interest, and depreciation. Whether this is broadly distributed or concentrated depends on ownership structure, which the household income table (Section 17) reveals.
+
+**Mining is labor-intensive (72%).**
+Contrary to the global norm for capital-intensive extractive industries, Pakistan's mining sector in 2007-08 was predominantly labor-driven. This reflects the dominance of artisanal and small-scale operations — coal mining in Balochistan, quarrying in KPK — rather than mechanized large-scale extraction. A mining investment shock in this context creates more employment and wage income than capital income.
+
+**Public Administration is entirely labor-driven (64.2%).**
+Government is a wage bill. Every public sector salary increase flows directly into household labor income — with distributional effects concentrated in urban educated households. This is why public sector pay reform is both a fiscal and distributional policy simultaneously.
+
+---
+
+## 17. Household Income Distribution
+
+This is where the SAM speaks most directly to poverty and inequality. The distribution of income sources across household groups reveals who benefits and who loses from any economic change — a price shock, a policy reform, a natural disaster.
+
+**Household Income Shares by Source — Pakistan SAM 2007-08 (Table 5.8)**
+
+| Household Group | Land (%) | Labor (%) | Livestock (%) | Formal Capital (%) | Other Capital (%) | Govt Transfer (%) | Remittances (%) | Total Income (PKR bn) |
+|---|---|---|---|---|---|---|---|---|
+| Large farm — Sindh | 57.7 | 11.0 | 7.4 | 0 | 16.0 | 4.8 | 3.2 | 160 |
+| Large farm — Punjab | 31.8 | 9.2 | 14.0 | 0 | 37.3 | 4.2 | 3.5 | 653 |
+| Large farm — Other | 42.5 | 19.7 | 4.2 | 0 | 27.9 | 2.8 | 3.0 | 90 |
+| Small farm — Sindh | 15.1 | 12.2 | 18.4 | 0 | 37.6 | 8.5 | 8.3 | 192 |
+| Small farm — Punjab | 11.4 | 9.6 | 24.1 | 0 | 39.0 | 7.8 | 8.1 | 1,223 |
+| Small farm — Other | 9.3 | 16.9 | 11.1 | 0 | 47.9 | 7.0 | 7.9 | 349 |
+| Landless farmers — Sindh | 11.5 | 10.0 | 21.1 | 0 | 41.8 | 7.0 | 8.5 | 145 |
+| Landless Ag. Workers — Sindh | 0 | 21.7 | 3.5 | 0 | 59.7 | 6.6 | 8.6 | 156 |
+| Landless Ag. Workers — Punjab | 0 | 21.0 | 11.9 | 0 | 53.4 | 6.1 | 7.7 | 148 |
+| Rural non-farm non-poor | 0 | 36.1 | 6.7 | 0 | 46.3 | 4.9 | 6.0 | 296 |
+| Rural non-farm poor | 0 | 38.9 | 8.5 | 0 | 39.3 | 6.1 | 7.3 | 352 |
+| Urban non-poor | 0 | 16.8 | 0 | 59.7 | 12.2 | 4.4 | 6.9 | 4,085 |
+| Urban poor | 0 | 63.2 | 0 | 0 | 21.2 | 7.2 | 8.4 | 356 |
+| **All Households** | **5.4** | **22.7** | **7.2** | **23.0** | **28.6** | **5.8** | **7.2** | **10,605** |
+
+*Source: Pakistan SAM 2007-08, Table 5.8.*
+
+### Reading the Distribution
+
+**Urban non-poor households** hold PKR 4,085 billion — 38.5% of all household income — and derive 59.7% of it from formal capital (corporate dividends, financial asset returns). These households are structurally diversified: even if wages stagnate, capital income sustains them. They benefit from financial market development, corporate profit growth, and capital-intensive investment.
+
+**Urban poor households** earn 63.2% of income from labor and hold zero formal capital. Their economic security depends entirely on wage stability and employment availability. When food prices rise, they face a cost-of-living squeeze with no offsetting income-side benefit. They are the household group most exposed to both inflation shocks and labor market downturns.
+
+**Large farm households (Sindh)** derive 57.7% of income from land rent — the highest land-income dependency in the matrix. A drought, a commodity price collapse, or a land tax would hit this group with almost no buffer from labor or capital income diversification.
+
+**Remittances** are economically significant across all rural groups — 7 to 8% of income universally. For landless agricultural workers, remittances from the diaspora (8.6%) represent the critical non-farm income buffer that partially offsets the structural poverty of wage-only rural livelihoods.
+
+### Survey vs. SAM Discrepancy (Table 5.9)
+
+> **Important methodological caveat:** When the SAM figures are cross-checked against the Pakistan Rural Household Survey (PRHS 2001-02), significant discrepancies emerge.
+
+| Household Group | Agricultural Income — PRHS (%) | Agricultural Income — SAM (%) |
+|---|---|---|
+| Medium & Large farms | 83.5 | 66.0 |
+| Small farms | 67.9 | 41.2 |
+| Landless farmers | 87.7 | 45.6 |
+| Rural agricultural workers | 53.1 | 22.2 |
+| Rural non-farm non-poor | 1.9 | 6.7 |
+| Rural non-farm poor | 6.3 | 9.7 |
+
+These gaps reflect the fundamental difficulty of reconciling **bottom-up household survey data** (which captures income as reported by households) with **top-down national accounts data** (which measures production and factor payments at the sector level). Neither source is definitively correct — they measure the same economic reality through different instruments and methodologies. Analysts working with the SAM must be aware of this tension when drawing welfare conclusions.
+
+---
+
+## 18. SAM Multipliers & Policy Simulation
+
+The SAM's greatest analytical power lies in computing **SAM multipliers** — the total economy-wide impact of an exogenous demand shock, after all circular-flow linkages have propagated through the system.
+
+### The Multiplier Derivation
+
+Partition the SAM into **endogenous accounts** (Activities, Commodities, Factors, Households) whose incomes are determined within the model, and **exogenous accounts** (Government, Saving-Investment, ROW) whose expenditures are set outside the model.
+
+Define the matrix of **average expenditure propensities**:
+
+```
+A(i,j) = T(i,j) / y(j)    where y(j) = column j total
+                            (share of account j's income spent on account i)
+```
+
+The endogenous system satisfies:
+
+```
+y = A · y + x
+
+Where:
+  y = vector of endogenous account incomes
+  x = vector of exogenous injections
+
+Solving:
+  y = (I - A)⁻¹ · x
+
+SAM Multiplier Matrix:
+  M = (I - A)⁻¹
+
+Interpretation:
+  M(i,j) = total income generated in account i
+            per unit of exogenous injection into account j
+```
+
+The matrix M captures not just direct effects but all indirect and induced effects through the circular flow — intermediate input linkages, factor income generation, household consumption respending, and so on.
+
+### Types of SAM Multipliers
+
+| Multiplier Type | What It Measures | Primary Policy Use |
+|---|---|---|
+| **Output Multiplier** | Total gross output generated per unit injection | Assess production impact of public investment or export demand |
+| **Income Multiplier** | Total factor income generated per unit injection | Estimate GDP impact of remittance inflow, aid, or export boom |
+| **Employment Multiplier** | Jobs created per unit of demand (requires labor coefficients) | Infrastructure investment targeting, labor market policy |
+| **Household Multiplier** | Income gain to a specific household group per unit injection | Social protection design, poverty targeting |
+
+### Pakistan Example: Agricultural Flood Shock
+
+Suppose catastrophic floods destroy PKR 100 billion of agricultural production — an exogenous negative injection into the agriculture activity account. The SAM multiplier chain propagates as follows:
+
+**Round 1 — Direct Effect:**
+Agriculture gross output falls by PKR 100 billion → wages (PKR 399/5,118 = 7.8% of output) fall by PKR 7.8 billion; land rent falls by PKR 9.3 billion; capital returns fall by PKR 37.2 billion.
+
+**Round 2 — Factor-to-Household:**
+Land income loss → large farm households (Sindh) lose 57.7% of their land income share; small farm Punjab households lose 11.4%. Total household income falls across all rural agricultural groups.
+
+**Round 3 — Consumption Multiplier:**
+Reduced household income → lower expenditure on food commodities (C-AGRI) → food processing industries (milling, oil extraction, sugar) lose intermediate demand → second-round output contraction in agri-related manufacturing.
+
+**Round 4 — Fiscal and Trade Effects:**
+Government loses indirect tax revenue → fiscal deficit widens. Lower domestic food production → imports of food commodities rise → current account deficit expands.
+
+**The multiplier bottom line:**
+In empirical studies using Pakistan SAMs, the **income multiplier for agriculture** typically ranges from **1.5 to 2.5**. This means every PKR 1 of agricultural income loss ultimately reduces total household income by PKR 1.5 to 2.5 through the circular flow. This is why flood damage assessments based solely on direct crop loss *systematically understate* the true economic cost of agricultural disasters.
+
+> **Policy design implication:** Social protection responses to floods (cash transfers, food support) must be sized not for the direct crop loss but for the economy-wide income impact — which is 1.5–2.5 times larger. The SAM multiplier tells you the right order of magnitude for the policy response.
+
+---
+
+## 19. Limitations of the SAM
+
+The SAM is a powerful and rigorous tool, but it has important constraints. Every analyst drawing policy conclusions from a SAM must understand these limitations clearly.
+
+### 1. Static Framework
+
+The SAM is a snapshot of *one year*. It cannot capture dynamic processes — capital accumulation, technological change, population growth, institutional evolution, or learning effects. A SAM built in 2007-08 does not tell you what Pakistan looked like in 2012 or 2020. For dynamic analysis, you need a CGE model with explicit time periods or a dynamic stochastic general equilibrium (DSGE) framework.
+
+### 2. Fixed Price Assumption in Multiplier Analysis
+
+Simple SAM multipliers assume **fixed prices** — all adjustment happens through quantity changes. This is the Keynesian assumption, appropriate for economies with significant unemployed resources (slack labor, idle capacity). If the economy is near full employment, a demand injection causes price increases rather than output increases, and SAM multipliers overstate real impact. The correct tool for simultaneous price-quantity determination is a CGE model.
+
+### 3. Average vs. Marginal Propensities
+
+The expenditure propensities A(i,j) are computed from *average* shares in one historical year. **Marginal behavior** — how households actually respond to an incremental rupee of income — may differ substantially. Poor households have a much higher marginal propensity to consume than their average consumption share suggests; wealthy households may save a larger fraction of incremental income. This distinction matters for accurately sizing multiplier effects.
+
+### 4. Aggregation Bias
+
+Even with 19 household groups, the Pakistan SAM 2007-08 averages over enormous within-group heterogeneity. Two "large farm" households in Punjab may have dramatically different land holdings, debt burdens, off-farm income, and consumption patterns. Grouping them together loses this variation. **Microsimulation models**, which work directly with household survey microdata, are needed when distributional precision at the individual household level is required.
+
+### 5. No Behavioral Equations
+
+The SAM is **pure accounting** — it has no behavioral content. It records what happened; it cannot model how agents would *choose* to respond to new conditions. It cannot predict input substitution when relative prices change, consumption reallocation when commodity prices shift, or investment responses to interest rate changes. A CGE model adds behavioral equations (production functions, demand systems, market clearing conditions) to the accounting skeleton that the SAM provides.
+
+### 6. Data Quality and Measurement Gaps
+
+The SAM is only as good as the underlying data. In Pakistan, three measurement challenges are acute:
+
+- **Informal sector** — a large fraction of production, employment, and income occurs outside formal national accounts coverage
+- **Agricultural subsistence** — own-consumed production is imputed at market prices with significant uncertainty
+- **Remittances** — formal banking channel remittances are measured; hawala and informal transfers are not
+
+The PRHS vs. SAM discrepancies in Table 5.9 are a concrete, quantified example of this challenge. Analysts should treat SAM-based estimates as best available approximations, not precise measurements.
+
+---
+
+## 20. Conclusion
+
+The Social Accounting Matrix is, at its core, a disciplined act of economic storytelling. It insists that every economic transaction be accounted for — twice, from both sides — and in doing so, forces the analyst to confront the full interdependence of an economy.
+
+The Pakistan SAM 2007-08 tells a specific story: an economy where services dominate value added but manufacturing drives trade; where agriculture's importance is measured not in its modest 12% output share but in the 20% value added share and in the primary livelihoods it provides to nearly half the population; where formal capital is deeply concentrated — urban non-poor households capture 59.7% of formal capital income while urban poor households capture zero; and where remittances (PKR 763 billion) serve as a quiet but critical income buffer for the most economically vulnerable rural groups, partially compensating for structural deficiencies that formal economic policy has not resolved.
+
+Understanding this structure before any policy intervention is the first prerequisite of effective economic governance. The SAM provides that understanding with rigorous, quantitative discipline. It is simultaneously a data tool, a theoretical framework, and a bridge between the aggregate national accounts and the lived reality of millions of households.
+
+> *From simple input-output analysis to the most advanced CGE models, the road always passes through the SAM. Master it, and you hold the map of an entire economy in your hands.*
+
+### Where to Go from Here
+
+The SAM is a foundation, not a destination. The analytical paths it opens are:
+
+- **SAM multiplier analysis** — quick policy impact assessment using the (I−A)⁻¹ matrix
+- **CGE modeling** — full price-quantity general equilibrium simulation, calibrated to the SAM
+- **Microsimulation** — household-level welfare and poverty impact analysis using survey microdata
+- **Dynamic SAM extensions** — growth accounting, capital accumulation modeling, structural change analysis
+- **Multi-country SAMs (GTAPs)** — trade policy analysis using linked national SAMs
+
+Each builds directly on the concepts and data structures introduced in this guide.
+
+---
+
+## Data Reference
+
+| Table | Content | Source |
+|---|---|---|
+| Table 5.1 | Basic SAM structure (10-account map) | Pakistan SAM 2007-08 |
+| Table 5.2 | Activity aggregation (51 → 6 sectors) | Pakistan SAM 2007-08 |
+| Table 5.3 | Structure of economy (output, VA, trade shares) | Pakistan SAM 2007-08 |
+| Table 5.4 | Value added by factor per sector | Pakistan SAM 2007-08 |
+| Table 5.5 | Factor aggregation (27 → 3 categories) | Pakistan SAM 2007-08 |
+| Table 5.7 | Household aggregation (19 → 9 groups) | Pakistan SAM 2007-08 |
+| Table 5.8 | Household income shares by source | Pakistan SAM 2007-08 |
+| Table 5.9 | PRHS vs. SAM agricultural income comparison | PRHS 2001-02 & Pakistan SAM 2007-08 |
+| Table 5.18 | Aggregated 21-account SAM matrix | Pakistan SAM 2007-08 |
+
+*All monetary values in billions of Pakistan Rupees (PKR). Activity aggregation: 51 → 6. Factor aggregation: 27 → 3. Household aggregation: 19 → 9.*
+
+---
+
+*© Black Iron Times / Black Iron Quantum AI (Private) Limited*
+*For republication or citation, reference: Pakistan SAM 2007-08 and original source tables.*
