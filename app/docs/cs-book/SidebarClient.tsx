@@ -100,6 +100,12 @@ const chapters = [
       { title: "Case Study: Bloomberg-Style Fintech Platform", href: "/docs/cs-book/part-7-ai-and-llms/blackirontimes-fintech-platform" },
     ],
   },
+  {
+    part: "Part 8 — Blockchain",
+    items: [
+      { title: "Chapter 1: What Is Blockchain? Blocks, Hashing & Chain Structure", href: "/docs/cs-book/part-8-blockchain/what-is-blockchain" },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) => c.items.map((i) => i.href));
@@ -187,12 +193,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/50 chapters</span>
+              <span>{readCount}/51 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 50) * 100}%` }}
+                style={{ width: `${(readCount / 51) * 100}%` }}
               />
             </div>
           </div>

@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "what-is-blockchain",
+    title: "What Is Blockchain? Blocks, Hashing, and Chain Structure Explained from First Principles",
+    description:
+      "A 3Blue1Brown-style deep dive into blockchain — no jargon, no hype, just the math and logic underneath. Covers cryptographic hashing, block structure, chaining, Proof of Work, and distributed consensus.",
+    date: "May 10, 2026",
+    tag: "Blockchain",
+  },
+  {
     slug: "social-accounting-matrix",
     title: "Social Accounting Matrix: A Complete Guide",
     description:
