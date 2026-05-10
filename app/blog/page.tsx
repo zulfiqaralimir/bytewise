@@ -72,8 +72,9 @@ export default function BlogIndex() {
             <img
               src={`/blog/${post.slug}/opengraph-image`}
               alt={post.title}
-              className="w-full object-cover"
-              style={{ aspectRatio: "1200/630" }}
+              width={1200}
+              height={630}
+              className="w-full h-auto"
             />
             <div className="p-6">
               <div className="flex items-center gap-3 mb-3">
