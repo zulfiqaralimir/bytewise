@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bytewise-one.vercel.app"),
   title: "ByteWise — Programming Concepts from First Principles",
   description: "A comprehensive CS education book covering data structures, algorithms, system design, and modern engineering by Zulfiqar Ali Mir.",
   openGraph: {
