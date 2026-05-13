@@ -1,0 +1,777 @@
+export const metadata = {
+  title: "Class 01 — Why Do We Need Distributed Systems? | System Design Course",
+  description: "A complete beginner's guide to distributed systems: availability, reliability, fault tolerance, replication, consistency, CAP theorem, and PACELC theorem.",
+  keywords: ["distributed systems", "CAP theorem", "PACELC", "fault tolerance", "consistency", "system design"],
+  openGraph: {
+    title: "Class 01 — Why Do We Need Distributed Systems?",
+    description: "Beginner's guide covering availability, fault tolerance, CAP theorem, and PACELC theorem.",
+    type: "article",
+  },
+};
+
+# System Design | Why Do We Need Distributed Systems? | Complete Beginner's Guide (Part 01)
+
+> **Note:** This document combines the full long-form blog into a single markdown file with conversational explanations and complete technical coverage.
+
+## Introduction
+
+Modern software systems are deceptively simple—at least from the outside.
+
+You open Netflix, press play, and your movie starts instantly. You order an Uber, and the app magically knows where your driver is in real time. You send money through your banking app and expect it to work flawlessly. You upload a video to YouTube, and millions of people can eventually watch it across the world.
+
+It all feels seamless.
+
+But behind the scenes?
+
+There are thousands—sometimes millions—of computers talking to one another, exchanging information, recovering from failures, synchronizing data, and making decisions without human intervention.
+
+That invisible machinery is what we call **distributed systems**.
+
+In this beginner-friendly guide, we'll answer one of the most important questions in system design:
+
+> **Why do we need distributed systems?**
+
+We'll also explore the core ideas that power them—**availability, reliability, fault tolerance, replication, consistency, CAP theorem, PACELC theorem**, and much more.
+
+This article is based on concepts covered in an introductory system design lecture and expands them into practical, conversational explanations while preserving technical vocabulary.
+
+---
+
+## What Is a Distributed System?
+
+A **distributed system** is a computing environment where multiple components are spread across multiple computers (called **nodes**) and work together as if they were a single system.
+
+A famous definition by Leslie Lamport captures the complexity nicely:
+
+> "A distributed system is one in which the failure of a computer you didn't even know existed can make your own computer unusable."
+
+Funny? Yes.
+
+Accurate? Also yes.
+
+When systems become distributed, complexity rises quickly because:
+
+* Machines fail independently
+* Networks become unreliable
+* Data must remain synchronized
+* Clocks drift apart
+* Machines must coordinate without humans
+
+Still, distributed systems are unavoidable in modern computing.
+
+## Why Do We Need Distributed Systems?
+
+### 1. They Are Sometimes Impossible to Avoid
+
+Suppose you call someone from your phone.
+
+That interaction involves:
+
+* Your device
+* Cell towers
+* Routers
+* Telecom infrastructure
+* Internet services
+
+Your voice gets converted into packets and travels through multiple systems.
+
+The system is naturally distributed.
+
+### 2. Better Reliability and Fault Tolerance
+
+Think about Netflix.
+
+You experience one smooth application.
+
+But behind the scenes?
+
+Thousands of servers exist.
+
+Servers fail all the time because of:
+
+* Hardware issues
+* CPU crashes
+* Memory problems
+* Power failures
+* Heat issues
+* Software bugs
+
+Yet Netflix keeps running.
+
+Why?
+
+Because distributed systems are designed with **fault tolerance**.
+
+### What Is Fault Tolerance?
+
+**Fault tolerance** means:
+
+> The system continues functioning even when some components fail.
+
+If one server crashes, another server absorbs the load.
+
+Users never notice.
+
+### 3. Better Performance Through Geographic Distribution
+
+Users are spread globally.
+
+If every request had to travel to one server in New York, users in India or Japan would experience terrible delays.
+
+This delay is called **latency**.
+
+### What Is Latency?
+
+Latency is:
+
+> The time required for data to travel between systems.
+
+Distributed systems place infrastructure closer to users:
+
+* Singapore
+* India
+* Europe
+* Regional data centers
+* Edge servers
+
+Requests go to nearby systems.
+
+Result:
+
+* Faster performance
+* Lower latency
+* Better user experience
+
+### 4. Supporting Large-Scale Compute Tasks
+
+Some tasks are too large for one machine:
+
+* AI model training
+* Matrix multiplication
+* Computer vision workloads
+* Scientific simulations
+
+These require **parallelization**.
+
+Different machines process different parts simultaneously.
+
+Without distributed systems, modern AI would struggle to exist at scale.
+
+## Centralized Systems vs Distributed Systems
+
+### Centralized Systems
+
+A centralized system uses:
+
+> One machine handling everything.
+
+#### Advantages
+
+* Simpler architecture
+* Easier debugging
+* Easier deployment
+
+#### Limitations
+
+* Limited scale
+* Single point of failure
+* Poor fault tolerance
+
+If that machine fails:
+
+Everything stops.
+
+### Distributed Systems
+
+Distributed systems use:
+
+> Multiple machines working together.
+
+#### Benefits
+
+##### Scalability
+
+Suppose one server handles **1,000 users**.
+
+To support **10,000 users**, you add more servers.
+
+This process is called **horizontal scaling**.
+
+##### Partitioning
+
+A common scaling strategy is **partitioning**.
+
+Data or traffic gets distributed across multiple servers.
+
+A common technique is **hashing**.
+
+Example:
+
+* Hash result = 0 → Server 0
+* Hash result = 1 → Server 1
+* Hash result = 2 → Server 2
+
+This helps balance traffic.
+
+##### Robustness
+
+If one server fails, requests can shift elsewhere.
+
+Techniques like **consistent hashing** later help redistribute traffic intelligently.
+
+##### Complexity
+
+The downside?
+
+Distributed systems become extremely complex.
+
+---
+
+## The Complexities of Distributed Systems
+
+### 1. Node Failures
+
+A **node** means a server.
+
+Nodes fail independently.
+
+Causes include:
+
+* CPU crashes
+* Memory exhaustion
+* Hardware failure
+* Disk corruption
+
+Distributed systems assume:
+
+> Failure is normal.
+
+### 2. Unreliable Networks
+
+Networks fail too.
+
+Problems include:
+
+* Router failures
+* Congestion
+* Broken cables
+* Undersea cable disruptions
+
+Networks may:
+
+* Slow down
+* Become unreliable
+* Stop entirely
+
+### 3. Communication Between Nodes
+
+Machines must talk to one another.
+
+Different applications require different communication guarantees.
+
+Examples:
+
+#### Banking
+
+Needs:
+
+* Security
+* Reliability
+* Consistency
+
+#### Streaming Platforms
+
+Need:
+
+* Speed
+* Low latency
+* Tolerance for temporary inconsistency
+
+### 4. Service Discovery
+
+Suppose Server 8 crashes and restarts.
+
+How does it know:
+
+* Which cluster to join?
+* Who the leader is?
+* Where other nodes exist?
+
+This challenge is called **service discovery**.
+
+### 5. Time Synchronization and Clock Drift
+
+Distributed systems struggle with time.
+
+Each machine has its own clock.
+
+Clocks drift.
+
+This is called **clock drift**.
+
+Even milliseconds matter.
+
+This creates challenges in **event ordering**.
+
+### 6. Consensus and Leader Election
+
+Sometimes systems need a leader.
+
+Machines must automatically decide:
+
+> Who becomes leader?
+
+This is called **leader election**.
+
+The broader problem is called **consensus**:
+
+> Multiple machines agreeing on one truth.
+
+### 7. Fast Data Persistence
+
+Large systems must:
+
+* Write quickly
+* Read quickly
+* Avoid losing data
+
+Balancing reads and writes becomes a major engineering challenge.
+
+### 8. Security
+
+Security matters both:
+
+* **At rest** (stored data)
+* **In motion** (network transfer)
+
+Poor security destroys trust.
+
+### 9. Operational Complexity
+
+Distributed systems require:
+
+* Monitoring
+* Observability
+* Scaling
+* Incident handling
+* Failure recovery
+
+---
+
+## Real-World Examples of Distributed Systems
+
+Examples include:
+
+* Internet
+* Netflix
+* Email systems
+* Uber
+* Gaming systems
+* Telephone networks
+* Air traffic control
+* IoT devices
+* Blockchain
+* ATM systems
+
+Even nature behaves like a distributed system.
+
+---
+
+## Foundational Concepts
+
+### Availability
+
+**Availability** means:
+
+> The system remains operational.
+
+Measured using uptime:
+
+* 99%
+* 99.9% (Three nines)
+* 99.99% (Four nines)
+* 99.999% (Five nines)
+
+Higher availability means less downtime.
+
+### Fault Tolerance
+
+**Fault tolerance** means:
+
+> Surviving failures without collapsing.
+
+### Reliability
+
+**Reliability** means:
+
+> The system consistently behaves as intended.
+
+### Redundancy
+
+**Redundancy** means:
+
+> Maintaining backups or copies.
+
+### Replication
+
+**Replication** means:
+
+> Copying data across systems.
+
+Replication creates redundancy.
+
+#### Synchronous Replication
+
+The system waits for multiple acknowledgements before confirming success.
+
+##### Advantage
+
+Strong consistency.
+
+##### Disadvantage
+
+Higher latency.
+
+#### Asynchronous Replication
+
+The system confirms immediately and replicates later.
+
+##### Advantage
+
+Fast responses.
+
+##### Disadvantage
+
+Temporary inconsistency or possible data loss.
+
+---
+
+## Consistency in Distributed Systems
+
+### What Is Consistency?
+
+Consistency means:
+
+> Everyone sees the same latest data.
+
+### YouTube Likes Example
+
+Suppose likes are replicated across three databases.
+
+DB1 = 1001
+
+DB2 = 1000
+
+DB3 = 1000
+
+Different users may temporarily see different values.
+
+This is inconsistency.
+
+### Strong Consistency
+
+Everyone sees the latest value.
+
+### Eventual Consistency
+
+Systems may disagree temporarily but eventually synchronize.
+
+Good for:
+
+* Likes
+* Counters
+* Social media metrics
+
+Bad for:
+
+* Banking
+* Financial transactions
+
+---
+
+## Read and Write Strategies
+
+### Serial Synchronous Writes
+
+Write sequentially to:
+
+* DB1
+* DB2
+* DB3
+
+Wait for acknowledgements.
+
+Strong consistency.
+
+Higher latency.
+
+### Serial Asynchronous Writes
+
+Write to one node.
+
+Acknowledge immediately.
+
+Replicate later.
+
+Fast but riskier.
+
+### Parallel Synchronous Writes
+
+Write everywhere simultaneously.
+
+Faster than serial sync.
+
+Higher thread usage.
+
+### Parallel Asynchronous Writes
+
+Fastest option.
+
+Weakest consistency.
+
+---
+
+## Read Strategies
+
+### Read From One Replica
+
+Fast.
+
+May be stale.
+
+### Read From All Replicas
+
+Slower.
+
+More accurate.
+
+---
+
+## Quorum Reads and Writes
+
+Let:
+
+* **N** = total replicas
+* **W** = write quorum
+* **R** = read quorum
+
+### Strong Consistency Rule
+
+**R + W > N**
+
+Example:
+
+N = 3
+
+W = 1
+
+R = 3
+
+Strong consistency.
+
+Or:
+
+W = 3
+
+R = 1
+
+Strong consistency.
+
+But:
+
+W = 1
+
+R = 1
+
+Produces **eventual consistency**.
+
+---
+
+## CAP Theorem
+
+CAP theorem says:
+
+During a **network partition**, a distributed system can guarantee only two of:
+
+* **Consistency (C)**
+* **Availability (A)**
+* **Partition Tolerance (P)**
+
+### Hotel Booking Example
+
+Suppose:
+
+Only one hotel room remains.
+
+Two users book simultaneously.
+
+A network partition happens.
+
+#### Availability + Partition Tolerance (AP)
+
+Both bookings may succeed.
+
+Double booking risk.
+
+#### Consistency + Partition Tolerance (CP)
+
+The application temporarily blocks booking.
+
+No inconsistency.
+
+Lower availability.
+
+### Why Partition Tolerance Is Mandatory
+
+In real distributed systems:
+
+> Network failures are inevitable.
+
+So the actual decision becomes:
+
+> Consistency vs Availability.
+
+### Real Examples
+
+#### Banking → CP
+
+Correctness matters.
+
+#### Social Media → AP
+
+Speed matters more.
+
+---
+
+## PACELC Theorem
+
+PACELC extends CAP.
+
+It says:
+
+### If Partition Exists
+
+Choose:
+
+* Availability
+* Consistency
+
+### Else
+
+Choose:
+
+* Latency
+* Consistency
+
+This explains tradeoffs even when networks are slow rather than broken.
+
+### Banking Example
+
+Prefer:
+
+Consistency over latency.
+
+### Social Media Example
+
+Prefer:
+
+Low latency over perfect consistency.
+
+---
+
+## ATM Example: Distributed System Tradeoffs
+
+Imagine an ATM loses backend connectivity.
+
+Possible strategies:
+
+### Strategy 1
+
+Disable everything.
+
+Safest.
+
+Poor user experience.
+
+### Strategy 2
+
+Allow deposits.
+
+Block withdrawals.
+
+Safer compromise.
+
+### Strategy 3
+
+Allow tentative balance checks.
+
+Warn users.
+
+### Strategy 4
+
+Permit limited withdrawals.
+
+Riskier but more convenient.
+
+---
+
+## Why Distributed Systems Are Hard
+
+Distributed systems introduce challenges absent from single machines:
+
+* Node failures
+* Replication
+* Consensus
+* Clock drift
+* Event ordering
+* Network partitions
+* Security
+* Synchronization
+
+Every choice introduces tradeoffs.
+
+---
+
+## Final Thoughts
+
+Distributed systems power the modern world.
+
+We need them because modern applications demand:
+
+* Scale
+* Reliability
+* Fault tolerance
+* Better performance
+* Global reach
+
+But distributed systems come with complexity.
+
+There is no perfect architecture.
+
+Only tradeoffs.
+
+Some systems prioritize:
+
+* Consistency
+* Availability
+* Latency
+* Reliability
+
+The right answer depends entirely on the problem you are solving.
+
+And that is what makes system design both challenging and fascinating.
+
+## Key Takeaways
+
+* Distributed systems use multiple machines working together
+* They exist because modern systems need scale and resilience
+* Availability means staying operational
+* Fault tolerance means surviving failures
+* Reliability means behaving correctly
+* Replication creates redundancy
+* Consistency ensures shared truth
+* Eventual consistency tolerates temporary mismatch
+* Quorums follow **R + W > N**
+* CAP theorem explains partition tradeoffs
+* PACELC explains latency vs consistency tradeoffs
+* Great system design is about choosing intelligent compromises
