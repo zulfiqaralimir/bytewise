@@ -144,8 +144,14 @@ export function SidebarClient() {
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-gray-200 text-xs text-gray-400 text-center">
-          By Zulfiqar Ali Mir
+        <div className="p-4 border-t border-gray-200 space-y-2">
+          <Link
+            href="/docs/cs-book"
+            className="block text-xs text-blue-500 hover:text-blue-700 transition-colors text-center"
+          >
+            ← ByteWise CS Book
+          </Link>
+          <div className="text-xs text-gray-400 text-center">By Zulfiqar Ali Mir</div>
         </div>
       </aside>
     </>
