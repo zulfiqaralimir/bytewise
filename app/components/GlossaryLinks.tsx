@@ -19,6 +19,15 @@ export function ChapterLink({ href, children }: { href: string; children: ReactN
   );
 }
 
+// Amber inline — user-suggested term appearing in chapter text, links back to glossary
+export function UserConcept({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link href={href} style={{ color: "#b45309", fontWeight: 700, textDecoration: "underline" }}>
+      {children}
+    </Link>
+  );
+}
+
 // Amber — terms suggested by the user (not auto-compiled from chapters)
 export function UserTerm({ id, children }: { id: string; children: ReactNode }) {
   return (

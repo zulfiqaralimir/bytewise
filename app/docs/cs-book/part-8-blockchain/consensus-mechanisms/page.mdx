@@ -10,6 +10,7 @@ export const metadata = {
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
+import { UserConcept } from "@/app/components/GlossaryLinks";
 
 # Consensus Mechanisms: Proof of Work vs Proof of Stake Explained from First Principles
 
@@ -35,7 +36,7 @@ Bitcoin introduced the first practical solution: **Proof of Work.** Ethereum lat
 
 Before comparing the two mechanisms, let us be precise about what consensus means in a blockchain context.
 
-Every few seconds, new transactions are broadcast to the network. Someone must collect these transactions, bundle them into a block, and add that block to the chain. But who? And how do thousands of computers agree that *this* block — and not some other block — is the legitimate next entry?
+Every few seconds, new transactions are <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#broadcast-to-the-network">broadcast</UserConcept> to the network. Someone must collect these transactions, bundle them into a block, and add that block to the chain. But who? And how do thousands of computers agree that *this* block — and not some other block — is the legitimate next entry?
 
 The answer must satisfy three requirements simultaneously:
 
@@ -68,7 +69,7 @@ There is no shortcut to finding this nonce. You try numbers sequentially — 1, 
 
 ### The Economics of Mining
 
-When a miner finds a valid nonce, they broadcast their completed block to the network. Other nodes verify it instantly — verification is trivial, even though finding the answer was hard — and add it to their chain. The winning miner receives a **block reward**: newly minted cryptocurrency plus transaction fees.
+When a miner finds a valid nonce, they <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#broadcast-to-the-network">broadcast</UserConcept> their completed block to the network. Other nodes verify it instantly — verification is trivial, even though finding the answer was hard — and add it to their chain. The winning miner receives a **block reward**: newly minted cryptocurrency plus transaction fees.
 
 This creates a straightforward economic equation:
 

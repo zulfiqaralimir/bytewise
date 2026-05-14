@@ -10,6 +10,7 @@ export const metadata = {
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
+import { UserConcept } from "@/app/components/GlossaryLinks";
 
 # What Is Blockchain? Blocks, Hashing, and Chain Structure Explained from First Principles
 
@@ -168,13 +169,13 @@ So far we have one chain on one computer. That is just a database. The power com
 
 Here is how a new transaction enters the network:
 
-**Step 1:** You broadcast your transaction to the network. "I want to send 1 ETH to this address."
+**Step 1:** You <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#broadcast-to-the-network">broadcast</UserConcept> your transaction to the network. "I want to send 1 ETH to this address."
 
 **Step 2:** Thousands of nodes (computers) receive it and add it to a waiting pool called the **mempool** (memory pool).
 
 **Step 3:** Miners (or validators in Proof of Stake) pick up transactions from the mempool and race to find a valid nonce for the new block.
 
-**Step 4:** The first miner to find a valid nonce broadcasts their completed block to the network.
+**Step 4:** The first miner to find a valid nonce <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#broadcast-to-the-network">broadcasts</UserConcept> their completed block to the network.
 
 **Step 5:** All other nodes verify: is the data valid? Is the hash correct? Does the Proof of Work check out? If yes, they add this block to their copy of the chain and start working on the next one.
 
