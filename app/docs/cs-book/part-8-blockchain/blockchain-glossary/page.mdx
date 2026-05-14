@@ -23,256 +23,409 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 ## A
 
-**51% Attack**
-An attack on a Proof of Work blockchain where a single entity gains control of more than half the network's total hashrate. With majority hashrate, the attacker can rewrite recent transaction history and double-spend coins. Economically impractical on large networks like Bitcoin — a one-hour attack would cost over $1 billion in electricity alone.
-*→ Chapter 2: Consensus Mechanisms*
+### 51% Attack
 
-**Attestation**
-In Proof of Stake (Ethereum), the act of a validator voting to confirm that a proposed block is valid. A supermajority of attestations is required before a block is added to the chain.
-*→ Chapter 2: Consensus Mechanisms*
+An attack on a [Proof of Work](#proof-of-work-pow) blockchain where a single entity gains control of more than half the network's total [hashrate](#hashrate). With majority hashrate, the attacker can rewrite recent transaction history and double-spend coins. Economically impractical on large networks like Bitcoin — a one-hour attack would cost over $1 billion in electricity alone.
 
-**Avalanche Effect**
-A property of cryptographic hash functions: changing even a single bit of the input causes the output hash to change completely and unpredictably. There is no gradual change — it is a cliff edge. This makes hash functions ideal for tamper detection.
-*→ Chapter 1: What Is Blockchain?*
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Attestation
+
+In [Proof of Stake](#proof-of-stake-pos) (Ethereum), the act of a [validator](#validator) voting to confirm that a proposed block is valid. A supermajority of attestations is required before a block is added to the chain.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Avalanche Effect
+
+A property of [cryptographic hash functions](#cryptographic-hash-function): changing even a single bit of the input causes the output hash to change completely and unpredictably. There is no gradual change — it is a cliff edge. This makes hash functions ideal for tamper detection.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
 ---
 
 ## B
 
-**Block**
-The fundamental unit of a blockchain. Each block contains: (1) transaction data, (2) its own hash (a fingerprint of its contents), and (3) the hash of the previous block. The previous-hash field is what links blocks into a chain.
-*→ Chapter 1: What Is Blockchain?*
+### Block
 
-**Block Reward**
-Newly minted cryptocurrency awarded to the miner or validator who successfully adds a block to the chain. In Bitcoin, the block reward halves approximately every four years (the "halving"). Block rewards are the primary incentive for honest participation.
-*→ Chapters 1 & 2*
+The fundamental unit of a blockchain. Each block contains: (1) transaction data, (2) its own hash — a fingerprint of its contents, and (3) the hash of the previous block. The previous-hash field is what creates [chaining](#chaining) and makes history tamper-evident.
 
-**Blockchain**
-A distributed ledger in which records (blocks) are linked by cryptographic hashes and held simultaneously by thousands of independent computers. The combination of hashing, chaining, and distributed consensus makes the ledger tamper-evident without requiring any central authority.
-*→ Chapter 1: What Is Blockchain?*
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
-**Byzantine Generals Problem**
-A foundational problem in distributed systems, first described by Lamport, Shostak, and Pease (1982). It asks: how can distributed participants reach agreement on a shared plan when some participants may be dishonest — and there is no way to know who? Blockchain consensus mechanisms are practical solutions to this problem.
-*→ Chapter 2: Consensus Mechanisms*
+---
+
+### Block Reward
+
+Newly minted cryptocurrency awarded to the [miner](#miner) or [validator](#validator) who successfully adds a block to the chain. In Bitcoin, the block reward halves approximately every four years (the "halving"). Block rewards are the primary economic incentive for honest participation.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain) · [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Blockchain
+
+A distributed ledger in which records ([blocks](#block)) are linked by cryptographic hashes and held simultaneously by thousands of independent computers. The combination of [hashing](#cryptographic-hash-function), [chaining](#chaining), and distributed [consensus](#consensus-mechanism) makes the ledger tamper-evident without requiring any central authority.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Byzantine Generals Problem
+
+A foundational problem in distributed systems, first described by Lamport, Shostak, and Pease (1982). It asks: how can distributed participants reach agreement on a shared plan when some participants may be dishonest — and there is no way to know who? Blockchain [consensus mechanisms](#consensus-mechanism) are practical solutions to this problem.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## C
 
-**Chaining**
-The design principle of storing the previous block's hash inside every block. Altering any block changes its hash, which breaks the "previous hash" reference in the next block — cascading a chain break through every subsequent block. This makes rewriting history computationally prohibitive.
-*→ Chapter 1: What Is Blockchain?*
+### Chaining
 
-**Consensus Mechanism**
-The rules by which a decentralized network of computers agrees on the true state of the ledger — specifically, which block is the legitimate next addition to the chain. Must satisfy three requirements: Sybil Resistance, Fork Resolution, and Incentive Alignment. Primary examples: Proof of Work and Proof of Stake.
-*→ Chapter 2: Consensus Mechanisms*
+The design principle of storing the previous block's hash inside every new [block](#block). Altering any block changes its hash, which breaks the "previous hash" reference in the next block — cascading a chain break through every subsequent block. This makes rewriting history computationally prohibitive even if someone has the power to recalculate one block.
 
-**Cryptographic Hash Function**
-A mathematical function that converts any input (a word, a file, an entire database) into a fixed-length output string. Key properties: deterministic, one-way (irreversible), and avalanche effect. SHA-256 is the hash function used by Bitcoin.
-*→ Chapter 1: What Is Blockchain?*
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Consensus Mechanism
+
+The rules by which a decentralized network of computers agrees on the true state of the ledger — specifically, which block is the legitimate next addition to the chain. Must satisfy three requirements simultaneously: [Sybil Resistance](#sybil-resistance), [Fork Resolution](#fork-resolution), and [Incentive Alignment](#incentive-alignment). Primary examples: [Proof of Work](#proof-of-work-pow) and [Proof of Stake](#proof-of-stake-pos).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Cryptographic Hash Function
+
+A mathematical function that converts any input — a word, a file, an entire database — into a fixed-length output string. Key properties: [deterministic](#deterministic), [one-way](#one-way-function) (irreversible), and [avalanche effect](#avalanche-effect). SHA-256 is the hash function used by Bitcoin.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
 ---
 
 ## D
 
-**Delegated Proof of Stake (DPoS)**
-A Proof of Stake variant in which token holders vote to elect a fixed number of delegates (e.g., 21 on EOS) who take turns producing blocks. Faster and more efficient than standard PoS, but more centralized. Used by EOS, TRON, and BitShares.
-*→ Chapter 2: Consensus Mechanisms*
+### Delegated Proof of Stake (DPoS)
 
-**Deterministic**
-A property of hash functions: the same input always produces the same output, every time, on every computer. "Hello" will always hash to the same string.
-*→ Chapter 1: What Is Blockchain?*
+A [Proof of Stake](#proof-of-stake-pos) variant in which token holders vote to elect a fixed number of delegates (e.g., 21 on EOS) who take turns producing blocks. Faster and more efficient than standard PoS, but more centralized. Used by EOS, TRON, and BitShares.
 
-**Difficulty Adjustment**
-Proof of Work's self-regulating mechanism. Bitcoin automatically recalibrates the mining target every 2,016 blocks (~2 weeks) to maintain a 10-minute average block time. If more miners join, difficulty increases. If miners leave, difficulty decreases. The network behaves like a thermostat.
-*→ Chapter 2: Consensus Mechanisms*
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
-**Distributed Ledger**
-A ledger (record of transactions) that is held simultaneously by thousands of independent computers rather than by a single institution. Every copy is identical. A change accepted by the network is reflected in all copies; a change made to one copy without network consensus is immediately detectable.
-*→ Chapter 1: What Is Blockchain?*
+---
+
+### Deterministic
+
+A property of [cryptographic hash functions](#cryptographic-hash-function): the same input always produces the same output, every time, on every computer. "Hello" will always hash to exactly the same string.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Difficulty Adjustment
+
+[Proof of Work's](#proof-of-work-pow) self-regulating mechanism. Bitcoin automatically recalibrates the [mining](#mining) target every 2,016 blocks (~2 weeks) to maintain a 10-minute average block time. If more [miners](#miner) join, difficulty increases. If miners leave, difficulty decreases. The network behaves like a thermostat.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Distributed Ledger
+
+A ledger (record of transactions) held simultaneously by thousands of independent computers rather than by a single institution. Every copy is identical. A change accepted by the network is reflected in all copies; a change made to one copy without network [consensus](#consensus-mechanism) is immediately detectable.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
 ---
 
 ## E
 
-**Economic Finality**
-The point at which reversing a transaction would require an attacker to spend more than the value gained — making it economically irrational. In Ethereum PoS, economic finality is reached after ~12–15 minutes (two checkpoint epochs); reversal would require destroying at least one-third of all staked ETH.
-*→ Chapter 2: Consensus Mechanisms*
+### Economic Finality
 
-**Equivocation**
-A slashable offense in Proof of Stake: when a validator simultaneously signs two different blocks at the same block height. This is a clear sign of malicious behavior and triggers automatic slashing of the validator's stake.
-*→ Chapter 2: Consensus Mechanisms*
+The point at which reversing a transaction would require an attacker to spend more than the value gained — making it economically irrational. In Ethereum [Proof of Stake](#proof-of-stake-pos), economic finality is reached after ~12–15 minutes; reversal would require destroying at least one-third of all staked ETH, worth tens of billions of dollars.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Equivocation
+
+A slashable offense in [Proof of Stake](#proof-of-stake-pos): when a [validator](#validator) simultaneously signs two different blocks at the same block height. This is a clear sign of malicious behavior and triggers automatic [slashing](#slashing) of the validator's [stake](#stake).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## F
 
-**Finality**
-The point at which a transaction is considered irreversible. In Bitcoin PoW, finality is reached after 6 block confirmations (~60 minutes). In Ethereum PoS, after ~12–15 minutes. In PBFT-based systems (Hyperledger Fabric), finality is immediate.
-*→ Chapter 2: Consensus Mechanisms*
+### Finality
 
-**Fork**
-When two miners find valid blocks at almost the same instant, the network temporarily has two competing chains. The network resolves this by following the longest chain (Nakamoto Consensus). The shorter fork is abandoned; its transactions return to the mempool.
-*→ Chapter 1: What Is Blockchain?*
+The point at which a transaction is considered irreversible. In Bitcoin [Proof of Work](#proof-of-work-pow), finality is reached after 6 block confirmations (~60 minutes). In Ethereum [Proof of Stake](#proof-of-stake-pos), after ~12–15 minutes ([economic finality](#economic-finality)). In [PBFT](#pbft)-based systems like [Hyperledger Fabric](#hyperledger-fabric), finality is immediate — milliseconds.
 
-**Fork Resolution**
-One of the three requirements a consensus mechanism must satisfy. The network must have an unambiguous rule for choosing one chain when two valid competing chains exist. In PoW: the longest chain wins. In PoS: determined by validator attestations and finality checkpoints.
-*→ Chapter 2: Consensus Mechanisms*
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Fork
+
+When two [miners](#miner) find valid blocks at almost the same instant, the network temporarily has two competing chains. Resolved by [Nakamoto Consensus](#nakamoto-consensus) — the longer chain wins. The shorter fork is abandoned; its transactions return to the [mempool](#mempool).
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Fork Resolution
+
+One of the three requirements a [consensus mechanism](#consensus-mechanism) must satisfy. The network must have an unambiguous rule for choosing one chain when two valid competing chains exist. In [Proof of Work](#proof-of-work-pow): the longest chain wins ([Nakamoto Consensus](#nakamoto-consensus)). In [Proof of Stake](#proof-of-stake-pos): determined by [validator](#validator) attestations and finality checkpoints.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## G
 
-**Genesis Block**
-The very first block in a blockchain. It has no parent, so its "Previous Hash" field contains all zeros. Every subsequent block traces its lineage back to the genesis block.
-*→ Chapter 1: What Is Blockchain?*
+### Genesis Block
+
+The very first block in a blockchain, with no parent — its "Previous Hash" field contains all zeros. Every subsequent block traces its lineage back to the genesis block through [chaining](#chaining).
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
 ---
 
 ## H
 
-**Hash Function**
-See *Cryptographic Hash Function.*
+### Hash Function
 
-**Hashrate**
-The total computational power being applied to a Proof of Work blockchain at a given moment, measured in hashes per second. Higher hashrate means higher security — an attacker must match or exceed the entire network's hashrate to execute a 51% attack.
-*→ Chapter 2: Consensus Mechanisms*
+See [Cryptographic Hash Function](#cryptographic-hash-function).
 
-**Hyperledger Fabric**
-An enterprise-grade, permissioned blockchain platform maintained by the Linux Foundation. Uses PBFT consensus. Has no native cryptocurrency. Designed for known participants (e.g., supply chain consortiums, regulatory networks). The recommended platform for HalalLedger.
-*→ Chapters 1 & 2*
+---
+
+### Hashrate
+
+The total computational power being applied to a [Proof of Work](#proof-of-work-pow) blockchain at a given moment, measured in hashes per second. Higher hashrate means higher security — an attacker must match or exceed the entire network's hashrate to execute a [51% Attack](#51-attack).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Hyperledger Fabric
+
+An enterprise-grade, permissioned blockchain platform maintained by the Linux Foundation. Uses [PBFT](#pbft) consensus. Has no native cryptocurrency. Designed for known participants (e.g., supply chain consortiums, regulatory networks). The recommended platform for HalalLedger.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain) · [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## I
 
-**Inactivity Penalty**
-In Ethereum's Proof of Stake, a small penalty applied to validators that go offline or fail to attest. Designed to incentivize uptime. If the chain itself fails to finalize (e.g., due to many validators going offline simultaneously), inactivity penalties escalate significantly.
-*→ Chapter 2: Consensus Mechanisms*
+### Inactivity Penalty
 
-**Incentive Alignment**
-One of the three requirements a consensus mechanism must satisfy. The economic structure must make honest behavior more profitable than dishonest behavior. PoW achieves this through block rewards vs. wasted electricity. PoS achieves this through staking rewards vs. slashing.
-*→ Chapter 2: Consensus Mechanisms*
+In Ethereum's [Proof of Stake](#proof-of-stake-pos), a small penalty applied to [validators](#validator) that go offline or fail to attest. Designed to incentivize uptime alongside honesty. If the chain itself fails to finalize due to many validators going offline simultaneously, inactivity penalties escalate significantly.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Incentive Alignment
+
+One of the three requirements a [consensus mechanism](#consensus-mechanism) must satisfy. The economic structure must make honest behavior more profitable than dishonest behavior. [Proof of Work](#proof-of-work-pow) achieves this through [block rewards](#block-reward) vs. wasted electricity. [Proof of Stake](#proof-of-stake-pos) achieves this through [staking rewards](#staking-reward) vs. [slashing](#slashing).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## L
 
-**Liquid Staking**
-A service (e.g., Lido, Rocket Pool) that allows users to participate in Proof of Stake validation without the 32 ETH minimum requirement. The protocol pools smaller amounts, runs validators, and distributes proportional rewards to participants.
-*→ Chapter 2: Consensus Mechanisms*
+### Liquid Staking
+
+A service (e.g., Lido, Rocket Pool) that allows users to participate in [Proof of Stake](#proof-of-stake-pos) [validation](#validator) without the 32 ETH minimum [stake](#stake) requirement. The protocol pools smaller amounts, runs validators, and distributes proportional [staking rewards](#staking-reward) to participants.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## M
 
-**Mempool** *(Memory Pool)*
-The waiting area for transactions that have been broadcast to the network but not yet included in a block. Miners and validators pick transactions from the mempool (typically prioritizing higher-fee transactions) to include in the next block.
-*→ Chapter 1: What Is Blockchain?*
+### Mempool
 
-**Miner**
-A computer (and its operator) that competes to add the next block to a Proof of Work blockchain by finding a valid nonce. Miners invest in hardware and electricity; they are rewarded with block rewards and transaction fees when they win.
-*→ Chapter 1: What Is Blockchain?*
+*(Memory Pool)* — The waiting area for transactions that have been broadcast to the network but not yet included in a block. [Miners](#miner) and [validators](#validator) pick transactions from the mempool to include in the next block, typically prioritizing higher-fee transactions. Transactions from abandoned [forks](#fork) return here.
 
-**Mining**
-The process of finding a valid nonce for a block in Proof of Work — repeated hashing with different nonce values until the output meets the difficulty target. Deliberately slow and computationally expensive by design.
-*→ Chapter 1: What Is Blockchain?*
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Miner
+
+A computer (and its operator) that competes to add the next block to a [Proof of Work](#proof-of-work-pow) blockchain by finding a valid [nonce](#nonce). Miners invest in hardware and electricity; they are rewarded with [block rewards](#block-reward) and [transaction fees](#transaction-fee) when they win.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Mining
+
+The process of finding a valid [nonce](#nonce) for a block in [Proof of Work](#proof-of-work-pow) — repeated hashing with different nonce values until the output meets the [difficulty](#difficulty-adjustment) target. Deliberately slow and computationally expensive by design. The [difficulty adjustment](#difficulty-adjustment) ensures this always takes ~10 minutes on Bitcoin regardless of how much computing power is applied.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
 ---
 
 ## N
 
-**Nakamoto Consensus**
-The fork-resolution rule introduced by Bitcoin: always build on the longest chain. When two valid competing chains exist, miners extend one of them. Whichever grows longer faster becomes the accepted truth. Named after Bitcoin's pseudonymous creator Satoshi Nakamoto.
-*→ Chapter 1: What Is Blockchain?*
+### Nakamoto Consensus
 
-**Node**
-Any computer participating in a blockchain network. Nodes receive, validate, and relay transactions and blocks. Full nodes store the complete blockchain history; light nodes store only block headers.
-*→ Chapter 1: What Is Blockchain?*
+The [fork](#fork)-resolution rule introduced by Bitcoin: always build on the longest chain. When two valid competing chains exist, [miners](#miner) extend one of them; whichever grows longer faster becomes the accepted truth. Named after Bitcoin's pseudonymous creator Satoshi Nakamoto. Requires no central authority — the math decides.
 
-**Nonce** *(Number Used Once)*
-A number included in a block's data that miners vary — trying 1, 2, 3, ... — until the resulting hash meets the difficulty target (starts with enough zeros). Finding the right nonce is the core computational task of Proof of Work mining.
-*→ Chapters 1 & 2*
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Node
+
+Any computer participating in a blockchain network. Nodes receive, validate, and relay transactions and blocks. Full nodes store the complete blockchain history; light nodes store only block headers and rely on full nodes for transaction verification.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Nonce
+
+*(Number Used Once)* — A number included in a block's data that [miners](#miner) vary — trying 1, 2, 3, ... — until the resulting hash meets the [difficulty](#difficulty-adjustment) target (starts with enough zeros). Finding the right nonce is the core computational task of [Proof of Work](#proof-of-work-pow) [mining](#mining).
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain) · [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## O
 
-**One-Way Function**
-A property of cryptographic hash functions: given an output hash, it is computationally infeasible to reverse-engineer the input. You can verify that "Hello" produces a given hash, but you cannot reconstruct "Hello" from the hash alone.
-*→ Chapter 1: What Is Blockchain?*
+### One-Way Function
+
+A property of [cryptographic hash functions](#cryptographic-hash-function): given an output hash, it is computationally infeasible to reverse-engineer the input. You can verify that "Hello" produces a given hash, but you cannot reconstruct "Hello" from the hash alone.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
 ---
 
 ## P
 
-**PBFT** *(Practical Byzantine Fault Tolerance)*
-A consensus algorithm in which validators communicate directly in multiple rounds of voting. Provides immediate finality (milliseconds). Requires known, permissioned participants — not suitable for anonymous public blockchains. Used by Hyperledger Fabric for enterprise applications.
-*→ Chapter 2: Consensus Mechanisms*
+### PBFT
 
-**Proof of Authority (PoA)**
-A consensus mechanism in which a small set of pre-approved, known validators produce blocks by reputation rather than computational work or staked capital. Extremely fast and efficient, but fully centralized. Used in private enterprise blockchains and testnets.
-*→ Chapter 2: Consensus Mechanisms*
+*(Practical Byzantine Fault Tolerance)* — A [consensus mechanism](#consensus-mechanism) in which [validators](#validator) communicate directly in multiple rounds of voting. Provides immediate [finality](#finality) (milliseconds). Requires known, permissioned participants — not suitable for anonymous public blockchains. Used by [Hyperledger Fabric](#hyperledger-fabric) for enterprise applications like HalalLedger.
 
-**Proof of History (PoH)**
-Solana's consensus innovation. A cryptographic clock embedded in the protocol creates a verifiable, timestamped record of events, allowing validators to agree on ordering without extensive back-and-forth communication. Enables Solana's high throughput (~65,000 TPS theoretically).
-*→ Chapter 2: Consensus Mechanisms*
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
-**Proof of Stake (PoS)**
-A consensus mechanism in which validators lock up (stake) cryptocurrency as collateral to earn the right to propose and attest to blocks. Dishonesty is punished by slashing the stake. Requires ~99.95% less energy than Proof of Work. Used by Ethereum (post-Merge), Cardano, Polkadot, and others.
-*→ Chapter 2: Consensus Mechanisms*
+---
 
-**Proof of Work (PoW)**
-A consensus mechanism in which miners earn the right to add a block by solving a computational puzzle — finding a nonce that makes the block's hash meet a difficulty target. Security is grounded in physical energy expenditure. Used by Bitcoin, Litecoin, and Monero.
-*→ Chapters 1 & 2*
+### Proof of Authority (PoA)
+
+A [consensus mechanism](#consensus-mechanism) in which a small set of pre-approved, known [validators](#validator) produce blocks by reputation rather than computational work or staked capital. Extremely fast and efficient, but fully centralized. Used in private enterprise blockchains and testnets. Similar in spirit to [PBFT](#pbft).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Proof of History (PoH)
+
+Solana's [consensus](#consensus-mechanism) innovation. A cryptographic clock embedded in the protocol creates a verifiable, timestamped record of events, allowing [validators](#validator) to agree on ordering without extensive back-and-forth communication. Enables Solana's high throughput (~65,000 TPS theoretically).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Proof of Stake (PoS)
+
+A [consensus mechanism](#consensus-mechanism) in which [validators](#validator) lock up ([stake](#stake)) cryptocurrency as collateral to earn the right to propose and attest to blocks. Dishonesty is punished by [slashing](#slashing) the stake. Requires ~99.95% less energy than [Proof of Work](#proof-of-work-pow). Used by Ethereum (after [The Merge](#the-merge)), Cardano, Polkadot, and others.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Proof of Work (PoW)
+
+A [consensus mechanism](#consensus-mechanism) in which [miners](#miner) earn the right to add a block by solving a computational puzzle — finding a [nonce](#nonce) that makes the block's hash meet a [difficulty](#difficulty-adjustment) target. Security is grounded in physical energy expenditure: you either did the work or you did not. Used by Bitcoin, Litecoin, and Monero.
+
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain) · [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## S
 
-**SHA-256** *(Secure Hash Algorithm 256-bit)*
-The cryptographic hash function used by Bitcoin. Produces a 256-bit (64 hexadecimal character) output from any input. Designed by the US National Security Agency; considered cryptographically secure.
-*→ Chapter 1: What Is Blockchain?*
+### SHA-256
 
-**Slashing**
-The automatic, protocol-enforced destruction of a portion of a validator's staked cryptocurrency as punishment for provably malicious behavior (e.g., equivocation). No court or regulator involved — the punishment is baked into the protocol's math. The primary security mechanism of Proof of Stake.
-*→ Chapter 2: Consensus Mechanisms*
+*(Secure Hash Algorithm 256-bit)* — The [cryptographic hash function](#cryptographic-hash-function) used by Bitcoin. Produces a 256-bit (64 hexadecimal character) output from any input. Designed by the US National Security Agency; considered cryptographically secure.
 
-**Smart Contract**
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
+
+---
+
+### Slashing
+
+The automatic, protocol-enforced destruction of a portion of a [validator's](#validator) [staked](#stake) cryptocurrency as punishment for provably malicious behavior (e.g., [equivocation](#equivocation)). No court or regulator is involved — the punishment is baked into the protocol's math. The primary security mechanism of [Proof of Stake](#proof-of-stake-pos).
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Smart Contract
+
 A program stored on a blockchain that executes automatically when predefined conditions are met. Nobody can stop or alter it after deployment. Invented by Ethereum. Enables DeFi, NFTs, DAOs, and on-chain business logic like automated halal certification release.
-*→ Chapter 1: What Is Blockchain?*
 
-**Stake**
-Cryptocurrency locked as collateral by a validator in a Proof of Stake system. Acts as a security deposit — honest behavior earns rewards, dishonest behavior destroys it via slashing. On Ethereum, the minimum solo validator stake is 32 ETH.
-*→ Chapter 2: Consensus Mechanisms*
+*→ [Chapter 1: What Is Blockchain?](/docs/cs-book/part-8-blockchain/what-is-blockchain)*
 
-**Staking Reward**
-Earnings received by validators in Proof of Stake for honestly proposing and attesting to blocks. Equivalent in function to the block reward in Proof of Work — the economic incentive for honest participation.
-*→ Chapter 2: Consensus Mechanisms*
+---
 
-**Sybil Resistance**
-One of the three requirements a consensus mechanism must satisfy. The system must make it prohibitively costly to create many fake identities and flood the network with fraudulent blocks. PoW achieves this via computational cost; PoS achieves this via capital cost.
-*→ Chapter 2: Consensus Mechanisms*
+### Stake
+
+Cryptocurrency locked as collateral by a [validator](#validator) in a [Proof of Stake](#proof-of-stake-pos) system. Acts as a security deposit — honest behavior earns [staking rewards](#staking-reward), dishonest behavior destroys it via [slashing](#slashing). On Ethereum, the minimum solo validator stake is 32 ETH.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Staking Reward
+
+Earnings received by [validators](#validator) in [Proof of Stake](#proof-of-stake-pos) for honestly proposing and attesting to blocks. Equivalent in function to the [block reward](#block-reward) in [Proof of Work](#proof-of-work-pow) — the economic incentive for honest participation.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Sybil Resistance
+
+One of the three requirements a [consensus mechanism](#consensus-mechanism) must satisfy. The system must make it prohibitively costly to create many fake identities and flood the network with fraudulent blocks. [Proof of Work](#proof-of-work-pow) achieves this via computational cost; [Proof of Stake](#proof-of-stake-pos) achieves this via capital cost.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## T
 
-**The Merge**
-Ethereum's transition from Proof of Work to Proof of Stake, completed on September 15, 2022. One of the most complex live software upgrades in blockchain history. Reduced Ethereum's energy consumption by ~99.95% overnight.
-*→ Chapter 2: Consensus Mechanisms*
+### The Merge
 
-**Transaction Fee**
-A fee paid by users to have their transaction prioritized and included in a block. Collected by miners (PoW) or validators (PoS) in addition to the block reward. On congested networks, fees can be substantial.
-*→ Chapter 2: Consensus Mechanisms*
+Ethereum's transition from [Proof of Work](#proof-of-work-pow) to [Proof of Stake](#proof-of-stake-pos), completed on September 15, 2022. One of the most complex live software upgrades in blockchain history — swapping the consensus engine of a running system without stopping it. Reduced Ethereum's energy consumption by ~99.95% overnight.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
+
+---
+
+### Transaction Fee
+
+A fee paid by users to have their transaction prioritized and included in a block. Collected by [miners](#miner) in [Proof of Work](#proof-of-work-pow) and [validators](#validator) in [Proof of Stake](#proof-of-stake-pos), in addition to the [block reward](#block-reward). On congested networks, fees can be substantial.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
 ## V
 
-**Validator**
-In Proof of Stake, a computer (and its operator) that stakes cryptocurrency to participate in block proposal and attestation. Validators replace miners as the block-producers in PoS systems. On Ethereum, each validator requires exactly 32 ETH staked.
-*→ Chapter 2: Consensus Mechanisms*
+### Validator
+
+In [Proof of Stake](#proof-of-stake-pos), a computer (and its operator) that [stakes](#stake) cryptocurrency to participate in block proposal and [attestation](#attestation). Validators replace [miners](#miner) as the block-producers in PoS systems. Dishonest validators are punished via [slashing](#slashing); offline validators receive [inactivity penalties](#inactivity-penalty). On Ethereum, each validator requires exactly 32 ETH staked.
+
+*→ [Chapter 2: Consensus Mechanisms](/docs/cs-book/part-8-blockchain/consensus-mechanisms)*
 
 ---
 
