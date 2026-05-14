@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "consensus-mechanisms",
+    title: "Consensus Mechanisms: Proof of Work vs Proof of Stake Explained from First Principles",
+    description:
+      "How do thousands of computers agree on a single truth without trusting each other? A first-principles breakdown of Proof of Work, Proof of Stake, slashing, The Merge, and PBFT.",
+    date: "May 14, 2026",
+    tag: "Blockchain",
+  },
+  {
     slug: "what-is-blockchain",
     title: "What Is Blockchain? Blocks, Hashing, and Chain Structure Explained from First Principles",
     description:

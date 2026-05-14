@@ -104,6 +104,7 @@ const chapters = [
     part: "Part 8 — Blockchain",
     items: [
       { title: "Chapter 1: What Is Blockchain? Blocks, Hashing & Chain Structure", href: "/docs/cs-book/part-8-blockchain/what-is-blockchain" },
+      { title: "Chapter 2: Consensus Mechanisms — Proof of Work vs Proof of Stake", href: "/docs/cs-book/part-8-blockchain/consensus-mechanisms" },
     ],
   },
 ];
