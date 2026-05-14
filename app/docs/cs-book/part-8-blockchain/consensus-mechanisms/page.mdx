@@ -81,19 +81,19 @@ If Revenue > Cost → Mine honestly
 If Revenue < Cost → Stop mining
 ```
 
-Honesty is not enforced by law or trust. It is enforced by profit motive. An honest miner earns the reward. A dishonest miner wastes electricity producing blocks the network rejects. The market punishes fraud automatically.
+Honesty is not enforced by law or trust. It is enforced by profit motive. An <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#honest-mining">honest miner</UserConcept> earns the reward. A dishonest miner wastes electricity producing blocks the network rejects. The market punishes fraud automatically.
 
 ### The 51% Attack
 
-The primary attack vector on a Proof of Work chain is the **51% attack.** If a single entity controls more than half of the network's total computational power (called **hashrate**), they can theoretically rewrite recent history — reversing transactions, double-spending coins.
+The primary <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#attack-vector">attack vector</UserConcept> on a Proof of Work chain is the **51% attack.** If a single entity controls more than half of the network's total computational power (called <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#hashrate">hashrate</UserConcept>), they can theoretically rewrite recent history — reversing transactions, double-spending coins.
 
 In practice, attacking Bitcoin requires controlling more hashing power than the rest of the world combined. At current network hashrate, the electricity cost alone for a one-hour attack on Bitcoin would exceed $1 billion. And the moment the attack became known, the price of Bitcoin would collapse — destroying the value of any coins the attacker just double-spent.
 
-The economic cost of attacking Proof of Work is its greatest strength. Honest mining is simply more profitable than dishonest mining.
+The economic cost of attacking Proof of Work is its greatest strength. <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#honest-mining">Honest mining</UserConcept> is simply more profitable than dishonest mining.
 
 ### The Difficulty Adjustment
 
-One elegant feature of Proof of Work is the **difficulty adjustment.** The protocol automatically recalibrates the target every 2,016 blocks (approximately two weeks on Bitcoin) to maintain a consistent block time of 10 minutes.
+One elegant feature of Proof of Work is the <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#difficulty-adjustment">difficulty adjustment</UserConcept>. The protocol automatically recalibrates the target every 2,016 blocks (approximately two weeks on Bitcoin) to maintain a consistent block time of 10 minutes.
 
 If more miners join the network, blocks are found faster. The difficulty increases — the target requires more leading zeros. If miners leave, blocks slow down. The difficulty decreases. The network self-regulates like a thermostat, regardless of how much or how little computational power is pointed at it.
 
@@ -109,12 +109,12 @@ This mechanism ensures the chain grows at a predictable, stable pace regardless 
 **Strengths:**
 - Battle-tested. Bitcoin has run continuously since January 2009 without a successful protocol-level attack.
 - Security is grounded in physical reality — electricity and hardware. You cannot fake computation.
-- Maximally decentralized in principle — anyone with a computer can mine.
+- <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#maximal-decentralization">Maximally decentralized in principle</UserConcept> — anyone with a computer can mine.
 
 **Weaknesses:**
 - Enormous energy consumption. Bitcoin's annual electricity usage rivals that of medium-sized countries.
-- Hardware arms race. Over time, mining has shifted from CPUs to GPUs to specialized ASICs, centralizing power among those who can afford industrial-scale hardware.
-- Slow finality. A transaction on Bitcoin is considered truly final only after 6 confirmations — approximately 60 minutes.
+- Hardware arms race. Over time, mining has shifted from CPUs to GPUs to specialized <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#asic">ASICs</UserConcept>, centralizing power among those who can afford industrial-scale hardware.
+- <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#finality">Slow finality</UserConcept>. A transaction on Bitcoin is considered truly final only after 6 confirmations — approximately 60 minutes.
 
 ---
 
@@ -132,13 +132,13 @@ Validator B stakes 64 ETH   → 64% chance of selection
 Validator C stakes 4 ETH    →  4% chance of selection
 ```
 
-When selected, the validator proposes a block. A committee of other validators then **attests** — votes — on whether the block is valid. If a supermajority agrees, the block is added. The proposer and attestors earn rewards proportional to their stake.
+When selected, the validator proposes a block. A committee of other validators then <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#attestation">attests</UserConcept> — votes — on whether the block is valid. If a supermajority agrees, the block is added. The proposer and attestors earn rewards proportional to their <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#stake">stake</UserConcept>.
 
 ### How Dishonesty Is Punished: Slashing
 
 In Proof of Work, dishonest miners waste electricity. In Proof of Stake, the punishment is more direct: **slashing.**
 
-If a validator behaves maliciously — for example, simultaneously signing two different blocks at the same height (called **equivocation**) — the protocol automatically destroys a portion of their staked ETH. They lose real money, immediately, by protocol rule.
+If a validator behaves maliciously — for example, simultaneously signing two different blocks at the same height (called <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#equivocation">equivocation</UserConcept>) — the protocol automatically destroys a portion of their staked ETH. They lose real money, immediately, by protocol rule.
 
 ```
 Validator stakes 32 ETH
@@ -159,9 +159,9 @@ Compare this to Bitcoin's 60-minute wait for 6 confirmations. For most applicati
 
 ### The Validator Requirements on Ethereum
 
-To become a solo validator on Ethereum, you must stake exactly **32 ETH**. This is a significant capital requirement. For those with less, **liquid staking protocols** like Lido allow participation with any amount — they pool smaller stakes and distribute rewards proportionally.
+To become a solo validator on Ethereum, you must stake exactly **32 ETH**. This is a significant capital requirement. For those with less, <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#liquid-staking">liquid staking protocols</UserConcept> like Lido allow participation with any amount — they pool smaller stakes and distribute rewards proportionally.
 
-The validator runs software continuously. If a validator goes offline — even accidentally — they receive small **inactivity penalties.** The protocol incentivizes uptime, not just honesty.
+The validator runs software continuously. If a validator goes offline — even accidentally — they receive small <UserConcept href="/docs/cs-book/part-8-blockchain/blockchain-glossary#inactivity-penalty">inactivity penalties</UserConcept>. The protocol incentivizes uptime, not just honesty.
 
 ---
 

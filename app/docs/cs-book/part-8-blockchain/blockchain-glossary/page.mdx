@@ -36,7 +36,23 @@ An attack on a <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> bloc
 
 ---
 
-### Attestation
+<UserTerm id="asic">ASIC</UserTerm>
+
+*(Application-Specific Integrated Circuit)* — Specialized hardware engineered to perform one task with maximum efficiency. In blockchain, ASICs are built solely to compute <TermLink href="#cryptographic-hash-function">SHA-256 hashes</TermLink> as fast as possible for <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> <TermLink href="#mining">mining</TermLink>. They vastly outperform general-purpose CPUs and GPUs at this task but are useless for anything else. Their dominance has concentrated Bitcoin mining among entities that can afford industrial-scale ASIC farms, undermining <TermLink href="#maximal-decentralization">maximal decentralization</TermLink>.
+
+*→ <ChapterLink href="/docs/cs-book/part-8-blockchain/consensus-mechanisms">Chapter 2: Consensus Mechanisms</ChapterLink>*
+
+---
+
+<UserTerm id="attack-vector">Attack Vector</UserTerm>
+
+A specific method or path through which a security system can be exploited. In <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> blockchains, the primary attack vector is the <TermLink href="#51-attack">51% attack</TermLink> — gaining majority <TermLink href="#hashrate">hashrate</TermLink> to rewrite transaction history. In <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink>, the attack vector is accumulating enough staked capital to disrupt <TermLink href="#finality">finality</TermLink> or double-spend.
+
+*→ <ChapterLink href="/docs/cs-book/part-8-blockchain/consensus-mechanisms">Chapter 2: Consensus Mechanisms</ChapterLink>*
+
+---
+
+<UserTerm id="attestation">Attestation</UserTerm>
 
 In <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink> (Ethereum), the act of a <TermLink href="#validator">validator</TermLink> voting to confirm that a proposed block is valid. A supermajority of attestations is required before a block is added to the chain.
 
@@ -146,7 +162,7 @@ A property of <TermLink href="#cryptographic-hash-function">cryptographic hash f
 
 ---
 
-### Difficulty Adjustment
+<UserTerm id="difficulty-adjustment">Difficulty Adjustment</UserTerm>
 
 <TermLink href="#proof-of-work-pow">Proof of Work's</TermLink> self-regulating mechanism. Bitcoin automatically recalibrates the <TermLink href="#mining">mining</TermLink> target every 2,016 blocks (~2 weeks) to maintain a 10-minute average block time. If more <TermLink href="#miner">miners</TermLink> join, difficulty increases. If miners leave, difficulty decreases. The network behaves like a thermostat.
 
@@ -164,7 +180,7 @@ A ledger (record of transactions) held simultaneously by thousands of independen
 
 ## E
 
-### Economic Finality
+<UserTerm id="economic-finality">Economic Finality</UserTerm>
 
 The point at which reversing a transaction would require an attacker to spend more than the value gained — making it economically irrational. In Ethereum <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink>, economic finality is reached after ~12–15 minutes; reversal would require destroying at least one-third of all staked ETH, worth tens of billions of dollars.
 
@@ -172,7 +188,7 @@ The point at which reversing a transaction would require an attacker to spend mo
 
 ---
 
-### Equivocation
+<UserTerm id="equivocation">Equivocation</UserTerm>
 
 A slashable offense in <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink>: when a <TermLink href="#validator">validator</TermLink> simultaneously signs two different blocks at the same block height. This is a clear sign of malicious behaviour and triggers automatic <TermLink href="#slashing">slashing</TermLink> of the validator's <TermLink href="#stake">stake</TermLink>.
 
@@ -182,7 +198,7 @@ A slashable offense in <TermLink href="#proof-of-stake-pos">Proof of Stake</Term
 
 ## F
 
-### Finality
+<UserTerm id="finality">Finality</UserTerm>
 
 The point at which a transaction is considered irreversible. In Bitcoin <TermLink href="#proof-of-work-pow">Proof of Work</TermLink>, finality is reached after 6 block confirmations (~60 minutes). In Ethereum <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink>, after ~12–15 minutes (<TermLink href="#economic-finality">economic finality</TermLink>). In <TermLink href="#pbft">PBFT</TermLink>-based systems like <TermLink href="#hyperledger-fabric">Hyperledger Fabric</TermLink>, finality is immediate — milliseconds.
 
@@ -224,9 +240,17 @@ See <TermLink href="#cryptographic-hash-function">Cryptographic Hash Function</T
 
 ---
 
-### Hashrate
+<UserTerm id="hashrate">Hashrate</UserTerm>
 
 The total computational power being applied to a <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> blockchain at a given moment, measured in hashes per second. Higher hashrate means higher security — an attacker must match or exceed the entire network's hashrate to execute a <TermLink href="#51-attack">51% Attack</TermLink>.
+
+*→ <ChapterLink href="/docs/cs-book/part-8-blockchain/consensus-mechanisms">Chapter 2: Consensus Mechanisms</ChapterLink>*
+
+---
+
+<UserTerm id="honest-mining">Honest Mining</UserTerm>
+
+The economically rational behaviour of a <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> <TermLink href="#miner">miner</TermLink> who follows all protocol rules — building on the longest valid chain, including valid transactions, and <TermLink href="#broadcast-to-the-network">broadcasting</TermLink> completed blocks truthfully. <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> makes honest mining more profitable than dishonest mining: an honest miner earns the <TermLink href="#block-reward">block reward</TermLink>; a dishonest miner burns electricity producing blocks the network rejects.
 
 *→ <ChapterLink href="/docs/cs-book/part-8-blockchain/consensus-mechanisms">Chapter 2: Consensus Mechanisms</ChapterLink>*
 
@@ -242,7 +266,7 @@ An enterprise-grade, permissioned blockchain platform maintained by the Linux Fo
 
 ## I
 
-### Inactivity Penalty
+<UserTerm id="inactivity-penalty">Inactivity Penalty</UserTerm>
 
 In Ethereum's <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink>, a small penalty applied to <TermLink href="#validator">validators</TermLink> that go offline or fail to attest. Designed to incentivise uptime alongside honesty. If the chain itself fails to finalise due to many validators going offline simultaneously, inactivity penalties escalate significantly.
 
@@ -260,7 +284,7 @@ One of the three requirements a <TermLink href="#consensus-mechanism">consensus 
 
 ## L
 
-### Liquid Staking
+<UserTerm id="liquid-staking">Liquid Staking</UserTerm>
 
 A service (e.g., Lido, Rocket Pool) that allows users to participate in <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink> <TermLink href="#validator">validation</TermLink> without the 32 ETH minimum <TermLink href="#stake">stake</TermLink> requirement. The protocol pools smaller amounts, runs validators, and distributes proportional <TermLink href="#staking-reward">staking rewards</TermLink> to participants.
 
@@ -269,6 +293,14 @@ A service (e.g., Lido, Rocket Pool) that allows users to participate in <TermLin
 ---
 
 ## M
+
+<UserTerm id="maximal-decentralization">Maximal Decentralization</UserTerm>
+
+A design property of <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> blockchains: in principle, anyone with any computer can participate in <TermLink href="#mining">mining</TermLink> with a proportional chance of earning <TermLink href="#block-reward">block rewards</TermLink> — no permission, identity, or minimum investment required. In practice, the <TermLink href="#asic">ASIC</TermLink> arms race has significantly eroded this property by making competitive mining economically viable only at industrial scale.
+
+*→ <ChapterLink href="/docs/cs-book/part-8-blockchain/consensus-mechanisms">Chapter 2: Consensus Mechanisms</ChapterLink>*
+
+---
 
 ### Mempool
 
@@ -398,7 +430,7 @@ A program stored on a blockchain that executes automatically when predefined con
 
 ---
 
-### Stake
+<UserTerm id="stake">Stake</UserTerm>
 
 Cryptocurrency locked as collateral by a <TermLink href="#validator">validator</TermLink> in a <TermLink href="#proof-of-stake-pos">Proof of Stake</TermLink> system. Acts as a security deposit — honest behaviour earns <TermLink href="#staking-reward">staking rewards</TermLink>, dishonest behaviour destroys it via <TermLink href="#slashing">slashing</TermLink>. On Ethereum, the minimum solo validator stake is 32 ETH.
 
