@@ -18,3 +18,15 @@ export function ChapterLink({ href, children }: { href: string; children: ReactN
     </Link>
   );
 }
+
+// Amber — terms suggested by the user (not auto-compiled from chapters)
+export function UserTerm({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <h3 id={id} style={{ color: "#b45309" }}>
+      {children}
+      <span style={{ fontSize: "0.6em", fontWeight: 500, color: "#d97706", marginLeft: "0.6em", verticalAlign: "middle", letterSpacing: "0.05em" }}>
+        YOUR TERM
+      </span>
+    </h3>
+  );
+}
