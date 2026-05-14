@@ -86,6 +86,14 @@ The act of sending a transaction or completed block to all connected <TermLink h
 
 ---
 
+<UserTerm id="brute-force-computation">Brute Force Computation</UserTerm>
+
+A problem-solving approach that systematically tries every possible option until the correct answer is found — with no mathematical shortcut available. In <TermLink href="#proof-of-work-pow">Proof of Work</TermLink> <TermLink href="#mining">mining</TermLink>, finding a valid <TermLink href="#nonce">nonce</TermLink> is brute force: the miner tries values 1, 2, 3, ... sequentially, hashing each time, until the result meets the <TermLink href="#difficulty-adjustment">difficulty</TermLink> target. This cannot be faked or simulated — the only way to produce a valid result is to have genuinely performed the work.
+
+*→ <ChapterLink href="/docs/cs-book/part-8-blockchain/consensus-mechanisms">Chapter 2: Consensus Mechanisms</ChapterLink>*
+
+---
+
 ### Byzantine Generals Problem
 
 A foundational problem in distributed systems, first described by Lamport, Shostak, and Pease (1982). It asks: how can distributed participants reach agreement on a shared plan when some participants may be dishonest — and there is no way to know who? Blockchain <TermLink href="#consensus-mechanism">consensus mechanisms</TermLink> are practical solutions to this problem.
