@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "notebook-coding-productivity",
+    title: "Why Your Laptop Might Be Making You Worse at Coding",
+    description:
+      "The science behind writing code in a notebook — how handwriting, reflection, and deep work make programmers faster, clearer thinkers.",
+    date: "May 16, 2026",
+    tag: "Developer Productivity",
+  },
+  {
     slug: "consensus-mechanisms",
     title: "Consensus Mechanisms: Proof of Work vs Proof of Stake Explained from First Principles",
     description:
