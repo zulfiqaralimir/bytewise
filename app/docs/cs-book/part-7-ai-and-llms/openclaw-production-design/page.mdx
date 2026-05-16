@@ -1,0 +1,755 @@
+export const metadata = {
+  title: "OpenClaw: Production-Ready Self-Hosted AI Assistant Architecture — ByteWise CS Book",
+  description: "A complete production system design for OpenClaw — a self-hosted AI orchestration platform with multi-channel messaging, persistent memory, browser automation, voice processing, and Docker deployment on Hostinger VPS.",
+  keywords: ["OpenClaw", "self-hosted AI", "AI orchestration", "system design", "Docker", "multi-agent", "WhatsApp AI", "Telegram AI", "VPS deployment", "AI architecture"],
+  openGraph: {
+    title: "OpenClaw: Production-Ready Self-Hosted AI Assistant Architecture — ByteWise CS Book",
+    description: "Complete production system design for a self-hosted AI orchestration platform — multi-channel messaging, persistent memory, browser automation, voice, and Docker deployment.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+# OpenClaw: Production-Ready Self-Hosted AI Assistant Architecture
+
+**Version:** 1.0  
+**Target Environment:** Hostinger VPS / Self-Hosted Infrastructure  
+**Architecture Style:** Event-Driven + Modular Microservices
+
+---
+
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Goals & Requirements](#2-goals--requirements)
+3. [High-Level Architecture](#3-high-level-architecture)
+4. [Core System Components](#4-core-system-components)
+5. [Message Routing Architecture](#5-message-routing-architecture)
+6. [AI Routing Layer](#6-ai-routing-layer)
+7. [Persistent Memory System](#7-persistent-memory-system)
+8. [Browser Automation Layer](#8-browser-automation-layer)
+9. [Voice Processing Pipeline](#9-voice-processing-pipeline)
+10. [Security Architecture](#10-security-architecture)
+11. [Docker Service Design](#11-docker-service-design)
+12. [Deployment Architecture](#12-deployment-architecture)
+13. [Database Design](#13-database-design)
+14. [API Gateway Design](#14-api-gateway-design)
+15. [Scaling Strategy](#15-scaling-strategy)
+16. [Recommended VPS Plans](#16-recommended-vps-plans)
+17. [Production Best Practices](#17-production-best-practices)
+18. [Monitoring & Observability](#18-monitoring--observability)
+19. [Disaster Recovery](#19-disaster-recovery)
+20. [Deployment Checklist](#20-deployment-checklist)
+
+---
+
+## 1. Overview
+
+OpenClaw is a **self-hosted AI orchestration platform** — a centralized AI control plane for multi-channel communication and intelligent automation.
+
+Instead of relying on one messaging platform or one AI provider, OpenClaw brings everything together:
+
+- WhatsApp, Telegram, Slack, Discord, Signal, Google Chat, Microsoft Teams
+- Voice interactions and browser automation
+- Persistent AI memory across sessions
+- Multi-model routing (GPT, Claude, local LLMs)
+- Skills/workflow engine and workspace management
+
+The result is a single, self-hosted system that acts as an intelligent layer across all your communication channels.
+
+---
+
+## 2. Goals & Requirements
+
+### Functional Goals
+
+- Multi-channel messaging support
+- AI orchestration across providers
+- Persistent memory (short-term + long-term)
+- Voice assistant support
+- Browser automation
+- Skills and custom workflows
+- Secure self-hosted environment
+- Multi-model AI provider support
+
+### Non-Functional Goals
+
+| Requirement     | Goal                  |
+| --------------- | --------------------- |
+| Availability    | 99.9%                 |
+| Scalability     | Horizontal            |
+| Latency         | Low                   |
+| Security        | Zero Trust            |
+| Maintainability | Modular microservices |
+| Cost Efficiency | Optimized for VPS     |
+
+---
+
+## 3. High-Level Architecture
+
+<MermaidDiagram title="High-Level Architecture" chart={`
+flowchart TB
+
+subgraph Channels
+WA[WhatsApp]
+TG[Telegram]
+SL[Slack]
+DC[Discord]
+TM[Teams]
+GC[Google Chat]
+end
+
+subgraph OpenClaw
+GW[Gateway Layer]
+WS[WebSocket Manager]
+SESS[Session Manager]
+ROUTER[AI Router]
+SKILLS[Skills Engine]
+end
+
+subgraph AI
+GPT[OpenAI GPT]
+CLAUDE[Anthropic Claude]
+LOCAL[Local LLM]
+end
+
+subgraph Memory
+POSTGRES[(PostgreSQL)]
+REDIS[(Redis)]
+VECTOR[(Qdrant / pgvector)]
+end
+
+subgraph Automation
+BROWSER[Chromium Workers]
+VOICE[Voice Engine]
+TASKS[Task Queue]
+end
+
+WA --> GW
+TG --> GW
+SL --> GW
+DC --> GW
+TM --> GW
+GC --> GW
+
+GW --> WS
+WS --> SESS
+SESS --> ROUTER
+ROUTER --> GPT
+ROUTER --> CLAUDE
+ROUTER --> LOCAL
+ROUTER --> SKILLS
+
+SKILLS --> BROWSER
+SKILLS --> VOICE
+SKILLS --> TASKS
+
+ROUTER --> POSTGRES
+ROUTER --> REDIS
+ROUTER --> VECTOR
+`} />
+
+Everything flows through a single Gateway Layer. Channels send events in; the AI Router decides what to do; Skills execute actions; Memory persists context.
+
+---
+
+## 4. Core System Components
+
+### 4.1 Gateway Layer
+
+**Responsibilities:**
+
+- Channel integration and authentication
+- Session creation and WebSocket communication
+- Event dispatching to internal services
+
+**Supported Channels:**
+
+| Platform  | Support  |
+| --------- | -------- |
+| WhatsApp  | Yes      |
+| Telegram  | Yes      |
+| Slack     | Yes      |
+| Discord   | Yes      |
+| Teams     | Yes      |
+| Signal    | Yes      |
+| iMessage  | Optional |
+
+---
+
+### 4.2 Session Manager
+
+Handles:
+
+- Active user sessions and workspace context
+- User memory retrieval and context switching
+- Rate limiting per user/workspace
+
+---
+
+### 4.3 Skills Engine
+
+Responsible for task execution, automation, webhooks, custom workflows, and plugin execution.
+
+Example skills:
+
+```
+Search Google
+Send Email
+Read CRM
+Generate Report
+Scrape Website
+Book Meeting
+```
+
+---
+
+## 5. Message Routing Architecture
+
+<MermaidDiagram title="Message Flow" chart={`
+sequenceDiagram
+
+participant User
+participant Channel
+participant Gateway
+participant Router
+participant Memory
+participant LLM
+participant Skills
+
+User->>Channel: Send Message
+Channel->>Gateway: Incoming Event
+Gateway->>Router: Route Request
+Router->>Memory: Fetch Context
+Memory-->>Router: Relevant Memory
+Router->>LLM: Generate Intent
+
+alt Skill Required
+LLM->>Skills: Execute Action
+Skills-->>LLM: Result
+end
+
+LLM-->>Router: Response
+Router-->>Gateway: Final Response
+Gateway-->>Channel: Deliver Message
+Channel-->>User: Reply
+`} />
+
+Every message follows this path. Memory is fetched before the LLM is called — so every response is context-aware. Skills are invoked only when the LLM determines an action is needed.
+
+---
+
+## 6. AI Routing Layer
+
+Using a single model for every task is wasteful and suboptimal. OpenClaw routes each request to the best model for the job.
+
+<MermaidDiagram title="AI Router" chart={`
+flowchart TD
+
+INPUT[Incoming Request]
+INPUT --> TYPE{Request Type?}
+
+TYPE -->|Coding| CLAUDE[Claude]
+TYPE -->|Writing| GPT[GPT]
+TYPE -->|Quick Reply| SMALL[Small Model]
+TYPE -->|Research| HYBRID[GPT + Claude]
+TYPE -->|Private| LOCAL[Local LLM]
+
+CLAUDE --> OUTPUT[Response]
+GPT --> OUTPUT
+SMALL --> OUTPUT
+HYBRID --> OUTPUT
+LOCAL --> OUTPUT
+`} />
+
+### Model Selection Table
+
+| Task          | Best Model   |
+| ------------- | ------------ |
+| Coding        | Claude       |
+| Blog Writing  | GPT          |
+| Research      | Hybrid       |
+| Vision        | GPT          |
+| Quick Answers | Small Model  |
+| Private Data  | Local LLM    |
+
+### Routing Logic
+
+```python
+if task == "code":
+    model = "claude"
+
+elif task == "content":
+    model = "gpt"
+
+elif task == "private":
+    model = "local"
+
+elif task == "research":
+    model = "hybrid"
+```
+
+This keeps costs down, latency low, and output quality high — each task goes to the model it's suited for.
+
+---
+
+## 7. Persistent Memory System
+
+OpenClaw uses **multi-layer memory** — different stores optimized for different access patterns.
+
+<MermaidDiagram title="Memory Architecture" chart={`
+flowchart TB
+
+CHAT[Conversation]
+CHAT --> EMBED[Embedding Engine]
+EMBED --> VECTOR[(Vector Database)]
+VECTOR --> RETRIEVE[Semantic Retrieval]
+RETRIEVE --> CONTEXT[Relevant Context]
+CONTEXT --> LLM[LLM Response]
+`} />
+
+### PostgreSQL
+
+Stores structured, relational data:
+
+- Users, sessions, and workspaces
+- Full chat history
+- Configurations and skill definitions
+
+### Redis
+
+In-memory store for:
+
+- Active sessions and cache
+- Fast context retrieval
+- Rate limit counters
+
+### Vector Database
+
+Long-term semantic memory:
+
+- Embeddings of past conversations
+- Semantic search over user history
+- Context retrieval beyond a single session
+
+**Recommended options:**
+
+```
+Qdrant       ← recommended (self-hostable, fast)
+pgvector     ← good if you want to stay in Postgres
+Chroma       ← simple, good for small scale
+Weaviate     ← enterprise-grade
+```
+
+---
+
+## 8. Browser Automation Layer
+
+OpenClaw can control headless browsers for web automation tasks.
+
+<MermaidDiagram title="Browser Automation" chart={`
+flowchart TD
+
+OPENCLAW[OpenClaw]
+OPENCLAW --> QUEUE[Browser Queue]
+
+QUEUE --> CHROME1[Chromium Worker 1]
+QUEUE --> CHROME2[Chromium Worker 2]
+QUEUE --> CHROME3[Chromium Worker 3]
+
+CHROME1 --> WEB[Web Actions]
+CHROME2 --> WEB
+CHROME3 --> WEB
+`} />
+
+### Use Cases
+
+- Lead scraping and data extraction
+- Form submission and CRM updates
+- Web automation workflows
+
+### Security Rule
+
+Always isolate browser workers inside Docker containers. Never expose browser workers to the public internet — they run with elevated permissions and are a significant attack surface if exposed.
+
+---
+
+## 9. Voice Processing Pipeline
+
+<MermaidDiagram title="Voice Pipeline" chart={`
+flowchart TD
+
+VOICE[Voice Input]
+VOICE --> STT[Speech-to-Text]
+STT --> AI[OpenClaw AI]
+AI --> TTS[Text-to-Speech]
+TTS --> OUTPUT[Voice Response]
+`} />
+
+### Recommended Providers
+
+**Speech-to-Text:**
+- Whisper (self-hosted, free)
+- Deepgram (managed, low latency)
+
+**Text-to-Speech:**
+- ElevenLabs (high quality, natural voices)
+- Azure TTS (enterprise-grade, cost-efficient at scale)
+
+---
+
+## 10. Security Architecture
+
+Security model: **Zero Trust**. Every layer authenticates independently; no layer trusts another by default.
+
+<MermaidDiagram title="Security Layers" chart={`
+flowchart TB
+
+USER[User]
+USER --> CF[Cloudflare]
+CF --> NGINX[Nginx Reverse Proxy]
+NGINX --> AUTH[Auth Layer]
+AUTH --> OPENCLAW[OpenClaw Services]
+OPENCLAW --> DB[(Databases)]
+`} />
+
+### Layer 1 — Cloudflare
+
+Protects against DDoS, bots, abuse, and traffic spikes. Acts as the outermost shield before traffic hits your VPS.
+
+### Layer 2 — Reverse Proxy (Nginx or Traefik)
+
+- SSL/TLS termination
+- Rate limiting per IP
+- WebSocket proxying
+
+### Layer 3 — Docker Isolation
+
+Each service runs in its own container with no direct inter-container access unless explicitly configured. Separate containers for:
+
+```
+OpenClaw Core
+PostgreSQL
+Redis
+Vector DB
+Browser Workers
+Voice Services
+```
+
+### Layer 4 — Secrets Management
+
+Never store secrets in code or environment files committed to version control. Use:
+
+```
+HashiCorp Vault     ← best for production
+Docker Secrets      ← simpler, still secure
+Encrypted .env      ← minimum acceptable
+```
+
+---
+
+## 11. Docker Service Design
+
+<MermaidDiagram title="Docker Architecture" chart={`
+flowchart TB
+
+NGINX[Nginx]
+OPENCLAW[OpenClaw Core]
+POSTGRES[(Postgres)]
+REDIS[(Redis)]
+QDRANT[(Qdrant)]
+CHROME[Chromium Workers]
+VOICE[Voice Engine]
+WORKER[Task Worker]
+
+NGINX --> OPENCLAW
+OPENCLAW --> POSTGRES
+OPENCLAW --> REDIS
+OPENCLAW --> QDRANT
+OPENCLAW --> CHROME
+OPENCLAW --> VOICE
+OPENCLAW --> WORKER
+`} />
+
+### docker-compose.yml Service Map
+
+```yaml
+services:
+  nginx:
+  openclaw:
+  postgres:
+  redis:
+  qdrant:
+  chromium:
+  worker:
+  voice-service:
+  backup-service:
+```
+
+Each service gets its own network namespace, volume mounts, and restart policy. The `backup-service` runs on a cron schedule and handles automated snapshots of Postgres, Redis, and Qdrant data.
+
+---
+
+## 12. Deployment Architecture
+
+<MermaidDiagram title="Production Deployment" chart={`
+flowchart TD
+
+HOSTINGER[Hostinger VPS]
+HOSTINGER --> UBUNTU[Ubuntu 24.04]
+UBUNTU --> DOCKER[Docker Engine]
+DOCKER --> REVERSE[Nginx]
+REVERSE --> OPENCLAW[OpenClaw]
+OPENCLAW --> DATABASES[(Databases)]
+OPENCLAW --> CHANNELS[Messaging APIs]
+`} />
+
+### Deployment Sequence
+
+<MermaidDiagram title="Deployment Flow" chart={`
+flowchart LR
+
+InstallUbuntu --> InstallDocker
+InstallDocker --> ConfigureNginx
+ConfigureNginx --> DeployOpenClaw
+DeployOpenClaw --> SetupDatabase
+SetupDatabase --> AddChannels
+AddChannels --> EnableSSL
+EnableSSL --> ProductionReady
+`} />
+
+Follow this sequence exactly. Attempting to add channels or enable SSL before the core stack is stable is a common source of deployment failures.
+
+---
+
+## 13. Database Design
+
+<MermaidDiagram title="ER Diagram" chart={`
+erDiagram
+
+USERS ||--o{ SESSIONS : owns
+USERS ||--o{ WORKSPACES : has
+SESSIONS ||--o{ CHAT_HISTORY : contains
+WORKSPACES ||--o{ SKILLS : uses
+
+USERS {
+  uuid id
+  string email
+  string role
+}
+
+SESSIONS {
+  uuid id
+  timestamp created_at
+}
+
+CHAT_HISTORY {
+  uuid id
+  text message
+  text response
+}
+
+WORKSPACES {
+  uuid id
+  string name
+}
+
+SKILLS {
+  uuid id
+  string name
+}
+`} />
+
+Keep this schema minimal at launch. Add columns as features are validated — premature normalization adds complexity without benefit at small scale.
+
+---
+
+## 14. API Gateway Design
+
+```
+/api/v1/chat         → message processing
+/api/v1/workspace    → workspace management
+/api/v1/memory       → memory read/write
+/api/v1/skills       → skill execution
+/api/v1/browser      → browser automation jobs
+/api/v1/voice        → voice pipeline
+/api/v1/auth         → authentication
+```
+
+All routes sit behind the auth layer. Rate limit at the gateway level before requests reach OpenClaw services.
+
+---
+
+## 15. Scaling Strategy
+
+### Under 100 Users — Single VPS
+
+<MermaidDiagram title="Single VPS" chart={`
+flowchart LR
+USER[User] --> VPS[Single VPS]
+`} />
+
+Everything on one machine. Simple to operate, easy to debug. Right choice until you hit actual resource limits.
+
+**Recommended specs:** 4 vCPU / 8–16 GB RAM
+
+---
+
+### 100–1,000 Users — Load Balanced
+
+<MermaidDiagram title="Load Balanced" chart={`
+flowchart TB
+
+LB[Load Balancer]
+LB --> APP1[App Server 1]
+LB --> APP2[App Server 2]
+APP1 --> DB[(Database)]
+APP2 --> DB
+`} />
+
+Separate the stateless app layer from the stateful database layer. Use a managed database or a dedicated DB server.
+
+**Recommended specs:** 8–16 vCPU / 32 GB RAM
+
+---
+
+### Enterprise Scale — Kubernetes
+
+<MermaidDiagram title="Kubernetes Cluster" chart={`
+flowchart TB
+
+K8S[Kubernetes Cluster]
+K8S --> POD1[OpenClaw Pod]
+K8S --> POD2[Worker Pod]
+K8S --> POD3[Browser Pod]
+`} />
+
+Don't start here. Kubernetes adds significant operational overhead — only worth it when horizontal scaling and pod-level isolation are actual requirements.
+
+---
+
+## 16. Recommended VPS Plans
+
+| Use Case   | Specs           |
+| ---------- | --------------- |
+| Personal   | 4 vCPU / 8 GB   |
+| Small Team | 8 vCPU / 16 GB  |
+| Business   | 12 vCPU / 32 GB |
+| Enterprise | Kubernetes      |
+
+Hostinger's KVM VPS plans are a practical starting point — good price-to-RAM ratio and full root access for Docker.
+
+---
+
+## 17. Production Best Practices
+
+- Use HTTPS only — never HTTP in production
+- Enable auto backups before anything else
+- Separate browser workers into isolated containers
+- Rate limit at the gateway, not application layer
+- Encrypt all secrets — never commit `.env` files
+- Enable monitoring before you go live, not after
+- Use vector memory for any user with more than a few sessions
+- Never share a container between OpenClaw and browser workers
+
+---
+
+## 18. Monitoring & Observability
+
+**Recommended stack:**
+
+```
+Prometheus   → metrics collection
+Grafana      → dashboards and alerting
+Loki         → log aggregation
+Sentry       → error tracking
+Uptime Kuma  → uptime monitoring
+```
+
+<MermaidDiagram title="Monitoring Flow" chart={`
+flowchart LR
+
+OPENCLAW[OpenClaw] --> PROM[Prometheus]
+PROM --> GRAFANA[Grafana]
+OPENCLAW --> LOGS[Loki]
+LOGS --> DASHBOARD[Dashboard]
+`} />
+
+Set up Uptime Kuma first — it's the lightest and gives you immediate visibility into whether services are responding. Add Prometheus/Grafana once you have baseline metrics to track.
+
+---
+
+## 19. Disaster Recovery
+
+**What to back up:**
+
+```
+PostgreSQL        → daily pg_dump
+Redis             → RDB snapshots
+Vector DB         → Qdrant collection exports
+Docker Volumes    → bind-mount snapshots
+Configs           → versioned in git
+Secrets           → encrypted vault backup
+```
+
+**Backup schedule:**
+
+```
+Daily    → database backups
+Weekly   → full volume snapshots
+Monthly  → archived long-term storage
+```
+
+Test restores regularly. A backup you've never restored from is a backup you don't actually have.
+
+---
+
+## 20. Deployment Checklist
+
+```
+☐ VPS Provisioned
+☐ Ubuntu 24.04 Installed
+☐ Docker & Docker Compose Installed
+☐ Nginx Configured
+☐ SSL Certificate Enabled
+☐ PostgreSQL Ready
+☐ Redis Running
+☐ Vector DB (Qdrant) Running
+☐ OpenClaw Core Running
+☐ Browser Workers Active
+☐ Voice Services Enabled
+☐ Messaging Channels Connected
+☐ Monitoring Enabled
+☐ Backups Configured
+☐ Security Hardened
+☐ Rate Limits Applied
+☐ Production Load Tested
+```
+
+---
+
+## Final Stack
+
+```
+Hostinger VPS (8–16 GB RAM)
++ Docker Compose
++ OpenClaw Core
++ PostgreSQL
++ Redis
++ Qdrant
++ Nginx
++ Cloudflare
++ GPT + Claude Hybrid Routing
++ Chromium Browser Workers
++ Voice Pipeline (Whisper + ElevenLabs)
++ Monitoring (Prometheus + Grafana + Loki)
+```
+
+This stack gives you a scalable, secure, self-hosted AI assistant platform ready for personal, startup, or enterprise deployment — without vendor lock-in and without sending your data to a third-party SaaS.
+
+<ArticleNav
+  prev={{ title: "Case Study: Open Claw System Design", href: "/docs/cs-book/part-7-ai-and-llms/open-claude-system-design" }}
+  next={{ title: "Case Study: Bloomberg-Style Fintech Platform", href: "/docs/cs-book/part-7-ai-and-llms/blackirontimes-fintech-platform" }}
+/>
