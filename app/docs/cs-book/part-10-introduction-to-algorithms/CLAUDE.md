@@ -101,12 +101,27 @@ Two sub-sections, each with a table:
 
 End with a blockquote summarizing the HLD vs LLD distinction.
 
-### 7. The Big Picture
+### 7. Applications in Networking and Security
+Two sub-sections:
+
+**In Networking:**
+- How the concept or algorithm appears in network protocols, routing, packet processing, or infrastructure
+- Include a table where multiple protocols/algorithms can be compared
+- At least 3 concrete examples with protocol names
+
+**In Security:**
+- How it appears in cryptography, authentication, firewalls, intrusion detection, or vulnerability analysis
+- Include a table where relevant (algorithm comparisons, speed benchmarks)
+- At least 3 concrete examples with real algorithm/protocol names
+- End with a blockquote:
+  > **Simple takeaway:** [one sentence connecting networking/security back to the section's core concept]
+
+### 8. The Big Picture
 - Bullet list of 4–6 key takeaways from the section
 - End with a blockquote:
   > **Simple takeaway:** [one sentence that captures the entire section]
 
-### 8. Practice — LeetCode Problems
+### 9. Practice — LeetCode Problems
 Table format:
 
 | # | Problem | Difficulty | Why It Fits |
@@ -117,7 +132,7 @@ Table format:
 - "Why It Fits" column must explain the specific connection — not just "it uses this algorithm"
 - End with a "How to use these" bullet list + a closing blockquote
 
-### 9. Edge Cases to Always Think About
+### 10. Edge Cases to Always Think About
 Two sub-sections:
 
 **Universal Checklist** (include on every page):

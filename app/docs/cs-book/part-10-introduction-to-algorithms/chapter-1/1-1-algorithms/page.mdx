@@ -220,6 +220,52 @@ Every time you choose a data structure, you are also choosing the algorithms tha
 
 ---
 
+## Applications in Networking and Security
+
+### In Networking
+
+Every network protocol you have ever used is an algorithm. The three properties from 1.1 — well-defined, finite, correct — are non-negotiable requirements for anything that runs on a network.
+
+**Routing algorithms:**
+- When you send a message, routers decide the path it takes across the internet
+- Each router runs an algorithm to decide: which direction should this packet go next?
+- The algorithm must be **correct** — wrong routing = packets go nowhere or loop forever
+- The algorithm must be **finite** — it must decide in microseconds, not seconds
+- Examples: OSPF (Open Shortest Path First), BGP (Border Gateway Protocol)
+
+**DNS — the internet's phone book:**
+- When you type `google.com`, a lookup algorithm translates it to an IP address
+- This lookup happens billions of times per day
+- It must always return the correct answer (correctness) and do it in milliseconds (efficiency)
+- The data structure underneath (a distributed hash table) is what makes the speed possible
+
+**TCP handshake:**
+- The three-step process (SYN → SYN-ACK → ACK) that establishes every internet connection is a precise algorithm
+- Every step is well-defined, the process always finishes, and it must work correctly every time
+
+### In Security
+
+Security algorithms have the strictest correctness requirements of any algorithms you will encounter. A sorting algorithm that fails on 1 in a million inputs is a bug. A cryptographic algorithm that fails on 1 in a trillion inputs is a catastrophic vulnerability.
+
+**Cryptographic algorithms — correctness is everything:**
+- AES (Advanced Encryption Standard) — encrypts your data before it travels across the internet
+- SHA-256 — produces a unique fingerprint of any file or message; used in TLS, Bitcoin, digital signatures
+- RSA — the algorithm behind public-key encryption; securing HTTPS for billions of connections
+- All of these must be **correct for every possible input** — one failure means broken security
+
+**Algorithm selection matters in security too:**
+- MD5 was once a standard hashing algorithm — it was fast and seemed correct
+- Researchers found collisions (two different inputs producing the same output) — it was no longer correct for security purposes
+- The industry switched to SHA-256 — a better algorithm, not a faster computer, fixed the problem
+
+**Data structures and security:**
+- Hash tables power fast password lookups, session token validation, and certificate checking
+- Wrong data structure = timing attacks (an attacker can infer information from how long operations take)
+
+> **Simple takeaway:** In networking and security, algorithm correctness is not a nice-to-have — it is the difference between a system that works and one that can be exploited. Section 1.1's definition of correctness is the foundation everything else is built on.
+
+---
+
 ## The Big Picture
 
 **Key ideas to carry forward from 1.1:**

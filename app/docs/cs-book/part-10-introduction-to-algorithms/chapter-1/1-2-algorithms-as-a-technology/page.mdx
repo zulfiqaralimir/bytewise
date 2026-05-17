@@ -184,6 +184,65 @@ At the code level, algorithm selection shows up in every class and method you wr
 
 ---
 
+## Applications in Networking and Security
+
+The core lesson of 1.2 — that algorithm choice matters as much as hardware — is nowhere more visible than in networking and security, where systems must handle millions of operations per second and any slowdown has immediate real-world consequences.
+
+### In Networking
+
+**Packet forwarding — where O(n) is simply not an option:**
+- A core internet router forwards millions of packets per second
+- Each packet needs a routing table lookup: which interface should this packet leave from?
+- A naive O(n) scan through routing rules would bottleneck the entire router
+- Modern routers use **Longest Prefix Match** algorithms with tries or TCAM hardware — achieving near O(1) lookup
+- This is the 1.2 lesson in hardware: the algorithm made line-rate forwarding possible, not just faster chips
+
+**TCP congestion control — algorithm selection changes network behavior:**
+- When the internet is congested, TCP must decide how fast to send data
+- Different algorithms (Reno, CUBIC, BBR) produce dramatically different throughput and fairness
+- Google developed BBR — a fundamentally different algorithm — and measured 75% higher throughput on some paths
+- Same hardware, same network — different algorithm, different performance
+
+| TCP Algorithm | Approach | Result |
+|---|---|---|
+| TCP Reno (old) | React to packet loss | Underutilizes bandwidth on high-latency links |
+| CUBIC | Cubic growth function | Better for high-bandwidth links |
+| BBR (Google) | Model bandwidth + RTT | Up to 75% better throughput in some cases |
+
+**DNS at scale:**
+- DNS resolves billions of domain names per day
+- The hierarchical lookup algorithm (root → TLD → authoritative) keeps lookup time under 50ms globally
+- Without an efficient algorithm, the entire internet naming system would collapse under load
+
+### In Security
+
+**Cryptographic algorithm efficiency — the direct 1.2 parallel:**
+
+Just as merge sort beats insertion sort by doing less work per element, modern cryptographic algorithms are engineered to be both secure and efficient. This is not accidental — it is deliberate algorithm design.
+
+| Algorithm | Purpose | Speed (approx.) | Notes |
+|---|---|---|---|
+| AES-256 | Symmetric encryption | ~10 GB/s (hardware) | Replaced DES — same security goal, radically better performance |
+| SHA-256 | Hashing | ~500 MB/s | Used in TLS, Bitcoin, code signing |
+| ChaCha20 | Encryption (mobile) | Faster than AES on devices without hardware AES | Algorithm chosen because hardware matters |
+| RSA-2048 | Key exchange | ~1,000 operations/sec | Being replaced by ECDH — smaller keys, same security, much faster |
+
+**Password hashing — where slowness IS the algorithm design:**
+- bcrypt, Argon2, and scrypt are deliberately slow algorithms
+- The goal: make brute-force attacks computationally expensive
+- This is the opposite of the 1.2 lesson — here, engineers intentionally chose a slow algorithm for a security reason
+- Key insight: **"better algorithm" depends on the goal** — sometimes the goal is to be slow
+
+**SSL/TLS handshake — algorithm selection in the wild:**
+- Every HTTPS connection negotiates which algorithms to use: key exchange, encryption, MAC
+- Older TLS versions used RSA key exchange — slow, and vulnerable to retrospective decryption
+- Modern TLS 1.3 uses ECDHE (Elliptic Curve Diffie-Hellman Ephemeral) — faster, forward-secure
+- Algorithm upgrade, same hardware, dramatically better security and performance
+
+> **Simple takeaway:** In networking, algorithm efficiency determines whether a system can handle real-world load — no hardware upgrade compensates for an O(n) routing lookup at line rate. In security, algorithm selection determines both performance and whether the system can be broken — a faster but weaker algorithm is the wrong trade-off.
+
+---
+
 ## The Big Picture
 
 **Key ideas to carry forward from 1.2:**
