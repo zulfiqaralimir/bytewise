@@ -1,0 +1,544 @@
+export const metadata = {
+  title: "How to Read a Social Accounting Matrix (SAM) — ByteWise",
+  description: "A practical guide to reading and interpreting a SAM — the golden rule, cell-by-cell explanation, row and column logic, and complete walkthrough using Pakistan SAM 2007-08.",
+  keywords: ["social accounting matrix", "SAM reading guide", "Pakistan SAM 2007-08", "SAM cells", "row column interpretation", "circular flow", "macroeconomics"],
+  openGraph: {
+    title: "How to Read a Social Accounting Matrix (SAM)",
+    description: "A practical guide to reading and interpreting a SAM using Pakistan SAM 2007-08 — the golden rule, cell-by-cell walkthrough, and complete row/column logic.",
+    type: "article",
+  },
+};
+
+# How to Read a Social Accounting Matrix (SAM)
+
+**A Practical Guide Using Pakistan SAM 2007-08**
+
+> *Economic & Finance Models · Chapter 1 · Section 1.1*
+
+---
+
+## Introduction
+
+A Social Accounting Matrix (SAM) is a comprehensive data framework that captures all economic transactions in an economy for a single year. This guide explains how to read and interpret a SAM using Pakistan's 2007-08 SAM as an example.
+
+---
+
+## The Golden Rule of Reading SAMs
+
+**Cell T(i, j) = Payment FROM column j TO row i**
+
+Simply: **"Column pays Row"**
+
+This means:
+- **Reading across a row** → all income sources of that account
+- **Reading down a column** → all expenditure uses of that account
+
+**Critical Rule:** For every account, **Row Total = Column Total** (income equals expenditure)
+
+---
+
+## Structure of Pakistan SAM 2007-08
+
+The Pakistan SAM has 9 main accounts:
+
+| Account | Description |
+|---------|-------------|
+| **Activities** | Production sectors |
+| **Commodities** | Goods and services |
+| **Land** | Factor of production |
+| **Labor** | Factor of production |
+| **Capital** | Factor of production |
+| **Household** | Consumers |
+| **Government** | Public sector |
+| **S-I** | Savings-Investment |
+| **ROW** | Rest of World (foreign trade) |
+
+---
+
+## Reading Specific Cells: Key Examples
+
+### Production and Consumption Flows
+
+**Cell: Activities Row, Commodities Column = "Supply Matrix"**
+- **Reading:** Commodities pays Activities
+- **Meaning:** Shows which activities produce which commodities
+
+**Cell: Commodities Row, Activities Column = "Intermediate Consumption"**
+- **Reading:** Activities pays Commodities
+- **Meaning:** Activities buy commodities as production inputs
+
+### Factor Payments
+
+**Cell: Labor Row, Activities Column = "VA by Labor"**
+- **Reading:** Activities pays Labor
+- **Meaning:** Wages paid by production sectors
+
+**Cell: Household Row, Labor Column = "Factor Income → HH"**
+- **Reading:** Labor pays Household
+- **Meaning:** Workers receive wage income
+
+### Household Transactions
+
+**Cell: Commodities Row, Household Column = "Private Consumption"**
+- **Reading:** Household pays Commodities
+- **Meaning:** Households buy goods and services
+
+**Cell: Government Row, Household Column = "Direct Taxes"**
+- **Reading:** Household pays Government
+- **Meaning:** Households pay income taxes
+
+### Trade Flows
+
+**Cell: Commodities Row, ROW Column = "Imports"**
+- **Reading:** ROW pays Commodities
+- **Meaning:** Foreign goods enter domestic market
+
+**Cell: ROW Row, Commodities Column = "Exports"**
+- **Reading:** Commodities pays ROW
+- **Meaning:** Domestic goods sold abroad
+
+---
+
+## Reading a Complete Row: Household Income
+
+Reading the **Household Row** across shows all household income sources:
+
+| From Account | Transaction | Meaning |
+|--------------|-------------|---------|
+| Land | Factor Income | Land rent |
+| Labor | Factor Income | Wages |
+| Capital | Factor Income | Profits, dividends |
+| Government | Govt Transfers | Welfare payments |
+| ROW | Remittances | Money from abroad |
+
+**Row Total = Total Household Income**
+
+---
+
+## Reading a Complete Column: Household Expenditure
+
+Reading the **Household Column** down shows how households spend:
+
+| To Account | Transaction | Meaning |
+|------------|-------------|---------|
+| Commodities | Private Consumption | Buying goods/services |
+| Government | Direct Taxes | Income tax |
+| S-I | HH Savings | Savings |
+
+**Column Total = Total Household Expenditure**
+
+**Must equal Row Total (income = expenditure)**
+
+---
+
+## Tracing Economic Flows: A Textile Factory Example
+
+Follow money through the economy:
+
+1. **Factory produces cloth** → Activities → Commodities (Supply Matrix)
+2. **Factory buys cotton** → Commodities ← Activities (Intermediate Consumption)
+3. **Factory pays workers** → Labor ← Activities (VA by Labor)
+4. **Workers receive wages** → Household ← Labor (Factor Income)
+5. **Workers buy food** → Commodities ← Household (Private Consumption)
+6. **Workers pay taxes** → Government ← Household (Direct Taxes)
+
+This shows the **circular flow of income**: production → factor income → household spending → more production.
+
+---
+
+## Key Blocks in the Pakistan SAM
+
+### 1. Production Block
+- Activities ↔ Commodities
+- Shows production technology and input use
+
+### 2. Factor Income Block
+- Factors (Land, Labor, Capital) ← Activities
+- Shows factor payments (wages, rents, profits)
+
+### 3. Household Income Block
+- Household ← Factors (wages, rents, profits)
+- Household ← Government (transfers)
+- Household ← ROW (remittances)
+
+### 4. Final Demand Block
+- Commodities ← Household (consumption)
+- Commodities ← Government (public spending)
+- Commodities ← S-I (investment)
+- Commodities ← ROW (exports)
+
+### 5. Government Revenue Block
+- Government ← Commodities (sales tax, import tax)
+- Government ← Household (income tax)
+- Government ← Capital (state enterprise income)
+- Government ← ROW (foreign grants)
+
+### 6. Trade Block
+- Imports: Commodities ← ROW
+- Exports: ROW ← Commodities
+
+---
+
+## Understanding What Each Cell Tells You
+
+| Cell Location | What It Shows | Example |
+|---------------|---------------|---------|
+| (Labor, Activities) | Wage bill by sector | Agriculture pays wages |
+| (Household, Labor) | Labor income to households | Workers receive wages |
+| (Commodities, Household) | Consumer spending | Households buy goods |
+| (Government, Commodities) | Indirect taxes | Sales tax collected |
+| (Commodities, ROW) | Imports | Foreign goods purchased |
+| (ROW, Commodities) | Exports | Domestic goods sold abroad |
+
+---
+
+## Common Interpretation Mistakes
+
+❌ **Wrong:** "Cell (Labor, Activities) = labor employed"
+✓ **Correct:** "Cell (Labor, Activities) = payments FROM Activities TO Labor (wage bill)"
+
+❌ **Wrong:** Reading row as expenditure
+✓ **Correct:** Row = income sources, Column = expenditure uses
+
+❌ **Wrong:** Ignoring that Row Total must equal Column Total
+✓ **Correct:** Always verify accounting balance
+
+---
+
+## Detailed Cell-by-Cell Explanation
+
+### Row 1: Activities (Production Sectors)
+
+**Reading Activities Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | — | Activities don't pay themselves |
+| Commodities | **Supply Matrix** | Production output — Activities produce commodities |
+| Factors | — | Factors don't buy from activities |
+| Household | — | Households don't buy directly from activities |
+| Government | — | Government doesn't buy directly from activities |
+| S-I | — | Investment doesn't buy from activities directly |
+| ROW | — | Foreign sector doesn't buy from activities directly |
+
+**Row Total = Gross Output** (total value of production)
+
+---
+
+### Row 2: Commodities (Goods & Services)
+
+**Reading Commodities Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | **Intermediate Consumption** | Activities buy commodities as inputs (e.g., steel for car manufacturing) |
+| Commodities | — | Commodities don't buy from themselves |
+| Factors | — | Factors don't consume commodities directly |
+| Household | **Private Consumption** | Households buy commodities for consumption |
+| Government | **Public Consumption** | Government purchases goods/services |
+| S-I | **Fixed Investment** | Investment demand for capital goods |
+| ROW | **Exports** | Commodities sold to foreign buyers |
+
+**Row Total = Aggregate Demand** (total demand for commodities)
+
+> **Key Insight:** This row shows the demand side — who buys the commodities produced.
+
+---
+
+### Row 3: Land (Factor of Production)
+
+**Reading Land Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | **VA by Land** | Activities pay rent for using land (e.g., agricultural land rent) |
+| All others | — | Land receives income only from Activities |
+
+**Row Total = Land Income** (total rent earned by the land factor)
+
+---
+
+### Row 4: Labor (Factor of Production)
+
+**Reading Labor Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | **VA by Labor** | Activities pay wages to workers (labor compensation) |
+| All others | — | Labor receives income only from Activities |
+
+**Row Total = Labor Income** (total wages earned)
+
+---
+
+### Row 5: Capital (Factor of Production)
+
+**Reading Capital Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | **VA by Capital** | Activities pay return to capital (profits, interest, dividends) |
+| All others | — | Capital receives income only from Activities |
+
+**Row Total = Capital Income** (total return to capital)
+
+---
+
+### Row 6: Household (Consumers)
+
+**Reading Household Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | — | Households don't receive from activities directly |
+| Commodities | — | Households don't receive from commodities |
+| Factors (Land/Labor/Capital) | **Factor Income → HH** | Households own factors and receive factor income |
+| Government | **Govt Transfers** | Social security, subsidies, welfare payments |
+| S-I | — | No payment |
+| ROW | **Remittances** | Money sent from Pakistanis working abroad |
+
+**Row Total = HH Income** (total household income from all sources)
+
+> **Key Insight:** Shows all sources of household income — primarily factor income (wages, rents, profits), plus government transfers and remittances.
+
+---
+
+### Row 7: Government (Public Sector)
+
+**Reading Government Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Activities | — | Government doesn't receive from activities directly |
+| Commodities | **Sales/Import Tax** | Indirect taxes (VAT, sales tax, customs duties) |
+| Capital factor | **Capital → Govt** | Income from state-owned enterprises |
+| Household | **Direct Taxes** | Personal income tax from households |
+| ROW | **Foreign Grants** | International aid, donor assistance |
+
+**Row Total = Govt Revenue** (total government revenue from all sources)
+
+> **Key Insight:** Government revenue comes from taxes (direct and indirect), state enterprise profits, and foreign aid.
+
+---
+
+### Row 8: S-I (Savings-Investment Account)
+
+**Reading S-I Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Household | **HH Savings** | Household savings (income not consumed or taxed) |
+| Government | **Govt Savings** | Government budget surplus (positive) or deficit (negative) |
+| ROW | **Foreign Savings** | Net capital inflow from abroad |
+
+**Row Total = Total Investment** (total investment financing available)
+
+> **Key Insight:** This row collects all savings in the economy — from households, government, and foreign sources. In Pakistan 2007-08: Household PKR 2,168bn + Government −PKR 777bn + Foreign PKR 868bn = PKR 2,259bn total investment.
+
+---
+
+### Row 9: ROW (Rest of World)
+
+**Reading ROW Row Across:**
+
+| Column | Cell Content | Interpretation |
+|--------|--------------|----------------|
+| Commodities | **Imports** | Pakistan buys goods from abroad |
+| Capital factor | **Dividend Repatriation** | Profits sent back to foreign investors |
+| Government | **Govt Payments Abroad** | Debt service, foreign aid given |
+
+**Row Total = FX Outflow** (total foreign exchange leaving Pakistan)
+
+---
+
+## Reading the Columns (Expenditure Side)
+
+### Column 1: Activities (Production Costs)
+
+**Reading Activities Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Commodities | **Intermediate Consumption** | Activities buy inputs (raw materials, energy, services) |
+| Land | **VA by Land** | Activities pay land rent |
+| Labor | **VA by Labor** | Activities pay wages |
+| Capital | **VA by Capital** | Activities pay capital returns |
+
+**Column Total = Cost of Production**
+
+**Formula:** Cost = Intermediate Inputs + Land Rent + Wages + Capital Returns
+
+---
+
+### Column 2: Commodities (Supply Sources)
+
+**Reading Commodities Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Activities | **Supply Matrix** | Domestic production supplies commodities |
+| Government | **Sales/Import Tax** | Taxes added to commodity prices |
+| ROW | **Imports** | Foreign supply of commodities |
+
+**Column Total = Aggregate Supply** (domestic production + imports + taxes)
+
+---
+
+### Column 3: Factors — Land, Labor, Capital (Factor Expenditure)
+
+**Reading Factors Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Household | **Factor Income → HH** | Factor income flows to households (who own the factors) |
+| Government | **Capital → Govt** | Some capital income goes to government (state enterprises) |
+| ROW | **Dividend Repatriation** | Some capital income goes to foreign owners |
+
+**Column Total = Factor Expenditure** (how factor income is distributed)
+
+---
+
+### Column 4: Household (Household Spending)
+
+**Reading Household Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Commodities | **Private Consumption** | Households buy goods and services |
+| Government | **Direct Taxes** | Households pay income tax |
+| S-I | **HH Savings** | Households save part of income |
+
+**Column Total = HH Expenditure**
+
+**Formula:** Expenditure = Consumption + Taxes + Savings
+
+---
+
+### Column 5: Government (Government Spending)
+
+**Reading Government Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Commodities | **Public Consumption** | Government buys goods/services (healthcare, education, defense) |
+| Household | **Govt Transfers** | Social security, subsidies, welfare payments |
+| S-I | **Govt Savings** | Government budget surplus (or negative if deficit) |
+| ROW | **Govt Payments Abroad** | Debt service, foreign commitments |
+
+**Column Total = Govt Expenditure**
+
+---
+
+### Column 6: S-I (Investment Expenditure)
+
+**Reading S-I Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Commodities | **Fixed Investment** | Investment purchases (machinery, buildings, infrastructure) |
+| (Change in Stocks) | **Inventory** | Stock accumulation |
+
+> **Key Insight:** Savings collected in the S-I row are spent on capital goods from the commodities account.
+
+---
+
+### Column 7: ROW (Foreign Exchange Sources)
+
+**Reading ROW Column Down:**
+
+| Row | Cell Content | Interpretation |
+|-----|--------------|----------------|
+| Commodities | **Exports** | Pakistan sells goods abroad (brings in foreign exchange) |
+| Household | **Remittances** | Pakistanis abroad send money home |
+| Government | **Foreign Grants** | International aid received |
+| S-I | **Foreign Savings** | Net capital inflow (foreign investment) |
+
+**Column Total = Foreign exchange sources for Pakistan**
+
+---
+
+## Row and Column Totals at a Glance
+
+### Row Totals (What Each Account Earns)
+
+| Account | Row Total Represents |
+|---------|---------------------|
+| Activities | **Gross Output** — total production value |
+| Commodities | **Aggregate Demand** — total demand for goods/services |
+| Land | **Land Income** — total rent earned |
+| Labor | **Labor Income** — total wages earned |
+| Capital | **Capital Income** — total capital returns |
+| Household | **HH Income** — total household income |
+| Government | **Govt Revenue** — total government revenue |
+| S-I | **Total Investment** — total investment financing |
+| ROW | **FX Outflow** — foreign exchange leaving Pakistan |
+
+### Column Totals (What Each Account Spends)
+
+| Account | Column Total Represents |
+|---------|------------------------|
+| Activities | **Cost of Production** — total production costs |
+| Commodities | **Aggregate Supply** — total commodity supply |
+| Factors | **Factor Expenditure** — factor income distribution |
+| Household | **HH Expenditure** — how households spend |
+| Government | **Govt Expenditure** — government spending |
+| S-I | **Investment Uses** — where investment goes |
+| ROW | **FX Inflow** — foreign exchange sources |
+
+### The Balance Condition
+
+For each account: **Row Total = Column Total**
+
+| Account | What Must Balance |
+|---------|------------------|
+| Household | Income (factors + transfers + remittances) = Consumption + Taxes + Savings |
+| Government | Revenue (taxes + state enterprises + aid) = Public consumption + Transfers + Budget balance |
+| Commodities | Demand (intermediate + final + exports) = Domestic production + Imports + Taxes |
+| S-I | Savings (HH + Govt + Foreign) = Fixed Investment + Stock Changes |
+
+---
+
+## Key Economic Insights from Pakistan SAM 2007-08
+
+### 1. Production Structure
+- Activities produce commodities using intermediate inputs, land, labor, and capital
+- Value Added = Labor + Capital + Land payments per sector
+
+### 2. Income Distribution
+- Households earn from three factors: land rent, wages, capital income
+- Government transfers and remittances are significant secondary sources
+- Remittances (PKR 763bn) play a critical role in rural household budgets
+
+### 3. Expenditure Patterns
+- Households split income across consumption, taxes, and savings
+- Government spends on public goods, transfers, and external commitments
+- Investment financing = domestic savings (households + government) + foreign savings
+
+### 4. External Sector
+- Pakistan imports commodities and exports predominantly manufactured goods
+- Receives large remittances from the diaspora
+- Foreign savings (PKR 868bn) financed the investment gap left by the fiscal deficit
+
+### 5. Circular Flow
+
+The SAM captures the complete circular flow of income in one consistent matrix:
+
+```
+Activities → produce → Commodities
+Commodities → intermediate inputs → back to Activities
+Activities → wages → Labor → → Households
+Activities → land rent → Land ──→ Households
+Activities → profits → Capital ──→ Households
+Households → consumption → Commodities → demand → Activities
+Households → taxes → Government → public spending → Commodities
+Government deficit + Household savings + Foreign savings → S-I → Fixed Investment → Commodities
+ROW → exports → Commodities → Imports → ROW
+```
+
+Every payment in this flow appears exactly twice in the SAM — once as income, once as expenditure. That is the double-entry principle applied to an entire economy.
+
+> **Simple takeaway:** Once you understand that every cell is a payment from a column account to a row account, you can read any SAM — the logic is identical regardless of the size or country.
+
+---
+
+*Also available in the [CS Book — Economic & Finance Models](/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam)*

@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "how-to-read-a-sam",
+    title: "How to Read a Social Accounting Matrix (SAM)",
+    description:
+      "The golden rule, cell-by-cell explanation, row and column logic, and a complete walkthrough using Pakistan SAM 2007-08. Master the one rule that unlocks any SAM.",
+    date: "May 17, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "agents-of-chaos",
     title: "Agents of Chaos: A Warning About Autonomous AI Systems",
     description:
