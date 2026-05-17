@@ -24,34 +24,50 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 # 1.1 Algorithms
 
+---
+
 ## What Is an Algorithm?
 
-Here is the one-line definition from CLRS:
+**The one-line definition from CLRS:**
 
 > An algorithm is a well-defined computational procedure that takes some input, does a finite amount of work, and produces the correct output.
 
-Three words in that definition do a lot of work: **well-defined**, **finite**, and **correct**.
+**Three words do all the work:**
 
-- **Well-defined** — every step is clear and unambiguous. There is no room for "it depends" or "use your judgment." A computer needs exact instructions.
-- **Finite** — the algorithm always stops. It does not run forever. It takes some number of steps and then finishes.
+- **Well-defined** — every step is clear and unambiguous. No room for "it depends." A computer needs exact instructions.
+- **Finite** — it always stops. It does not run forever. It takes some number of steps and finishes.
 - **Correct** — it produces the right answer. Not sometimes. For every possible valid input.
 
-Think of it like a recipe. You give it ingredients (input), follow the steps, and get a dish (output). A good recipe is unambiguous, always finishes, and always produces something edible. A bad recipe might be vague, loop forever, or occasionally produce something inedible — that is a bad algorithm.
+**Think of it like a recipe:**
+- Ingredients = input
+- Steps = the algorithm
+- Dish = output
+- A good recipe is unambiguous, always finishes, and always works
 
 ---
 
 ## The Sorting Problem — The Book's Running Example
 
-CLRS uses sorting as its go-to example throughout the book. It is a perfect teaching problem because it is simple to understand but rich enough to reveal deep ideas.
+**Why sorting?**
+- Simple to understand
+- Rich enough to reveal deep trade-offs
+- CLRS uses it as a teaching canvas throughout the whole book
 
 **The problem:**
+- **Input:** A list of numbers in any order — `[31, 41, 59, 26, 41, 58]`
+- **Output:** The same numbers sorted smallest to largest — `[26, 31, 41, 41, 58, 59]`
 
-- **Input:** A list of numbers in any order — say `[31, 41, 59, 26, 41, 58]`
-- **Output:** The same numbers rearranged from smallest to largest — `[26, 31, 41, 41, 58, 59]`
+**What makes it interesting:**
+- Dozens of completely different algorithms all solve this correctly
+- Some are fast, some are slow, some use more memory, some use less
+- Choosing between them is an engineering decision — and it depends on context
 
-Easy to state. But here is what makes it interesting: there are dozens of completely different algorithms that all solve this problem correctly. Some are fast, some are slow, some use a lot of memory, some use very little. The sorting problem exists in the book as a canvas for comparing those trade-offs.
-
-You will encounter many sorting algorithms in this book — insertion sort, merge sort, heapsort, quicksort, and more. Each one solves the same problem. Each one does it differently. Choosing between them is an engineering decision, and that decision depends on context.
+**Sorting algorithms you will meet in this book:**
+- Insertion sort
+- Merge sort
+- Heapsort
+- Quicksort
+- And more — each solving the same problem differently
 
 ---
 
@@ -59,82 +75,111 @@ You will encounter many sorting algorithms in this book — insertion sort, merg
 
 ### 1. Instance of a Problem
 
-A **problem** is general. A **instance** is one specific input.
+- A **problem** is general — "sort a list of numbers"
+- An **instance** is one specific input — "sort `[5, 3, 8, 1]`"
 
-- The *sorting problem* is the general task of putting numbers in order.
-- Sorting the list `[5, 3, 8, 1]` is one *instance* of that problem.
-
-This distinction matters because an algorithm must solve every instance — not just the easy ones, not just the ones you tested. If your algorithm fails on even one valid input, it is not correct.
+**Why it matters:**
+- An algorithm must solve every instance — not just the easy ones
+- If it fails on even one valid input, it is not correct
 
 ### 2. Correct Algorithm
 
-An algorithm is **correct** if it halts with the right answer for every possible input instance.
+**An algorithm is correct if:**
+- It halts (finishes) for every input
+- It produces the right answer for every input — including edge cases
 
-Think of it like a student taking an exam. Getting question 1 right is not enough. Getting most questions right is not enough. Correctness means getting every question right, including edge cases — an empty list, a list with one item, a list where everything is already sorted, a list where everything is in reverse.
+**Edge cases to always think about:**
+- An empty list
+- A list with one item
+- A list already sorted
+- A list sorted in reverse
 
-This is why testing is never enough to prove correctness. You can test a million inputs and still miss the one that breaks your algorithm. That is why CLRS teaches formal proof techniques alongside the algorithms themselves.
+**Think of it like an exam:**
+- Getting most questions right is not enough
+- Correctness means every question — including the tricky ones at the end
+
+**Why testing alone is not enough:**
+- You can test a million inputs and still miss the one that breaks it
+- That is why CLRS teaches formal proof techniques alongside algorithms
 
 ### 3. Data Structures
 
-A **data structure** is the way you organize and store data in memory.
+**What it is:**
+- The way you organize and store data in memory
 
-Algorithms and data structures are always a pair. The algorithm describes *what to do*. The data structure describes *how the data is arranged*. Choosing the wrong data structure can make a fast algorithm slow, or make an easy problem hard.
+**Why it matters:**
+- Algorithms and data structures are always a pair
+- Algorithm = *what to do*
+- Data structure = *how the data is arranged*
+- Wrong data structure → fast algorithm becomes slow
 
-Think of it like a kitchen. The recipe (algorithm) tells you how to cook. The way you organize your ingredients and tools (data structure) determines how efficiently you can follow that recipe. A chef who cannot find anything in their kitchen will be slow even if they know the recipe perfectly.
+**Think of it like a kitchen:**
+- Recipe = algorithm
+- How your ingredients and tools are organized = data structure
+- A chef who cannot find anything will be slow — even with a perfect recipe
 
 ---
 
 ## Why Efficiency Matters
 
-Two algorithms can both be correct and still be vastly different in practice.
+**Two correct algorithms can be vastly different in practice.**
 
-Imagine searching a phone book:
+**Example — searching a phone book:**
 
-- **Strategy 1:** Flip through every page from the beginning until you find the name. Always works. Very slow.
-- **Strategy 2:** Open to the middle, decide whether the name is in the left half or right half, repeat. Always works. Much faster.
+| Strategy | How it works | Steps for 1,000 pages |
+|---|---|---|
+| Flip page by page | Check every page from the start | Up to 1,000 steps |
+| Open to the middle | Halve the search space each time | About 10 steps |
 
-Both are correct. But Strategy 1 might take 1,000 steps on a 1,000-page phone book. Strategy 2 takes about 10 steps on the same book — because each step cuts the remaining search in half.
+Both always find the name. One is 100x faster.
 
-Now scale that to the internet. Google does not search a 1,000-page phone book. It searches billions of pages. Strategy 1 would take years. Strategy 2 takes milliseconds.
+**Now scale to the internet:**
+- Google does not search 1,000 pages — it searches billions
+- Strategy 1 (flip every page) would take years
+- Strategy 2 (halve each time) takes milliseconds
 
-This is why efficiency is not an optional optimization — it is often the difference between a system that works in the real world and one that does not.
+**The lesson:**
+- Efficiency is not an optional optimization
+- At scale, it is the difference between a system that works and one that does not
 
-CLRS formalizes this with **running time analysis**, which you will get deep into starting in Chapter 2. The tools for measuring efficiency — Big O notation, best case, worst case, average case — all flow from this simple idea: two correct algorithms can be dramatically different in the amount of work they do.
+**Coming up in Chapter 2:**
+- CLRS formalizes this with **running time analysis**
+- Tools: Big O notation, best case, worst case, average case
+- All of it flows from this simple idea — two correct algorithms can do dramatically different amounts of work
 
 ---
 
 ## Where You Will See This
 
-Algorithms are everywhere once you start looking. Every piece of software you use today is running algorithms underneath:
+Algorithms are everywhere once you start looking:
 
-- **Search** — Google, Bing, and database queries all use algorithms to find the right result from billions of options
-- **Sorting** — spreadsheets, leaderboards, ranked search results, your email inbox sorted by date
-- **Navigation** — Google Maps, GPS routing, and network packet routing all use path-finding algorithms
-- **Finance** — stock exchange matching engines pair buyers and sellers using algorithms in microseconds
-- **Social media** — your feed, your recommendations, who you might know — all algorithm-driven decisions
+- **Search** — Google, database queries, file lookups
+- **Sorting** — spreadsheets, leaderboards, email inbox by date, ranked results
+- **Navigation** — Google Maps, GPS routing, network packet routing
+- **Finance** — stock exchange matching engines pair buyers and sellers in microseconds
+- **Social media** — your feed, recommendations, and "people you may know" are all algorithm-driven
 - **AI and machine learning** — every model trains and predicts using algorithms at its core
-
-The concepts in 1.1 — correctness, efficiency, the right data structure — show up in every single one of these.
 
 ---
 
-## Real-World Example
+## Real-World Example — Google Search
 
-### How Google Search Decides What to Show You
+**The problem Google solves:**
+- Return the right result from billions of webpages
+- In under one second
+- For billions of queries per day
 
-When you type a search query, Google does not read every webpage on the internet to find your answer. That would take hours. Instead, it runs a series of carefully chosen algorithms on pre-built data structures — indexes — that were constructed in advance.
-
-The reason Google returns results in under a second is not raw hardware power alone. It is **algorithm selection**. Google's engineers chose algorithms that can search billions of documents in logarithmic time — meaning doubling the number of webpages barely increases the search time at all.
-
-This is a direct real-world consequence of what 1.1 is teaching:
+**Why it works — three reasons that map directly to 1.1:**
 
 - **Correctness** — the algorithm must return relevant results every time, not just sometimes
-- **Efficiency** — the algorithm must be fast enough to serve billions of queries per day
-- **Data structures** — the inverted index (a specific data structure) is what makes fast lookup possible in the first place
+- **Efficiency** — fast enough to serve billions of queries per day without slowing down
+- **Data structures** — Google pre-builds an inverted index (a specific data structure) so it never has to read every webpage live
 
-Change any one of those three and Google either returns wrong results, takes too long, or crashes under load. All three have to be right simultaneously.
+**What would happen without good algorithm selection:**
+- A "check every webpage" approach would take hours per search
+- No hardware upgrade fixes a fundamentally slow algorithm
 
-> **Why this algorithm?** Google uses a combination of inverted indexes and ranking algorithms (like PageRank) because they allow sub-second lookup across billions of documents — something a naive "check every page" approach could never achieve at that scale.
+> **Why this algorithm?** Google uses inverted indexes with ranking algorithms (like PageRank) because they allow sub-second lookup across billions of documents — something a naive approach could never achieve at any scale.
 
 ---
 
@@ -142,39 +187,48 @@ Change any one of those three and Google either returns wrong results, takes too
 
 ### In System Design (HLD)
 
-Every major architectural decision in system design has an algorithm underneath it. When you design a large system, you are constantly making algorithm choices — even when you do not call them that.
+Every major architectural decision has an algorithm underneath it:
 
-- **Databases** — when you add an index to a database column, the database builds a sorted data structure (usually a B-Tree) that uses binary search for lookups. The algorithm makes queries fast.
-- **Caching systems** — deciding which data to evict from a cache (LRU, LFU) is an algorithm problem
-- **Load balancers** — distributing traffic across servers uses algorithms (round-robin, least connections, consistent hashing)
-- **Message queues** — prioritizing which messages to process first is a sorting and scheduling algorithm problem
+| System Component | Algorithm at Work |
+|---|---|
+| Database index | B-Tree — binary search on sorted structure |
+| Cache eviction | LRU / LFU — decides what to remove when cache is full |
+| Load balancer | Round-robin, least connections, consistent hashing |
+| Message queue | Priority scheduling — decides which message to process next |
+| Search engine | Inverted index + ranking algorithm |
 
-At the HLD level, algorithm choice determines whether your system can handle 1,000 users or 100 million users.
+**The big point:**
+- Algorithm choice at the HLD level determines whether your system handles 1,000 users or 100 million users
 
 ### In Low-Level Design (LLD)
 
-At the code and class design level, every time you choose a data structure, you are also choosing the algorithms that come with it.
+Every time you choose a data structure, you are also choosing the algorithms that come with it:
 
-- Choosing an **array** means search is slow (scan everything) but access by index is instant
-- Choosing a **hash map** means search is fast but order is lost
-- Choosing a **sorted list** means you can binary search but inserts are slower
+| Data Structure | Fast At | Slow At |
+|---|---|---|
+| Array | Access by index — O(1) | Search — O(n) |
+| Hash Map | Search and insert — O(1) | Ordered access |
+| Sorted List | Binary search — O(log n) | Insert — O(n) |
+| Linked List | Insert at head — O(1) | Access by index — O(n) |
 
-These are not implementation details — they are design decisions. A class you design today with the wrong internal data structure might be 100x slower than it needs to be, and the fix will require a full redesign later.
+**The big point:**
+- These are design decisions, not implementation details
+- A class built on the wrong data structure may need a full redesign later
+- Getting this right early is the mark of a senior engineer
 
-> **Simple takeaway:** In HLD, algorithms determine system scale. In LLD, algorithms determine class performance. Understanding both levels is what separates a junior engineer from a senior one.
+> **Simple takeaway:** In HLD, algorithms determine system scale. In LLD, algorithms determine class performance. Both levels matter — and both start with understanding what an algorithm actually is.
 
 ---
 
 ## The Big Picture
 
-Section 1.1 is not throwing algorithms at you yet. It is building your mental model before any code or math appears.
-
-The key ideas to carry forward:
+**Key ideas to carry forward from 1.1:**
 
 - An algorithm is a precise, finite, correct procedure — not a vague plan
 - The same problem can have many correct algorithms — correctness is the minimum bar, not the finish line
 - Efficiency determines whether a correct algorithm is actually useful at scale
 - Data structures and algorithms are inseparable — the choice of one shapes the choice of the other
+- Every real system you use today — search, maps, social media, finance — is built on algorithm and data structure decisions made by engineers
 
 > **Simple takeaway:** An algorithm is only as good as two things — whether it is always correct, and whether it is fast enough to be practical. Section 1.1 is the book reminding you that both matter, before it teaches you how to measure either.
 
