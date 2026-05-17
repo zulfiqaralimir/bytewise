@@ -1,0 +1,275 @@
+export const metadata = {
+  title: "1.2 Algorithms as a Technology — Introduction to Algorithms (CLRS) — ByteWise CS Book",
+  description:
+    "Algorithms are a technology just like hardware. CLRS 1.2 — why algorithm choice can beat a computer 100x faster, with the insertion sort vs merge sort proof.",
+  keywords: [
+    "algorithms as technology",
+    "insertion sort vs merge sort",
+    "algorithm efficiency",
+    "CLRS 1.2",
+    "running time",
+    "algorithm selection",
+    "scalability",
+    "introduction to algorithms",
+  ],
+  openGraph: {
+    title: "1.2 Algorithms as a Technology — CLRS Chapter 1",
+    description:
+      "Why a slower computer with a better algorithm beats a faster computer with a worse one — CLRS 1.2 explained plainly.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 1.2 Algorithms as a Technology
+
+---
+
+## What
+
+**The core claim of Section 1.2:**
+
+> Algorithms are a technology — just as real and just as important as hardware, programming languages, or computer architecture.
+
+**What this means in plain English:**
+- Buying a faster computer is one way to make software faster
+- Choosing a better algorithm is another — and often a much more powerful one
+- Both are engineering tools. Neither replaces the other.
+- At large scale, algorithm choice often matters **more** than hardware
+
+**Think of it like transportation:**
+- Faster car = better hardware
+- Taking the highway instead of backroads = better algorithm
+- A slow car on the highway often beats a fast car stuck in traffic
+
+---
+
+## Why
+
+**Why does this matter enough to be in Chapter 1?**
+
+- Most beginners think performance is a hardware problem — "just get a faster machine"
+- CLRS wants to correct this from the very start
+- Algorithm selection is a **design decision** that compounds at scale
+
+**What breaks without this thinking:**
+- You overspend on hardware to compensate for inefficient algorithms
+- Your system cannot scale no matter how much infrastructure you add
+- Competitors with better algorithms outperform you at a fraction of the cost
+
+**The key insight:**
+- Hardware improvements are linear — double the speed, double the performance
+- Algorithm improvements can be exponential — a better algorithm can outperform by 1,000x or more on large inputs
+
+---
+
+## How — The Insertion Sort vs Merge Sort Proof
+
+This is CLRS's most famous illustration. It directly proves that algorithm choice beats hardware.
+
+### Setup — Two Computers, Two Algorithms
+
+| | Computer A | Computer B |
+|---|---|---|
+| Speed | 10⁹ instructions per second (fast) | 10⁷ instructions per second (100× slower) |
+| Algorithm | Insertion Sort — takes **2n²** steps | Merge Sort — takes **50n log₂n** steps |
+| Task | Sort **10 million numbers** | Sort **10 million numbers** |
+
+### The Calculation
+
+**Computer A — fast machine, slow algorithm (Insertion Sort):**
+- Steps needed: 2 × (10⁷)² = 2 × 10¹⁴
+- Time: 2 × 10¹⁴ ÷ 10⁹ = **200,000 seconds ≈ 55 hours**
+
+**Computer B — slow machine, fast algorithm (Merge Sort):**
+- Steps needed: 50 × 10⁷ × log₂(10⁷) ≈ 50 × 10⁷ × 23.25 ≈ 1.16 × 10¹⁰
+- Time: 1.16 × 10¹⁰ ÷ 10⁷ = **1,163 seconds ≈ 20 minutes**
+
+### The Result
+
+| | Time |
+|---|---|
+| Computer A (fast hardware, bad algorithm) | ~55 hours |
+| Computer B (slow hardware, good algorithm) | ~20 minutes |
+| **Winner** | **Computer B — by 172×** |
+
+**The lesson:**
+- Computer B is 100× slower in hardware
+- But wins by 172× because of the algorithm
+- This gap grows larger as the input gets bigger — not smaller
+
+### Why Does the Gap Grow?
+
+- Insertion Sort grows as **n²** — double the input, quadruple the work
+- Merge Sort grows as **n log n** — double the input, barely more than double the work
+
+| Input Size | Insertion Sort (n²) | Merge Sort (n log n) |
+|---|---|---|
+| 1,000 | 1,000,000 steps | ~10,000 steps |
+| 1,000,000 | 1,000,000,000,000 steps | ~20,000,000 steps |
+| 10,000,000 | 100,000,000,000,000 steps | ~232,500,000 steps |
+
+At 10 million items, merge sort does **430,000× less work** than insertion sort.
+
+---
+
+## Where You Will See This
+
+Algorithm selection as a technology decision shows up everywhere at scale:
+
+- **Search engines** — Google rebuilds its search index nightly using merge-sort-style operations across petabytes of data. An O(n²) approach would take years, not hours.
+- **Databases** — query optimizers choose between different join algorithms (nested loop, hash join, merge join) based on data size. Wrong choice = query that takes hours instead of milliseconds.
+- **Social media feeds** — sorting millions of posts for hundreds of millions of users in real time requires O(n log n) algorithms, not O(n²) ones.
+- **Genomics** — sequencing the human genome required algorithmic breakthroughs, not just faster computers. The algorithms made the project possible.
+- **Financial trading** — high-frequency trading systems sort and match orders in microseconds. Algorithm efficiency is the competitive moat.
+- **Logistics** — Amazon's delivery routing optimizes billions of package routes daily. A slow algorithm here means late deliveries and higher costs.
+
+---
+
+## Real-World Example — Google's Nightly Index Rebuild
+
+**The problem:**
+- Google's web index contains hundreds of billions of pages
+- It needs to be rebuilt and re-sorted regularly to reflect new pages and updated rankings
+- This process sorts and merges data at petabyte scale
+
+**What would happen with a slow algorithm (O(n²)):**
+- Doubling the number of web pages would quadruple the rebuild time
+- At current scale, the rebuild would take years — not hours
+- Google could not keep its index fresh. Search results would go stale.
+
+**What actually happens with merge sort (O(n log n)):**
+- Doubling the web pages barely increases rebuild time
+- The index stays fresh because the algorithm scales with the data
+- Engineers can add more servers to parallelize — but the algorithm is why parallelization works at all
+
+**Why this algorithm?**
+- Merge sort is used at this scale because it splits data into independent chunks that can be processed in parallel across thousands of machines — a property called **external sorting**. No O(n²) algorithm has this property.
+
+> **Why this algorithm?** Merge sort's divide-and-conquer structure maps naturally onto distributed systems — each machine handles a chunk, then results are merged. This is why Google's MapReduce (and later frameworks like Spark) are built around merge-sort-like operations. The algorithm choice enabled the architecture.
+
+---
+
+## HLD & LLD Connections
+
+### In System Design (HLD)
+
+Algorithm selection at the architectural level determines whether a system can scale:
+
+| Design Decision | Algorithm Choice | Why It Matters |
+|---|---|---|
+| Database query planner | Hash join vs merge join vs nested loop | Nested loop = O(n²), wrong for large tables |
+| Search index rebuild | External merge sort | Only O(n log n) algorithms parallelize across machines |
+| Recommendation engine | Approximate nearest neighbor | Exact search is O(n) per query — too slow at scale |
+| Feed ranking | Top-K selection (heap) | Sorting everything is wasteful when you only need top 100 |
+| Log processing pipeline | Streaming merge sort | Must handle data larger than RAM — merge sort works, others don't |
+
+**The HLD principle:**
+- Before choosing infrastructure, choose algorithms
+- A bad algorithm cannot be fixed by adding more servers — it just fails at larger scale
+
+### In Low-Level Design (LLD)
+
+At the code level, algorithm selection shows up in every class and method you write:
+
+| Code Decision | Slow Choice | Fast Choice | Why |
+|---|---|---|---|
+| Sorting a list | Bubble sort O(n²) | Merge / Quick sort O(n log n) | Gap multiplies with data size |
+| Finding duplicates | Nested loop O(n²) | Hash set O(n) | One pass is always better than two |
+| Searching sorted data | Linear scan O(n) | Binary search O(log n) | Already sorted — use it |
+| Inserting into sorted structure | Shift array O(n) | Use a tree O(log n) | Structure determines cost |
+
+> **Simple takeaway:** In HLD, wrong algorithm choice means your system cannot scale beyond a certain size. In LLD, wrong algorithm choice means your methods are silently 100× slower than they need to be. Both have the same root cause — treating algorithm selection as an afterthought.
+
+---
+
+## The Big Picture
+
+**Key ideas to carry forward from 1.2:**
+
+- Algorithms are a technology — as real and as important as hardware
+- A better algorithm on slower hardware beats a worse algorithm on faster hardware — the CLRS proof shows this with numbers
+- The gap between a good and bad algorithm grows with input size — it does not shrink
+- Algorithmic efficiency is a design decision made early — it cannot always be fixed later by adding hardware
+- The same data processed with different algorithms can take 20 minutes or 55 hours — the algorithm is the difference
+
+> **Simple takeaway:** Hardware makes everything faster by a constant factor. A better algorithm makes large inputs possible at all. That is why algorithm selection is engineering, not optimization.
+
+---
+
+## Practice — LeetCode Problems
+
+These problems force you to experience the insertion sort vs merge sort lesson firsthand — a slow correct solution exists, and a fast correct solution also exists. You have to find the fast one.
+
+| # | Problem | Difficulty | Why It Fits |
+|---|---|---|---|
+| 1 | [Sort an Array](https://leetcode.com/problems/sort-an-array/) | 🟡 Medium | The exact debate from 1.2 in code — O(n²) solutions time out, only O(n log n) passes. You feel the gap. |
+| 2 | [Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/) | 🟢 Easy | Core operation inside merge sort — understanding this makes merge sort click |
+| 3 | [Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/) | 🟡 Medium | Three valid algorithms (sort, heap, quickselect) with very different performance — algorithm selection in practice |
+| 4 | [Merge Intervals](https://leetcode.com/problems/merge-intervals/) | 🟡 Medium | Sorting first transforms an O(n²) problem into O(n log n) — shows how algorithm choice changes the entire approach |
+| 5 | [Sort Colors](https://leetcode.com/problems/sort-colors/) | 🟡 Medium | O(n) solution beats O(n log n) for this specific case — proves "better algorithm" depends on the problem, not just the name |
+
+**How to use these:**
+
+- For each problem, first write the brute-force O(n²) solution and make it pass
+- Then ask: can I do this faster? What structure in the problem can I exploit?
+- Compare the runtime results between your two solutions
+- That runtime difference is the 1.2 lesson made visible
+
+> **Simple rule:** If your solution times out on large inputs, you have a correctness problem with scale — not a hardware problem. The fix is a better algorithm, not a faster machine.
+
+---
+
+## Edge Cases to Always Think About
+
+### Universal Checklist
+
+**If your input is a list or array:**
+- What if it is **empty**? → `[]`
+- What if it has **only one item**? → `[5]`
+- What if all items are the **same**? → `[3, 3, 3]`
+- What if it is **already sorted**? → `[1, 2, 3, 4]`
+- What if it is **sorted in reverse**? → `[4, 3, 2, 1]`
+- What if the answer is at the **very first** or **very last** position?
+
+**If your input involves numbers:**
+- What if the number is **zero**? → `0`
+- What if it is **negative**? → `-5`
+- What if it is the **largest possible integer**? → overflow risk
+
+**If your problem involves searching:**
+- What if the target **does not exist**?
+- What if there are **duplicate values**?
+- What if there are **multiple valid answers**?
+
+**If your problem involves strings:**
+- What if the string is **empty**? → `""`
+- What if it has **one character**? → `"a"`
+- What if all characters are the **same**? → `"aaaa"`
+
+---
+
+### Section-Specific Edge Cases — For 1.2 Concepts
+
+When comparing algorithm performance, these cases reveal where an algorithm breaks down:
+
+**For sorting algorithms:**
+- Already sorted input — insertion sort is fast here (O(n)), merge sort still O(n log n). Best case matters.
+- Reverse sorted input — worst case for insertion sort (O(n²)). Always test this.
+- All elements equal — does your algorithm still work correctly? Does it do unnecessary swaps?
+- Very large n — does your O(n²) algorithm time out where O(n log n) does not?
+
+**For algorithm comparison in general:**
+- What is the **best case** for each algorithm? They are not always the same.
+- What is the **worst case**? This is where O(n²) vs O(n log n) hurts most.
+- What happens at the **crossover point**? Sometimes O(n²) is faster for very small n because it has less overhead.
+
+> **Simple rule:** Always test your algorithm on the smallest input, the largest input, and the worst-case shape of input (already sorted, reverse sorted, all same). If it passes all three, you understand how it actually behaves.
+
+---
+
+<ArticleNav
+  prev={{ title: "1.1 Algorithms", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-1-algorithms" }}
+  next={null}
+/>

@@ -127,6 +127,7 @@ const chapters = [
         chapter: "Chapter 1: The Role of Algorithms in Computing",
         items: [
           { title: "1.1 Algorithms", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-1-algorithms" },
+          { title: "1.2 Algorithms as a Technology", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-2-algorithms-as-a-technology" },
         ],
       },
     ],
@@ -222,12 +223,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/54 chapters</span>
+              <span>{readCount}/55 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 54) * 100}%` }}
+                style={{ width: `${(readCount / 55) * 100}%` }}
               />
             </div>
           </div>
