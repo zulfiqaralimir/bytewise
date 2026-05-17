@@ -134,6 +134,34 @@ Two sub-sections:
 
 ---
 
+## OG Image (Thumbnail)
+
+Every page must have an `opengraph-image.tsx` alongside `page.mdx`.
+
+**File location:**
+```
+chapter-{N}/{section-slug}/opengraph-image.tsx
+```
+
+**Visual identity for CLRS series:**
+- Background: deep navy `#020c1b → #0a1628`
+- Grid overlay: subtle cyan lines at 4% opacity
+- Accent color: cyan `#38bdf8` (top pill, glow, branding)
+- Secondary accent: indigo `#818cf8` (tags, bottom glow)
+- Title: white `#f0f9ff`, 88px, weight 900
+- Subtitle: light blue `#7dd3fc`, 26px
+
+**What changes per section:**
+- Top pill text: `CLRS · Part {N} · Chapter {N}`
+- Section number label: `Section {X.Y}`
+- Main title: the section name
+- Subtitle: 3–4 key concepts from that section separated by ` · `
+- Tags row: 4 key terms from the section
+
+**Base template:** Copy from `chapter-1/1-1-algorithms/opengraph-image.tsx` and update the 5 items above.
+
+---
+
 ## ArticleNav Wiring
 
 Every page ends with:
