@@ -289,6 +289,107 @@ Cloud computing is where the 1.2 lesson — **better algorithm beats faster hard
 
 ---
 
+## Applications in Machine Learning, Deep Learning, Data Science, Data Engineering, and FinOps
+
+The 1.2 proof — a slower computer with a better algorithm beats a faster computer with a worse one by 172× — has direct equivalents at every layer of the data stack. Same hardware, different algorithm, dramatically different result.
+
+### In Machine Learning
+
+**Optimizer selection — the insertion sort vs merge sort of ML training:**
+
+Training a neural network requires an optimization algorithm that updates model weights. Different optimizers reach the same accuracy at very different speeds — same model, same hardware, different algorithm.
+
+| Optimizer | Convergence Speed | Best For |
+|---|---|---|
+| SGD | Slow — many epochs needed | Simple models, predictable behavior |
+| Adam | Fast — adaptive learning rate | Most deep learning tasks |
+| RMSprop | Medium | Recurrent networks |
+| LAMB / LARS | Very fast at large batch | BERT pre-training at scale |
+
+- Google switched from SGD to LAMB for BERT pre-training: training time dropped from days to hours — same hardware, different optimizer algorithm, the 1.2 proof in production
+
+**Approximate Nearest Neighbor (ANN) — algorithm selection for inference:**
+- A recommendation system needs to find similar items from billions of vectors in real time
+- Brute-force exact search: O(n) per query — at 1 billion items, completely unusable
+- FAISS / HNSW (ANN algorithms): O(log n) approximate search — millisecond latency at billions of items
+- Same hardware, different algorithm, the gap is millions of queries per second vs zero
+
+### In Deep Learning
+
+**The Transformer attention bottleneck — an insertion sort problem:**
+- Standard self-attention is O(n²) in sequence length — doubling the input length quadruples the computation
+- This is the insertion sort problem: correct, but does not scale
+
+| Attention Algorithm | Compute | Memory | Speed |
+|---|---|---|---|
+| Standard attention | O(n²) | O(n²) | Slow for long sequences |
+| FlashAttention | O(n²) compute, O(n) memory | O(n) | 2–4× faster, identical result |
+| Linear attention | O(n) | O(n) | Approximate — trades accuracy |
+
+- FlashAttention (2022) restructured the exact same math to use GPU memory more efficiently — same hardware, better algorithm, enabled models previously impossible to train
+- This is the 1.2 lesson: the algorithm selection changed what was architecturally possible, not just faster
+
+**Model compression algorithms:**
+- Quantization converts FP32 weights to INT8 — the model runs 4× faster on the same hardware
+- Pruning removes redundant weights — same architecture, less compute per inference
+- Both are algorithm-level decisions, not hardware upgrades
+
+### In Data Science
+
+**Pandas vs Polars — same analysis, different algorithm:**
+- Both process DataFrames, but with fundamentally different underlying algorithms
+- Polars uses SIMD-optimized, multi-threaded operations — typically 5–20× faster on the same machine
+- The data scientist changes nothing about the logic — only the library (and therefore the algorithm)
+
+**Model selection in sklearn — algorithm performance varies dramatically:**
+- `KNeighborsClassifier` with brute-force search: O(n) per query — slow at scale
+- `KNeighborsClassifier` with kd-tree: O(log n) per query — fast at scale — same predictions, different algorithm
+- `LinearRegression` vs `Ridge` vs `Lasso`: all solve regression with different algorithmic approaches that behave differently at scale
+- This is the 1.2 lesson applied to every library call a data scientist makes
+
+### In Data Engineering
+
+**Spark join selection — the most direct 1.2 parallel in data engineering:**
+
+| Spark Join Type | Algorithm | Complexity | When to Use |
+|---|---|---|---|
+| Broadcast hash join | Hash table in memory | O(n) lookup | Small table fits in RAM |
+| Sort-merge join | Sort both sides, then merge | O(n log n) | Both tables are large |
+| Nested loop join | Brute force — check every pair | O(n²) | Never — Spark forces this only as a last resort |
+
+- Choosing broadcast hash join over sort-merge join can make a query 10–100× faster — same cluster, same data, different algorithm
+- Choosing sort-merge over nested loop eliminates the O(n²) that makes large joins impossible
+
+**Delta Lake / Iceberg — algorithm-driven storage layout:**
+- These formats use Z-ordering and data-skipping algorithms to avoid reading irrelevant files
+- A query that would scan 1 TB with a naive layout scans 10 GB with Z-ordering — same data, different access algorithm
+- This is the 1.2 lesson applied to storage: the layout algorithm determines whether your query costs $50 or $5,000
+
+### In FinOps
+
+**Cloud cost is a direct function of algorithm efficiency:**
+
+| Inefficiency | Root Cause | FinOps Billing Impact |
+|---|---|---|
+| Full table scan in BigQuery | No partition filter applied | Billed for TB scanned instead of GB |
+| Nested loop join in Redshift | Wrong join type selected | 10× more CPU-hours charged |
+| Unoptimized Spark shuffle | Data not pre-partitioned correctly | 3–5× longer jobs = higher cost |
+| Repeated recomputation | No caching / memoization | Same compute paid for multiple times |
+
+**Spot instance bin-packing — algorithm efficiency as a monthly cost lever:**
+- Kubernetes uses a bin-packing algorithm to fit containers onto nodes and minimize machine count
+- A better bin-packing algorithm fits more jobs onto fewer machines — same workload, lower bill
+- Cloud engineering teams tune this algorithm directly because a 10% improvement at AWS/GCP scale saves millions of dollars per month
+
+**Carbon-aware scheduling:**
+- Azure and Google Cloud offer carbon-aware compute: schedule your workload when renewable energy is available, within your deadline
+- This is a constraint optimization algorithm — find the lowest-cost, lowest-carbon time window
+- The algorithm determines both the financial and environmental outcome of every scheduled batch job
+
+> **Simple takeaway:** In ML and deep learning, algorithm selection determines whether training takes hours or days. In data engineering and FinOps, it determines whether a pipeline costs $50 or $5,000. The 1.2 lesson — better algorithm beats faster hardware — shows up on every cloud bill and in every model training run.
+
+---
+
 ## The Big Picture
 
 **Key ideas to carry forward from 1.2:**

@@ -292,6 +292,66 @@ Cloud platforms — AWS, Azure, Google Cloud — are essentially giant algorithm
 
 ---
 
+## Applications in Machine Learning, Deep Learning, Data Science, Data Engineering, and FinOps
+
+The three properties that define an algorithm — well-defined, finite, correct — are the baseline requirement in every data-driven field. These fields are not separate from algorithms; they are built on top of them.
+
+### In Machine Learning
+
+Machine learning is a collection of algorithms that learn patterns from data. The 1.1 definition applies directly.
+
+- **Training algorithms** — fitting a model to data is an algorithm: well-defined steps (compute gradient, update weights), runs for a finite number of epochs, and must produce correct weights
+- **Gradient descent** — the most widely used training algorithm. Takes a loss value, computes gradients, updates model parameters. Must always converge (finite) and produce correct updates (not corrupt the model)
+- **k-Nearest Neighbors (kNN)** — classifies new inputs by finding the k most similar training examples. Choice of data structure (flat array vs kd-tree vs ball tree) determines O(n) vs O(log n) per query — the exact data structure + algorithm pairing from 1.1
+- **Correctness edge cases in ML** — a model that fails on 1% of inputs is not correct in the 1.1 sense. Missing values, outliers, and unusual distributions are the edge cases that break ML pipelines
+
+### In Deep Learning
+
+Deep learning stacks algorithms on top of algorithms. Every layer performs an algorithm; training the network performs another.
+
+- **Backpropagation** — computes how to update every weight in a neural network. Well-defined (chain rule applied layer by layer), always finishes (one backward pass per forward pass), and must be numerically correct — one wrong gradient corrupts the entire model
+- **Attention mechanisms (Transformers)** — powers GPT, BERT, and every modern large language model. The core operation is a scaled dot-product across all token pairs — an algorithm whose correctness determines whether the model learns anything at all
+- **CUDA kernels** — deep learning runs on GPUs via hand-optimized algorithms at the memory level. A naive matrix multiply vs cuBLAS is 10–100× faster on the same hardware — data structure layout is why
+
+### In Data Science
+
+Data science workflows are sequences of algorithms applied to datasets. The 1.1 properties show up at every step.
+
+- **Sorting and ranking** — every time a data scientist sorts a DataFrame or ranks features by importance, they invoke a sorting algorithm. The correctness of that sort determines whether the analysis is valid
+- **Aggregation algorithms** — `groupby`, `pivot_table`, and `resample` in pandas are not magic — they run specific algorithms under the hood. Understanding their data structures (hash tables for groupby) explains why they are fast on some shapes of data and slow on others
+- **Statistical algorithms** — t-tests, chi-square tests, and confidence intervals are algorithms: well-defined formulas, always produce a result, must be correct for every valid sample
+- **Correctness in pipelines** — a data science pipeline that gives wrong answers on 1% of inputs is not correct. NaN handling, type coercion errors, and join key mismatches are the instances that break correctness
+
+### In Data Engineering
+
+Data engineering is the field most directly shaped by algorithm choice at scale. Every ETL pipeline processes millions or billions of records — the algorithm determines whether this is feasible.
+
+- **Apache Spark** — core operations (map, reduce, join, sort) are distributed algorithms. Choosing the right join strategy (sort-merge join vs broadcast hash join) can change a 2-hour job to 2 minutes — same cluster, same data, different algorithm
+- **Shuffle operations** — the most expensive operation in distributed data processing. How much data moves across machines is determined entirely by the partitioning algorithm
+- **Partitioning algorithms** — hash partitioning, range partitioning, and round-robin partitioning decide how data is split across files and machines. The choice affects every downstream read — a data structure decision applied at distributed scale
+- **Streaming — algorithms that never stop** — Apache Kafka and Flink process data as it arrives. Each event must be processed in finite time and produce correct output — exactly the 1.1 definition, applied to an infinite stream
+
+### In FinOps
+
+FinOps (Financial Operations for cloud) is the practice of optimizing cloud infrastructure costs. The 1.1 lesson — efficiency is not optional — is directly measurable in dollars.
+
+- **Cost allocation** — parsing, tagging, and allocating millions of billing events to teams requires algorithms that are both correct (wrong allocation = wrong business decisions) and efficient (runs daily on massive billing logs)
+- **Rightsizing** — FinOps tools analyze CPU, memory, and network usage to recommend smaller instance types. This is a search algorithm: find the cheapest option that still meets performance requirements
+- **Spot instance scheduling** — workload scheduling algorithms decide which jobs run on spot vs on-demand. Incorrect scheduling = jobs terminated mid-run. Inefficient scheduling = unused capacity paid for
+- **Budget forecasting** — predicting next month's cloud bill uses time-series forecasting algorithms. Incorrect forecasts lead to budget overruns. Inefficient ones cannot process enough historical data to be accurate
+
+| Domain | 1.1 Concept Applied | Where It Shows Up |
+|---|---|---|
+| Machine Learning | Correctness for every input | Model fails on edge-case inputs or unusual distributions |
+| Deep Learning | Well-defined + finite | Backpropagation must complete and not corrupt weights |
+| Data Science | Data structure choice | Hash table for groupby vs sorted array for binary search |
+| Data Engineering | Finite + correct at scale | Spark job must finish and produce correct output on every run |
+| FinOps | Efficiency = cost | Slow scheduling algorithm bills more CPU-hours for the same work |
+
+> **Simple takeaway:** Every field that touches data runs algorithms every second. The three properties from 1.1 — well-defined, finite, correct — are not academic definitions; they are the daily engineering standard across machine learning, data science, and cloud operations.
+
+---
+
 ## The Big Picture
 
 **Key ideas to carry forward from 1.1:**
