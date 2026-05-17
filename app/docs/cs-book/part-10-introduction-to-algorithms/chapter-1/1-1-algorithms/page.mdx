@@ -103,6 +103,68 @@ CLRS formalizes this with **running time analysis**, which you will get deep int
 
 ---
 
+## Where You Will See This
+
+Algorithms are everywhere once you start looking. Every piece of software you use today is running algorithms underneath:
+
+- **Search** — Google, Bing, and database queries all use algorithms to find the right result from billions of options
+- **Sorting** — spreadsheets, leaderboards, ranked search results, your email inbox sorted by date
+- **Navigation** — Google Maps, GPS routing, and network packet routing all use path-finding algorithms
+- **Finance** — stock exchange matching engines pair buyers and sellers using algorithms in microseconds
+- **Social media** — your feed, your recommendations, who you might know — all algorithm-driven decisions
+- **AI and machine learning** — every model trains and predicts using algorithms at its core
+
+The concepts in 1.1 — correctness, efficiency, the right data structure — show up in every single one of these.
+
+---
+
+## Real-World Example
+
+### How Google Search Decides What to Show You
+
+When you type a search query, Google does not read every webpage on the internet to find your answer. That would take hours. Instead, it runs a series of carefully chosen algorithms on pre-built data structures — indexes — that were constructed in advance.
+
+The reason Google returns results in under a second is not raw hardware power alone. It is **algorithm selection**. Google's engineers chose algorithms that can search billions of documents in logarithmic time — meaning doubling the number of webpages barely increases the search time at all.
+
+This is a direct real-world consequence of what 1.1 is teaching:
+
+- **Correctness** — the algorithm must return relevant results every time, not just sometimes
+- **Efficiency** — the algorithm must be fast enough to serve billions of queries per day
+- **Data structures** — the inverted index (a specific data structure) is what makes fast lookup possible in the first place
+
+Change any one of those three and Google either returns wrong results, takes too long, or crashes under load. All three have to be right simultaneously.
+
+> **Why this algorithm?** Google uses a combination of inverted indexes and ranking algorithms (like PageRank) because they allow sub-second lookup across billions of documents — something a naive "check every page" approach could never achieve at that scale.
+
+---
+
+## HLD & LLD Connections
+
+### In System Design (HLD)
+
+Every major architectural decision in system design has an algorithm underneath it. When you design a large system, you are constantly making algorithm choices — even when you do not call them that.
+
+- **Databases** — when you add an index to a database column, the database builds a sorted data structure (usually a B-Tree) that uses binary search for lookups. The algorithm makes queries fast.
+- **Caching systems** — deciding which data to evict from a cache (LRU, LFU) is an algorithm problem
+- **Load balancers** — distributing traffic across servers uses algorithms (round-robin, least connections, consistent hashing)
+- **Message queues** — prioritizing which messages to process first is a sorting and scheduling algorithm problem
+
+At the HLD level, algorithm choice determines whether your system can handle 1,000 users or 100 million users.
+
+### In Low-Level Design (LLD)
+
+At the code and class design level, every time you choose a data structure, you are also choosing the algorithms that come with it.
+
+- Choosing an **array** means search is slow (scan everything) but access by index is instant
+- Choosing a **hash map** means search is fast but order is lost
+- Choosing a **sorted list** means you can binary search but inserts are slower
+
+These are not implementation details — they are design decisions. A class you design today with the wrong internal data structure might be 100x slower than it needs to be, and the fix will require a full redesign later.
+
+> **Simple takeaway:** In HLD, algorithms determine system scale. In LLD, algorithms determine class performance. Understanding both levels is what separates a junior engineer from a senior one.
+
+---
+
 ## The Big Picture
 
 Section 1.1 is not throwing algorithms at you yet. It is building your mental model before any code or math appears.
