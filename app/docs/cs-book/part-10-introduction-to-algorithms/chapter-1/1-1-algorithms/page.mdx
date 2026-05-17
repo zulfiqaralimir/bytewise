@@ -257,6 +257,59 @@ These problems directly reinforce what 1.1 teaches — the difference between a 
 
 ---
 
+## Edge Cases to Always Think About
+
+You do not need years of experience to think of edge cases. You need a checklist. Use this every time you sit down to solve a problem.
+
+### The Universal Checklist — Works for Almost Every Problem
+
+**If your input is a list or array:**
+- What if it is **empty**? → `[]`
+- What if it has **only one item**? → `[5]`
+- What if all items are the **same**? → `[3, 3, 3]`
+- What if it is **already sorted**? → `[1, 2, 3, 4]`
+- What if it is **sorted in reverse**? → `[4, 3, 2, 1]`
+- What if the answer is at the **very first position**?
+- What if the answer is at the **very last position**?
+
+**If your input involves numbers:**
+- What if the number is **zero**? → `0`
+- What if it is **negative**? → `-5`
+- What if it is the **largest possible integer**? → overflow risk
+
+**If your problem involves searching:**
+- What if the target **does not exist** in the input?
+- What if there are **duplicate values**?
+- What if there are **multiple valid answers**?
+
+**If your problem involves strings:**
+- What if the string is **empty**? → `""`
+- What if it has **one character**? → `"a"`
+- What if all characters are the **same**? → `"aaaa"`
+- What if it has **spaces or special characters**?
+
+---
+
+### Section-Specific Edge Cases — For 1.1 Concepts
+
+Since 1.1 is about what an algorithm is — not a specific algorithm yet — these are the edge cases that test whether your understanding of correctness is complete:
+
+**Testing correctness of any algorithm you write:**
+- Does it work on the **smallest possible input**? (empty, zero, one item)
+- Does it work when the **answer is obvious**? (already sorted, target is first element)
+- Does it work when the **answer is at the boundary**? (last element, maximum value)
+- Does it work when **there is no answer**? (target not found, empty result)
+- Does it **always stop**? Or can it loop forever on some input?
+
+**Think of it like a teacher checking homework:**
+- Easy inputs are the standard questions
+- Edge cases are the trick questions at the end
+- A correct algorithm passes both — not just the easy ones
+
+> **Simple rule:** Before you call your solution done, run through the universal checklist above. This one habit will catch 80% of bugs that test cases miss.
+
+---
+
 <ArticleNav
   prev={null}
   next={null}
