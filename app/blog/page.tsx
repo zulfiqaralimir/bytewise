@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "agents-of-chaos",
+    title: "Agents of Chaos: A Warning About Autonomous AI Systems",
+    description:
+      "A research paper from Harvard, MIT, Stanford, and CMU deploys real autonomous AI agents with memory, email, and shell access — and documents what goes wrong.",
+    date: "May 17, 2026",
+    tag: "Agentic AI Papers",
+  },
+  {
     slug: "notebook-coding-productivity",
     title: "Why Your Laptop Might Be Making You Worse at Coding",
     description:

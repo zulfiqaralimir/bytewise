@@ -109,9 +109,24 @@ const chapters = [
       { title: "Blockchain Glossary", href: "/docs/cs-book/part-8-blockchain/blockchain-glossary" },
     ],
   },
+  {
+    part: "Part 9 — Research",
+    chapters: [
+      {
+        chapter: "Agentic AI",
+        items: [
+          { title: "Agents of Chaos: A Warning About Autonomous AI Systems", href: "/docs/cs-book/part-9-research/agentic-ai/agents-of-chaos" },
+        ],
+      },
+    ],
+  },
 ];
 
-const allHrefs = chapters.flatMap((c) => c.items.map((i) => i.href));
+const allHrefs = chapters.flatMap((c) =>
+  "items" in c && c.items
+    ? c.items.map((i: { href: string }) => i.href)
+    : (c as any).chapters?.flatMap((ch: any) => ch.items.map((i: any) => i.href)) ?? []
+);
 
 export function SidebarClient() {
   const pathname = usePathname();
@@ -196,12 +211,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/52 chapters</span>
+              <span>{readCount}/53 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 52) * 100}%` }}
+                style={{ width: `${(readCount / 53) * 100}%` }}
               />
             </div>
           </div>
@@ -229,28 +244,62 @@ export function SidebarClient() {
               </button>
 
               {!collapsed[section.part] && (
-                <ul>
-                  {section.items.map((item) => {
-                    const globalIdx = allHrefs.indexOf(item.href);
-                    const isActive = pathname === item.href;
-                    return (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          onClick={() => setMobileOpen(false)}
-                          className={`flex items-center gap-3 px-6 py-2 text-sm transition-colors ${
-                            isActive
-                              ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500"
-                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                          }`}
-                        >
-                          <span className="text-xs text-gray-400 w-4 flex-shrink-0">{globalIdx + 1}.</span>
-                          <span className="flex-1">{item.title}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
+                "items" in section && section.items ? (
+                  <ul>
+                    {(section.items as { title: string; href: string }[]).map((item) => {
+                      const globalIdx = allHrefs.indexOf(item.href);
+                      const isActive = pathname === item.href;
+                      return (
+                        <li key={item.href}>
+                          <Link
+                            href={item.href}
+                            onClick={() => setMobileOpen(false)}
+                            className={`flex items-center gap-3 px-6 py-2 text-sm transition-colors ${
+                              isActive
+                                ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500"
+                                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                            }`}
+                          >
+                            <span className="text-xs text-gray-400 w-4 flex-shrink-0">{globalIdx + 1}.</span>
+                            <span className="flex-1">{item.title}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <div>
+                    {((section as any).chapters as { chapter: string; items: { title: string; href: string }[] }[]).map((ch) => (
+                      <div key={ch.chapter}>
+                        <div className="px-6 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-indigo-500">
+                          {ch.chapter}
+                        </div>
+                        <ul>
+                          {ch.items.map((item) => {
+                            const globalIdx = allHrefs.indexOf(item.href);
+                            const isActive = pathname === item.href;
+                            return (
+                              <li key={item.href}>
+                                <Link
+                                  href={item.href}
+                                  onClick={() => setMobileOpen(false)}
+                                  className={`flex items-center gap-3 pl-8 pr-6 py-2 text-sm transition-colors ${
+                                    isActive
+                                      ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500"
+                                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  <span className="text-xs text-gray-400 w-4 flex-shrink-0">{globalIdx + 1}.</span>
+                                  <span className="flex-1">{item.title}</span>
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )
               )}
             </div>
           ))}
