@@ -132,6 +132,18 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 11 — Economic & Finance Models",
+    chapters: [
+      {
+        chapter: "Chapter 1: Social Accounting Matrix",
+        items: [
+          { title: "Social Accounting Matrix: A Complete Guide", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/social-accounting-matrix" },
+          { title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" },
+        ],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
@@ -223,12 +235,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/55 chapters</span>
+              <span>{readCount}/57 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 55) * 100}%` }}
+                style={{ width: `${(readCount / 57) * 100}%` }}
               />
             </div>
           </div>
