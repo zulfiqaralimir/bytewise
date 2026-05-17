@@ -234,6 +234,29 @@ Every time you choose a data structure, you are also choosing the algorithms tha
 
 ---
 
+## Practice — LeetCode Problems
+
+These problems directly reinforce what 1.1 teaches — the difference between a correct algorithm and an efficient one, and how data structure choice changes everything.
+
+| # | Problem | Difficulty | Why It Fits |
+|---|---|---|---|
+| 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | 🟢 Easy | A brute-force correct solution exists (nested loop) but a smarter data structure (hash map) makes it 10x faster — the exact correctness vs efficiency trade-off in 1.1 |
+| 2 | [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/) | 🟢 Easy | Choosing between array scan vs hash set is a pure data structure decision — wrong choice is correct but slow |
+| 3 | [Binary Search](https://leetcode.com/problems/binary-search/) | 🟢 Easy | The phone book analogy from 1.1 in code — halving the search space vs scanning every element |
+| 4 | [Search Insert Position](https://leetcode.com/problems/search-insert-position/) | 🟢 Easy | Reinforces what "correct for every instance" means — edge cases like empty arrays and boundary positions |
+| 5 | [Missing Number](https://leetcode.com/problems/missing-number/) | 🟢 Easy | Multiple correct algorithms exist — brute force, sorting, hash set, math — perfect for comparing efficiency across solutions |
+
+**How to use these:**
+
+- Solve each problem yourself first
+- Then ask: is my solution correct for every possible input — including edge cases?
+- Then ask: is there a faster solution that uses a better data structure?
+- That two-step thinking is exactly what 1.1 is building
+
+> **Simple rule:** A solution that passes all test cases is correct. A solution that does it efficiently is engineering.
+
+---
+
 <ArticleNav
   prev={null}
   next={null}
