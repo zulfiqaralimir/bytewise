@@ -184,7 +184,7 @@ At the code level, algorithm selection shows up in every class and method you wr
 
 ---
 
-## Applications in Networking and Security
+## Applications in Networking, Security, and Cloud Computing
 
 The core lesson of 1.2 — that algorithm choice matters as much as hardware — is nowhere more visible than in networking and security, where systems must handle millions of operations per second and any slowdown has immediate real-world consequences.
 
@@ -240,6 +240,52 @@ Just as merge sort beats insertion sort by doing less work per element, modern c
 - Algorithm upgrade, same hardware, dramatically better security and performance
 
 > **Simple takeaway:** In networking, algorithm efficiency determines whether a system can handle real-world load — no hardware upgrade compensates for an O(n) routing lookup at line rate. In security, algorithm selection determines both performance and whether the system can be broken — a faster but weaker algorithm is the wrong trade-off.
+
+### In Cloud Computing
+
+Cloud computing is where the 1.2 lesson — **better algorithm beats faster hardware** — plays out at the largest scale ever built. The difference between a good and bad algorithm at cloud scale is not 172× — it can be millions of dollars per month.
+
+**Auto-scaling — algorithm efficiency determines your cloud bill:**
+- Cloud platforms constantly decide: add more servers or remove them?
+- A slow, inefficient scaling algorithm over-provisions resources — you pay for machines you do not need
+- A fast, well-designed algorithm right-sizes capacity — same performance, lower cost
+- At AWS/Azure/GCP scale, a 10% improvement in scheduling efficiency saves hundreds of millions of dollars per year
+
+**MapReduce and Spark — distributed merge sort in production:**
+- Google's MapReduce (and Apache Spark) process petabytes of data across thousands of machines
+- The core operation is a distributed merge sort — splitting data into chunks, processing in parallel, merging results
+- This is the exact 1.2 lesson: merge sort's divide-and-conquer structure scales horizontally across machines
+- An O(n²) sorting approach cannot be parallelized the same way — the algorithm determines the architecture
+
+**Kubernetes scheduler — bin packing as a business decision:**
+- Kubernetes decides which machine runs which container
+- It uses a variant of the **bin packing algorithm** — fitting containers (items) onto nodes (bins) to maximize utilization
+- Better algorithm = more containers per machine = lower cost per workload
+- This is algorithm selection as a direct cost optimization
+
+**Cloud storage — algorithm choice at exabyte scale:**
+
+| Storage System | Algorithm | Why It Matters |
+|---|---|---|
+| AWS S3 | Consistent hashing | O(1) object lookup regardless of how many objects exist |
+| Google Bigtable | SSTable + merge sort | Efficient sorted storage across distributed nodes |
+| Amazon DynamoDB | Consistent hashing + B-Tree | Fast reads and writes at any scale |
+| Cassandra | Consistent hashing ring | No single point of failure — algorithm distributes load |
+
+**CDN routing — algorithm decides who serves your content:**
+- When you visit a website, a CDN (like Cloudflare or Akamai) uses an **anycast routing algorithm** to route you to the nearest edge server
+- This reduces latency from hundreds of milliseconds to single digits
+- Same content, same hardware — the algorithm determines the user experience
+
+**The cloud cost equation — algorithm efficiency = money:**
+
+| Scenario | Bad Algorithm | Good Algorithm | Monthly Cost Difference |
+|---|---|---|---|
+| Sorting 1TB of logs daily | O(n²) — unusable | O(n log n) | Cannot even run vs ~$50 |
+| Scheduling 10,000 containers | Greedy O(n²) | Optimized O(n log n) | 30–40% more machines needed |
+| Load balancing 1M req/sec | O(n) scan per request | O(1) consistent hash | Extra servers vs no extra cost |
+
+> **Simple takeaway:** In cloud computing, the 1.2 lesson is measured in dollars. A better algorithm does not just run faster — it runs on fewer machines, at lower cost, with better reliability. Every major cloud provider employs teams of engineers whose sole job is to improve the algorithms that schedule, route, and store data — because even a 1% improvement at their scale is worth tens of millions of dollars.
 
 ---
 

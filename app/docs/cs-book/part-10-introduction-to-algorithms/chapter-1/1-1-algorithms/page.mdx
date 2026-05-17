@@ -220,7 +220,7 @@ Every time you choose a data structure, you are also choosing the algorithms tha
 
 ---
 
-## Applications in Networking and Security
+## Applications in Networking, Security, and Cloud Computing
 
 ### In Networking
 
@@ -263,6 +263,32 @@ Security algorithms have the strictest correctness requirements of any algorithm
 - Wrong data structure = timing attacks (an attacker can infer information from how long operations take)
 
 > **Simple takeaway:** In networking and security, algorithm correctness is not a nice-to-have — it is the difference between a system that works and one that can be exploited. Section 1.1's definition of correctness is the foundation everything else is built on.
+
+### In Cloud Computing
+
+Cloud platforms — AWS, Azure, Google Cloud — are essentially giant algorithm machines. Every service you use in the cloud is powered by algorithms running at enormous scale.
+
+**Resource scheduling — the algorithm that decides where your code runs:**
+- When you deploy a container or a serverless function, a scheduling algorithm decides which physical machine runs it
+- Kubernetes uses a **bin-packing algorithm** to fit as many containers as possible onto as few machines as possible — saving cost
+- The algorithm must be correct (container runs where resources are available) and finite (decision made in milliseconds, not minutes)
+
+**Load balancing — correctness across distributed systems:**
+- A load balancer distributes incoming requests across many servers
+- The algorithm must correctly route each request, always finish the decision, and never crash or loop
+- Round-robin, least-connections, and consistent hashing are all different algorithms solving the same problem with different trade-offs
+
+**Object storage — data structure + algorithm at petabyte scale:**
+- AWS S3 stores trillions of objects across thousands of machines
+- A **consistent hashing algorithm** decides which machine stores which object
+- The algorithm must always give the correct answer (find the object) and do it in constant time O(1) — regardless of how many objects exist
+
+**Serverless functions — algorithm correctness under uncertainty:**
+- AWS Lambda, Google Cloud Functions — code that runs on demand
+- The platform uses algorithms to decide when to spin up instances, when to shut them down, and how to route requests
+- Incorrect algorithm = requests fail or go to wrong instances
+
+> **Simple takeaway:** In cloud computing, every dollar of infrastructure cost and every millisecond of latency is determined by algorithm choices made by engineers. The three properties from 1.1 — well-defined, finite, correct — are the baseline requirement for every algorithm running at cloud scale.
 
 ---
 
