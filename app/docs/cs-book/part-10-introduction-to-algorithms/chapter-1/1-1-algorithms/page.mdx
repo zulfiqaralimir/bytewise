@@ -1,0 +1,124 @@
+export const metadata = {
+  title: "1.1 Algorithms — Introduction to Algorithms (CLRS) — ByteWise CS Book",
+  description:
+    "What is an algorithm? A plain-English walkthrough of CLRS Chapter 1.1 — definitions, the sorting problem, correctness, and why efficiency matters.",
+  keywords: [
+    "algorithms",
+    "introduction to algorithms",
+    "CLRS",
+    "what is an algorithm",
+    "sorting problem",
+    "algorithm correctness",
+    "algorithm efficiency",
+    "computer science",
+  ],
+  openGraph: {
+    title: "1.1 Algorithms — CLRS Chapter 1",
+    description:
+      "What is an algorithm? Plain-English explanation of CLRS Section 1.1 — definitions, sorting, correctness, and efficiency.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 1.1 Algorithms
+
+## What Is an Algorithm?
+
+Here is the one-line definition from CLRS:
+
+> An algorithm is a well-defined computational procedure that takes some input, does a finite amount of work, and produces the correct output.
+
+Three words in that definition do a lot of work: **well-defined**, **finite**, and **correct**.
+
+- **Well-defined** — every step is clear and unambiguous. There is no room for "it depends" or "use your judgment." A computer needs exact instructions.
+- **Finite** — the algorithm always stops. It does not run forever. It takes some number of steps and then finishes.
+- **Correct** — it produces the right answer. Not sometimes. For every possible valid input.
+
+Think of it like a recipe. You give it ingredients (input), follow the steps, and get a dish (output). A good recipe is unambiguous, always finishes, and always produces something edible. A bad recipe might be vague, loop forever, or occasionally produce something inedible — that is a bad algorithm.
+
+---
+
+## The Sorting Problem — The Book's Running Example
+
+CLRS uses sorting as its go-to example throughout the book. It is a perfect teaching problem because it is simple to understand but rich enough to reveal deep ideas.
+
+**The problem:**
+
+- **Input:** A list of numbers in any order — say `[31, 41, 59, 26, 41, 58]`
+- **Output:** The same numbers rearranged from smallest to largest — `[26, 31, 41, 41, 58, 59]`
+
+Easy to state. But here is what makes it interesting: there are dozens of completely different algorithms that all solve this problem correctly. Some are fast, some are slow, some use a lot of memory, some use very little. The sorting problem exists in the book as a canvas for comparing those trade-offs.
+
+You will encounter many sorting algorithms in this book — insertion sort, merge sort, heapsort, quicksort, and more. Each one solves the same problem. Each one does it differently. Choosing between them is an engineering decision, and that decision depends on context.
+
+---
+
+## Three Terms You Need to Know
+
+### 1. Instance of a Problem
+
+A **problem** is general. A **instance** is one specific input.
+
+- The *sorting problem* is the general task of putting numbers in order.
+- Sorting the list `[5, 3, 8, 1]` is one *instance* of that problem.
+
+This distinction matters because an algorithm must solve every instance — not just the easy ones, not just the ones you tested. If your algorithm fails on even one valid input, it is not correct.
+
+### 2. Correct Algorithm
+
+An algorithm is **correct** if it halts with the right answer for every possible input instance.
+
+Think of it like a student taking an exam. Getting question 1 right is not enough. Getting most questions right is not enough. Correctness means getting every question right, including edge cases — an empty list, a list with one item, a list where everything is already sorted, a list where everything is in reverse.
+
+This is why testing is never enough to prove correctness. You can test a million inputs and still miss the one that breaks your algorithm. That is why CLRS teaches formal proof techniques alongside the algorithms themselves.
+
+### 3. Data Structures
+
+A **data structure** is the way you organize and store data in memory.
+
+Algorithms and data structures are always a pair. The algorithm describes *what to do*. The data structure describes *how the data is arranged*. Choosing the wrong data structure can make a fast algorithm slow, or make an easy problem hard.
+
+Think of it like a kitchen. The recipe (algorithm) tells you how to cook. The way you organize your ingredients and tools (data structure) determines how efficiently you can follow that recipe. A chef who cannot find anything in their kitchen will be slow even if they know the recipe perfectly.
+
+---
+
+## Why Efficiency Matters
+
+Two algorithms can both be correct and still be vastly different in practice.
+
+Imagine searching a phone book:
+
+- **Strategy 1:** Flip through every page from the beginning until you find the name. Always works. Very slow.
+- **Strategy 2:** Open to the middle, decide whether the name is in the left half or right half, repeat. Always works. Much faster.
+
+Both are correct. But Strategy 1 might take 1,000 steps on a 1,000-page phone book. Strategy 2 takes about 10 steps on the same book — because each step cuts the remaining search in half.
+
+Now scale that to the internet. Google does not search a 1,000-page phone book. It searches billions of pages. Strategy 1 would take years. Strategy 2 takes milliseconds.
+
+This is why efficiency is not an optional optimization — it is often the difference between a system that works in the real world and one that does not.
+
+CLRS formalizes this with **running time analysis**, which you will get deep into starting in Chapter 2. The tools for measuring efficiency — Big O notation, best case, worst case, average case — all flow from this simple idea: two correct algorithms can be dramatically different in the amount of work they do.
+
+---
+
+## The Big Picture
+
+Section 1.1 is not throwing algorithms at you yet. It is building your mental model before any code or math appears.
+
+The key ideas to carry forward:
+
+- An algorithm is a precise, finite, correct procedure — not a vague plan
+- The same problem can have many correct algorithms — correctness is the minimum bar, not the finish line
+- Efficiency determines whether a correct algorithm is actually useful at scale
+- Data structures and algorithms are inseparable — the choice of one shapes the choice of the other
+
+> **Simple takeaway:** An algorithm is only as good as two things — whether it is always correct, and whether it is fast enough to be practical. Section 1.1 is the book reminding you that both matter, before it teaches you how to measure either.
+
+---
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>

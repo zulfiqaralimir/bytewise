@@ -120,6 +120,17 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 10 — Introduction to Algorithms (CLRS)",
+    chapters: [
+      {
+        chapter: "Chapter 1: The Role of Algorithms in Computing",
+        items: [
+          { title: "1.1 Algorithms", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-1-algorithms" },
+        ],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
@@ -211,12 +222,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/53 chapters</span>
+              <span>{readCount}/54 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 53) * 100}%` }}
+                style={{ width: `${(readCount / 54) * 100}%` }}
               />
             </div>
           </div>
