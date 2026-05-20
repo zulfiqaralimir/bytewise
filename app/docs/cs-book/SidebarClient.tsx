@@ -130,6 +130,12 @@ const chapters = [
           { title: "1.2 Algorithms as a Technology", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-2-algorithms-as-a-technology" },
         ],
       },
+      {
+        chapter: "Chapter 2: Getting Started",
+        items: [
+          { title: "2.1 Insertion Sort", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-2/2-1-insertion-sort" },
+        ],
+      },
     ],
   },
   {

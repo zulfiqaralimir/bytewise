@@ -1,0 +1,410 @@
+export const metadata = {
+  title: "2.1 Insertion Sort — Introduction to Algorithms (CLRS) — ByteWise CS Book",
+  description:
+    "Insertion sort explained plainly — how it works, why it is correct, loop invariants, and where O(n²) is actually the right choice.",
+  keywords: [
+    "insertion sort",
+    "CLRS 2.1",
+    "loop invariant",
+    "sorting algorithm",
+    "in-place sorting",
+    "stable sort",
+    "algorithm correctness",
+    "introduction to algorithms",
+  ],
+  openGraph: {
+    title: "2.1 Insertion Sort — CLRS Chapter 2",
+    description:
+      "The card-sorting algorithm that teaches correctness proofs — CLRS 2.1 explained plainly, with loop invariants and real-world applications.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 2.1 Insertion Sort
+
+---
+
+## What
+
+**The core idea:**
+
+> Insertion sort sorts an array by repeatedly taking the next unsorted element and sliding it into its correct position among the already-sorted elements to its left.
+
+**Key terms:**
+- **In-place** — sorts within the original array, no extra array needed
+- **Stable** — equal elements keep their original relative order
+- **Incremental** — builds the sorted answer one element at a time
+- **Comparison-based** — decides order by comparing pairs of elements
+
+**Think of it like dealing cards:**
+- You pick up cards one at a time from the table
+- Each new card gets inserted into the right slot in your hand
+- Your hand is always sorted — you just grow it one card at a time
+- You never reshuffle everything, you only move the new card to where it belongs
+
+---
+
+## Why
+
+**Why does CLRS start Chapter 2 with insertion sort?**
+
+- It is simple enough to understand completely on the first read
+- It introduces **loop invariants** — the proof technique CLRS uses throughout the entire book
+- It sets up the contrast with merge sort in Section 2.3: same problem, very different performance
+- It shows that a correct algorithm can still be the wrong choice at scale
+
+**What breaks without understanding insertion sort:**
+- You skip the loop invariant technique and struggle to prove that any algorithm is correct
+- You use insertion sort on large inputs and wonder why your code times out
+- You also miss the cases where insertion sort is genuinely the right tool (small arrays, nearly sorted data)
+
+**The key insight:**
+- Insertion sort is not just a slow algorithm to learn and discard — it is the foundation for understanding correctness proofs and the O(n²) vs O(n log n) tradeoff that runs through all of Part I
+
+---
+
+## How
+
+### The Algorithm
+
+CLRS pseudocode (4th edition, p. 19):
+
+```
+INSERTION-SORT(A, n)
+  for i = 2 to n
+    key = A[i]
+    j = i - 1
+    while j > 0 and A[j] > key
+      A[j + 1] = A[j]
+      j = j - 1
+    A[j + 1] = key
+```
+
+**Step-by-step walkthrough on `[5, 2, 4, 6, 1, 3]`:**
+
+| i | key | Before inner loop | After inner loop |
+|---|---|---|---|
+| 2 | 2 | [**5**, 2, 4, 6, 1, 3] | [2, **5**, 4, 6, 1, 3] |
+| 3 | 4 | [2, **5**, 4, 6, 1, 3] | [2, 4, **5**, 6, 1, 3] |
+| 4 | 6 | [2, 4, **5**, 6, 1, 3] | [2, 4, 5, **6**, 1, 3] |
+| 5 | 1 | [2, 4, 5, **6**, 1, 3] | [**1**, 2, 4, 5, 6, 3] |
+| 6 | 3 | [1, 2, 4, 5, **6**, 3] | [1, 2, **3**, 4, 5, 6] |
+
+Each iteration: pick up the element at position `i`, shift everything larger one step right, drop the element into the gap.
+
+### Loop Invariant — How CLRS Proves Correctness
+
+A **loop invariant** is a property that holds true at three specific moments:
+
+1. **Initialization** — it is true before the loop's first iteration
+2. **Maintenance** — if it is true before an iteration, it stays true after
+3. **Termination** — when the loop ends, the invariant tells you the algorithm is correct
+
+**The loop invariant for insertion sort:**
+
+> *At the start of each iteration of the outer for-loop, the subarray A[1..i-1] contains the original first i-1 elements, now in sorted order.*
+
+**Proving it:**
+- **Initialization** (before i=2): A[1..1] contains just A[1]. A single element is trivially sorted. ✓
+- **Maintenance**: the inner while-loop shifts A[i-1], A[i-2], ... rightward until it finds the right spot for `key`. After the insertion, A[1..i] is sorted. ✓
+- **Termination**: when i = n+1, the invariant says A[1..n] — the whole array — is sorted. ✓
+
+This is not just formality. Loop invariants are the standard proof tool for algorithm correctness in CLRS and in computer science generally.
+
+### Performance
+
+| Case | Why | Time |
+|---|---|---|
+| Best — already sorted | Inner while never runs (`A[j] ≤ key` immediately) | Θ(n) |
+| Worst — reverse sorted | Inner while runs i-1 times for every i | Θ(n²) |
+| Average — random input | Inner while runs about i/2 times on average | Θ(n²) |
+
+**Key properties:**
+
+| Property | Value |
+|---|---|
+| In-place | Yes — O(1) extra space |
+| Stable | Yes — equal elements keep original order |
+| Adaptive | Yes — faster on nearly sorted input |
+| Online | Yes — can sort a stream, one element at a time |
+
+---
+
+## Where You Will See This
+
+Insertion sort appears in production wherever small size or near-sortedness makes it the fastest choice:
+
+- **Standard library hybrid sorts** — Python's Timsort and Java's Arrays.sort both fall back to insertion sort for subarrays smaller than ~32–64 elements, where its simplicity beats merge sort's overhead
+- **Database row insertion** — inserting a row into a small sorted index page uses insertion-sort logic to maintain order
+- **Real-time sensor streams** — incoming data that arrives nearly in order (temperature readings, timestamps) is fast to re-sort with insertion sort
+- **Card game engines** — literally: any game that deals and sorts cards uses insertion sort or a direct variant
+- **CPU instruction schedulers** — some CPU out-of-order execution pipelines use insertion-sort-like logic to reorder a small instruction window
+- **Online algorithms** — any situation where items arrive one at a time and must be sorted continuously — insertion sort handles this naturally since it is an online algorithm
+- **Embedded systems** — on microcontrollers with limited RAM, insertion sort's O(1) space is valuable even at Θ(n²) time
+
+---
+
+## Real-World Example — Python's Timsort
+
+**The problem:**
+CPython needed a sort for real-world data — logs, database results, user records — that was both fast and stable.
+
+**What the team found:**
+- Real-world data is almost never random. It arrives in *runs* — stretches that are already partially sorted.
+- Merge sort handles random data well but wastes time on already-sorted stretches.
+- Insertion sort is Θ(n) on already-sorted input and has almost no overhead for tiny arrays.
+
+**What Timsort does:**
+- Scans the array for natural runs (already ascending or descending sequences)
+- Uses insertion sort to extend short runs to a minimum size (~32–64 elements)
+- Merges runs together using merge sort
+
+**The result:**
+- On random data: O(n log n) — same as merge sort
+- On nearly sorted data: approaches O(n) — because insertion sort handles the small runs blazingly fast
+- Python's default `list.sort()` and `sorted()` use this. Java's `Arrays.sort()` for objects uses it too.
+
+> **Why this algorithm?** Insertion sort's best-case Θ(n) performance on sorted input is exactly what makes Timsort fast on real-world data — which is almost always partially ordered, not randomly shuffled.
+
+---
+
+## HLD & LLD Connections
+
+### In System Design (HLD)
+
+| System Component | How Insertion Sort Appears |
+|---|---|
+| Database B-tree leaf node insertion | New row inserted into a small sorted page using shift-and-insert logic |
+| Message queue re-ordering | Late-arriving messages with timestamps are re-inserted into a near-sorted buffer |
+| Timsort inside sort services | Microservices that sort small result sets rely on Timsort, which uses insertion sort internally |
+| Search index incremental update | New documents inserted into a small sorted postings list one at a time |
+| Priority queue for n < 20 | A sorted array with insertion-sort maintenance beats a heap for very small n |
+
+### In Low-Level Design (LLD)
+
+| Data Structure / Class | How Insertion Sort Appears |
+|---|---|
+| `SortedList` class | `insert()` method uses binary search + shift — insertion sort split into two steps |
+| `OrderedDict` implementation | Keeping keys in sorted order on small maps uses insertion-sort logic |
+| Array-backed priority queue | Inserting into a sorted backing array is insertion sort one element at a time |
+| In-place sort on `ArrayList` | Java's `Collections.sort` falls back to insertion sort for lists shorter than 7 |
+| Sliding window maximum | Maintaining a sorted window of recent values uses incremental insertion logic |
+
+> **Simple takeaway:** In HLD, insertion sort shows up as the small-input fast path inside larger hybrid algorithms — you rarely call it directly, but it runs inside every call to `sort()`. In LLD, any class that maintains a sorted collection and adds one element at a time is implementing insertion sort, whether it is named that or not.
+
+---
+
+## Applications in Networking and Security
+
+### In Networking
+
+**Packet reordering buffers:**
+- TCP reassembles out-of-order packets into a correct stream
+- The receive buffer holds a small window of packets, each stamped with a sequence number
+- When a new packet arrives, it is inserted into its correct position in the buffer — insertion sort logic on a small, nearly-sorted list
+- The buffer is small (typically 32–256 packets), so insertion sort's O(n²) worst case is never reached in practice
+
+**Network switch priority queues:**
+- Managed switches maintain per-port queues with traffic prioritization (QoS)
+- When a new packet arrives with a priority level, it is inserted into the correct position in a small sorted queue
+- Insertion sort handles this naturally — the queue is small, nearly sorted, and needs to stay sorted after every arrival
+
+**BGP route table updates:**
+- BGP peers exchange route updates incrementally — one route at a time
+- The local routing table is large but updates arrive one at a time
+- Insertion sort logic governs where each new route is placed in a sorted prefix list for efficient longest-prefix-match lookup
+
+| Network Operation | Why Insertion Sort Logic Applies |
+|---|---|
+| TCP packet reassembly | Small near-sorted buffer, one new packet at a time |
+| QoS priority queue | Small sorted queue, frequent single insertions |
+| BGP incremental route update | One route inserted into a sorted routing table at a time |
+| DNS cache TTL ordering | Expiration times maintained in a sorted list with incremental updates |
+
+### In Security
+
+**Password list sorting for dictionary attacks:**
+- Penetration testers and security researchers sort wordlists for password auditing
+- Real wordlists are often generated incrementally and arrive nearly sorted
+- Insertion sort (via Timsort) is faster than random-input sorts on these nearly-sorted lists
+
+**Certificate chain validation:**
+- TLS certificate chains must be verified in a specific order: leaf → intermediate → root
+- The chain is short (typically 2–4 certificates) — insertion sort is the exact right algorithm for ordering a small nearly-sorted sequence
+- Negligible overhead, correct result every time
+
+**Intrusion detection event ordering:**
+- IDS systems (Snort, Suricata) receive network events and must process them in timestamp order
+- Events arrive nearly in order (network latency causes small reorderings)
+- Insertion sort is O(n) on nearly sorted input — the exact case that dominates in real traffic
+
+| Security Operation | Why Insertion Sort Is Relevant |
+|---|---|
+| TLS certificate chain ordering | Short sequence (2–4 items), nearly ordered, must be sorted correctly |
+| IDS event buffer ordering | Near-sorted timestamp stream, one event at a time |
+| Wordlist incremental generation | Nearly sorted input — insertion sort's best case |
+| JWT claim sorting | Small set of claims, sometimes pre-ordered, inserted into sorted structure |
+
+> **Simple takeaway:** In networking and security, insertion sort thrives where the textbook says it is weak — small inputs and nearly sorted data. Those two conditions describe the vast majority of real-time buffer management in both domains.
+
+---
+
+## Applications in Machine Learning, Deep Learning, Data Science, Data Engineering, and FinOps
+
+### In Machine Learning
+
+**Feature importance ranking — incremental insertion:**
+- Some feature selection methods rank features one at a time as they are added to a model (forward feature selection)
+- Each new feature is inserted into a sorted ranking of already-evaluated features
+- This is insertion sort: maintain a sorted list, insert one new element per iteration
+
+**Online learning — sorting predictions as they arrive:**
+- Online ML models (bandit algorithms, streaming classifiers) produce predictions one at a time
+- Maintaining a sorted leaderboard of top-k predictions uses insertion sort logic
+- The buffer is small (k is usually 10–100), so insertion sort's O(n²) worst case is irrelevant
+
+**Timsort inside Pandas and NumPy:**
+- `DataFrame.sort_values()` and `np.sort()` both use Timsort under the hood
+- Any time a ML pipeline calls `.sort_values()` on a nearly-sorted column (timestamps, sequential IDs), insertion sort runs internally and achieves near-linear performance
+
+### In Deep Learning
+
+**Attention score top-k selection:**
+- In transformer self-attention, you sometimes want the top-k highest attention scores
+- For small k (e.g., sparse attention with k=32), maintaining a sorted buffer of top scores and inserting each new score uses insertion sort logic
+- Small sorted buffer + one new element at a time = insertion sort's exact sweet spot
+
+**Gradient update ordering:**
+- Some optimizers (e.g., AdaGrad variants) maintain a sorted list of parameter update magnitudes
+- New gradients are inserted one at a time into this sorted list to determine update priority
+- Again: small buffer, incremental insertion, near-sorted — insertion sort in disguise
+
+### In Data Science
+
+**EDA on small DataFrames:**
+- When previewing data with `.head()` or `.sample()`, Pandas sorts small result sets using Timsort
+- For DataFrames with fewer than ~64 rows, insertion sort does all the work
+- Data scientists invoke this constantly without realizing it
+
+**Sliding window statistics:**
+- A common EDA pattern: compute rolling statistics over a window of the last N values
+- Maintaining a sorted window as new values arrive is insertion sort — remove the oldest value, insert the newest into the correct position
+- Libraries like `sortedcontainers.SortedList` implement this pattern
+
+### In Data Engineering
+
+**Spark sort-based shuffle on small partitions:**
+- Spark's sort-merge join sorts both sides before merging
+- For small partitions (< 64 rows, which happens after aggressive filtering), Spark's internal Timsort falls back to insertion sort
+- This is invisible to the data engineer but runs on every job
+
+**Stream processing — Kafka consumer reordering:**
+- Kafka delivers messages nearly in order, but network jitter causes small reorderings
+- Flink and Spark Streaming maintain a small reorder buffer and use insertion sort logic to re-establish timestamp order before processing
+
+| Pipeline Operation | Why Insertion Sort Applies |
+|---|---|
+| Spark sort-merge join (small partitions) | Timsort fallback on small partition sizes |
+| Kafka consumer event reordering | Near-sorted timestamp stream, small buffer |
+| dbt incremental model row ordering | New rows inserted into sorted staging table one batch at a time |
+| Parquet file footer index building | Small sorted index of row group statistics built incrementally |
+
+### In FinOps
+
+| Inefficiency | Root Cause | Billing Impact |
+|---|---|---|
+| Calling a full sort on 5-row result sets | Using heapsort/quicksort when insertion sort would be free | CPU cycles wasted on sorting overhead — minimal per call, costly at millions of calls |
+| Not using Timsort-aware data ordering | Sending randomly shuffled data to Pandas sort instead of nearly-sorted | Timsort degrades from O(n) to O(n log n) — job takes longer, more compute billed |
+| Full re-sort on append | Re-sorting an entire array after adding one element | O(n log n) instead of O(n) insertion — at Spark scale, adds up to hours and dollars |
+
+> **Simple takeaway:** Insertion sort is not a slow algorithm to be avoided — it is the fast inner loop that makes Python, Java, and every data framework sort real-world data efficiently. Understanding when data is nearly sorted is worth real money at scale.
+
+---
+
+## The Big Picture
+
+- Insertion sort is correct — the loop invariant proves it, and correctness proof is a skill, not a formality
+- It runs in Θ(n) on already-sorted input and Θ(n²) on reverse-sorted — the gap is real and matters
+- It is in-place and stable — properties that determine whether an algorithm is safe to use in production contexts like databases and sort services
+- It is the right tool for small arrays and near-sorted data — Python, Java, and every major runtime uses it internally in exactly these cases
+- The loop invariant technique introduced here — initialization, maintenance, termination — is the standard way CLRS proves every algorithm correct for the rest of the book
+
+> **Simple takeaway:** Insertion sort is not just a beginner's algorithm — it is the fast path inside every real-world sort, and its loop invariant is the template for proving correctness in all of computer science.
+
+---
+
+## Practice — LeetCode Problems
+
+| # | Problem | Difficulty | Why It Fits |
+|---|---|---|---|
+| 1 | [Sort an Array](https://leetcode.com/problems/sort-an-array/) | 🟡 Medium | Naive insertion sort will time out — forces you to understand exactly why O(n²) fails at n=50,000 |
+| 2 | [Insertion Sort List](https://leetcode.com/problems/insertion-sort-list/) | 🟡 Medium | Insertion sort on a linked list — same logic, different structure, tests whether you understand the algorithm or just the array implementation |
+| 3 | [Sort Colors](https://leetcode.com/problems/sort-colors/) | 🟡 Medium | Forces you past insertion sort thinking — the Dutch National Flag algorithm is O(n), not O(n²). Why? |
+| 4 | [Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/) | 🟢 Easy | The insert step of insertion sort isolated — understanding in-place shifting is the exact mechanical skill insertion sort teaches |
+| 5 | [Count of Smaller Numbers After Self](https://leetcode.com/problems/count-of-smaller-numbers-after-self/) | 🔴 Hard | Counting inversions — the exact measure of how much work insertion sort does. More inversions = more swaps = slower sort |
+
+**How to use these:**
+- Start with #4 — master the shift mechanic before implementing the full sort
+- Implement #2 (linked list version) after the array version — it forces you to separate the algorithm from the data structure
+- On #1, implement insertion sort first and watch it time out, then implement merge sort — you will feel the 1.2 proof from your own terminal
+- On #5, ask yourself: what is an inversion? Why does insertion sort's runtime equal the number of inversions?
+
+> **Simple rule:** If your insertion sort times out, it is not a bug — it is O(n²) working exactly as described. The fix is a better algorithm, not a faster loop.
+
+---
+
+## Edge Cases to Always Think About
+
+### Universal Checklist
+
+**If your input is a list or array:**
+- What if it is **empty**? → `[]` — loop from 2 to 0 never runs, returns empty correctly
+- What if it has **only one item**? → `[5]` — loop from 2 to 1 never runs, single element is sorted
+- What if all items are the **same**? → `[3, 3, 3]` — inner while condition `A[j] > key` is false immediately, zero shifts
+- What if it is **already sorted**? → `[1, 2, 3]` — best case Θ(n), inner while never runs
+- What if it is **sorted in reverse**? → `[3, 2, 1]` — worst case Θ(n²), maximum shifts every iteration
+- What if the answer is at the **very first** or **very last** position? → both handled correctly by the shift logic
+
+**If your input involves numbers:**
+- What if a number is **zero**? → handled correctly, zero compares as less than positives
+- What if numbers are **negative**? → handled correctly, comparison logic is unchanged
+- What if values are **very large**? → no overflow risk in comparisons, but watch for it in index arithmetic
+
+**If your problem involves searching:**
+- What if the target **does not exist**? → not applicable to sorting itself, but relevant if you add a binary search step
+- What if there are **duplicate values**? → insertion sort is stable — duplicates keep their original relative order
+
+**If your problem involves strings:**
+- What if the string is **empty**? → same as empty array
+- What if all characters are the **same**? → best case, zero swaps needed
+
+### Section-Specific Edge Cases — Insertion Sort
+
+**The stability edge case:**
+- If two elements compare as equal (`A[j] == key`), insertion sort does NOT shift — the inner while condition is `A[j] > key`, not `>=`
+- This is what makes it stable: equal elements never swap positions
+- If you accidentally change `>` to `>=`, you break stability — watch this in implementations
+
+**Nearly sorted input:**
+- Insertion sort on nearly sorted data (e.g., one element out of place) is O(n), not O(n²)
+- This is Timsort's entire justification — test your insertion sort on already-sorted and almost-sorted inputs to verify it runs fast
+
+**Single inversion:**
+- `[1, 2, 4, 3, 5]` has exactly one inversion (4 and 3)
+- Insertion sort handles this in O(n) total — one swap plus n comparisons with no shifts otherwise
+
+**Large n:**
+- At n=10,000, insertion sort does up to 50 million comparisons in the worst case
+- At n=100,000, it does up to 5 billion — at which point it times out on any modern judge
+- Always ask: what is n? If n > 10,000, you should not be using insertion sort
+
+> **Simple rule:** Check your loop condition — `>` not `>=` preserves stability. Check your input size — n > 10,000 means you need a better algorithm. Check whether your input is nearly sorted — if it is, insertion sort might actually be the right call.
+
+---
+
+<ArticleNav
+  prev={{ title: "1.2 Algorithms as a Technology", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-2-algorithms-as-a-technology" }}
+  next={null}
+/>
