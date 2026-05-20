@@ -173,6 +173,33 @@ Two sub-sections:
 - End with a blockquote:
   > **Simple rule:** [one habit or rule for catching edge cases]
 
+### 12. My Notes
+Three sub-sections for spaced-repetition revision — added to every page, left empty until the user fills them in:
+
+```mdx
+## My Notes
+
+### Notes — Reading 1
+
+*(Your notes from the first reading go here.)*
+
+---
+
+### Notes — Reading 2
+
+*(Your notes from the second reading go here.)*
+
+---
+
+### Notes — Reading 3
+
+*(Your notes from the third reading go here.)*
+```
+
+- Leave all three sections as placeholder text when first creating the page
+- When the user dictates notes, update only the relevant Reading section
+- Notes go after Edge Cases and before ArticleNav
+
 ---
 
 ## OG Image (Thumbnail)
