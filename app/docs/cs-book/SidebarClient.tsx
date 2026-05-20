@@ -163,7 +163,9 @@ export function SidebarClient() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [readCount, setReadCount] = useState(0);
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(chapters.map((c) => [c.part, true]))
+  );
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("bw-read") ?? "[]") as string[];
@@ -189,6 +191,20 @@ export function SidebarClient() {
       }
     }
     return () => window.removeEventListener("scroll", onScroll);
+  }, [pathname]);
+
+  useEffect(() => {
+    const activePart = chapters.find((section) => {
+      if ("items" in section && section.items) {
+        return (section.items as { href: string }[]).some((item) => item.href === pathname);
+      }
+      return (section as any).chapters?.some((ch: any) =>
+        ch.items.some((item: any) => item.href === pathname)
+      );
+    });
+    if (activePart) {
+      setCollapsed((prev) => ({ ...prev, [activePart.part]: false }));
+    }
   }, [pathname]);
 
   const toggleCollapse = (part: string) => {
