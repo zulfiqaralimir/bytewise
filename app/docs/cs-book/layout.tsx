@@ -9,9 +9,9 @@ interface LayoutProps {
 // Server Component layout — client interactivity is in SidebarClient
 export default function BookLayout({ children }: LayoutProps) {
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="bg-white">
       <SidebarClient />
-      <main className="flex-1 min-w-0 pt-14 md:pt-0">
+      <main className="md:ml-72 h-screen overflow-y-auto pt-14 md:pt-0">
         <div className="max-w-4xl mx-auto px-6 py-12">
           <div className="prose">
             <ReadingTime />
