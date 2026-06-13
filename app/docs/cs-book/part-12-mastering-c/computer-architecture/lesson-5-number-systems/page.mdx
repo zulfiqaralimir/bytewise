@@ -1,0 +1,361 @@
+export const metadata = {
+  title: "Lesson 5: Number Systems — Binary, Decimal, Octal, Hexadecimal — Mastering C — ByteWise",
+  description:
+    "Why computers use binary, how decimal, binary, octal, and hexadecimal work, step-by-step conversion methods, and why number systems are foundational for C programming, pointers, bitwise operators, and computer architecture.",
+  keywords: [
+    "number systems",
+    "binary number system",
+    "hexadecimal",
+    "decimal to binary conversion",
+    "binary to hexadecimal",
+    "octal",
+    "base 2",
+    "base 16",
+    "C programming number systems",
+    "computer architecture binary",
+  ],
+  openGraph: {
+    title: "Lesson 5: Number Systems — Binary, Decimal, Octal, Hexadecimal",
+    description:
+      "Why computers use binary, how to convert between number systems, and why hex is every programmer's best friend.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Number Systems
+
+## Lesson 5: Binary, Decimal, Octal, Hexadecimal
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is a number system?
+- Why do computers use Binary instead of Decimal?
+- What is the difference between Decimal, Binary, Octal, and Hexadecimal?
+- How do I convert numbers between different systems?
+- Why do programmers use Hexadecimal?
+- How does the CPU actually store numbers?
+
+---
+
+## Why Do We Need Number Systems?
+
+Humans communicate using numbers every day — 5 apples, 10 students, 100 books.
+
+But computers do not understand those symbols directly.
+
+A computer only understands whether electricity is **ON** or **OFF**:
+
+```text
+ON  →  1
+OFF →  0
+```
+
+This is why computers use the **Binary Number System**. Everything a computer processes — text, images, video, code — is ultimately a sequence of 0s and 1s.
+
+---
+
+## What Is a Number System?
+
+A number system is a method of representing numbers using a fixed set of symbols.
+
+- **Humans** use: `0 1 2 3 4 5 6 7 8 9` → Decimal (Base 10)
+- **Computers** use: `0 1` → Binary (Base 2)
+
+---
+
+## The Four Number Systems You Must Know
+
+| Number System | Base | Digits Used |
+|---------------|------|-------------|
+| Decimal | 10 | 0–9 |
+| Binary | 2 | 0–1 |
+| Octal | 8 | 0–7 |
+| Hexadecimal | 16 | 0–9, A–F |
+
+---
+
+## 1. Decimal (Base 10)
+
+The system humans naturally use.
+
+**Example:** `573`
+
+```text
+5 × 10²  +  7 × 10¹  +  3 × 10⁰
+= 500     +  70       +  3
+= 573
+```
+
+**Why Base 10?** It has exactly 10 symbols: `0 1 2 3 4 5 6 7 8 9`. After 9, you carry into the next position and write `10`.
+
+---
+
+## 2. Binary (Base 2)
+
+Binary uses only two symbols: `0` and `1`.
+
+**Example:** `1011₂`
+
+```text
+1 × 2³  +  0 × 2²  +  1 × 2¹  +  1 × 2⁰
+= 8     +  0       +  2       +  1
+= 11
+```
+
+So `1011₂ = 11₁₀`.
+
+### Why Do Computers Use Binary?
+
+Inside a CPU, there are billions of tiny switches called **transistors**. Each transistor has exactly two stable states:
+
+```text
+OFF  →  0     (low voltage)
+ON   →  1     (high voltage)
+```
+
+Two states → two symbols → Binary is the natural language of electronics.
+
+| Real-world analogy | OFF | ON |
+|--------------------|-----|----|
+| Light bulb | 0 | 1 |
+| Switch | 0 | 1 |
+| CPU transistor | 0 (low voltage) | 1 (high voltage) |
+
+---
+
+## 3. Octal (Base 8)
+
+Digits used: `0 1 2 3 4 5 6 7`
+
+**Example:** `725₈`
+
+```text
+7 × 8²  +  2 × 8¹  +  5 × 8⁰
+= 448   +  16      +  5
+= 469
+```
+
+So `725₈ = 469₁₀`.
+
+### Why Was Octal Used?
+
+Early computers grouped binary digits into sets of **3 bits** at a time:
+
+```text
+111  010  101
+ 7    2    5
+```
+
+Octal made binary shorter to read and write. It is less common today — hex has largely replaced it.
+
+---
+
+## 4. Hexadecimal (Base 16)
+
+Hex uses 16 symbols:
+
+```text
+0 1 2 3 4 5 6 7 8 9 A B C D E F
+```
+
+| Symbol | Decimal Value |
+|--------|--------------|
+| A | 10 |
+| B | 11 |
+| C | 12 |
+| D | 13 |
+| E | 14 |
+| F | 15 |
+
+**Example:** `2F₁₆`
+
+```text
+2 × 16¹  +  F × 16⁰
+= 32     +  15
+= 47
+```
+
+So `2F₁₆ = 47₁₀`.
+
+### Why Do Programmers Love Hexadecimal?
+
+Compare the same number written two ways:
+
+```text
+Binary:       1111 1111 1111 1111     (16 digits)
+Hexadecimal:  FFFF                    (4 digits)
+```
+
+Hex is 4× more compact than binary because one hex digit represents exactly **4 binary bits**.
+
+Hex appears everywhere in programming:
+
+- Memory addresses: `0x7ffee4b1a2c0`
+- Machine code output
+- Debugging (register values, stack dumps)
+- HTML/CSS colours: `#FF0000` = red
+- Network protocols
+- Embedded systems firmware
+
+---
+
+## Binary Place Values
+
+Every binary digit position represents a power of 2:
+
+| Position | 2⁷ | 2⁶ | 2⁵ | 2⁴ | 2³ | 2² | 2¹ | 2⁰ |
+|----------|----|----|----|----|----|----|----|----|
+| Value | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 1 |
+
+**Example:** `11010101₂`
+
+```text
+1×128 + 1×64 + 0×32 + 1×16 + 0×8 + 1×4 + 0×2 + 1×1
+= 128 + 64 + 16 + 4 + 1
+= 213
+```
+
+---
+
+## Conversions
+
+### Decimal → Binary
+
+**Divide by 2 repeatedly. Read remainders bottom to top.**
+
+**Example:** Convert `13₁₀`
+
+| Step | Division | Remainder |
+|------|----------|-----------|
+| 1 | 13 ÷ 2 = 6 | **1** |
+| 2 | 6 ÷ 2 = 3 | **0** |
+| 3 | 3 ÷ 2 = 1 | **1** |
+| 4 | 1 ÷ 2 = 0 | **1** |
+
+Read remainders from bottom to top: **`1101₂`**
+
+`13₁₀ = 1101₂`
+
+---
+
+### Binary → Decimal
+
+**Multiply each bit by its place value and sum.**
+
+**Example:** `101101₂`
+
+```text
+1×32 + 0×16 + 1×8 + 1×4 + 0×2 + 1×1
+= 32 + 8 + 4 + 1
+= 45
+```
+
+`101101₂ = 45₁₀`
+
+---
+
+### Binary → Hexadecimal
+
+**Group bits into sets of 4 from the right. Convert each group.**
+
+**Example:** `10101111₂`
+
+```text
+1010  1111
+ A     F
+```
+
+`10101111₂ = AF₁₆`
+
+---
+
+### Hexadecimal → Binary
+
+**Expand each hex digit into 4 binary bits.**
+
+**Example:** `3C₁₆`
+
+```text
+3  →  0011
+C  →  1100
+```
+
+`3C₁₆ = 00111100₂`
+
+---
+
+## Conversion Quick Reference
+
+| Decimal | Binary | Octal | Hex |
+|---------|--------|-------|-----|
+| 0 | 0000 | 0 | 0 |
+| 1 | 0001 | 1 | 1 |
+| 2 | 0010 | 2 | 2 |
+| 3 | 0011 | 3 | 3 |
+| 4 | 0100 | 4 | 4 |
+| 5 | 0101 | 5 | 5 |
+| 6 | 0110 | 6 | 6 |
+| 7 | 0111 | 7 | 7 |
+| 8 | 1000 | 10 | 8 |
+| 9 | 1001 | 11 | 9 |
+| 10 | 1010 | 12 | A |
+| 11 | 1011 | 13 | B |
+| 12 | 1100 | 14 | C |
+| 13 | 1101 | 15 | D |
+| 14 | 1110 | 16 | E |
+| 15 | 1111 | 17 | F |
+
+---
+
+## Why This Matters for C Programming
+
+Number systems are not just theory. They appear directly in C code:
+
+| C Topic | Where Number Systems Appear |
+|---------|----------------------------|
+| Bitwise operators (`&`, `\|`, `^`, `~`, `<<`, `>>`) | Operate directly on binary representations |
+| Pointers and memory addresses | Printed as hex: `0x7ffd...` |
+| `printf` format specifiers | `%d` decimal, `%x` hex, `%o` octal, `%b` binary |
+| Bit masks | Written in hex: `0xFF`, `0x0F` |
+| File formats and protocols | Headers stored as hex bytes |
+| Embedded systems | Register addresses are hex constants |
+| Debugging | Stack traces, core dumps, disassembly all use hex |
+
+Without understanding Binary and Hexadecimal, C's bitwise operators and pointer arithmetic will not make sense.
+
+---
+
+## Quick Revision
+
+| System | Base | Digits | Use |
+|--------|------|--------|-----|
+| Decimal | 10 | 0–9 | Human communication |
+| Binary | 2 | 0–1 | CPU and hardware |
+| Octal | 8 | 0–7 | Legacy Unix permissions, early computing |
+| Hexadecimal | 16 | 0–9, A–F | Memory addresses, debugging, colours |
+
+---
+
+## Interview Questions
+
+1. What is a number system?
+2. Why do computers use Binary?
+3. Why is Decimal called Base 10?
+4. Why is Binary called Base 2?
+5. What is the difference between Binary and Hexadecimal?
+6. Why do programmers prefer Hexadecimal over Binary?
+7. Convert `25₁₀` to Binary.
+8. Convert `101101₂` to Decimal.
+9. Convert `AF₁₆` to Decimal.
+10. Why is understanding number systems important for C programming and computer architecture?
+
+<ArticleNav
+  prev={{ title: "Lesson 4: History of Computers", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-4-history-of-computers" }}
+  next={null}
+/>
