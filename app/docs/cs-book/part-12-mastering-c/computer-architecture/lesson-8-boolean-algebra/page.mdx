@@ -1,0 +1,537 @@
+export const metadata = {
+  title: "Lesson 8: Boolean Algebra — Mastering C — ByteWise",
+  description:
+    "What Boolean Algebra is, who invented it, the three fundamental operations (AND, OR, NOT), all major Boolean laws including De Morgan's, how Boolean expressions map to Logic Gates, and how C operators implement Boolean logic in code.",
+  keywords: [
+    "boolean algebra",
+    "george boole",
+    "AND OR NOT operations",
+    "boolean laws",
+    "de morgan's law",
+    "boolean expressions",
+    "logic gates boolean algebra",
+    "C programming boolean operators",
+    "truth table",
+    "digital logic",
+    "complement law",
+    "distributive law boolean",
+  ],
+  openGraph: {
+    title: "Lesson 8: Boolean Algebra",
+    description:
+      "The mathematical system behind every decision a computer makes — AND, OR, NOT, De Morgan's Laws, and how it all shows up in C code.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Boolean Algebra
+
+## Lesson 8: The Mathematics Behind Every Computer Decision
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is Boolean Algebra?
+- Who invented Boolean Algebra?
+- Why is Boolean Algebra important?
+- How does Boolean Algebra relate to Logic Gates?
+- How does Boolean Algebra relate to C programming?
+- What are the fundamental Boolean operations?
+- What are the important Boolean Laws?
+- How are Boolean expressions simplified?
+
+---
+
+## Why Do We Need Boolean Algebra?
+
+Humans make logical decisions constantly:
+
+- If it is raining, take an umbrella.
+- If the exam is tomorrow, study tonight.
+- If the password is correct, allow login.
+
+Computers make decisions too — but they only understand:
+
+```text
+0  (FALSE)
+1  (TRUE)
+```
+
+Boolean Algebra is the mathematical system that gives computers a precise, rule-based way to make these logical decisions. Every `if` statement, every condition, every circuit in a CPU traces back to it.
+
+---
+
+## What Is Boolean Algebra?
+
+Boolean Algebra is a branch of mathematics that works with logical values instead of numbers.
+
+Unlike ordinary algebra where:
+
+```text
+2 + 3 = 5
+```
+
+Boolean Algebra operates on only two values:
+
+```text
+0 = FALSE
+1 = TRUE
+```
+
+All operations produce either `0` or `1` — nothing in between.
+
+---
+
+## Who Invented Boolean Algebra?
+
+**George Boole** (1815–1864), a self-taught English mathematician, introduced a mathematical system for logical reasoning in his 1854 book *An Investigation of the Laws of Thought*.
+
+His work became the foundation of:
+
+- Digital Electronics
+- Logic Gates
+- CPUs
+- Programming Languages
+- Artificial Intelligence
+
+Nearly a century after Boole's death, Claude Shannon (1937) showed that Boolean Algebra could describe electrical switching circuits — the insight that made modern computers possible.
+
+---
+
+## Boolean Variables and Constants
+
+A **Boolean variable** holds exactly one of two values at any time:
+
+```text
+A = 0   (FALSE)
+A = 1   (TRUE)
+```
+
+**Boolean constants:**
+
+| Value | Meaning |
+|-------|---------|
+| 0 | False |
+| 1 | True |
+
+---
+
+## The Three Fundamental Operations
+
+Everything in Boolean Algebra is built from three operations:
+
+1. **AND**
+2. **OR**
+3. **NOT**
+
+---
+
+## 1. AND Operation
+
+**Symbol:** `A · B` or `A AND B`
+
+**Rule:** Output is `1` only when **all** inputs are `1`.
+
+### Truth Table
+
+| A | B | A · B |
+|---|---|-------|
+| 0 | 0 | 0 |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | **1** |
+
+### Real Example
+
+```text
+Username Correct = 1
+AND
+Password Correct = 1
+        ↓
+   Login Successful
+```
+
+Both conditions must be true — one failure blocks the result.
+
+---
+
+## 2. OR Operation
+
+**Symbol:** `A + B` or `A OR B`
+
+**Rule:** Output is `1` when **at least one** input is `1`.
+
+### Truth Table
+
+| A | B | A + B |
+|---|---|-------|
+| 0 | 0 | 0 |
+| 0 | 1 | **1** |
+| 1 | 0 | **1** |
+| 1 | 1 | **1** |
+
+### Real Example
+
+```text
+Cash Available = 1
+OR
+Credit Card   = 0
+      ↓
+Purchase Possible
+```
+
+---
+
+## 3. NOT Operation
+
+**Symbol:** `A'` or `NOT A`
+
+**Rule:** Reverses the input.
+
+```text
+0  →  1
+1  →  0
+```
+
+### Truth Table
+
+| A | A' |
+|---|----|
+| 0 | **1** |
+| 1 | **0** |
+
+### Real Example
+
+```text
+Light OFF (0)  →  NOT  →  Signal: Light is not ON (1)
+```
+
+---
+
+## Reading Boolean Expressions
+
+| Expression | Meaning |
+|------------|---------|
+| `A · B` | A AND B |
+| `A + B` | A OR B |
+| `A'` | NOT A |
+| `A · B + C` | (A AND B) OR C |
+| `(A + B)'` | NOT (A OR B) |
+
+---
+
+## Boolean Laws
+
+These laws let you simplify complex Boolean expressions — which means fewer Logic Gates, which means a smaller, faster, cheaper circuit.
+
+---
+
+### Identity Law
+
+```text
+A + 0 = A
+A · 1 = A
+```
+
+OR-ing with `0` changes nothing. AND-ing with `1` changes nothing.
+
+---
+
+### Null Law
+
+```text
+A + 1 = 1
+A · 0 = 0
+```
+
+OR-ing with `1` always gives `1`. AND-ing with `0` always gives `0`.
+
+---
+
+### Idempotent Law
+
+```text
+A + A = A
+A · A = A
+```
+
+A value OR or AND with itself is just itself — unlike regular algebra where `x + x = 2x`.
+
+---
+
+### Complement Law
+
+```text
+A + A' = 1
+A · A' = 0
+```
+
+A variable OR'd with its own complement is always `1`. AND'd with its complement is always `0`.
+
+---
+
+### Double Negation Law
+
+```text
+(A')' = A
+```
+
+Negating twice returns the original value:
+
+```text
+NOT(NOT TRUE) = TRUE
+```
+
+---
+
+### Commutative Law
+
+Order does not matter:
+
+```text
+A + B = B + A
+A · B = B · A
+```
+
+---
+
+### Associative Law
+
+Grouping does not matter:
+
+```text
+(A + B) + C = A + (B + C)
+(A · B) · C = A · (B · C)
+```
+
+---
+
+### Distributive Law
+
+```text
+A · (B + C) = A·B + A·C
+A + (B · C) = (A + B) · (A + C)
+```
+
+The first form mirrors how multiplication distributes over addition in regular algebra. The second form has no regular-algebra equivalent.
+
+---
+
+### Absorption Law
+
+```text
+A + A·B = A
+A · (A + B) = A
+```
+
+The larger term is "absorbed" into the simpler one. Useful for eliminating redundant gates in circuits.
+
+---
+
+## De Morgan's Laws
+
+De Morgan's Laws are among the most practically important results in Boolean Algebra. They let you convert AND circuits to OR circuits and vice versa — critical for circuit design and simplification.
+
+### First Law
+
+```text
+(A · B)' = A' + B'
+```
+
+**The complement of AND equals the OR of the complements.**
+
+In words: "NOT (A AND B)" is the same as "(NOT A) OR (NOT B)".
+
+### Second Law
+
+```text
+(A + B)' = A' · B'
+```
+
+**The complement of OR equals the AND of the complements.**
+
+In words: "NOT (A OR B)" is the same as "(NOT A) AND (NOT B)".
+
+### Example
+
+Simplify `(A + B)'`:
+
+```text
+Using De Morgan's Second Law:
+(A + B)' = A' · B'
+```
+
+This converts a NOR gate into two NOT gates feeding an AND gate — directly useful when building circuits from available components.
+
+---
+
+## Summary of Boolean Laws
+
+| Law | OR form | AND form |
+|-----|---------|----------|
+| Identity | `A + 0 = A` | `A · 1 = A` |
+| Null | `A + 1 = 1` | `A · 0 = 0` |
+| Idempotent | `A + A = A` | `A · A = A` |
+| Complement | `A + A' = 1` | `A · A' = 0` |
+| Double Negation | `(A')' = A` | — |
+| Commutative | `A + B = B + A` | `A · B = B · A` |
+| Associative | `(A+B)+C = A+(B+C)` | `(A·B)·C = A·(B·C)` |
+| Distributive | `A+BC = (A+B)(A+C)` | `A(B+C) = AB+AC` |
+| Absorption | `A + A·B = A` | `A·(A+B) = A` |
+| De Morgan | `(A·B)' = A'+B'` | `(A+B)' = A'·B'` |
+
+---
+
+## Boolean Algebra and Logic Gates
+
+Logic Gates are the physical, hardware implementation of Boolean operations:
+
+| Boolean Expression | Logic Gate |
+|-------------------|------------|
+| `A · B` | AND Gate |
+| `A + B` | OR Gate |
+| `A'` | NOT Gate |
+| `(A · B)'` | NAND Gate |
+| `(A + B)'` | NOR Gate |
+| `A ⊕ B` | XOR Gate |
+
+Every Boolean expression can be drawn as a circuit of Logic Gates, and every circuit of Logic Gates can be written as a Boolean expression. They are two representations of the same thing.
+
+---
+
+## Boolean Algebra and C Programming
+
+C operators map directly to Boolean operations:
+
+| C Operator | Boolean Operation | Example |
+|------------|-------------------|---------|
+| `&&` | AND | `age >= 18 && citizen == 1` |
+| `\|\|` | OR | `marks >= 90 \|\| sports == 1` |
+| `!` | NOT | `!loggedIn` |
+| `&` | Bitwise AND | `flags & 0x01` |
+| `\|` | Bitwise OR | `flags \| 0x02` |
+| `^` | Bitwise XOR | `a ^ b` |
+| `~` | Bitwise NOT | `~mask` |
+
+### Boolean Values in C
+
+In C, any non-zero value is `TRUE`, and `0` is `FALSE`:
+
+```c
+int x = 0;   // FALSE
+int x = 1;   // TRUE
+int x = 42;  // Also TRUE — any non-zero value
+```
+
+This is why conditions like `if (ptr)` work — a non-null pointer is truthy.
+
+---
+
+## Real-World Examples
+
+### ATM Machine
+
+```text
+Card Valid = 1  AND  PIN Correct = 1  →  Cash Dispensed
+```
+
+Boolean: `Card · PIN = Output`
+
+### Fire Alarm
+
+```text
+Smoke = 1  OR  Heat = 1  →  Alarm ON
+```
+
+Boolean: `Smoke + Heat = Alarm`
+
+### Login System
+
+```text
+Username Correct = 1  AND  Password Correct = 1  →  Login Success
+```
+
+Boolean: `U · P = Login`
+
+---
+
+## Why Is Boolean Algebra Important?
+
+It underpins virtually every layer of computing:
+
+- **CPUs** — every arithmetic and logical unit is designed using Boolean expressions
+- **Logic Gates** — gates are hardware implementations of Boolean operations
+- **Operating Systems** — permission checks, scheduling conditions, interrupt flags
+- **Databases** — `WHERE` clauses are Boolean expressions evaluated on rows
+- **Search Engines** — "Python AND tutorial NOT beginner" is Boolean search
+- **Artificial Intelligence** — decision trees are Boolean branching structures
+- **Networking** — subnet masks, ACL rules, firewall conditions
+- **Embedded Systems** — register flag manipulation using bitwise Boolean ops
+- **Programming Languages** — every `if`, `while`, and `for` condition is a Boolean expression
+
+Without Boolean Algebra, there is no logical foundation for any of the above.
+
+---
+
+## Common Mistakes
+
+**Mistake 1:** Applying regular algebra rules to Boolean Algebra.
+
+```text
+Wrong:  A + A = 2A
+Right:  A + A = A      (Idempotent Law)
+```
+
+**Mistake 2:** Confusing AND with OR in De Morgan's Laws.
+
+```text
+(A · B)' = A' + B'     (AND becomes OR after complement)
+(A + B)' = A' · B'     (OR becomes AND after complement)
+```
+
+**Mistake 3:** Thinking OR and XOR are the same.
+
+```text
+OR:   1 + 1 = 1    (any input true → true)
+XOR:  1 ⊕ 1 = 0    (identical inputs → false)
+```
+
+**Mistake 4:** Forgetting that in C, any non-zero integer is `TRUE` — not just `1`.
+
+---
+
+## Quick Revision
+
+- **Boolean Algebra** works with only two values: `0` (False) and `1` (True).
+- **George Boole** invented it; Claude Shannon connected it to electronics.
+- Three fundamental operations: **AND** (`·`), **OR** (`+`), **NOT** (`'`).
+- Key laws: Identity, Null, Idempotent, Complement, Double Negation, Commutative, Associative, Distributive, Absorption.
+- **De Morgan's Laws:** `(A·B)' = A'+B'` and `(A+B)' = A'·B'`.
+- Logic Gates are the hardware implementation of Boolean operations.
+- C operators `&&`, `||`, `!`, `&`, `|`, `^`, `~` all implement Boolean Algebra.
+- Boolean Algebra is a mathematical foundation of Computer Science.
+
+---
+
+## Interview Questions
+
+1. What is Boolean Algebra?
+2. Who invented Boolean Algebra?
+3. Why is Boolean Algebra important in Computer Science?
+4. Explain the AND operation with a truth table.
+5. Explain the OR operation with a truth table.
+6. Explain the NOT operation with a truth table.
+7. State De Morgan's First Law.
+8. State De Morgan's Second Law.
+9. How are Logic Gates related to Boolean Algebra?
+10. How are Boolean operators represented in the C programming language?
+
+<ArticleNav
+  prev={{ title: "Lesson 7: Logic Gates", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-7-logic-gates" }}
+  next={null}
+/>
