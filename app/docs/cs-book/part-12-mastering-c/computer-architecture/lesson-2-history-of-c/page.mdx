@@ -1,0 +1,249 @@
+export const metadata = {
+  title: "Lesson 2: History of the C Programming Language — Mastering C — ByteWise",
+  description:
+    "From machine language and assembly to BCPL, B, and C — a step-by-step history of how Dennis Ritchie created C at Bell Labs in 1972, why UNIX was rewritten in it, and how every major version evolved from C89 to C23.",
+  keywords: [
+    "history of C",
+    "Dennis Ritchie",
+    "Bell Labs",
+    "UNIX history",
+    "BCPL",
+    "B language",
+    "C89",
+    "C99",
+    "C11",
+    "C23",
+    "K&R C",
+    "C programming language history",
+  ],
+  openGraph: {
+    title: "Lesson 2: History of the C Programming Language",
+    description:
+      "From machine code to C — how Dennis Ritchie created C at Bell Labs in 1972 and why it took over the world.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# History of the C Programming Language
+
+## Lesson 2
+
+---
+
+## Before C (1940s–1960s)
+
+Early computers were programmed directly in **machine language** — raw 0s and 1s.
+
+```text
+10110011 11001010
+```
+
+This was:
+
+- Difficult to write
+- Difficult to debug
+- Different for every computer
+
+So programmers invented **Assembly Language**, which replaced binary with symbols.
+
+```asm
+MOV A, B
+ADD A, C
+```
+
+Easier — but still tied to specific hardware. One computer's assembly was useless on another.
+
+---
+
+## High-Level Languages Arrive
+
+Scientists wanted languages that looked more like mathematics and English.
+
+| Language | Year | Purpose |
+|----------|------|---------|
+| FORTRAN | 1957 | Scientific computing |
+| COBOL | 1959 | Business applications |
+| ALGOL | 1958 | Structured programming |
+
+These languages proved that code could be human-readable and still run on a machine. They planted the seed for everything that followed — including C.
+
+---
+
+## The Parent of C: BCPL (1966)
+
+In **1966**, **Martin Richards** created **BCPL (Basic Combined Programming Language)**.
+
+Goals:
+- Simplicity
+- Portability
+- System programming
+
+BCPL was lean and could be moved across different machines. But it was also limited — no data types, no structures, no way to express hardware differences cleanly.
+
+---
+
+## Ken Thompson Creates B (1969)
+
+Around **1969**, **Ken Thompson** at **Bell Labs** took BCPL and stripped it down further into a language called **B**.
+
+**Why?** He wanted to write the **UNIX** operating system without writing assembly.
+
+**Problems with B:**
+- No data types — everything was a raw machine word
+- Slow on newer hardware architectures
+- Not expressive enough for complex system work
+
+---
+
+## Dennis Ritchie Creates C (1972)
+
+**The creator of C:**
+
+> **Dennis Ritchie** — Bell Labs, 1972
+
+Ritchie took B and rebuilt it. He added everything B was missing:
+
+| Addition | What it gave you |
+|----------|-----------------|
+| Data types (`int`, `char`, `float`) | Type-safe computation |
+| Pointers | Direct memory access |
+| Structures (`struct`) | Grouped, organised data |
+| Better memory model | Precise hardware control |
+| High performance | Fast enough to write an OS |
+
+C hit the sweet spot: close enough to the hardware to be fast, high-level enough to be readable.
+
+---
+
+## UNIX Was Rewritten in C (1973)
+
+Before C, **UNIX** was written mostly in **assembly language** — fast, but a nightmare to move to a new machine.
+
+After C:
+
+- UNIX was rewritten almost entirely in C
+- Moving UNIX to a new computer meant recompiling C code — not rewriting everything
+- Universities and companies adopted UNIX, and with it, C spread worldwide
+
+**This is the single biggest reason C became dominant.** The language that runs the OS becomes the language every programmer learns.
+
+---
+
+## The Famous K&R Book (1978)
+
+In **1978**, **Brian Kernighan** and **Dennis Ritchie** published:
+
+> ***The C Programming Language***
+
+Known universally as **K&R C**, this book was the de facto standard for a decade. If you wanted to learn C, this was the only book that mattered.
+
+---
+
+## ANSI C Standard (1989)
+
+By the 1980s, C had drifted. Different compilers had different dialects. Code written for one vendor's C would not compile on another's.
+
+The **American National Standards Institute (ANSI)** fixed this:
+
+- **ANSI C** — also called **C89**
+- First official, unified standard for the language
+- Programmers could now write genuinely portable code
+
+---
+
+## ISO C (1990)
+
+The **International Organization for Standardization (ISO)** adopted the ANSI standard as:
+
+- **C90**
+
+Same language, international stamp. C was now a global standard.
+
+---
+
+## Version History
+
+| Version | Year | Key Additions |
+|---------|------|--------------|
+| C89 / ANSI C | 1989 | First official standard |
+| C90 | 1990 | ISO adoption — international standard |
+| C99 | 1999 | `//` comments, `long long`, variable-length arrays, new math library |
+| C11 | 2011 | Multi-threading support, safer standard library additions |
+| C17 / C18 | 2018 | Bug fixes and clarifications to C11 |
+| C23 | 2023 | Modern quality-of-life improvements, `typeof`, better attributes |
+
+---
+
+## Family Tree of C
+
+```text
+Machine Language
+        │
+        ▼
+Assembly Language
+        │
+        ▼
+ALGOL (1958)
+        │
+        ▼
+BCPL (1966) — Martin Richards
+        │
+        ▼
+B (1969) — Ken Thompson
+        │
+        ▼
+C (1972) — Dennis Ritchie
+        │
+        ├──► C++          (object-oriented systems programming)
+        ├──► Objective-C  (Apple platforms)
+        ├──► C#           (Microsoft, .NET)
+        ├──► Java         (C syntax, managed memory)
+        ├──► JavaScript   (C-like syntax)
+        ├──► Go           (simplicity and concurrency, C-inspired)
+        └──► Rust         (memory safety without a garbage collector)
+```
+
+Every major language you will use traces its syntax back to C.
+
+---
+
+## Why C Became So Popular
+
+- Very fast — compiles to tight machine code
+- Close to hardware — direct memory access, no runtime overhead
+- Portable — the same C code compiles on different machines
+- Small and efficient — the whole language fits in one thin book
+- Excellent for operating systems, compilers, and embedded systems
+- Influenced every major language that followed
+
+---
+
+## One-Line Timeline
+
+| Year | Event |
+|------|-------|
+| 1950s | High-level languages emerge |
+| 1966 | BCPL created by Martin Richards |
+| 1969 | B developed by Ken Thompson at Bell Labs |
+| 1972 | Dennis Ritchie creates C at Bell Labs |
+| 1973 | UNIX rewritten in C |
+| 1978 | *The C Programming Language* (K&R) published |
+| 1989 | ANSI standard — C89 |
+| 1990 | ISO standard — C90 |
+| 1999 | C99 |
+| 2011 | C11 |
+| 2018 | C17 / C18 |
+| 2023 | C23 |
+
+---
+
+## Key Fact for Interviews
+
+> **C was created by Dennis Ritchie at Bell Labs in 1972 as an improvement over the B language, and it became dominant after being used to rewrite the UNIX operating system.**
+
+<ArticleNav
+  prev={{ title: "Lesson 1: Introduction — What Is a Computer?", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-1-introduction" }}
+  next={null}
+/>
