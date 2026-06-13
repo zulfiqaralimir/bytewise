@@ -1,0 +1,415 @@
+export const metadata = {
+  title: "Lesson 4: History of Computers — Mastering C — ByteWise",
+  description:
+    "From the abacus to the microprocessor — a step-by-step history of computing: five generations of computers, the evolution of programming languages, why C was created, and why computer history makes you a better engineer.",
+  keywords: [
+    "history of computers",
+    "generations of computers",
+    "abacus",
+    "Charles Babbage",
+    "Ada Lovelace",
+    "vacuum tubes",
+    "transistors",
+    "microprocessor",
+    "evolution of programming languages",
+    "why C was created",
+  ],
+  openGraph: {
+    title: "Lesson 4: History of Computers",
+    description:
+      "Abacus → vacuum tubes → transistors → microprocessor → AI. Why technology exists and why C was the answer.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# History of Computers
+
+## Lesson 4
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- Why were computers invented?
+- How did computers evolve?
+- Why did programming languages evolve?
+- Why was C created?
+- Why does computer history make you a better programmer?
+
+---
+
+## Life Before Computers
+
+Imagine you are a shopkeeper 5,000 years ago. You need to calculate:
+
+```text
+125 + 347 + 986 + 241
+```
+
+There were no calculators, no spreadsheets, no computers. Everything was done by hand.
+
+**The core problem:** humans can calculate, but we are slow and we make mistakes. Every civilisation needed a faster, more reliable way to handle numbers.
+
+---
+
+## Step 1 — The Abacus (around 2500 BC)
+
+Beads on rods. Move the beads to represent numbers.
+
+```
+|●●●|
+|●●|
+|●|
+```
+
+| Advantage | Disadvantage |
+|-----------|-------------|
+| Faster than counting fingers | Required human operation every step |
+| Reusable and portable | Could not store results |
+| — | Could not execute instructions automatically |
+
+The abacus was the first mechanical aid to calculation — but it did nothing on its own.
+
+---
+
+## Step 2 — Napier's Bones (1617)
+
+John Napier invented a set of rods that made multiplication and division dramatically faster.
+
+Instead of working out `356 × 47` from scratch, the rods turned it into a series of simple additions.
+
+**Importance:** one of the earliest attempts to automate mathematical steps.
+
+---
+
+## Step 3 — The Pascaline (1642)
+
+**Inventor:** Blaise Pascal
+
+Mechanical gears — turn a wheel, carry a digit.
+
+```
+[Gear][Gear][Gear]
+```
+
+Could do:
+- Addition
+- Subtraction
+
+**Limitation:** no decisions, no instructions. Pure mechanical action.
+
+---
+
+## Step 4 — Leibniz Calculator
+
+Gottfried Wilhelm Leibniz extended Pascal's idea.
+
+Could now do:
+- Addition
+- Subtraction
+- Multiplication
+- Division
+
+Computers were becoming more capable — but still could not be programmed to follow a sequence of steps automatically.
+
+---
+
+## Step 5 — Charles Babbage
+
+Babbage asked the question that changed everything:
+
+> What if a machine could follow instructions automatically?
+
+### Difference Engine
+
+Designed to generate mathematical tables (logarithms, tidal charts) automatically — without human arithmetic at each step.
+
+### Analytical Engine
+
+The Analytical Engine mapped directly onto what we now call a computer:
+
+| Analytical Engine | Modern Computer |
+|------------------|----------------|
+| Store | RAM / Memory |
+| Mill | CPU |
+| Input (punch cards) | Keyboard / file input |
+| Output (printer) | Monitor / file output |
+| Control | Control Unit |
+
+**Why Babbage is called the Father of the Computer:** he designed the first general-purpose programmable computing machine — over a century before one was actually built.
+
+---
+
+## Ada Lovelace — The First Programmer
+
+Ada Lovelace wrote a sequence of instructions for Babbage's Analytical Engine to calculate Bernoulli numbers.
+
+These instructions are widely recognised as the **first computer program** — an algorithm written for a machine to execute.
+
+**Why she is called the First Programmer:** she understood that the Engine could do far more than arithmetic — it could manipulate any symbols according to rules.
+
+---
+
+## First Generation Computers (1940–1956)
+
+**Technology:** Vacuum Tubes
+
+```
+OOOOOOOOOOOO
+OOOOOOOOOOOO
+OOOOOOOOOOOO
+```
+
+**Examples:** ENIAC, UNIVAC
+
+| Advantage | Disadvantage |
+|-----------|-------------|
+| Automatic calculation | Room-sized machines |
+| — | Huge electricity consumption |
+| — | Excessive heat |
+| — | Tubes burned out constantly |
+
+Programming was done in **Machine Language** — raw binary:
+
+```text
+10110010
+11101011
+00011010
+```
+
+Extremely difficult for humans to read, write, or debug.
+
+---
+
+## What Is Machine Language?
+
+The CPU only understands binary:
+
+```
+0  and  1
+```
+
+Every instruction is a pattern of bits:
+
+```text
+101101011001
+```
+
+This is the language the hardware actually executes. Everything above it — assembly, C, Python — eventually becomes this.
+
+---
+
+## Second Generation Computers (1956–1963)
+
+**Technology:** Transistors replaced vacuum tubes.
+
+| Transistor vs Vacuum Tube |
+|--------------------------|
+| Smaller |
+| Faster |
+| More reliable |
+| Far more energy efficient |
+
+Computers shrank from room-sized to cabinet-sized. Costs dropped. Reliability improved dramatically.
+
+**Assembly Language** also arrived in this era:
+
+Instead of:
+```text
+101010101
+```
+
+Programmers wrote:
+```asm
+MOV A, B
+ADD A, C
+```
+
+Still close to the hardware, but human-readable. Still painful for large systems.
+
+---
+
+## Third Generation Computers (1964–1971)
+
+**Technology:** Integrated Circuits (ICs)
+
+Many transistors etched onto a single chip:
+
+```
+Before:  [ ][ ][ ][ ][ ]   — five separate transistors
+After:   [   CHIP   ]       — thousands on one piece of silicon
+```
+
+| Improvement |
+|------------|
+| Faster |
+| Smaller |
+| Cheaper |
+| More reliable |
+
+Operating systems became practical in this generation — the software that manages the hardware so programmers do not have to.
+
+---
+
+## Fourth Generation Computers (1971–Present)
+
+**Technology:** The Microprocessor — the entire CPU on a single chip.
+
+**Examples:** Intel 4004 (1971), Intel 8080, Intel Core, AMD Ryzen
+
+This one invention made possible:
+- Personal computers
+- Laptops
+- Smartphones
+- Tablets
+- Every modern computing device
+
+Without the microprocessor, computers would still be for governments and universities — not individuals.
+
+---
+
+## Fifth Generation Computers (Now and Ahead)
+
+Current research and deployment:
+
+| Area | Example |
+|------|---------|
+| Artificial Intelligence | ChatGPT, Gemini |
+| Machine Learning | Recommendation systems, medical diagnosis |
+| Natural Language Processing | Voice assistants |
+| Robotics | Industrial automation, autonomous vehicles |
+| Quantum Computing | Early-stage quantum processors |
+
+---
+
+## Evolution of Programming Languages
+
+```text
+Machine Language
+        ↓
+Assembly Language
+        ↓
+FORTRAN (1957)    — scientific computing
+        ↓
+COBOL (1959)      — business data processing
+        ↓
+ALGOL (1958)      — structured programming ideas
+        ↓
+BCPL (1966)       — portability and simplicity
+        ↓
+B (1969)          — system programming at Bell Labs
+        ↓
+C (1972)          — the language that runs the world
+        ↓
+C++ / Objective-C / Java / C# / Python / Go / Rust
+```
+
+Each language was created to solve the limitations of the one before it.
+
+---
+
+## Why Was C Created?
+
+UNIX was originally written in Assembly Language.
+
+**Problem with Assembly:**
+
+| Issue | Consequence |
+|-------|------------|
+| Tied to specific hardware | Moving UNIX to a new machine meant rewriting everything |
+| Hard to read | Maintenance was painful |
+| Hard to maintain | Adding features was slow and error-prone |
+
+Dennis Ritchie wanted a language that was:
+
+- Nearly as fast as Assembly
+- Easier to read and write
+- Easier to maintain
+- **Portable** — compile once, run on many machines
+
+The result was **C**.
+
+When UNIX was rewritten in C in 1973, the idea was proven: you could write an operating system in a high-level language and still get hardware-level performance.
+
+---
+
+## Why Is C So Important?
+
+```text
+C (1972)
+   │
+   ├──► C++           (object-oriented systems programming)
+   ├──► Objective-C   (Apple platforms)
+   ├──► Java          (C syntax, managed memory)
+   │         └──► C# (Microsoft, .NET)
+   ├──► JavaScript    (C-like syntax, runs the web)
+   ├──► Go            (simplicity, concurrency)
+   └──► Rust          (memory safety without garbage collection)
+```
+
+Learning C helps you understand:
+
+- **Memory** — how programs actually use RAM
+- **Pointers** — direct address manipulation
+- **Operating Systems** — how the OS manages processes and memory
+- **Compilers** — how source code becomes machine code
+- **Data Structures** — implemented from scratch, no magic
+- **Computer Architecture** — how the CPU actually executes instructions
+
+---
+
+## Why Learn Computer History?
+
+Understanding history answers *why* technology exists.
+
+| Question | History gives you the answer |
+|----------|------------------------------|
+| Why do CPUs have registers? | First-gen machines needed fast local storage inside the processor |
+| Why do programming languages exist? | Machine code was too painful to write at scale |
+| Why do operating systems exist? | Third-gen hardware needed a manager so programs could share it |
+| Why was C invented? | Assembly couldn't scale for UNIX development |
+| Why do modern languages work the way they do? | They solve the failures of their predecessors |
+
+Understanding history makes you an engineer who reasons about systems — not just a programmer who follows syntax.
+
+---
+
+## Quick Revision
+
+| Invention | Problem It Solved |
+|-----------|------------------|
+| Abacus | Basic counting |
+| Napier's Bones | Faster multiplication and division |
+| Pascaline | Mechanical addition and subtraction |
+| Leibniz Calculator | All four arithmetic operations |
+| Difference Engine | Automatic mathematical tables |
+| Analytical Engine | First concept of a programmable computer |
+| Vacuum Tubes | First electronic, automatic computers |
+| Transistors | Smaller, faster, more reliable computers |
+| Integrated Circuits | Compact, cheap, dependable computers |
+| Microprocessor | Personal computers and modern devices |
+| C Language | Efficient, portable systems programming |
+
+---
+
+## Interview Questions
+
+1. Why is Charles Babbage called the Father of the Computer?
+2. Why is Ada Lovelace called the First Programmer?
+3. What are the five generations of computers and their key technologies?
+4. What is Machine Language and why is it hard to use?
+5. Why was Assembly Language introduced?
+6. What problem did transistors solve over vacuum tubes?
+7. What is a microprocessor and why did it matter?
+8. Why was the C Programming Language created?
+9. Who invented C and in which year?
+10. Why is C considered one of the most important languages for systems programming?
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>

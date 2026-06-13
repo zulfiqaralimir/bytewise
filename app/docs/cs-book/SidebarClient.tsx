@@ -159,6 +159,7 @@ const chapters = [
           { title: "Lesson 0: Roadmap — C from Beginner to Expert", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-0-roadmap" },
           { title: "Lesson 1: Introduction — What Is a Computer?", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-1-introduction" },
           { title: "Lesson 2: History of the C Programming Language", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-2-history-of-c" },
+          { title: "Lesson 4: History of Computers", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-4-history-of-computers" },
         ],
       },
     ],
@@ -270,12 +271,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/60 chapters</span>
+              <span>{readCount}/61 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 60) * 100}%` }}
+                style={{ width: `${(readCount / 61) * 100}%` }}
               />
             </div>
           </div>
