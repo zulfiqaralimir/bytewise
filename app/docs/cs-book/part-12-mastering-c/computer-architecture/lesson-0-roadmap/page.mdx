@@ -1,21 +1,21 @@
 export const metadata = {
   title: "Lesson 0: Roadmap — Mastering C from Beginner to Expert — ByteWise",
   description:
-    "The complete roadmap for mastering the C programming language — 15 phases, 14 projects, and advanced topics covering computer architecture, OS internals, compilers, and systems programming.",
+    "The complete roadmap for mastering the C programming language — 15 phases, 13 projects, coding rules, review process, and the final goal of systems programming mastery.",
   keywords: [
     "C programming roadmap",
     "learn C from scratch",
     "systems programming",
     "C language beginner to expert",
     "C projects",
-    "operating systems C",
     "memory management C",
     "data structures in C",
+    "C debugging",
   ],
   openGraph: {
     title: "Lesson 0: Roadmap — Mastering C from Beginner to Expert",
     description:
-      "15 phases, 14 projects, and the full systems-programming curriculum — from variables to building your own OS.",
+      "15 phases, 13 projects — from variables and functions to building your own shell, database, and compiler.",
     type: "article",
   },
 };
@@ -26,85 +26,104 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 ## Lesson 0: Roadmap — Beginner to Expert
 
-> **Goal:** Master C 100% through building real projects — not just reading theory.
+---
 
-This lesson is your map. Every phase, every project, and every advanced topic you will encounter in this track is listed here. Bookmark it. Return to it often.
+## Goal
+
+My objective is to master the C programming language **100%** through building real projects instead of simply reading theory.
+
+You are my mentor and senior software engineer.
+
+Never give me the complete solution immediately. Instead:
+
+- Explain concepts first
+- Break problems into smaller tasks
+- Ask me to implement them
+- Review my code
+- Suggest improvements
+- Teach best practices
+- Explain why something works
+- Explain why something fails
+- Encourage debugging instead of giving answers
 
 ---
 
-## How This Track Works
+## Teaching Philosophy
 
-You are learning like a systems programmer, not like a student memorizing syntax.
+Assume I want to become an expert systems programmer.
 
-Every lesson follows this structure:
+Every lesson includes:
 
-| Step | What happens |
-|------|-------------|
-| 1 | Theory — the concept explained from first principles |
-| 2 | Visual explanation — diagrams and analogies |
-| 3 | Memory diagram — what is actually happening in RAM |
-| 4 | Example — working code with every line explained |
-| 5 | Exercise — you implement it |
-| 6 | Challenge exercise — harder variation |
-| 7 | Common mistakes — what trips people up |
-| 8 | Interview questions — how this topic is tested |
-| 9 | Real-world applications — where this shows up in production |
+| # | Component |
+|---|-----------|
+| 1 | Theory |
+| 2 | Visual explanation |
+| 3 | Memory diagram |
+| 4 | Example |
+| 5 | Exercise |
+| 6 | Challenge exercise |
+| 7 | Common mistakes |
+| 8 | Interview questions |
+| 9 | Real-world applications |
 
----
-
-## Final Goal
-
-By the end of this track you will:
-
-- Understand C and memory management at an expert level
-- Be able to read and contribute to large C codebases
-- Build data structures and algorithms from scratch
-- Understand operating systems, compilers, and file systems
-- Write systems-level programs — shells, servers, allocators
-- Debug with gdb, valgrind, and structured methodology
-- Build substantial projects independently
+Never skip explanations.
 
 ---
 
-## Phase Roadmap
+## Complete C Learning Roadmap
 
 ### Phase 1 — Fundamentals
 
 - History of C
 - Structure of a C program
 - Compilation process
-- Variables and data types
-- Constants and operators
-- Input and output
+- Variables
+- Data types
+- Constants
+- Operators
+- Input and Output
 - Type conversion
 
 ---
 
 ### Phase 2 — Control Flow
 
-- `if`, `if-else`, `else-if` ladder
+- `if`
+- `if-else`
+- `else-if` ladder
 - `switch`
-- `for`, `while`, `do-while`
-- `break`, `continue`
-- `goto` (educational context only)
+- `for` loop
+- `while` loop
+- `do-while` loop
+- `break`
+- `continue`
+- `goto` (educational purposes)
 
 ---
 
 ### Phase 3 — Functions
 
-- Declaration, definition, and calls
-- Parameters and return values
+- Function declaration
+- Function definition
+- Function calls
+- Parameters
+- Return values
 - Recursion
-- Scope, lifetime, and storage classes
+- Scope
+- Lifetime
+- Storage classes
 
 ---
 
 ### Phase 4 — Arrays and Strings
 
-- One-dimensional and multi-dimensional arrays
-- Character arrays and strings
+- One-dimensional arrays
+- Two-dimensional arrays
+- Multi-dimensional arrays
+- Character arrays
+- Strings
 - String manipulation
-- Standard string library (`string.h`)
+- Standard string library
 
 ---
 
@@ -112,7 +131,9 @@ By the end of this track you will:
 
 Taught until fully understood. Memory diagrams on every concept.
 
-- Basic pointers, address operator, dereference operator
+- Basic pointers
+- Address operator
+- Dereference operator
 - Pointer arithmetic
 - Arrays and pointers
 - Pointer to pointer
@@ -124,92 +145,125 @@ Taught until fully understood. Memory diagrams on every concept.
 
 ### Phase 6 — Structures
 
-- `struct`, nested struct, arrays of structs
+- `struct`
+- Nested struct
+- Arrays of structs
 - Pointer to struct
-- `typedef`, `enum`, `union`
+- `typedef`
+- `enum`
+- `union`
 
 ---
 
 ### Phase 7 — Dynamic Memory
 
 - Stack vs Heap
-- `malloc`, `calloc`, `realloc`, `free`
-- Memory leaks, dangling pointers, double free
-- Best practices and debugging
+- `malloc`
+- `calloc`
+- `realloc`
+- `free`
+- Memory leaks
+- Dangling pointers
+- Double free
+- Best practices
 
 ---
 
 ### Phase 8 — File Handling
 
-- `fopen`, `fclose`, `fprintf`, `fscanf`
-- `fread`, `fwrite`
-- Text files and binary files
+- `fopen`
+- `fclose`
+- `fprintf`
+- `fscanf`
+- `fread`
+- `fwrite`
+- Binary files
+- Text files
 - Error handling
 
 ---
 
 ### Phase 9 — Preprocessor
 
-- `#include`, `#define`, macros
+- `#include`
+- `#define`
+- Macros
 - Conditional compilation
-- Header files and include guards
+- Header files
 
 ---
 
 ### Phase 10 — Bit Manipulation
 
 - Bitwise operators
-- Masks and shifts
+- Masks
+- Shifts
 - Bit fields
 
 ---
 
-### Phase 11 — Data Structures (from scratch)
+### Phase 11 — Data Structures
 
-Implement every one manually in C.
+Implement everything from scratch.
 
-- Arrays
-- Singly linked list, doubly linked list, circular linked list
-- Stack
-- Queue and Deque
-- Binary Tree, Binary Search Tree
-- Hash Table
-- Graph
+**Arrays**
+
+**Linked Lists**
+- Singly
+- Doubly
+- Circular
+
+**Stack**
+
+**Queue**
+
+**Deque**
+
+**Trees**
+- Binary Tree
+- BST
+
+**Hash Table**
+
+**Graph**
 
 ---
 
 ### Phase 12 — Algorithms
 
-Sorting:
+**Sorting:**
+- Bubble Sort
+- Selection Sort
+- Insertion Sort
+- Merge Sort
+- Quick Sort
 
-- Bubble Sort, Selection Sort, Insertion Sort
-- Merge Sort, Quick Sort
+**Searching:**
+- Linear Search
+- Binary Search
 
-Searching:
-
-- Linear Search, Binary Search
-
-Analysis:
-
+**Analysis:**
 - Big-O notation
-- Time complexity and space complexity
+- Time complexity
+- Space complexity
 
 ---
 
 ### Phase 13 — Modular Programming
 
-- Multiple source files
+- Multiple files
 - Header files
-- Static and shared libraries
+- Static libraries
+- Shared libraries
 - Makefiles
 
 ---
 
 ### Phase 14 — Debugging
 
-- `gcc` warnings and flags
-- `gdb` — stepping through code
-- Segmentation faults — how to read them
+- `gcc` warnings
+- `gdb`
+- Segmentation faults
 - Valgrind concepts
 - Debugging methodology
 
@@ -217,7 +271,7 @@ Analysis:
 
 ### Phase 15 — Memory Layout
 
-Understand every segment of a running C program:
+Understand every segment of a running C program. Always use diagrams.
 
 ```
 High address
@@ -238,97 +292,151 @@ High address
 Low address
 ```
 
+- Text segment
+- Data segment
+- BSS
+- Heap
+- Stack
+
 ---
 
 ## Project Roadmap
 
 Projects must be completed in this order.
 
-| # | Project | Key Concepts |
-|---|---------|-------------|
-| 1 | **Calculator** | Variables, functions, switch, loops |
-| 2 | **Student Management System** | Structures, arrays, file handling, searching |
-| 3 | **Banking System** | Files, modular programming, validation |
-| 4 | **File Compression Utility** | Bit manipulation, file I/O |
-| 5 | **Text Editor** | Strings, dynamic memory, files |
-| 6 | **Snake Game** | Arrays, game loops, timing, keyboard input |
-| 7 | **Linked List Library** | Every list operation implemented manually |
-| 8 | **Stack Library** | Stack as an ADT |
-| 9 | **Queue Library** | Queue as an ADT |
-| 10 | **Mini Shell** | `help`, `pwd`, `ls`, `cd`, `mkdir`, `exit` |
-| 11 | **HTTP Server** | Sockets, networking basics |
-| 12 | **Custom `malloc()`** | Heap management, free lists, fragmentation |
-| 13 | **Mini Database** | CRUD, indexing, file storage |
-| 14 | **Mini Compiler / Interpreter** | Tokenizer, lexer, parser, AST, evaluator |
+---
 
-For every project:
-- Theory and architecture explained first
-- Broken into milestones
-- Folder structure designed upfront
-- Code written incrementally
-- Trade-offs discussed
-- Time and space complexity analysed
-- Interview-style questions asked on completion
+## Project 1
+
+### Calculator
+
+Learn:
+- Variables
+- Functions
+- Switch
+- Loops
 
 ---
 
-## Advanced Topics — Beyond C
+## Project 2
 
-These topics are taught when they connect naturally to the current lesson.
+### Student Management System
 
-### Computer Fundamentals
-CPU organization, memory hierarchy, cache, registers, instruction execution, virtual memory.
+Learn:
+- Structures
+- Arrays
+- File handling
+- Searching
 
-### Assembly Language
-x86/x86-64 basics, registers, stack operations, calling conventions, interfacing Assembly with C.
-Every lesson shows what C compiles down to.
+---
 
-### Operating System Internals
-Processes, threads, scheduler, context switching, memory management, paging, virtual memory, file systems, interrupts, system calls.
+## Project 3
 
-### Linux System Programming
-`fork()`, `exec()`, `wait()`, `pipe()`, `dup()`, `signal()`, `mmap()`, `open()`, `read()`, `write()`, `close()` — with internal explanation for each.
+### Bank Management System
 
-### Processes and Threads
-Creation, parent-child relationships, zombie and orphan processes, POSIX threads, mutexes, semaphores, condition variables, deadlocks, race conditions, atomic operations.
+Learn:
+- Files
+- Modular programming
+- Validation
 
-### Networking
-TCP, UDP, IP, client-server architecture, socket programming, HTTP basics — all implemented in C.
+---
 
-### Embedded Programming
-Memory-mapped I/O, microcontrollers, bare-metal programming, interrupts, timers, GPIO.
+## Project 4
 
-### Device Drivers
-Kernel vs user space, driver architecture, hardware interaction, driver lifecycle.
+### Text Editor
 
-### Compiler Design
-Lexical analysis, parsing, AST generation, semantic analysis, optimisation, code generation.
+Learn:
+- Strings
+- Dynamic memory
+- Files
 
-### Memory Allocator
-Build a simplified `malloc()` / `free()` — heap management, fragmentation, free lists, allocation strategies.
+---
 
-### Shell Implementation
-Build a shell from scratch with pipes, redirection, and background processes.
+## Project 5
 
-### Database Engine
-Storage engine, indexing, B-trees, query execution, transactions, logging, buffer management.
+### Snake Game
 
-### Operating System Development
-Boot process, bootloader, kernel basics, scheduling, interrupt handling, file systems — build a tiny educational OS.
+Learn:
+- Arrays
+- Game loops
+- Timing
+- Keyboard input
 
-### Advanced Concurrency
-Lock-free programming, compare-and-swap (CAS), atomic instructions, memory ordering, concurrent data structures.
+---
+
+## Project 6
+
+### Linked List Library
+
+Implement every operation manually.
+
+---
+
+## Project 7
+
+### Stack Library
+
+---
+
+## Project 8
+
+### Queue Library
+
+---
+
+## Project 9
+
+### Mini Database
+
+Implement CRUD operations.
+
+---
+
+## Project 10
+
+### Mini Shell
+
+Implement commands such as:
+- `help`
+- `exit`
+- `pwd`
+- `ls`
+
+---
+
+## Project 11
+
+### HTTP Server
+
+Learn sockets and networking basics.
+
+---
+
+## Project 12
+
+### Custom `malloc()`
+
+Implement a simplified memory allocator.
+
+---
+
+## Project 13
+
+### Mini Compiler or Interpreter
+
+Understand tokenization, parsing, and evaluation.
 
 ---
 
 ## Coding Rules
 
-- Explain every line of code you write.
-- Use meaningful variable names — no `x`, `tmp`, `foo`.
-- Keep functions small and focused.
-- Prefer readability over cleverness.
-- Comments only where the *why* is not obvious from the code.
-- Never use code you do not understand.
+- Never use AI-generated code blindly
+- Explain every line
+- Use meaningful variable names
+- Keep functions small
+- Prefer readability
+- Follow consistent formatting
+- Add comments only where useful
 
 ---
 
@@ -336,15 +444,30 @@ Lock-free programming, compare-and-swap (CAS), atomic instructions, memory order
 
 After every exercise:
 
-1. **Correctness** — does it produce the right output?
-2. **Efficiency** — is the time and space complexity acceptable?
-3. **Readability** — would another programmer understand it?
-4. **Memory safety** — are there leaks, dangling pointers, or buffer overflows?
-5. **Edge cases** — does it handle empty input, zero, negatives, overflow?
+- Review correctness
+- Review efficiency
+- Review readability
+- Review memory safety
+- Review edge cases
+
+Then assign the next challenge.
 
 ---
 
-> **Simple takeaway:** C is not just a language — it is a direct window into how computers actually work. Every concept you learn here will make you a sharper thinker about every other technology you use.
+## Final Goal
+
+By the end, I should understand:
+
+- C language
+- Memory management
+- Data structures
+- Algorithms
+- File systems
+- Debugging
+- Modular programming
+- Systems programming fundamentals
+
+I should be capable of reading and contributing to large C codebases and building substantial projects independently.
 
 <ArticleNav
   prev={null}
