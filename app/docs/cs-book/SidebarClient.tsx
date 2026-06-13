@@ -161,6 +161,7 @@ const chapters = [
           { title: "Lesson 2: History of the C Programming Language", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-2-history-of-c" },
           { title: "Lesson 4: History of Computers", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-4-history-of-computers" },
           { title: "Lesson 5: Number Systems — Binary, Decimal, Octal, Hex", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-5-number-systems" },
+          { title: "Lesson 6: Bits and Bytes", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-6-bits-and-bytes" },
         ],
       },
     ],

@@ -1,0 +1,367 @@
+export const metadata = {
+  title: "Lesson 6: Bits and Bytes — Mastering C — ByteWise",
+  description:
+    "What a Bit and Byte are, why computers use binary, how data sizes are measured from Bits to Petabytes, and why Bits and Bytes are foundational for C programming, memory, pointers, and data types.",
+  keywords: [
+    "bit",
+    "byte",
+    "binary digit",
+    "bits and bytes",
+    "data sizes",
+    "kilobyte megabyte gigabyte",
+    "memory units",
+    "C programming bits bytes",
+    "network speed mbps",
+    "computer architecture storage",
+  ],
+  openGraph: {
+    title: "Lesson 6: Bits and Bytes",
+    description:
+      "What a Bit and Byte are, how data sizes scale from Bits to Petabytes, and why every C programmer must understand them.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Bits and Bytes
+
+## Lesson 6: The Smallest Units of All Data
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is a Bit?
+- What is a Byte?
+- Why do computers use Bits and Bytes?
+- What is the difference between a Bit and a Byte?
+- How are data sizes measured?
+- Why is memory measured in Bytes instead of Bits?
+- How do Bits and Bytes relate to C programming?
+
+---
+
+## Why Do Computers Need Bits and Bytes?
+
+Humans communicate using letters, numbers, words, images, and sounds — for example `Hello` or `12345`.
+
+A computer cannot understand any human language directly.
+
+It only understands two electrical states:
+
+```text
+OFF  →  0
+ON   →  1
+```
+
+Therefore, everything inside a computer is stored using combinations of **0s and 1s**.
+
+---
+
+## What Is a Bit?
+
+A **Bit** stands for **Binary Digit**. It is the **smallest unit of data** in a computer.
+
+A Bit can only hold one of two values:
+
+```text
+0   or   1
+```
+
+Think of a light switch:
+
+```text
+OFF  →  0
+ON   →  1
+```
+
+A Bit is exactly like that switch — two states, nothing in between.
+
+---
+
+## Why Is It Called Binary?
+
+The word **Binary** means "having two possible states."
+
+| Binary concept | State A | State B |
+|----------------|---------|---------|
+| Logic | False | True |
+| Answer | No | Yes |
+| Switch | OFF | ON |
+| Voltage | Low | High |
+| Bit | 0 | 1 |
+
+Computers are built using billions of tiny electronic switches called **transistors**. Each transistor has exactly two stable states, so Binary is the natural language of hardware.
+
+---
+
+## How Many Values Can N Bits Hold?
+
+**1 Bit = 2 possible values** (`0` or `1`).
+
+Each extra Bit doubles the number of possible values:
+
+| Bits | Possible Values | Formula |
+|------|-----------------|---------|
+| 1 | 2 | 2¹ |
+| 2 | 4 | 2² |
+| 3 | 8 | 2³ |
+| 4 | 16 | 2⁴ |
+| 8 | 256 | 2⁸ |
+| 16 | 65,536 | 2¹⁶ |
+| 32 | 4,294,967,296 | 2³² |
+
+**General rule:** `n` Bits can represent **2ⁿ** different values.
+
+---
+
+## What Is a Byte?
+
+A **Byte** is a group of exactly **8 Bits**.
+
+```text
+1 Byte  →  10101100
+```
+
+Therefore:
+
+```text
+1 Byte = 8 Bits
+```
+
+---
+
+## Why Was 8 Bits Chosen for a Byte?
+
+Early computer engineers needed a standard-sized unit for storing characters.
+
+Eight Bits can represent:
+
+```text
+2⁸ = 256 different values
+```
+
+That is enough for:
+
+- Letters (A–Z, a–z)
+- Digits (0–9)
+- Symbols (!, @, #, …)
+- Control characters (newline, tab, …)
+
+So the Byte became the standard unit of storage — and it has stayed that way ever since.
+
+---
+
+## Example: ASCII Encoding
+
+The letter `A` stored in memory:
+
+```text
+01000001
+```
+
+That is one Byte. In the ASCII encoding standard it means `A`.
+
+Similarly `01000010` means `B`.
+
+---
+
+## Storing the Word "CAT"
+
+Each character in `CAT` requires one Byte:
+
+| Character | Storage |
+|-----------|---------|
+| C | 1 Byte |
+| A | 1 Byte |
+| T | 1 Byte |
+| **Total** | **3 Bytes** |
+
+---
+
+## Bits vs Bytes
+
+| | Bit | Byte |
+|---|---|---|
+| Size | Smallest unit | Group of 8 Bits |
+| Values | `0` or `1` | 256 possible values |
+| Notation | lowercase `b` | uppercase `B` |
+| Typical use | Network speeds (Mbps) | Storage sizes (MB, GB) |
+
+**Always remember:**
+
+```text
+8 Bits = 1 Byte
+```
+
+And always watch the capitalisation:
+
+- `Mb` = Megabit
+- `MB` = Megabyte
+
+These differ by a factor of 8 — mixing them up is one of the most common mistakes beginners make.
+
+---
+
+## Memory Units
+
+| Unit | Equivalent |
+|------|-----------|
+| 1 Bit | `0` or `1` |
+| 1 Byte | 8 Bits |
+| 1 KB (Kilobyte) | 1,024 Bytes |
+| 1 MB (Megabyte) | 1,024 KB |
+| 1 GB (Gigabyte) | 1,024 MB |
+| 1 TB (Terabyte) | 1,024 GB |
+| 1 PB (Petabyte) | 1,024 TB |
+
+**Note:** In most programming and operating system contexts, `1 KB = 1,024 Bytes` (powers of 2), not `1,000 Bytes`. This is a common source of confusion.
+
+---
+
+## Example: Converting Bytes to KB
+
+A file is `2,048 Bytes`. How many KB?
+
+```text
+2,048 ÷ 1,024 = 2 KB
+```
+
+---
+
+## Why Is RAM Measured in GB?
+
+`16 GB RAM` means the computer can hold approximately:
+
+```text
+16 × 1,024 MB = 16,384 MB
+```
+
+of programs and data in active memory while it is running. More GB means more programs can run simultaneously without slowing down.
+
+---
+
+## Why Is Internet Speed Measured in Bits?
+
+Storage devices use **Bytes**, but network speeds use **Bits**.
+
+Example: `100 Mbps` means **100 Megabits per second**.
+
+Since `8 Bits = 1 Byte`, the maximum theoretical download speed is:
+
+```text
+100 ÷ 8 = 12.5 MB/s
+```
+
+This is why a `100 Mbps` connection does not let you download `100 MB` every second — only `12.5 MB`.
+
+---
+
+## Why Are Bits and Bytes Important in C?
+
+Understanding Bits and Bytes is the foundation for every C concept that involves memory:
+
+| C Topic | Connection to Bits and Bytes |
+|---------|------------------------------|
+| Data types (`char`, `int`, `double`) | Each type has a fixed Byte size |
+| Pointers | Store memory addresses measured in Bytes |
+| Arrays | Contiguous blocks of Bytes |
+| Structures | Fields laid out Byte-by-Byte in memory |
+| Bitwise operators (`&`, `\|`, `^`, `~`, `<<`, `>>`) | Operate directly on individual Bits |
+| File handling | Files are streams of Bytes |
+| Networking | Data transmitted as Bits over a wire |
+| Embedded systems | Hardware registers are Bit-level |
+
+---
+
+## C Data Type Sizes
+
+```c
+char grade = 'A';
+```
+
+```text
+char  →  1 Byte  →  8 Bits
+```
+
+---
+
+```c
+int age = 25;
+```
+
+```text
+int  →  4 Bytes  →  32 Bits  (on most modern systems)
+```
+
+---
+
+```c
+double pi = 3.14159;
+```
+
+```text
+double  →  8 Bytes  →  64 Bits
+```
+
+---
+
+## Common Mistakes
+
+**Mistake 1:** Treating Bit and Byte as the same thing.
+
+```text
+Wrong:  1 KB = 1,000 Bits
+Right:  1 KB = 1,024 Bytes = 8,192 Bits
+```
+
+**Mistake 2:** Assuming `1 KB = 1,000 Bytes`.
+
+```text
+Wrong:  1 KB = 1,000 Bytes
+Right:  1 KB = 1,024 Bytes  (in computing contexts)
+```
+
+**Mistake 3:** Confusing `Mb` (Megabit) with `MB` (Megabyte).
+
+```text
+100 Mb = 12.5 MB
+```
+
+One lowercase letter is an 8× difference.
+
+---
+
+## Quick Revision
+
+- A **Bit** is a Binary Digit — the smallest unit of data.
+- A Bit is either `0` or `1`.
+- A **Byte** consists of **8 Bits**.
+- `n` Bits can represent `2ⁿ` different values.
+- `1 KB = 1,024 Bytes`, `1 MB = 1,024 KB`, `1 GB = 1,024 MB`.
+- Storage is measured in **Bytes** (KB, MB, GB, TB).
+- Network speeds are measured in **Bits** (Kbps, Mbps, Gbps).
+- Every C data type has a fixed size in Bytes — knowing this is essential for memory management and bitwise operations.
+
+---
+
+## Interview Questions
+
+1. What is a Bit?
+2. What is a Byte?
+3. Why do computers use Binary?
+4. Why is a Byte equal to 8 Bits?
+5. How many values can 8 Bits represent?
+6. What is the difference between a Bit and a Byte?
+7. How many Bytes are in 1 KB?
+8. Why is RAM measured in GB?
+9. Why is internet speed measured in Mbps instead of MBps?
+10. Why is understanding Bits and Bytes essential for C programming?
+
+<ArticleNav
+  prev={{ title: "Lesson 5: Number Systems — Binary, Decimal, Octal, Hex", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-5-number-systems" }}
+  next={null}
+/>
