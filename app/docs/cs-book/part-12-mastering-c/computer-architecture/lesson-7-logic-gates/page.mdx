@@ -1,0 +1,441 @@
+export const metadata = {
+  title: "Lesson 7: Logic Gates — Mastering C — ByteWise",
+  description:
+    "What Logic Gates are, how AND, OR, NOT, NAND, NOR, XOR, and XNOR work, why NAND and NOR are universal gates, how transistors build gates, and how C operators map directly to Logic Gates in hardware.",
+  keywords: [
+    "logic gates",
+    "AND gate",
+    "OR gate",
+    "NOT gate",
+    "NAND gate",
+    "NOR gate",
+    "XOR gate",
+    "XNOR gate",
+    "universal gate",
+    "boolean logic",
+    "transistors logic gates",
+    "C programming logic operators",
+    "computer architecture gates",
+  ],
+  openGraph: {
+    title: "Lesson 7: Logic Gates",
+    description:
+      "How AND, OR, NOT, NAND, NOR, XOR, and XNOR work — and why every C operator and CPU instruction traces back to these tiny decision machines.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Logic Gates
+
+## Lesson 7: How Computers Make Decisions
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is a Logic Gate?
+- Why do computers use Logic Gates?
+- How do Logic Gates work?
+- What are the seven basic Logic Gates?
+- What are the Universal Logic Gates?
+- How are Logic Gates implemented using transistors?
+- Why are Logic Gates fundamental to CPUs and C programming?
+
+---
+
+## Why Do We Need Logic Gates?
+
+Humans make decisions every day:
+
+- If it is raining, take an umbrella.
+- If the door is locked, use a key.
+- If the password is correct, allow login.
+
+These are **logical decisions** — a condition is either true or false, and an action follows.
+
+Computers make decisions too. But a computer only understands:
+
+```text
+0  (FALSE)
+1  (TRUE)
+```
+
+Therefore, computers use **Logic Gates** to make decisions — electronic circuits that take binary inputs and produce a binary output based on a logical rule.
+
+---
+
+## What Is a Logic Gate?
+
+A Logic Gate is an electronic circuit that performs one logical operation on one or more binary inputs and produces a single binary output.
+
+Think of it as a tiny decision machine:
+
+```text
+Input(s)  →  Logic Gate  →  Output
+```
+
+---
+
+## Boolean Logic
+
+Logic Gates are built on **Boolean Algebra**, developed by mathematician **George Boole** in the 1840s.
+
+Every value is either:
+
+```text
+TRUE  =  1
+FALSE =  0
+```
+
+Boolean algebra defines rules for combining these values — and Logic Gates implement those rules in hardware.
+
+---
+
+## The Seven Logic Gates
+
+| Gate | Core Rule |
+|------|-----------|
+| AND | Output is 1 only when **all** inputs are 1 |
+| OR | Output is 1 when **any** input is 1 |
+| NOT | Output is the **reverse** of the input |
+| NAND | NOT of AND |
+| NOR | NOT of OR |
+| XOR | Output is 1 when inputs are **different** |
+| XNOR | Output is 1 when inputs are the **same** |
+
+---
+
+## 1. AND Gate
+
+**Rule:** Output is `1` only when **all** inputs are `1`.
+
+Real-life analogy: "I will go outside **only if** it is Saturday **AND** the weather is good." Both conditions must be true.
+
+### Truth Table
+
+| A | B | Output |
+|---|---|--------|
+| 0 | 0 | 0 |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | **1** |
+
+### Real Example
+
+```text
+Password Correct = 1
+Fingerprint Match = 1
+         ↓
+    Access Granted
+```
+
+Both checks must pass — one failure means no access.
+
+---
+
+## 2. OR Gate
+
+**Rule:** Output is `1` when **any** input is `1`.
+
+Real-life analogy: "I will travel by Bus **OR** Train." Either option works.
+
+### Truth Table
+
+| A | B | Output |
+|---|---|--------|
+| 0 | 0 | 0 |
+| 0 | 1 | **1** |
+| 1 | 0 | **1** |
+| 1 | 1 | **1** |
+
+### Real Example
+
+```text
+Cash Available = 1
+         OR
+Card Available = 0
+         ↓
+  Purchase Possible
+```
+
+---
+
+## 3. NOT Gate
+
+**Rule:** Output is the **reverse** of the input. One input, one output.
+
+```text
+0  →  1
+1  →  0
+```
+
+### Truth Table
+
+| A | Output |
+|---|--------|
+| 0 | **1** |
+| 1 | **0** |
+
+### Real Example
+
+A door sensor reports `Closed = 1`. After NOT:
+
+```text
+NOT(1) = 0  →  Open = false
+```
+
+The system now knows the door is not open.
+
+---
+
+## 4. NAND Gate
+
+**NAND = NOT + AND** — perform AND, then invert the result.
+
+### Truth Table
+
+| A | B | Output |
+|---|---|--------|
+| 0 | 0 | **1** |
+| 0 | 1 | **1** |
+| 1 | 0 | **1** |
+| 1 | 1 | **0** |
+
+Notice: the only row where NAND outputs `0` is where AND would output `1`.
+
+### Why NAND Is Special
+
+NAND is a **Universal Gate** — every other Logic Gate (AND, OR, NOT, XOR, …) can be built using only NAND gates. Modern processors rely heavily on NAND because it is the cheapest gate to manufacture in silicon.
+
+---
+
+## 5. NOR Gate
+
+**NOR = NOT + OR** — perform OR, then invert the result.
+
+### Truth Table
+
+| A | B | Output |
+|---|---|--------|
+| 0 | 0 | **1** |
+| 0 | 1 | **0** |
+| 1 | 0 | **0** |
+| 1 | 1 | **0** |
+
+### Why NOR Is Special
+
+NOR is also a **Universal Gate**. Any digital circuit can be built using only NOR gates. Early space-mission computers (like those used in Apollo 11) were built entirely from NOR gates.
+
+---
+
+## 6. XOR Gate (Exclusive OR)
+
+**Rule:** Output is `1` only when inputs are **different**.
+
+### Truth Table
+
+| A | B | Output |
+|---|---|--------|
+| 0 | 0 | 0 |
+| 0 | 1 | **1** |
+| 1 | 0 | **1** |
+| 1 | 1 | 0 |
+
+### Key Difference from OR
+
+| Inputs | OR | XOR |
+|--------|----|-----|
+| 0, 0 | 0 | 0 |
+| 0, 1 | 1 | 1 |
+| 1, 0 | 1 | 1 |
+| 1, 1 | **1** | **0** |
+
+OR accepts `1,1`. XOR rejects it — "exclusive" means only one can be true.
+
+### Real Example
+
+Two switches controlling one lamp (common wiring in stairways):
+
+```text
+Switch A ≠ Switch B  →  Light ON
+Switch A = Switch B  →  Light OFF
+```
+
+XOR is also the foundation of **binary addition** — adding two bits uses an XOR gate.
+
+---
+
+## 7. XNOR Gate (Exclusive NOR)
+
+**XNOR = NOT XOR** — output is `1` only when inputs are the **same**.
+
+### Truth Table
+
+| A | B | Output |
+|---|---|--------|
+| 0 | 0 | **1** |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | **1** |
+
+### Real Example
+
+Password verification:
+
+```text
+Entered Password  =  Stored Password  →  XNOR output = 1  →  Valid
+Entered Password  ≠  Stored Password  →  XNOR output = 0  →  Rejected
+```
+
+XNOR is essentially an equality checker.
+
+---
+
+## Summary Table
+
+| Gate | Output is 1 when… | Universal? |
+|------|-------------------|------------|
+| AND | **All** inputs are 1 | No |
+| OR | **Any** input is 1 | No |
+| NOT | Input is 0 | No |
+| NAND | NOT all inputs are 1 | **Yes** |
+| NOR | No input is 1 | **Yes** |
+| XOR | Inputs are **different** | No |
+| XNOR | Inputs are the **same** | No |
+
+---
+
+## How Are Logic Gates Built?
+
+Logic Gates are implemented using **transistors** — microscopic electronic switches.
+
+```text
+Transistors  →  Logic Gates  →  Circuits  →  CPU  →  Computer
+```
+
+A modern CPU contains **billions of transistors**, each acting as a tiny ON/OFF switch. Combinations of transistors form Logic Gates; combinations of gates form adders, multiplexers, memory cells, and everything else inside a processor.
+
+---
+
+## Connection to C Programming
+
+Every logical operator in C maps directly to a Logic Gate in hardware:
+
+| C Operator | Logical Operation | Gate Equivalent |
+|------------|-------------------|-----------------|
+| `&&` | Logical AND | AND Gate |
+| `\|\|` | Logical OR | OR Gate |
+| `!` | Logical NOT | NOT Gate |
+| `&` | Bitwise AND | AND Gate (per bit) |
+| `\|` | Bitwise OR | OR Gate (per bit) |
+| `^` | Bitwise XOR | XOR Gate (per bit) |
+| `~` | Bitwise NOT | NOT Gate (per bit) |
+
+Example:
+
+```c
+if (age >= 18 && citizen == 1)
+{
+    printf("Eligible");
+}
+```
+
+The `&&` is an **AND operation** — both conditions must be `1` (true) for the body to execute. The CPU implements this check using AND gates at the hardware level.
+
+---
+
+## Real-World Examples
+
+### ATM Machine
+
+```text
+Correct PIN = 1
+AND
+Card Valid  = 1
+     ↓
+Cash Dispensed
+```
+
+### Login System
+
+```text
+Username Correct = 1
+AND
+Password Correct = 1
+        ↓
+   Login Success
+```
+
+### Fire Alarm
+
+```text
+Smoke Detected = 1
+OR
+Heat Detected  = 1
+      ↓
+  Alarm Triggered
+```
+
+---
+
+## Common Mistakes
+
+**Mistake 1:** Confusing AND with OR.
+
+```text
+AND:  both must be true
+OR:   either can be true
+```
+
+**Mistake 2:** Forgetting that NOT completely flips the value.
+
+```text
+NOT(1) = 0
+NOT(0) = 1
+```
+
+**Mistake 3:** Treating XOR the same as OR.
+
+```text
+OR:   1 OR  1 = 1    (both true → still true)
+XOR:  1 XOR 1 = 0    (both true → false, because inputs are not different)
+```
+
+---
+
+## Quick Revision
+
+- A **Logic Gate** is an electronic circuit that performs one logical operation on binary inputs.
+- Computers make every decision using Logic Gates.
+- **AND** — all inputs must be `1`.
+- **OR** — at least one input must be `1`.
+- **NOT** — reverses the input.
+- **NAND** and **NOR** are **Universal Gates** — every other gate can be built from them.
+- **XOR** — true when inputs differ; the foundation of binary addition.
+- **XNOR** — true when inputs match; used for equality checks.
+- Logic Gates are built from transistors; a modern CPU contains billions of them.
+- C operators `&&`, `||`, `!`, `&`, `|`, `^`, `~` all map directly to Logic Gates.
+
+---
+
+## Interview Questions
+
+1. What is a Logic Gate?
+2. Why do computers use Logic Gates?
+3. What is Boolean Logic?
+4. Explain the AND Gate with a real-world example.
+5. Explain the OR Gate with a real-world example.
+6. What does a NOT Gate do?
+7. Why is NAND called a Universal Gate?
+8. What is the difference between OR and XOR?
+9. Why is XNOR useful for comparison operations?
+10. How are Logic Gates related to C programming and CPU architecture?
+
+<ArticleNav
+  prev={{ title: "Lesson 6: Bits and Bytes", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-6-bits-and-bytes" }}
+  next={null}
+/>
