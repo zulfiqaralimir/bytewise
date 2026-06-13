@@ -150,6 +150,17 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 12 — Mastering Programming Language C",
+    chapters: [
+      {
+        chapter: "Computer Architecture — From Zero to Expert",
+        items: [
+          { title: "Lesson 1: Introduction — What Is a Computer?", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-1-introduction" },
+        ],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
@@ -257,12 +268,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/57 chapters</span>
+              <span>{readCount}/58 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 57) * 100}%` }}
+                style={{ width: `${(readCount / 58) * 100}%` }}
               />
             </div>
           </div>

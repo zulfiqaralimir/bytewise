@@ -1,0 +1,354 @@
+export const metadata = {
+  title: "Computer Architecture — Lesson 1: Introduction — Mastering C — ByteWise",
+  description:
+    "What is a computer? The five main components, CPU internals, memory hierarchy, Von Neumann architecture, and the fetch-decode-execute cycle — explained from first principles.",
+  keywords: [
+    "computer architecture",
+    "CPU",
+    "RAM",
+    "memory hierarchy",
+    "Von Neumann architecture",
+    "fetch decode execute",
+    "ALU",
+    "registers",
+    "control unit",
+    "C programming",
+  ],
+  openGraph: {
+    title: "Computer Architecture — Lesson 1: Introduction",
+    description:
+      "What is a computer? Five components, CPU internals, memory hierarchy, and the fetch-decode-execute cycle — from first principles.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Computer Architecture — From Zero to Expert
+
+## Lesson 1: Introduction
+
+> **Computer Architecture is the design and organization of a computer system, including its CPU, memory, storage, input/output devices, and the way they interact to execute instructions efficiently.**
+
+---
+
+## Think of a Computer as a Human Body
+
+| Human Body       | Computer       |
+|------------------|----------------|
+| Brain            | CPU            |
+| Memory           | RAM            |
+| Long-term memory | SSD / HDD      |
+| Eyes             | Camera         |
+| Ears             | Microphone     |
+| Mouth            | Speaker        |
+| Hands            | Keyboard / Mouse |
+| Nervous system   | Buses          |
+
+---
+
+## Why Learn Computer Architecture?
+
+If you want to master any of these, computer architecture is the foundation you cannot skip:
+
+- C Programming
+- C++
+- Operating Systems
+- Linux
+- Embedded Systems
+- Device Drivers
+- Reverse Engineering
+- Cybersecurity
+- AI Systems
+- High-Performance Computing
+
+---
+
+## The Big Picture
+
+```
+            User
+              │
+              ▼
+     ┌─────────────────┐
+     │  Input Devices  │
+     └─────────────────┘
+              │
+              ▼
+     ┌─────────────────┐
+     │      CPU        │
+     └─────────────────┘
+        │         │
+        ▼         ▼
+      Memory   Storage
+        │
+        ▼
+   Output Devices
+```
+
+Everything revolves around the **CPU**.
+
+---
+
+## Five Main Components
+
+### 1. Input Unit
+
+Takes information from the outside world.
+
+Examples: keyboard, mouse, scanner, camera, microphone.
+
+```
+You press: A
+→ The keyboard sends an electrical signal to the computer.
+```
+
+---
+
+### 2. CPU (Central Processing Unit)
+
+The CPU is the brain. It performs arithmetic, logic, decision-making, and control.
+
+```
+5 + 3  →  CPU computes  →  8
+```
+
+---
+
+### 3. Memory (RAM)
+
+RAM stores data **temporarily** while a program runs.
+
+```c
+int x = 10;
+```
+
+The value `10` is placed into RAM. When power is off, it is gone.
+
+- Very fast
+- Temporary
+- Volatile (loses data on shutdown)
+
+---
+
+### 4. Storage
+
+Stores information **permanently**.
+
+Examples: SSD, HDD, USB Drive.
+
+```
+photo.jpg  →  remains on disk even after shutdown
+```
+
+---
+
+### 5. Output Unit
+
+Shows the result of computation.
+
+Examples: monitor, printer, speaker.
+
+```c
+printf("Hello");
+// Monitor displays: Hello
+```
+
+---
+
+## Inside the CPU
+
+```
+           CPU
+     ┌──────────────┐
+     │     ALU      │
+     │──────────────│
+     │ Control Unit │
+     │──────────────│
+     │  Registers   │
+     └──────────────┘
+```
+
+### ALU — Arithmetic Logic Unit
+
+Handles all computation:
+
+```
+5 + 7       → addition
+10 × 8      → multiplication
+15 > 9      → comparison
+```
+
+Operations: addition, subtraction, multiplication, division, comparisons, logical operations (AND / OR / NOT).
+
+---
+
+### Control Unit
+
+Acts like a manager. Responsibilities:
+
+1. **Fetch** — get the next instruction from memory
+2. **Decode** — figure out what the instruction means
+3. **Execute** — carry it out
+4. **Coordinate** — tell every other component what to do and when
+
+---
+
+### Registers
+
+Registers are tiny storage locations **inside** the CPU — the fastest memory in the computer.
+
+Think of them as the CPU's pockets.
+
+```
+A = 5
+B = 7
+ALU: A + B = 12
+```
+
+The values `5` and `7` sit in registers while the ALU adds them.
+
+---
+
+## Memory Hierarchy
+
+Speed decreases and capacity generally increases as you go down:
+
+```
+Fast  ↑
+      │  Registers
+      │  Cache
+      │  RAM
+      │  SSD
+      │  HDD
+      │  Tape
+Slow  ↓
+```
+
+---
+
+## The Von Neumann Architecture
+
+Most modern computers follow this design.
+
+```
+           Memory
+              ▲
+              │
+Input → CPU → Output
+              │
+              ▼
+           Storage
+```
+
+**Key idea:** Instructions and data are stored in the **same** memory. The CPU reads both from RAM.
+
+---
+
+## How a Program Runs — Step by Step
+
+```c
+int a = 5;
+int b = 3;
+int c = a + b;
+```
+
+| Step | What happens |
+|------|-------------|
+| 1 | Program sits on SSD |
+| 2 | OS loads it into RAM |
+| 3 | CPU fetches the instruction |
+| 4 | CPU decodes the instruction |
+| 5 | ALU performs the addition |
+| 6 | Result stored in memory |
+| 7 | Output displayed |
+
+---
+
+## The Fetch–Decode–Execute Cycle
+
+Every CPU continuously repeats this loop — billions of times per second:
+
+```
+Fetch → Decode → Execute → Fetch → Decode → Execute → ...
+```
+
+---
+
+## Where C Fits In
+
+When you write:
+
+```c
+int x = 5;
+```
+
+the **compiler** translates it into machine instructions the CPU actually understands:
+
+```
+LOAD
+STORE
+ADD
+MOV
+```
+
+The CPU only understands **machine code** — C is an abstraction on top of it.
+
+---
+
+## Complete Roadmap — Topics Ahead
+
+| # | Topic |
+|---|-------|
+| 1 | History of Computers |
+| 2 | Number Systems (Binary, Decimal, Hexadecimal) |
+| 3 | Bits and Bytes |
+| 4 | Logic Gates |
+| 5 | Boolean Algebra |
+| 6 | CPU Internals |
+| 7 | Registers |
+| 8 | Memory Hierarchy |
+| 9 | Cache Memory |
+| 10 | Instruction Set Architecture (ISA) |
+| 11 | Assembly Language |
+| 12 | Machine Code |
+| 13 | Stack and Heap |
+| 14 | Function Calls |
+| 15 | Pointers and Memory |
+| 16 | Processes and Threads |
+| 17 | Virtual Memory |
+| 18 | Interrupts |
+| 19 | Pipelining |
+| 20 | Multi-core Processors |
+| 21 | GPUs |
+| 22 | Operating System Interaction |
+| 23 | How C Maps to Hardware |
+| 24 | How Linux Uses Computer Architecture |
+| 25 | Modern Processor Design |
+
+---
+
+## Key Definitions to Remember
+
+**CPU** — the brain; fetches, decodes, and executes instructions.
+
+**ALU** — the part of the CPU that does math and logic.
+
+**Control Unit** — the part of the CPU that coordinates everything.
+
+**Registers** — the fastest, smallest storage; lives inside the CPU.
+
+**RAM** — fast temporary memory; holds running programs.
+
+**Storage** — slow permanent memory; holds files between sessions.
+
+**Von Neumann Architecture** — the design where instructions and data share the same memory.
+
+**Fetch–Decode–Execute** — the cycle the CPU repeats endlessly.
+
+**Compiler** — the tool that translates C into machine code the CPU can run.
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>
