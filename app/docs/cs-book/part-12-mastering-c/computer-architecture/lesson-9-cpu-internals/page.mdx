@@ -1,0 +1,600 @@
+export const metadata = {
+  title: "Lesson 9: CPU Internals — Mastering C — ByteWise",
+  description:
+    "What a CPU is, its internal components (Control Unit, ALU, Registers, Cache, Clock, Buses), how the Fetch-Decode-Execute cycle works step by step, and how every line of C code maps to CPU operations.",
+  keywords: [
+    "CPU internals",
+    "central processing unit",
+    "control unit",
+    "ALU arithmetic logic unit",
+    "registers",
+    "program counter",
+    "instruction register",
+    "fetch decode execute cycle",
+    "CPU clock",
+    "cache memory",
+    "address bus data bus",
+    "C programming CPU",
+  ],
+  openGraph: {
+    title: "Lesson 9: CPU Internals",
+    description:
+      "What happens inside a CPU when your C code runs — Control Unit, ALU, Registers, and the Fetch-Decode-Execute cycle explained step by step.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# CPU Internals
+
+## Lesson 9: Step-by-Step Inside the Brain of the Computer
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is a CPU?
+- Why is the CPU called the brain of the computer?
+- What are the internal components of a CPU?
+- How does the CPU execute instructions?
+- What are Registers?
+- What is the ALU?
+- What is the Control Unit?
+- What is the Program Counter?
+- What is the Instruction Register?
+- What is the Clock?
+- What is the Fetch-Decode-Execute Cycle?
+- How does this relate to C programming?
+
+---
+
+## What Is a CPU?
+
+CPU stands for **Central Processing Unit**.
+
+It is the component responsible for executing instructions and controlling the operation of the computer.
+
+Think of the CPU as the brain of the human body:
+
+```text
+Brain
+    ↓
+Controls Body
+
+CPU
+    ↓
+Controls Computer
+```
+
+Without a CPU, a computer cannot perform calculations or execute programs.
+
+---
+
+## Why Is the CPU Important?
+
+Everything you do eventually reaches the CPU:
+
+- Opening a file
+- Playing a video
+- Running a C program
+- Browsing the internet
+- Printing text
+
+Every single instruction is executed by the CPU.
+
+---
+
+## High-Level CPU Architecture
+
+```text
+                 +----------------------+
+                 |         CPU          |
+                 |                      |
+                 |  +--------------+    |
+Input ---------->|  | Control Unit |    |
+                 |  +--------------+    |
+                 |          |           |
+                 |          v           |
+                 |  +--------------+    |
+                 |  |     ALU      |    |
+                 |  +--------------+    |
+                 |          |           |
+                 |          v           |
+                 |  +--------------+    |
+                 |  |  Registers   |    |
+                 |  +--------------+    |
+                 +----------------------+
+                          |
+                          v
+                      Main Memory
+```
+
+---
+
+## Main Components of a CPU
+
+| Component | Role |
+|-----------|------|
+| Control Unit (CU) | Fetches, decodes, and coordinates instructions |
+| Arithmetic Logic Unit (ALU) | Performs calculations and logical operations |
+| Registers | Ultra-fast storage inside the CPU |
+| Cache | Fast buffer memory near or inside the CPU |
+| Clock | Synchronizes all CPU operations |
+| Buses | Wires that carry data, addresses, and control signals |
+
+---
+
+## 1. Control Unit (CU)
+
+The Control Unit is the manager of the CPU.
+
+It:
+
+- Fetches instructions from memory
+- Decodes those instructions
+- Controls execution order
+- Coordinates all other components
+
+Think of it as the conductor of an orchestra — it doesn't play the music itself, but it tells every section when and how to play.
+
+```text
+Control Unit
+      ↓
+"Do this now"
+      ↓
+Other Components
+```
+
+### Example
+
+For the instruction:
+
+```c
+x = y + z;
+```
+
+The Control Unit tells:
+
+- Memory to send `y` and `z`
+- The ALU to perform addition
+- A register to store the result
+
+---
+
+## 2. Arithmetic Logic Unit (ALU)
+
+The ALU is where computation actually happens.
+
+It performs two categories of operations:
+
+**Arithmetic:**
+- Addition
+- Subtraction
+- Multiplication
+- Division
+
+**Logical:**
+- AND
+- OR
+- NOT
+- XOR
+- Comparisons (`>`, `<`, `==`)
+
+### Example
+
+```text
+5 + 3
+  ↓
+ ALU
+  ↓
+  8
+```
+
+The logical operations connect directly to Boolean Algebra from Lesson 8 — the ALU is Boolean Algebra implemented in hardware.
+
+---
+
+## 3. Registers
+
+Registers are tiny, ultra-fast storage locations **inside** the CPU itself.
+
+Think of them as the CPU's working desk. Instead of constantly reaching into RAM (which is slower and further away), the CPU keeps the values it's currently working with in registers.
+
+### Example
+
+```text
+a = 5    →   Register1 = 5
+b = 10   →   Register2 = 10
+
+ALU computes: 5 + 10 = 15
+
+             Register3 = 15
+```
+
+### Common Registers
+
+| Register | Full Name | Purpose |
+|----------|-----------|---------|
+| PC | Program Counter | Address of the next instruction |
+| IR | Instruction Register | The current instruction being executed |
+| MAR | Memory Address Register | Address of the memory location to access |
+| MDR | Memory Data Register | Data read from or written to memory |
+| General Purpose | (varies by CPU) | Temporary storage for calculations |
+
+---
+
+## 4. Program Counter (PC)
+
+The Program Counter stores the **address of the next instruction** to be executed.
+
+After each instruction executes, the PC automatically increments to the next one.
+
+### Example
+
+Suppose memory contains:
+
+```text
+Address 100 : LOAD
+Address 101 : ADD
+Address 102 : STORE
+```
+
+Execution sequence:
+
+```text
+PC = 100  →  Fetch LOAD  →  Execute
+PC = 101  →  Fetch ADD   →  Execute
+PC = 102  →  Fetch STORE →  Execute
+```
+
+The PC always points one step ahead. It's the CPU's bookmark in your program.
+
+---
+
+## 5. Instruction Register (IR)
+
+The Instruction Register holds the **current instruction** being executed.
+
+When the CPU fetches an instruction from memory, it places it in the IR so the Control Unit can decode and act on it.
+
+### Example
+
+```text
+Fetched instruction:  ADD R1, R2
+                        ↓
+               Stored in IR
+                        ↓
+          Control Unit reads IR
+                        ↓
+            Sends R1 and R2 to ALU
+```
+
+---
+
+## 6. Memory Address Register (MAR)
+
+The MAR holds the **address** of the memory location the CPU wants to read from or write to.
+
+### Example
+
+To read the value at memory address 500:
+
+```text
+MAR = 500
+       ↓
+Memory receives the address
+       ↓
+Returns value at location 500
+```
+
+---
+
+## 7. Memory Data Register (MDR)
+
+The MDR holds the **actual data** that was read from memory or is about to be written to memory.
+
+### Example
+
+```text
+Memory[500] = 25
+
+MAR = 500  →  Memory sends 25  →  MDR = 25
+                                        ↓
+                             CPU uses value 25
+```
+
+MAR carries the address. MDR carries the data. They work as a pair.
+
+---
+
+## 8. Cache Memory
+
+Cache is a very small but extremely fast memory located near or inside the CPU.
+
+Its purpose: reduce the time wasted fetching frequently used data from RAM.
+
+### Memory Speed Hierarchy
+
+```text
+Registers   ←  Fastest (inside CPU, nanoseconds)
+    ↓
+  Cache      ←  Very fast (L1/L2/L3, also inside/near CPU)
+    ↓
+   RAM       ←  Fast (main memory, hundreds of nanoseconds)
+    ↓
+   SSD       ←  Slow (microseconds)
+    ↓
+ Hard Disk   ←  Slowest (milliseconds)
+```
+
+When your C program runs a loop, the CPU caches the loop variable and repeated values in L1 or L2 cache so it doesn't re-fetch from RAM on every iteration.
+
+---
+
+## 9. Clock
+
+The CPU clock is a crystal oscillator that produces a regular electrical pulse.
+
+```text
+Tick  Tick  Tick  Tick ...
+```
+
+Each tick is one **clock cycle**. On every cycle, the CPU can perform one basic operation.
+
+### Clock Speed
+
+```text
+3 GHz  =  3,000,000,000 cycles per second
+```
+
+Higher clock speed generally means more operations per second — but architecture and instruction pipelining matter just as much.
+
+---
+
+## 10. Buses
+
+Buses are the wires that carry information between the CPU, memory, and other components.
+
+Three types:
+
+| Bus | Carries | Direction |
+|-----|---------|-----------|
+| Data Bus | Actual data values | Both ways |
+| Address Bus | Memory addresses | CPU → Memory |
+| Control Bus | Control signals (READ, WRITE, INTERRUPT) | Both ways |
+
+```text
+CPU
+ ├── Data Bus    ──→  Memory (and back)
+ ├── Address Bus ──→  Memory
+ └── Control Bus ──→  Memory / Devices
+```
+
+---
+
+## The Fetch-Decode-Execute Cycle
+
+This is the most important concept in this lesson — and one of the most important in all of Computer Science.
+
+Every instruction your CPU ever runs follows exactly three steps:
+
+```text
+Fetch
+  ↓
+Decode
+  ↓
+Execute
+```
+
+This repeats **billions of times per second** for as long as the computer is running.
+
+---
+
+### Step 1: Fetch
+
+The CPU reads the next instruction from memory.
+
+- The PC holds the address.
+- The CPU copies that address into the MAR.
+- Memory sends the instruction back via the MDR.
+- The instruction is loaded into the IR.
+- The PC increments to point to the next instruction.
+
+```text
+PC → MAR → Memory → MDR → IR
+```
+
+---
+
+### Step 2: Decode
+
+The Control Unit reads the instruction in the IR and determines what action is needed.
+
+```text
+Instruction: ADD
+
+Control Unit decodes:
+  → "This is an addition operation"
+  → "Operands are in Register1 and Register2"
+  → "Result goes to Register3"
+```
+
+---
+
+### Step 3: Execute
+
+The Control Unit activates the appropriate component — usually the ALU.
+
+```text
+ALU receives Register1 = 5, Register2 = 3
+ALU computes: 5 + 3 = 8
+Result stored in Register3
+```
+
+---
+
+### Complete Cycle Diagram
+
+```text
+Memory
+   ↓
+Fetch instruction (PC → MAR → MDR → IR, PC++)
+   ↓
+Decode instruction (Control Unit reads IR)
+   ↓
+Execute (ALU or other component acts)
+   ↓
+Store result (register or memory)
+   ↓
+Next instruction
+   ↓
+(Repeat)
+```
+
+---
+
+## CPU Internals and C Programming
+
+Every line of C you write becomes a sequence of machine instructions that run through the Fetch-Decode-Execute cycle.
+
+### Example 1
+
+```c
+int c = a + b;
+```
+
+Internally:
+
+```text
+Fetch LOAD instruction
+    ↓
+Load value of a into Register1
+    ↓
+Load value of b into Register2
+    ↓
+Fetch ADD instruction
+    ↓
+ALU adds Register1 + Register2
+    ↓
+Store result in Register3
+    ↓
+Write Register3 to memory location of c
+```
+
+---
+
+### Example 2
+
+```c
+if (x > y)
+```
+
+Internally:
+
+```text
+Load x into Register1
+    ↓
+Load y into Register2
+    ↓
+ALU compares Register1 and Register2
+    ↓
+Set condition flag (greater/equal/less)
+    ↓
+Control Unit checks flag
+    ↓
+Branch to correct code path
+```
+
+---
+
+### Example 3
+
+```c
+while (i < 10)
+```
+
+On every loop iteration:
+
+```text
+Load i into Register1
+    ↓
+Load 10 into Register2
+    ↓
+ALU compares
+    ↓
+If i < 10: PC jumps back to loop start
+If i >= 10: PC moves forward to exit loop
+```
+
+---
+
+## Why Learn CPU Internals?
+
+Understanding CPU internals helps with:
+
+- **C Programming** — understanding why `++i` can be slightly faster than `i++`
+- **Pointers** — addresses in C are exactly what the MAR holds
+- **Memory Management** — knowing why stack access is faster than heap
+- **Operating Systems** — context switching swaps register states between processes
+- **Compilers** — compilers translate your C code into CPU instructions
+- **Assembly Language** — assembly is a human-readable form of machine instructions
+- **Performance Optimization** — cache-friendly loops, branch prediction awareness
+- **Embedded Systems** — writing C for microcontrollers means programming the CPU directly
+
+Great C programmers understand what happens below the language. The CPU is that foundation.
+
+---
+
+## Common Misconceptions
+
+**CPU and RAM are the same.**
+They are not. The CPU processes instructions. RAM stores data and instructions. They communicate via buses.
+
+**Registers and RAM are the same kind of memory.**
+Registers are inside the CPU, hold one value, and are orders of magnitude faster than RAM. RAM holds billions of bytes and is external to the CPU.
+
+**The CPU executes an entire program at once.**
+It executes one instruction at a time, billions of times per second. The speed creates the illusion of simultaneous execution.
+
+**Clock speed alone determines CPU performance.**
+Architecture, cache size, pipeline depth, number of cores, and instruction efficiency all contribute. A 3 GHz CPU with a modern architecture outperforms a 4 GHz CPU with a poor one.
+
+---
+
+## Quick Revision
+
+- **CPU** = Central Processing Unit — the brain of the computer
+- Every program runs through the CPU one instruction at a time
+- **Control Unit** — fetches, decodes, and coordinates; does not compute
+- **ALU** — performs all arithmetic and logical operations; the actual calculator
+- **Registers** — ultra-fast on-chip storage; the CPU's working memory
+- **Program Counter** — always holds the address of the next instruction
+- **Instruction Register** — holds the current instruction being decoded
+- **MAR / MDR** — carry address and data to/from main memory
+- **Cache** — fast buffer between CPU and RAM; speeds up repeated access
+- **Clock** — synchronizes everything; measured in GHz
+- **Buses** — wires for data, addresses, and control signals
+- **Fetch-Decode-Execute** — the cycle every instruction follows, billions of times per second
+
+---
+
+## Interview Questions
+
+1. What is a CPU?
+2. Why is the CPU called the brain of the computer?
+3. What are the major components of a CPU?
+4. What is the function of the Control Unit?
+5. What is the function of the ALU?
+6. What are Registers and why are they important?
+7. What is the Program Counter?
+8. What is the Instruction Register?
+9. Explain the Fetch-Decode-Execute Cycle step by step.
+10. How does understanding CPU internals help in mastering C programming?
+
+<ArticleNav
+  prev={{ title: "Lesson 8: Boolean Algebra", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-8-boolean-algebra" }}
+  next={null}
+/>
