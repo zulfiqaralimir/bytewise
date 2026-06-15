@@ -185,6 +185,25 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 14 — Mastering Claude Code",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-14-mastering-claude-code/overview" },
+        ],
+      },
+      {
+        chapter: "Chapter 1: Claude Code CLI",
+        items: [],
+      },
+      {
+        chapter: "Chapter 2: Claude API & SDK",
+        items: [],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
