@@ -196,7 +196,9 @@ const chapters = [
       },
       {
         chapter: "Chapter 1: Claude Code CLI",
-        items: [],
+        items: [
+          { title: "1.1 Claude Code Skills — Supercharge Productivity", href: "/docs/cs-book/part-14-mastering-claude-code/chapter-1/1-1-claude-code-skills" },
+        ],
       },
       {
         chapter: "Chapter 2: Claude API & SDK",
