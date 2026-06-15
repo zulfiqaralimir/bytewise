@@ -1,0 +1,219 @@
+export const metadata = {
+  title: "Topic 1: Arrays & Hashing — NeetCode 150 — ByteWise",
+  description:
+    "Master the Arrays & Hashing pattern — why it exists, the data structures behind it, Python tools, and all 9 problems including Contains Duplicate with brute force, optimized solution, complexity analysis, and edge cases.",
+  keywords: [
+    "arrays and hashing",
+    "NeetCode 150",
+    "contains duplicate",
+    "HashMap Python",
+    "HashSet Python",
+    "LeetCode 217",
+    "coding interview patterns",
+    "frequency counter",
+  ],
+  openGraph: {
+    title: "Topic 1: Arrays & Hashing — NeetCode 150",
+    description:
+      "Trade space for speed. Learn when to reach for a set, dict, or Counter — and solve all 9 Arrays & Hashing problems.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Topic 1: Arrays & Hashing
+
+---
+
+## WHY — Why Does This Topic Exist?
+
+Imagine you have a list of 1 million numbers and someone asks: *"Does the number 742 appear twice?"*
+
+The naive approach checks every pair — that is **1 trillion comparisons**. Completely unusable.
+
+Arrays & Hashing solves this by trading **space for speed**. You store what you have seen in a structure that answers *"have I seen this?"* in **O(1)** — instantly, regardless of input size.
+
+This is the most fundamental trade-off in all of computer science: **time vs space**.
+
+---
+
+## WHAT — The Data Structures
+
+**Array** — ordered, indexed, O(1) access by index, O(n) search.
+
+**HashMap** (`dict` in Python) — stores key→value pairs. O(1) average for insert, lookup, and delete.
+
+**HashSet** (`set` in Python) — stores unique keys only. O(1) average for insert, lookup, and delete.
+
+Both use **hashing** internally — a function that converts any key into an array index in O(1).
+
+---
+
+## HOW — Recognizing This Pattern
+
+When you see any of these phrases in a problem, think Arrays & Hashing:
+
+| Trigger Phrase | Tool to Reach For |
+|---|---|
+| "find duplicate" / "already seen" | `set` |
+| "frequency of elements" | `Counter` or `dict` |
+| "two elements that sum to X" | `dict` for complement lookup |
+| "group by some property" | `defaultdict(list)` |
+| "count occurrences" | `Counter` |
+
+---
+
+## Python Concepts Used in This Topic
+
+| Python Concept | What It Does |
+|---|---|
+| `set()` | Stores unique values, O(1) lookup |
+| `dict` | Key→value mapping, O(1) lookup |
+| `defaultdict(list)` | dict that auto-creates missing keys |
+| `Counter(arr)` | Instant frequency map from any iterable |
+| `sorted()` | Returns a new sorted list |
+| `enumerate()` | Loop with both index and value |
+| `zip()` | Iterate two lists in parallel |
+| List comprehension | `[x for x in arr if condition]` |
+
+---
+
+## Problems in This Topic
+
+| # | Problem | Difficulty | LeetCode |
+|---|---------|------------|----------|
+| 1 | Contains Duplicate | 🟢 Easy | #217 |
+| 2 | Valid Anagram | 🟢 Easy | #242 |
+| 3 | Two Sum | 🟢 Easy | #1 |
+| 4 | Group Anagrams | 🟡 Medium | #49 |
+| 5 | Top K Frequent Elements | 🟡 Medium | #347 |
+| 6 | Encode and Decode Strings | 🟡 Medium | #271 |
+| 7 | Product of Array Except Self | 🟡 Medium | #238 |
+| 8 | Valid Sudoku | 🟡 Medium | #36 |
+| 9 | Longest Consecutive Sequence | 🟡 Medium | #128 |
+
+---
+
+## Problem 1 of 9 — Contains Duplicate
+
+**LeetCode #217 · 🟢 Easy**
+
+### Problem Statement
+
+> Given an integer array `nums`, return `true` if any value appears more than once in the array, otherwise return `false`.
+
+**Examples:**
+
+```
+Input:  nums = [1, 2, 3, 3]  →  Output: true
+Input:  nums = [1, 2, 3, 4]  →  Output: false
+```
+
+**Constraints:**
+- `1 <= nums.length <= 10⁵`
+- `-10⁹ <= nums[i] <= 10⁹`
+
+---
+
+### Brute Force Approach
+
+Check every possible pair (i, j) where i ≠ j:
+
+```python
+def hasDuplicate(nums):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] == nums[j]:
+                return True
+    return False
+```
+
+**Time Complexity: O(n²)** — for n = 100,000, this is 10 billion operations.
+
+**Space Complexity: O(1)**
+
+**Why it fails:** Time Limit Exceeded (TLE) on large inputs. Not acceptable in interviews.
+
+---
+
+### Intuition
+
+As you walk through the array, remember every number you have seen so far. The moment you encounter a number that is already in your memory — you have found a duplicate.
+
+A `set` is the perfect tool: O(1) insert and O(1) lookup, no matter how large it grows.
+
+---
+
+### Optimized Approach
+
+1. Create an empty `set` called `seen`
+2. Loop through each number `n` in `nums`
+3. If `n` is already in `seen` → return `True`
+4. Otherwise, add `n` to `seen` and continue
+5. If the loop ends without finding a duplicate → return `False`
+
+---
+
+### Python Solution
+
+```python
+def hasDuplicate(nums):
+    seen = set()
+    for n in nums:
+        if n in seen:
+            return True
+        seen.add(n)
+    return False
+```
+
+**Pythonic one-liner:**
+
+```python
+def hasDuplicate(nums):
+    return len(nums) != len(set(nums))
+```
+
+> The one-liner works because `set()` removes duplicates. If the lengths differ, a duplicate existed.
+
+---
+
+### Complexity Analysis
+
+| | Complexity | Reason |
+|---|---|---|
+| **Time** | O(n) | Single pass through the array |
+| **Space** | O(n) | Worst case: all elements unique, all stored in set |
+
+---
+
+### Edge Cases
+
+| Input | Expected Output | Reason |
+|---|---|---|
+| `[1]` | `false` | Single element — no pair possible |
+| `[1, 1]` | `true` | Smallest possible duplicate |
+| `[]` | `false` | Empty array — no elements to compare |
+| `[1, 2, 3, 4, 5]` | `false` | All unique elements |
+| `[-1, -1]` | `true` | Works with negative numbers too |
+
+---
+
+### Key Takeaway
+
+> **"Have I seen this before?"** → always reach for a `set`.
+
+---
+
+### Real-World Application
+
+Database deduplication — detect repeated records before inserting into a table, preventing primary key violations.
+
+---
+
+*Topic 1: Arrays & Hashing · Problem 1 of 9*
+
+<ArticleNav
+  prev={{ title: "NeetCode 150 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150" }}
+  next={{ title: "Part Review — Mastering NeetCode 150", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/part-review" }}
+/>
