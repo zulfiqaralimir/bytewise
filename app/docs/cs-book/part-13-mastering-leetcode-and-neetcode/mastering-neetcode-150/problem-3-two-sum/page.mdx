@@ -1,0 +1,189 @@
+export const metadata = {
+  title: "Topic 1: Problem 3 — Two Sum — NeetCode 150 — ByteWise",
+  description:
+    "LeetCode #1 Two Sum — brute force O(n²) vs optimized O(n) HashMap solution using complement lookup, complexity analysis, edge cases, and enumerate() spotlight.",
+  keywords: [
+    "two sum",
+    "LeetCode 1",
+    "arrays and hashing",
+    "NeetCode 150",
+    "HashMap Python",
+    "complement lookup",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Topic 1: Problem 3 — Two Sum",
+    description:
+      "LeetCode #1 · Easy — find two indices that sum to target in O(n) using a HashMap. Full walkthrough with brute force, optimized solution, and edge cases.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Topic 1: Problem 3 of 9
+
+## Two Sum
+
+**LeetCode #1 · 🟢 Easy**
+
+---
+
+### Problem Statement
+
+> Given an array of integers `nums` and an integer `target`, return the **indices** of the two numbers that add up to `target`.
+
+> You may assume that each input has **exactly one solution**, and you may not use the same element twice.
+
+**Examples:**
+
+```
+Input:  nums = [2, 7, 11, 15], target = 9   →  Output: [0, 1]
+Input:  nums = [3, 2, 4],      target = 6   →  Output: [1, 2]
+Input:  nums = [3, 3],         target = 6   →  Output: [0, 1]
+```
+
+**Constraints:**
+- `2 <= nums.length <= 10⁴`
+- `-10⁹ <= nums[i] <= 10⁹`
+- `-10⁹ <= target <= 10⁹`
+- Exactly one valid answer exists
+
+---
+
+### Brute Force Approach
+
+Check every pair (i, j) and see if they sum to target:
+
+```python
+def twoSum(nums, target):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+```
+
+**Time Complexity: O(n²)** — nested loop over all pairs.
+
+**Space Complexity: O(1)** — no extra space used.
+
+**Why it fails:** For n = 10,000 that is 100 million comparisons. TLE on large inputs. We can do this in a single pass.
+
+---
+
+### Intuition
+
+For each number `n` in the array, you need its **complement** — the value that makes the pair sum to `target`:
+
+```
+complement = target - n
+```
+
+Instead of scanning the whole array for the complement every time, store every number you have already seen in a `dict` with its index. Then for each new number, just check: *"Is its complement already in my dict?"*
+
+This turns an O(n²) search into an O(1) lookup — done in a single pass.
+
+---
+
+### Optimized Approach
+
+1. Create an empty `dict` called `seen` mapping value → index
+2. Loop through `nums` with `enumerate` to get both index and value
+3. Compute `complement = target - n`
+4. If `complement` is in `seen` → return `[seen[complement], i]`
+5. Otherwise, store `seen[n] = i` and continue
+
+---
+
+### Python Solution
+
+```python
+def twoSum(nums, target):
+    seen = {}  # value -> index
+
+    for i, n in enumerate(nums):
+        complement = target - n
+        if complement in seen:
+            return [seen[complement], i]
+        seen[n] = i
+```
+
+**Walkthrough with example:**
+
+```
+nums = [2, 7, 11, 15], target = 9
+
+i=0, n=2  → complement = 7  → not in seen → seen = {2: 0}
+i=1, n=7  → complement = 2  → 2 IS in seen → return [0, 1] ✓
+```
+
+---
+
+### Complexity Analysis
+
+| | Complexity | Reason |
+|---|---|---|
+| **Time** | O(n) | Single pass through the array |
+| **Space** | O(n) | Dict stores up to n elements |
+
+---
+
+### Edge Cases
+
+| Input | Expected Output | Reason |
+|---|---|---|
+| `nums=[3,3], target=6` | `[0, 1]` | Same value used at different indices |
+| `nums=[2,7], target=9` | `[0, 1]` | Minimum valid input |
+| `nums=[-1,-2,-3], target=-5` | `[1, 2]` | Negative numbers work the same way |
+| `nums=[0,4,3,0], target=0` | `[0, 3]` | Zero values handled correctly |
+
+---
+
+### Python Concept Spotlight — `enumerate()`
+
+`enumerate()` gives you both the index and value in a single loop — no need for `range(len(nums))`:
+
+```python
+nums = [2, 7, 11, 15]
+
+# Without enumerate (old way)
+for i in range(len(nums)):
+    print(i, nums[i])
+
+# With enumerate (Pythonic)
+for i, n in enumerate(nums):
+    print(i, n)
+
+# Output: 0 2 / 1 7 / 2 11 / 3 15
+```
+
+Also note `dict.get()` vs `in`:
+
+```python
+seen = {2: 0}
+
+# Check membership
+7 in seen        # False — clean and readable
+seen.get(7)      # None — use when you need the value too
+```
+
+---
+
+### Key Takeaway
+
+> **"Find two elements that satisfy a condition"** → store complements in a `dict` and look them up in O(1).
+
+---
+
+### Real-World Application
+
+Payment matching — given a list of transactions, find the two that sum to a target settlement amount, used in financial reconciliation systems.
+
+---
+
+*Topic 1: Arrays & Hashing · Problem 3 of 9*
+
+<ArticleNav
+  prev={{ title: "Topic 1: Problem 2 — Valid Anagram", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-2-valid-anagram" }}
+  next={null}
+/>

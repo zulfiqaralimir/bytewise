@@ -1,0 +1,173 @@
+export const metadata = {
+  title: "Topic 1: Problem 2 — Valid Anagram — NeetCode 150 — ByteWise",
+  description:
+    "LeetCode #242 Valid Anagram — brute force O(n log n) sort vs optimized O(n) Counter solution, complexity analysis, edge cases, and Python Counter spotlight.",
+  keywords: [
+    "valid anagram",
+    "LeetCode 242",
+    "arrays and hashing",
+    "NeetCode 150",
+    "Counter Python",
+    "frequency map",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Topic 1: Problem 2 — Valid Anagram",
+    description:
+      "LeetCode #242 · Easy — check if two strings are anagrams in O(n) using Counter. Full walkthrough with brute force, optimized solution, and edge cases.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Topic 1: Problem 2 of 9
+
+## Valid Anagram
+
+**LeetCode #242 · 🟢 Easy**
+
+---
+
+### Problem Statement
+
+> Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false` otherwise.
+
+> An **anagram** is a word formed by rearranging the letters of another word, using all original letters exactly once.
+
+**Examples:**
+
+```
+Input:  s = "anagram", t = "nagaram"  →  Output: true
+Input:  s = "rat",     t = "car"      →  Output: false
+```
+
+**Constraints:**
+- `1 <= s.length, t.length <= 5 * 10⁴`
+- `s` and `t` consist of lowercase English letters only
+
+---
+
+### Brute Force Approach
+
+Sort both strings and compare:
+
+```python
+def isAnagram(s, t):
+    return sorted(s) == sorted(t)
+```
+
+**Time Complexity: O(n log n)** — sorting costs O(n log n).
+
+**Space Complexity: O(n)** — `sorted()` creates new lists.
+
+**Why it fails:** This actually passes LeetCode, but interviewers will ask: *"Can you do it in O(n)?"* Sorting is unnecessary when we only care about character frequencies.
+
+---
+
+### Intuition
+
+Two strings are anagrams if and only if **every character appears the same number of times in both**.
+
+Count the frequency of each character in `s`, count the frequency in `t`, and compare. A `Counter` or `dict` does this in one pass each — O(n) total.
+
+---
+
+### Optimized Approach
+
+1. If lengths differ → immediately return `False`
+2. Build a frequency map for `s` using `Counter`
+3. Build a frequency map for `t` using `Counter`
+4. If both maps are equal → return `True`, else `False`
+
+---
+
+### Python Solution
+
+```python
+from collections import Counter
+
+def isAnagram(s, t):
+    if len(s) != len(t):
+        return False
+    return Counter(s) == Counter(t)
+```
+
+**Manual dict approach (without Counter):**
+
+```python
+def isAnagram(s, t):
+    if len(s) != len(t):
+        return False
+
+    count = {}
+    for c in s:
+        count[c] = count.get(c, 0) + 1
+    for c in t:
+        count[c] = count.get(c, 0) - 1
+        if count[c] < 0:
+            return False
+    return True
+```
+
+> The manual approach increments counts for `s` and decrements for `t`. If any count goes negative, `t` has a character that `s` does not — not an anagram.
+
+---
+
+### Complexity Analysis
+
+| | Complexity | Reason |
+|---|---|---|
+| **Time** | O(n) | One pass each through `s` and `t` |
+| **Space** | O(1) | At most 26 keys — fixed alphabet size |
+
+> Space is technically O(1) because there are only 26 possible lowercase letters. The frequency map never grows beyond 26 entries regardless of input size.
+
+---
+
+### Edge Cases
+
+| Input | Expected Output | Reason |
+|---|---|---|
+| `s="a", t="a"` | `true` | Single identical characters |
+| `s="ab", t="a"` | `false` | Different lengths — early exit |
+| `s="aa", t="bb"` | `false` | Same length, different characters |
+| `s="aab", t="bba"` | `false` | Frequency mismatch |
+| `s="", t=""` | `true` | Two empty strings are anagrams |
+
+---
+
+### Python Concept Spotlight — `Counter`
+
+`Counter` from `collections` is one of the most powerful tools in competitive Python:
+
+```python
+from collections import Counter
+
+Counter("anagram")
+# Counter({'a': 3, 'n': 1, 'g': 1, 'r': 1, 'm': 1})
+
+Counter("anagram") == Counter("nagaram")
+# True — order does not matter, only frequency counts
+```
+
+---
+
+### Key Takeaway
+
+> **"Do these two things have the same composition?"** → build a `Counter` for each and compare.
+
+---
+
+### Real-World Application
+
+Search engines — detect synonym or rearranged keyword queries to return relevant results even when word order differs.
+
+---
+
+*Topic 1: Arrays & Hashing · Problem 2 of 9*
+
+<ArticleNav
+  prev={{ title: "Topic 1: Problem 1 — Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-1-contains-duplicate" }}
+  next={{ title: "Topic 1: Problem 3 — Two Sum", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-3-two-sum" }}
+/>
