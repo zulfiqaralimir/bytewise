@@ -176,6 +176,7 @@ const chapters = [
         chapter: "Mastering NeetCode 150",
         items: [
           { title: "NeetCode 150 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150" },
+          { title: "Part Review — Mastering NeetCode 150", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/part-review" },
         ],
       },
     ],
@@ -287,12 +288,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/63 chapters</span>
+              <span>{readCount}/64 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 63) * 100}%` }}
+                style={{ width: `${(readCount / 64) * 100}%` }}
               />
             </div>
           </div>

@@ -1,0 +1,323 @@
+export const metadata = {
+  title: "Part Review — Mastering NeetCode 150 — ByteWise",
+  description:
+    "A complete review of the NeetCode 150 chapter — pattern cheat sheet, Python DSA toolkit, complexity reference, common mistakes, interview checklist, and real-world applications.",
+  keywords: [
+    "NeetCode 150 review",
+    "coding interview patterns",
+    "Python DSA toolkit",
+    "algorithm complexity reference",
+    "LeetCode interview prep",
+    "pattern recognition cheat sheet",
+  ],
+  openGraph: {
+    title: "Part Review — Mastering NeetCode 150",
+    description:
+      "18 patterns, 150 problems, one complete reference — everything you need to walk into any coding interview with confidence.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Part Review
+
+## Mastering LeetCode & NeetCode — Chapter: Mastering NeetCode 150
+
+---
+
+## 1. What This Chapter Covered
+
+This chapter took you through the complete NeetCode 150 — a curated set of 150 essential coding interview problems organized into 18 topic categories. Rather than memorizing solutions, the goal was to build a deep, intuitive understanding of algorithmic patterns that recur across hundreds of real interview problems.
+
+For every topic, you learned the **WHY** (why this pattern exists and what problem it solves), the **WHAT** (the underlying data structure or algorithm), and the **HOW** (how to recognize it in an unseen problem). For every one of the 150 problems, you worked through both a brute-force approach and an optimized solution, analyzed complexity, and identified edge cases.
+
+By completing this chapter, you have covered:
+
+- 🟢 **28 Easy problems** — building foundational pattern recognition
+- 🟡 **101 Medium problems** — the core of real-world coding interviews
+- 🔴 **21 Hard problems** — advanced techniques for top-tier roles
+- **18 complete topic categories** from Arrays to Bit Manipulation
+- **Every problem in Python**, with clean, interview-quality solutions
+
+---
+
+## 2. NeetCode 150 — Complete Roadmap
+
+NeetCode 150 consists of **18 topic categories** and **150 carefully selected problems**:
+
+🟢 **28 Easy** | 🟡 **101 Medium** | 🔴 **21 Hard**
+
+Every topic and every problem was studied in the exact order recommended by NeetCode, allowing problem-solving skills to build progressively.
+
+| # | Topic | Problems |
+|---|-------------------------|---------|
+| 1 | Arrays & Hashing | 9 |
+| 2 | Two Pointers | 5 |
+| 3 | Sliding Window | 6 |
+| 4 | Stack | 6 |
+| 5 | Binary Search | 7 |
+| 6 | Linked List | 11 |
+| 7 | Trees | 15 |
+| 8 | Heap / Priority Queue | 7 |
+| 9 | Backtracking | 10 |
+| 10 | Tries | 3 |
+| 11 | Graphs | 13 |
+| 12 | Advanced Graphs | 6 |
+| 13 | 1-D Dynamic Programming | 12 |
+| 14 | 2-D Dynamic Programming | 11 |
+| 15 | Greedy | 8 |
+| 16 | Intervals | 6 |
+| 17 | Math & Geometry | 8 |
+| 18 | Bit Manipulation | 7 |
+| | **Total** | **150** |
+
+---
+
+## 3. The Problem-Solving Learning Path
+
+Every problem in this chapter followed the same structured learning path. This is the framework you should apply to every new problem you encounter:
+
+> **Problem → Constraints → Hint → Your Attempt → Brute Force → Why It Fails → Intuition → Optimized Approach → Python Code → Complexity Analysis → Edge Cases**
+
+### What Each Step Means
+
+| Step | What to Do |
+|------|-----------|
+| **Problem Statement** | Read carefully. Underline key verbs: find, count, return, minimize. |
+| **Constraints** | These are hints. Small n means O(n²) is fine. Large n demands O(n log n) or better. |
+| **Hint** | A gentle nudge toward the pattern without giving away the solution. |
+| **Your Attempt** | Always try first. Even a wrong attempt builds intuition. |
+| **Brute Force** | Understand the naive O(n²) or O(2ⁿ) solution before optimizing. |
+| **Why It Fails** | Time Limit Exceeded (TLE) or Memory Limit Exceeded (MLE) reasoning. |
+| **Intuition** | The core insight that unlocks the optimized approach. |
+| **Optimized Approach** | The clean, efficient algorithm with step-by-step reasoning. |
+| **Python Code** | Interview-quality implementation with meaningful variable names. |
+| **Complexity Analysis** | Time and Space complexity with justification. |
+| **Edge Cases** | Empty input, single element, all duplicates, negative numbers, overflow. |
+
+---
+
+## 4. Pattern Recognition Cheat Sheet
+
+The most valuable skill from this chapter is the ability to read a problem and immediately identify which pattern applies.
+
+| When You See... | Reach For... | Topic |
+|-----------------|-------------|-------|
+| "find duplicate / unique" | HashSet — O(1) lookup | Arrays & Hashing |
+| "two elements sum to target" | Two Pointers or HashMap | Two Pointers / Arrays |
+| "subarray / substring of size k" | Sliding Window | Sliding Window |
+| "matching brackets / next greater" | Stack | Stack |
+| "sorted array, find position" | Binary Search | Binary Search |
+| "reverse / cycle / merge lists" | Fast & Slow Pointers | Linked List |
+| "lowest common ancestor / height" | DFS / BFS on Tree | Trees |
+| "k largest / k smallest" | Min-Heap / Max-Heap | Heap |
+| "all combinations / permutations" | Backtracking | Backtracking |
+| "prefix word / autocomplete" | Trie | Tries |
+| "number of islands / connected" | BFS / DFS / Union-Find | Graphs |
+| "shortest path with weights" | Dijkstra / Bellman-Ford | Advanced Graphs |
+| "max profit / min cost, 1D" | 1-D DP with dp[] array | 1-D DP |
+| "grid paths / edit distance" | 2-D DP with dp[][] grid | 2-D DP |
+| "minimum intervals / tasks" | Greedy + Sorting | Greedy |
+| "merge / overlap intervals" | Sort by start, merge | Intervals |
+| "power / sqrt / prime check" | Math tricks + modular ops | Math & Geometry |
+| "single number / count bits" | XOR / Bit Masking | Bit Manipulation |
+
+---
+
+## 5. Python DSA Toolkit — Master Reference
+
+Every Python built-in, library, and construct used across the NeetCode 150:
+
+| Python Tool | Purpose | Used In |
+|-------------|---------|---------|
+| `set()` | O(1) add, lookup, delete — duplicate detection | Arrays & Hashing |
+| `dict` / `defaultdict(int)` | Key-value store, frequency counter | Arrays & Hashing |
+| `Counter(nums)` | One-line frequency map from iterable | Arrays & Hashing |
+| `sorted()` / `.sort(key=)` | Sort with custom key function | Arrays, Greedy, Intervals |
+| `collections.deque` | O(1) append/pop from both ends | Sliding Window, BFS |
+| `heapq.heappush / heappop` | Min-heap operations — negate for max-heap | Heap |
+| `heapq.nlargest / nsmallest` | Top-k elements efficiently | Heap |
+| `ListNode` class | Singly linked list node structure | Linked List |
+| `TreeNode` class | Binary tree node structure | Trees |
+| `functools.lru_cache` | Memoization decorator for recursion | DP, Backtracking |
+| `@cache` (Python 3.9+) | Shorthand memoization decorator | DP |
+| `bisect.bisect_left/right` | Binary search on sorted list | Binary Search |
+| `enumerate(nums)` | Loop with index + value together | All topics |
+| `zip(a, b)` | Parallel iteration over two lists | Two Pointers, Arrays |
+| List comprehension | Concise list/set/dict construction | All topics |
+| `math.inf` / `float('inf')` | Infinity for min/max initialization | DP, Graphs |
+| `ord(c) - ord('a')` | Character to 0–25 index mapping | Tries, Strings |
+| `n & (n-1)` | Clear lowest set bit — check power of 2 | Bit Manipulation |
+| `n ^ n == 0` | XOR self-cancellation for duplicates | Bit Manipulation |
+
+### Key Python Patterns Worth Memorizing
+
+```python
+# Frequency counter
+from collections import Counter
+freq = Counter(nums)              # {element: count}
+
+# Default dictionary
+from collections import defaultdict
+graph = defaultdict(list)         # No KeyError on missing key
+
+# Min-heap (Python default)
+import heapq
+heapq.heappush(heap, val)         # Push
+heapq.heappop(heap)               # Pop smallest
+
+# Max-heap (negate values)
+heapq.heappush(heap, -val)        # Negate to simulate max-heap
+
+# Memoization
+from functools import lru_cache
+@lru_cache(maxsize=None)          # Cache recursive results
+def solve(i): ...
+
+# Binary search
+import bisect
+bisect.bisect_left(arr, target)   # Leftmost insertion index
+```
+
+---
+
+## 6. Complexity Quick Reference
+
+| Topic | Time | Space | Notes |
+|-------|------|-------|-------|
+| Arrays & Hashing | O(n) | O(n) | HashMap/HashSet storage |
+| Two Pointers | O(n log n) | O(1) | Sort first, then O(n) scan |
+| Sliding Window | O(n) | O(k) | Window contents only |
+| Stack | O(n) | O(n) | Stack grows to input size |
+| Binary Search | O(log n) | O(1) | No extra space needed |
+| Linked List | O(n) | O(1) | In-place pointer manipulation |
+| Trees | O(n) | O(h) | h = tree height, O(log n) balanced |
+| Heap | O(n log k) | O(k) | k = heap size |
+| Backtracking | O(2ⁿ) / O(n!) | O(n) | Exponential — prune early |
+| Tries | O(m) | O(m·n) | m = word length, n = words |
+| Graphs | O(V + E) | O(V) | Visited set size |
+| Advanced Graphs | O(E log V) | O(V + E) | Dijkstra with priority queue |
+| 1-D DP | O(n) | O(n) → O(1) | Often space-optimizable |
+| 2-D DP | O(m × n) | O(m × n) | Grid DP table |
+| Greedy | O(n log n) | O(1) | Dominated by sort |
+| Intervals | O(n log n) | O(n) | Output intervals storage |
+| Math & Geometry | O(√n) / O(log n) | O(1) | Depends on algorithm |
+| Bit Manipulation | O(log n) / O(1) | O(1) | Bit-level ops are O(1) |
+
+---
+
+## 7. Common Mistakes & How to Avoid Them
+
+| Topic | Most Common Mistake |
+|-------|-------------------|
+| Arrays & Hashing | Using list instead of set → O(n) lookup becomes O(n²) |
+| Two Pointers | Not sorting first when required; moving both pointers simultaneously |
+| Sliding Window | Forgetting to shrink window; not tracking window max correctly |
+| Stack | Not handling empty stack before pop; forgetting unmatched brackets edge case |
+| Binary Search | Off-by-one in lo/hi boundaries; infinite loop when mid not excluded |
+| Linked List | Losing reference before reassigning next; not handling head=None |
+| Trees | Confusing in-order / pre-order / post-order; not handling null children |
+| Heap | Using max-heap in Python (negate values); pushing wrong tuple order |
+| Backtracking | Not copying path on append (shallow copy bug); not undoing state on backtrack |
+| Tries | Confusing end-of-word flag with empty children; not initializing children dict |
+| Graphs | Not marking visited before recursion (infinite loop); forgetting disconnected components |
+| Advanced Graphs | Assuming Dijkstra works with negative weights; wrong relaxation order |
+| 1-D DP | Accessing dp[i-1] when i=0; confusing tabulation with memoization |
+| 2-D DP | Wrong base case initialization; off-by-one in row/col indices |
+| Greedy | Assuming greedy always works — must prove local optimum = global optimum |
+| Intervals | Not sorting by start time; missing the merge condition boundary |
+| Math & Geometry | Integer overflow in Python is rare but watch multiplication in constraints |
+| Bit Manipulation | Operator precedence: always use parentheses around bitwise expressions |
+
+---
+
+## 8. Interview Readiness Checklist
+
+Before walking into a coding interview, go through this checklist:
+
+- ☐ I can identify the correct pattern within 2 minutes of reading a problem
+- ☐ I always clarify constraints before coding (array size, negative numbers, duplicates)
+- ☐ I think through edge cases before writing any code
+- ☐ I can explain brute force and why it fails before jumping to the optimized solution
+- ☐ I code cleanly with meaningful variable names (not i, j, k for everything)
+- ☐ I analyze time and space complexity for every solution I write
+- ☐ I test my solution with the given examples, then with my own edge cases
+- ☐ I know the key Python built-ins: Counter, defaultdict, heapq, deque, bisect
+- ☐ I can implement BFS and DFS from memory on a graph and a tree
+- ☐ I understand when to use iterative vs recursive solutions
+- ☐ I can explain memoization and convert a recursive solution to tabulation
+- ☐ I have practiced at least 3 problems from every topic category
+- ☐ I can code a binary search without looking it up — including the boundary conditions
+- ☐ I know how to detect a cycle in a linked list (Floyd's algorithm)
+- ☐ I understand the difference between Dijkstra, Bellman-Ford, and Floyd-Warshall
+
+---
+
+## 9. Real-World Applications — Problems in Practice
+
+These problems are not academic exercises. Every pattern in this chapter is actively used in production systems around the world:
+
+| Problem | Real-World Application |
+|---------|----------------------|
+| Contains Duplicate | Database deduplication — detect repeated records before insert |
+| Two Sum | Payment matching — find two transactions summing to a target amount |
+| Valid Anagram | Search engines — detect synonym or rearranged keyword queries |
+| Longest Consecutive Sequence | Data pipelines — find longest unbroken time-series sequences |
+| Valid Palindrome | DNA analysis — check for palindromic nucleotide sequences |
+| 3Sum | Financial risk — find three assets whose returns offset to zero |
+| Container With Most Water | Resource allocation — maximize capacity between two walls |
+| Longest Substring Without Repeating | Network streaming — find longest unique data frame window |
+| Sliding Window Maximum | Real-time analytics — rolling maximum over a moving time window |
+| Valid Parentheses | Compilers — syntax validation of nested brackets/braces in code |
+| Binary Search | Search engines — O(log n) lookup in sorted index |
+| Reverse Linked List | Undo systems — reverse operation history in editors |
+| Merge Two Sorted Lists | Database merges — combine two sorted result sets efficiently |
+| Invert Binary Tree | Image processing — mirror a tree-structured image hierarchy |
+| Maximum Depth of Binary Tree | Network topology — find longest path in a hierarchical network |
+| Serialize/Deserialize Binary Tree | Distributed systems — send tree structures over a network |
+| Kth Largest Element | Recommendation systems — return top-k items by score |
+| Word Search II | Autocomplete engines — find all dictionary words in a character grid |
+| Implement Trie | Search bars — prefix-based autocomplete for billion-scale word sets |
+| Number of Islands | Geographic mapping — count discrete landmasses in a satellite grid |
+| Course Schedule | Dependency resolution — detect circular dependencies in build systems |
+| Dijkstra Shortest Path | GPS navigation — find shortest driving route between two cities |
+| Climbing Stairs | Finance — count distinct paths to reach a portfolio target value |
+| Coin Change | Payment systems — minimum number of denominations to make change |
+| Longest Common Subsequence | Version control (Git) — diff algorithm for comparing file versions |
+| Edit Distance | Spell checkers — minimum edits to correct a misspelled word |
+| Jump Game | Robotics — determine if a robot can reach its goal given jump constraints |
+| Merge Intervals | Calendar apps — merge overlapping meeting time slots |
+| Meeting Rooms II | Resource scheduling — minimum conference rooms for all meetings |
+| Rotate Image | Computer graphics — in-place 90-degree image rotation |
+| Single Number | Data integrity — find the one corrupted/unpaired packet in a stream |
+| Counting Bits | Compression algorithms — compute Hamming weights for encoding |
+
+---
+
+## 10. What Comes Next
+
+Completing NeetCode 150 is a major achievement. You have built a comprehensive toolkit of patterns, a Python DSA library, and the problem-solving intuition that separates strong candidates from exceptional ones.
+
+The natural next steps in your interview preparation journey are:
+
+- **System Design** — Learn to design scalable distributed systems: databases, caches, queues, APIs.
+- **Behavioral Interviews** — Structure your experience using the STAR method for situational questions.
+- **Company-Specific Practice** — Use NeetCode's company-tagged problem lists for your target companies.
+- **Mock Interviews** — Time yourself. Solve problems under real interview pressure with a timer.
+- **Competitive Programming** — For top-tier roles, extend to Codeforces or AtCoder for advanced problem sets.
+
+Most importantly: the goal was never to memorize 150 solutions. The goal was to internalize 18 patterns so deeply that when you encounter problem number 151 — one you have never seen before — you can still identify the pattern, reason through the approach, and write clean, correct code with confidence.
+
+---
+
+> *"You will not just memorize solutions — you will understand patterns, develop intuition, and master the problem-solving techniques required to confidently solve coding interview questions."*
+
+---
+
+*Part: Mastering LeetCode & NeetCode | Chapter: Mastering NeetCode 150 | All 150 Problems Covered*
+
+<ArticleNav
+  prev={{ title: "NeetCode 150 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150" }}
+  next={null}
+/>
