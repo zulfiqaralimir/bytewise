@@ -144,7 +144,7 @@ It:
 - Pauses for risky or irreversible actions
 - Reduces unnecessary interruptions
 
-This creates a smoother development experience while keeping the safety net in place. Think of it like giving a trusted engineer access to the codebase — they don't ask permission to read a file, but they do ask before deleting one.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>This creates a smoother development experience while keeping the safety net in place.</span> Think of it like giving a trusted engineer access to the codebase — they don't ask permission to read a file, but they do ask before deleting one.
 
 ---
 
@@ -158,7 +158,7 @@ Instead of imagining what the interface looks like, Claude can:
 - Take screenshots
 - Analyse the DOM
 
-This creates a real feedback loop. The AI observes the actual UI and refines it accordingly — the same way a developer would in a browser dev tools session.
+This creates a real feedback loop. <span style={{color: '#fb923c', fontWeight: 'bold'}}>The AI observes the actual UI and refines it accordingly</span> — the same way a developer would in a <span style={{color: '#fb923c', fontWeight: 'bold'}}>browser dev tools session</span>.
 
 ---
 
@@ -166,17 +166,17 @@ This creates a real feedback loop. The AI observes the actual UI and refines it 
 
 One common frustration with AI coding: you had a working implementation, asked for one more improvement, and now something is broken.
 
-Claude automatically creates **checkpoints** — snapshots of the project state before significant changes.
+Claude automatically creates **checkpoints** — <span style={{color: '#fb923c', fontWeight: 'bold'}}>snapshots of the project state before significant changes.</span>
 
-If later modifications make things worse, you revert to an earlier checkpoint instead of manually recovering lost work. Think of it as automatic git stashing at every meaningful step.
+If later modifications make things worse, you revert to an earlier checkpoint instead of manually recovering lost work. Think of it as <span style={{color: '#fb923c', fontWeight: 'bold'}}>automatic git stashing</span> at every meaningful step.
 
 ---
 
 ## Skill 2 — Grow with Docs
 
-This Skill enforces a discipline that separates senior engineers from junior ones: **understand before you build**.
+This Skill <span style={{color: '#fb923c', fontWeight: 'bold'}}>enforces a discipline that separates senior engineers from junior ones:</span> **understand before you build**.
 
-Instead of immediately implementing features, Claude interrogates you about requirements and explores the existing codebase first:
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Instead of immediately implementing features, Claude interrogates you about requirements and explores the existing codebase first:</span>
 
 - Existing documentation
 - Domain models
@@ -186,17 +186,17 @@ Instead of immediately implementing features, Claude interrogates you about requ
 
 ### Why This Matters
 
-Large projects have accumulated context. If you propose something inconsistent with the existing architecture, the Skill surfaces that conflict early — during planning, not three weeks into implementation.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Large projects have accumulated context.</span> If you propose something inconsistent with the existing architecture, the Skill surfaces that conflict early — during planning, not three weeks into implementation.
 
 ### Example Workflow
 
-Adding a new plugin to Kibana. Before asking implementation questions, Claude:
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Adding a new plugin to Kibana. Before asking implementation questions, Claude:</span>
 
 1. Searches the repository
 2. Reads source files
 3. Explores existing plugins
 4. Uses multiple agents to inspect different sections in parallel
-5. Builds a context document
+5. <span style={{color: '#fb923c', fontWeight: 'bold'}}>Builds a context document</span>
 
 *Only then* does it begin asking the developer questions. The resulting architectural decisions are dramatically better because they're grounded in what already exists.
 
@@ -204,7 +204,7 @@ Adding a new plugin to Kibana. Before asking implementation questions, Claude:
 
 ## Skill 3 — TDD Workflow
 
-**TDD = Test-Driven Development.** The classic three-step loop:
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>TDD = Test-Driven Development. The classic three-step loop:</span>
 
 1. Write a failing test
 2. Write implementation code to make it pass
@@ -218,7 +218,7 @@ Without structured guidance, AI typically:
 - Creates tests afterward
 - Produces tests that simply validate its own code
 
-Such tests rarely catch real defects — they're just mirrors of the implementation.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Such tests rarely catch real defects — they're just mirrors of the implementation.</span>
 
 ### How the Skill Enforces Proper TDD
 
@@ -226,7 +226,7 @@ Using the example of adding a Share button:
 
 **Step 1 — Generate tests.** Write the test cases before any implementation exists.
 
-**Step 2 — Generate edge-case tests.** What happens with empty inputs, null values, concurrent users, network failures?
+**Step 2 — Generate edge-case tests.** <span style={{color: '#fb923c', fontWeight: 'bold'}}>What happens with empty inputs, null values, concurrent users, network failures?</span>
 
 **Step 3 — Run tests.** They fail. This is correct — the implementation doesn't exist yet.
 
@@ -234,9 +234,9 @@ Using the example of adding a Share button:
 
 **Step 5 — Run tests again.** Now they pass.
 
-**Step 6 — Measure coverage.** The Skill enforces a minimum threshold (typically 80%+).
+**Step 6 — Measure coverage.** The Skill enforces a <span style={{color: '#fb923c', fontWeight: 'bold'}}>minimum threshold (typically 80%+).</span>
 
-This workflow creates stronger regression protection and catches bugs that implementation-first development misses entirely.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>This workflow creates stronger regression protection and catches bugs that implementation-first development misses entirely.</span>
 
 ---
 
