@@ -242,7 +242,7 @@ Using the example of adding a Share button:
 
 ## Skill 4 — Code Reviewer
 
-This Skill acts like a senior engineer reviewing a pull request — not just checking syntax, but evaluating:
+This Skill <span style={{color: '#fb923c', fontWeight: 'bold'}}>acts like a senior engineer reviewing a pull request</span> — not just checking syntax, but evaluating:
 
 - **Security** — are there injection risks, authentication gaps, unsafe defaults?
 - **Maintainability** — can a future engineer understand this in six months?
@@ -255,35 +255,35 @@ This Skill acts like a senior engineer reviewing a pull request — not just che
 
 **Critical findings:**
 
-Architectural assumptions exist in comments but are not enforced in code. If infrastructure changes, the security protections could silently disappear.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Architectural assumptions exist in comments but are not enforced in code.</span> If infrastructure changes, the security protections could silently disappear.
 
 **High priority findings:**
 
-Configuration values lack constraints. Future variations in capitalisation or schema naming could silently break intended behaviour.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Configuration values lack constraints.</span> Future variations in capitalisation or schema naming could silently break intended behaviour.
 
 **Medium priority findings:**
 
-No debug logging when security checks are bypassed. Such logs are essential for incident response and monitoring.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>No debug logging when security checks are bypassed.</span> Such logs are essential for incident response and monitoring.
 
 **Other findings:**
 
 Missing tests, naming issues, maintainability gaps — all surfaced and explained with suggested fixes.
 
-The Skill behaves like an experienced security reviewer on your team, available on every PR.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>The Skill behaves like an experienced security reviewer on your team, available on every PR.</span>
 
 ---
 
 ## Skill 5 — Skill Creator
 
-The most powerful feature: **Claude can create new Skills**.
+The most powerful feature: <span style={{color: '#fb923c', fontWeight: 'bold'}}>Claude can create new Skills.</span>
 
-Instead of manually writing markdown workflows, you describe your process in plain language. Claude then:
+Instead of manually writing markdown workflows, <span style={{color: '#fb923c', fontWeight: 'bold'}}>you describe your process in plain language.</span> Claude then:
 
 1. Interviews you about the workflow
 2. Asks clarifying questions
 3. Understands the exact requirements
 4. Generates the Skill
-5. Packages it correctly as a reusable `skills.md` file
+5. <span style={{color: '#fb923c', fontWeight: 'bold'}}>Packages it correctly as a reusable `skills.md` file</span>
 
 ### Example — Elasticsearch Query Validator
 
@@ -296,13 +296,13 @@ The desired Skill should:
 - Report findings in Markdown
 - Suggest concrete fixes
 
-Claude asks clarification questions, then generates a reusable Skill that any engineer on the team can invoke going forward.
+Claude asks clarification questions, then <span style={{color: '#fb923c', fontWeight: 'bold'}}>generates a reusable Skill that any engineer on the team can invoke going forward.</span>
 
 ---
 
 ## Why Skills Matter
 
-Skills shift AI from **reactive coding** to **structured engineering**.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Skills shift AI from reactive coding to structured engineering.</span>
 
 | Without Skills | With Skills |
 |---|---|
@@ -313,20 +313,20 @@ Skills shift AI from **reactive coding** to **structured engineering**.
 | Ad hoc reviews | Systematic evaluation |
 | Manual workflow docs | Automated Skill creation |
 
-Instead of repeatedly prompting the AI with the same instructions session after session, you encode best practices once and reuse them across every project, every engineer, every day.
+<span style={{color: '#fb923c', fontWeight: 'bold'}}>Instead of repeatedly prompting the AI with the same instructions session after session, you encode best practices once and reuse them across every project, every engineer, every day.</span>
 
 ---
 
 ## The Big Picture
 
-- **Skills are reusable workflows**, not one-off prompts — encode your process once, apply it everywhere
-- **Plan Mode prevents the most expensive mistake** — building the wrong thing confidently
-- **TDD Workflow produces tests that actually catch bugs** — not mirrors of the implementation
-- **Code Reviewer surfaces critical issues early** — security, architecture, and maintainability in one pass
-- **Grow with Docs enforces understanding before building** — grounding decisions in existing architecture
-- **Skill Creator compounds your investment** — your custom methodologies become reusable assets
+- **Skills are reusable workflows**, not one-off prompts — <span style={{color: '#fb923c', fontWeight: 'bold'}}>encode your process once, apply it everywhere</span>
+- **Plan Mode prevents the most expensive mistake** — <span style={{color: '#fb923c', fontWeight: 'bold'}}>building the wrong thing confidently</span>
+- **TDD Workflow produces tests that actually catch bugs** — <span style={{color: '#fb923c', fontWeight: 'bold'}}>not mirrors of the implementation</span>
+- **Code Reviewer surfaces critical issues early** — <span style={{color: '#fb923c', fontWeight: 'bold'}}>security, architecture, and maintainability in one pass</span>
+- **Grow with Docs enforces understanding before building** — <span style={{color: '#fb923c', fontWeight: 'bold'}}>grounding decisions in existing architecture</span>
+- **Skill Creator compounds your investment** — <span style={{color: '#fb923c', fontWeight: 'bold'}}>your custom methodologies become reusable assets</span>
 
-> **Simple takeaway:** Skills don't make Claude faster at coding — they make Claude smarter about *what* to code and *how* to do it correctly the first time.
+> **Simple takeaway:** Skills don't make Claude faster at coding — <span style={{color: '#fb923c', fontWeight: 'bold'}}>they make Claude smarter about *what* to code and *how* to do it correctly the first time.</span>
 
 ---
 
