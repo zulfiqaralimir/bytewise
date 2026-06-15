@@ -1,0 +1,148 @@
+export const metadata = {
+  title: "Topic 1: Problem 1 — Contains Duplicate — NeetCode 150 — ByteWise",
+  description:
+    "LeetCode #217 Contains Duplicate — brute force O(n²) vs optimized O(n) HashSet solution, complexity analysis, edge cases, and real-world application.",
+  keywords: [
+    "contains duplicate",
+    "LeetCode 217",
+    "arrays and hashing",
+    "NeetCode 150",
+    "HashSet Python",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Topic 1: Problem 1 — Contains Duplicate",
+    description:
+      "LeetCode #217 · Easy — detect duplicates in O(n) using a HashSet. Full walkthrough with brute force, optimized solution, and edge cases.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Topic 1: Problem 1 of 9
+
+## Contains Duplicate
+
+**LeetCode #217 · 🟢 Easy**
+
+---
+
+### Problem Statement
+
+> Given an integer array `nums`, return `true` if any value appears more than once in the array, otherwise return `false`.
+
+**Examples:**
+
+```
+Input:  nums = [1, 2, 3, 3]  →  Output: true
+Input:  nums = [1, 2, 3, 4]  →  Output: false
+```
+
+**Constraints:**
+- `1 <= nums.length <= 10⁵`
+- `-10⁹ <= nums[i] <= 10⁹`
+
+---
+
+### Brute Force Approach
+
+Check every possible pair (i, j) where i ≠ j:
+
+```python
+def hasDuplicate(nums):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] == nums[j]:
+                return True
+    return False
+```
+
+**Time Complexity: O(n²)** — for n = 100,000, this is 10 billion operations.
+
+**Space Complexity: O(1)**
+
+**Why it fails:** Time Limit Exceeded (TLE) on large inputs. Not acceptable in interviews.
+
+---
+
+### Intuition
+
+As you walk through the array, remember every number you have seen so far. The moment you encounter a number that is already in your memory — you have found a duplicate.
+
+A `set` is the perfect tool: O(1) insert and O(1) lookup, no matter how large it grows.
+
+---
+
+### Optimized Approach
+
+1. Create an empty `set` called `seen`
+2. Loop through each number `n` in `nums`
+3. If `n` is already in `seen` → return `True`
+4. Otherwise, add `n` to `seen` and continue
+5. If the loop ends without finding a duplicate → return `False`
+
+---
+
+### Python Solution
+
+```python
+def hasDuplicate(nums):
+    seen = set()
+    for n in nums:
+        if n in seen:
+            return True
+        seen.add(n)
+    return False
+```
+
+**Pythonic one-liner:**
+
+```python
+def hasDuplicate(nums):
+    return len(nums) != len(set(nums))
+```
+
+> The one-liner works because `set()` removes duplicates. If the lengths differ, a duplicate existed.
+
+---
+
+### Complexity Analysis
+
+| | Complexity | Reason |
+|---|---|---|
+| **Time** | O(n) | Single pass through the array |
+| **Space** | O(n) | Worst case: all elements unique, all stored in set |
+
+---
+
+### Edge Cases
+
+| Input | Expected Output | Reason |
+|---|---|---|
+| `[1]` | `false` | Single element — no pair possible |
+| `[1, 1]` | `true` | Smallest possible duplicate |
+| `[]` | `false` | Empty array — no elements to compare |
+| `[1, 2, 3, 4, 5]` | `false` | All unique elements |
+| `[-1, -1]` | `true` | Works with negative numbers too |
+
+---
+
+### Key Takeaway
+
+> **"Have I seen this before?"** → always reach for a `set`.
+
+---
+
+### Real-World Application
+
+Database deduplication — detect repeated records before inserting into a table, preventing primary key violations.
+
+---
+
+*Topic 1: Arrays & Hashing · Problem 1 of 9*
+
+<ArticleNav
+  prev={{ title: "Topic 1: Arrays & Hashing", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/topic-1-arrays-and-hashing" }}
+  next={{ title: "Part Review — Mastering NeetCode 150", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/part-review" }}
+/>
