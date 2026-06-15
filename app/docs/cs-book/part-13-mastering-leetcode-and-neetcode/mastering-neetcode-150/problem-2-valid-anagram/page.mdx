@@ -114,6 +114,113 @@ def isAnagram(s, t):
 
 ---
 
+
+### 📌 Deep Dive — Understanding the Manual Dict Approach
+
+The idea is simple: use one dictionary to track both strings at once.
+
+- For every character in `s` → **add 1**
+- For every character in `t` → **subtract 1**
+- At the end, if all counts are **zero** → same frequency → anagram ✅
+- If any count goes **negative** → `t` has something `s` doesn't → not anagram ❌
+
+---
+
+#### Step by Step with Example
+
+s = "anagram"
+
+t = "nagaram"
+
+**Phase 1 — Loop through `s`, increment counts:**
+
+```python
+for c in s:
+    count[c] = count.get(c, 0) + 1
+```
+
+| Character | count.get(c, 0) | After +1 | count dict |
+|---|---|---|---|
+| `a` | 0 (not seen) | 1 | `{'a': 1}` |
+| `n` | 0 | 1 | `{'a': 1, 'n': 1}` |
+| `a` | 1 (seen before) | 2 | `{'a': 2, 'n': 1}` |
+| `g` | 0 | 1 | `{'a': 2, 'n': 1, 'g': 1}` |
+| `r` | 0 | 1 | `{'a': 2, 'n': 1, 'g': 1, 'r': 1}` |
+| `a` | 2 | 3 | `{'a': 3, 'n': 1, 'g': 1, 'r': 1}` |
+| `m` | 0 | 1 | `{'a': 3, 'n': 1, 'g': 1, 'r': 1, 'm': 1}` |
+
+**Phase 2 — Loop through `t`, decrement counts:**
+
+```python
+for c in t:
+    count[c] = count.get(c, 0) - 1
+    if count[c] < 0:
+        return False
+```
+
+| Character | count before | After -1 | < 0? |
+|---|---|---|---|
+| `n` | 1 | 0 | No |
+| `a` | 3 | 2 | No |
+| `g` | 1 | 0 | No |
+| `a` | 2 | 1 | No |
+| `r` | 1 | 0 | No |
+| `a` | 1 | 0 | No |
+| `m` | 1 | 0 | No |
+
+All counts reached zero → `return True` ✅
+
+---
+
+#### What Does `count.get(c, 0)` Mean?
+
+```python
+count = {}
+
+# Normal dict access — crashes if key missing
+count['a']          # KeyError! 'a' not in dict yet
+
+# .get(key, default) — safe, returns default if missing
+count.get('a', 0)   # Returns 0 instead of crashing
+```
+
+So `count.get(c, 0) + 1` means: *"Give me the current count of this character, or 0 if I have never seen it, then add 1."*
+
+---
+
+#### When Would Count Go Negative?
+
+Try `s = "rat"`, `t = "car"`:
+
+After Phase 1: `count = {'r': 1, 'a': 1, 't': 1}`
+
+| Character | count before | After -1 | < 0? |
+|---|---|---|---|
+| `c` | 0 (never seen) | -1 | YES → return False ❌ |
+
+`t` contains `c` but `s` never did → count goes negative → immediately caught.
+
+---
+
+#### Why Check `< 0` Inside the Loop?
+
+Checking inside the loop is an **early exit optimization** — the moment we know it is not an anagram, we stop immediately without processing the rest of `t`.
+
+---
+
+#### Summary — Think of It as a Bank Account
+
+```python
+count[c] = count.get(c, 0) + 1   # s deposits characters
+count[c] = count.get(c, 0) - 1   # t withdraws characters
+if count[c] < 0: return False     # overdraft = not an anagram
+```
+
+- `s` deposits characters into the account
+- `t` withdraws characters from the account
+- If `t` tries to withdraw something never deposited → overdraft → not an anagram
+---
+
 ### Complexity Analysis
 
 | | Complexity | Reason |
