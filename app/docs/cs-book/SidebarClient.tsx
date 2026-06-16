@@ -181,6 +181,7 @@ const chapters = [
           { title: "Topic 1: Problem 1 — Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-1-contains-duplicate" },
           { title: "Topic 1: Problem 2 — Valid Anagram", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-2-valid-anagram" },
           { title: "Topic 1: Problem 3 — Two Sum", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-3-two-sum" },
+          { title: "Topic 1: Problem 4 — Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-4-group-anagrams" },
         ],
       },
     ],

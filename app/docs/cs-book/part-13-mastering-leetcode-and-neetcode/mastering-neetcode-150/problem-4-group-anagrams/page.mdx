@@ -1,0 +1,219 @@
+export const metadata = {
+  title: "Topic 1: Problem 4 — Group Anagrams — NeetCode 150 — ByteWise",
+  description:
+    "LeetCode #49 Group Anagrams — brute force O(n²·k log k) vs optimized O(n·k log k) sorted-key defaultdict solution, walkthrough, edge cases, and defaultdict spotlight.",
+  keywords: [
+    "group anagrams",
+    "LeetCode 49",
+    "arrays and hashing",
+    "NeetCode 150",
+    "defaultdict Python",
+    "canonical key",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Topic 1: Problem 4 — Group Anagrams",
+    description:
+      "LeetCode #49 · Medium — group anagrams in O(n·k log k) using sorted word as a canonical key and defaultdict(list). Full walkthrough with brute force, optimized solution, and edge cases.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Topic 1: Problem 4 of 9
+
+## Group Anagrams
+
+**LeetCode #49 · 🟡 Medium**
+
+---
+
+### Problem Statement
+
+> Given an array of strings `strs`, group all anagrams together and return them as a list of lists. The order of the output does not matter.
+
+**Examples:**
+
+```
+Input:  strs = ["eat","tea","tan","ate","nat","bat"]
+Output: [["eat","tea","ate"], ["tan","nat"], ["bat"]]
+
+Input:  strs = [""]
+Output: [[""]]
+
+Input:  strs = ["a"]
+Output: [["a"]]
+```
+
+**Constraints:**
+- `1 <= strs.length <= 10⁴`
+- `0 <= strs[i].length <= 100`
+- `strs[i]` consists of lowercase English letters only
+
+---
+
+### Brute Force Approach
+
+For every word, sort it and compare with every other word:
+
+```python
+def groupAnagrams(strs):
+    result = []
+    visited = [False] * len(strs)
+
+    for i in range(len(strs)):
+        if visited[i]:
+            continue
+        group = [strs[i]]
+        for j in range(i + 1, len(strs)):
+            if sorted(strs[i]) == sorted(strs[j]):
+                group.append(strs[j])
+                visited[j] = True
+        result.append(group)
+    return result
+```
+
+**Time Complexity: O(n² · k log k)** — n words, comparing each pair, sorting each word of length k.  
+**Space Complexity: O(n)**
+
+**Why it fails:** Doubly nested loop with sorting inside. TLE on large inputs. We need a smarter way to identify which words belong together.
+
+---
+
+### Intuition
+
+Two words are anagrams if and only if their **sorted versions are identical**:
+
+```
+"eat" → sorted → "aet"
+"tea" → sorted → "aet"
+"ate" → sorted → "aet"
+```
+
+All three map to the same key `"aet"`. So use a `defaultdict(list)` where:
+
+- **Key** = sorted version of the word
+- **Value** = list of all words that share that sorted key
+
+One pass through the array. Every word gets filed under its sorted key. Done.
+
+---
+
+### Optimized Approach
+
+1. Create a `defaultdict(list)` called `groups`
+2. Loop through each word in `strs`
+3. Sort the word → this becomes the **key**
+4. Append the original word to `groups[key]`
+5. Return all values of `groups` as a list
+
+---
+
+### Python Solution
+
+```python
+from collections import defaultdict
+
+def groupAnagrams(strs):
+    groups = defaultdict(list)
+
+    for word in strs:
+        key = "".join(sorted(word))  # "eat" → "aet"
+        groups[key].append(word)
+
+    return list(groups.values())
+```
+
+---
+
+### 📌 Deep Dive — Walkthrough With Example
+
+```
+strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+```
+
+| Word | Sorted Key | groups dict after this step |
+|------|-----------|----------------------------|
+| `"eat"` | `"aet"` | `{"aet": ["eat"]}` |
+| `"tea"` | `"aet"` | `{"aet": ["eat", "tea"]}` |
+| `"tan"` | `"ant"` | `{"aet": ["eat", "tea"], "ant": ["tan"]}` |
+| `"ate"` | `"aet"` | `{"aet": ["eat", "tea", "ate"], "ant": ["tan"]}` |
+| `"nat"` | `"ant"` | `{"aet": ["eat", "tea", "ate"], "ant": ["tan", "nat"]}` |
+| `"bat"` | `"abt"` | `{"aet": [...], "ant": [...], "abt": ["bat"]}` |
+
+**Final Output:** `[["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]` ✅
+
+---
+
+### Complexity Analysis
+
+| | Complexity | Reason |
+|---|---|---|
+| **Time** | O(n · k log k) | n words, each sorted in O(k log k) |
+| **Space** | O(n · k) | Storing all words in the dictionary |
+
+> k = length of the longest word, n = number of words.
+
+---
+
+### Edge Cases
+
+| Input | Expected Output | Reason |
+|---|---|---|
+| `[""]` | `[[""]]` | Empty string is its own group |
+| `["a"]` | `[["a"]]` | Single character, no anagram possible |
+| `["ab","ba"]` | `[["ab","ba"]]` | Two-element anagram group |
+| `["abc","def"]` | `[["abc"],["def"]]` | No anagrams — each in its own group |
+| `["",""]` | `[["",""]]` | Two empty strings grouped together |
+
+---
+
+### Python Concept Spotlight — `defaultdict` and `"".join(sorted())`
+
+A regular `dict` crashes if you access a missing key. `defaultdict` auto-creates it:
+
+```python
+from collections import defaultdict
+
+# Regular dict — crashes on missing key
+d = {}
+d["aet"].append("eat")   # KeyError!
+
+# defaultdict(list) — auto-creates an empty list for missing keys
+d = defaultdict(list)
+d["aet"].append("eat")   # Works perfectly → {"aet": ["eat"]}
+```
+
+`"".join(sorted(word))` converts a word into its sorted canonical key:
+
+```python
+sorted("eat")              # ['a', 'e', 't']  — returns a list
+"".join(['a', 'e', 't'])   # "aet"            — joins list into string
+
+# Combined in one line:
+"".join(sorted("eat"))     # "aet"
+```
+
+---
+
+### Key Takeaway
+
+> **"Group things that are secretly the same"** → find a **canonical key** that all equivalent items map to, and use `defaultdict(list)` to bucket them.
+
+The sorted word is the canonical form. Every anagram shares the same canonical form. This pattern appears in many problems beyond anagrams.
+
+---
+
+### Real-World Application
+
+Log aggregation systems — group server log messages that contain the same words in different orders into a single category for faster analysis and monitoring.
+
+---
+
+*Topic 1: Arrays & Hashing · Problem 4 of 9*
+
+<ArticleNav
+  prev={{ title: "Topic 1: Problem 3 — Two Sum", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-3-two-sum" }}
+  next={null}
+/>
