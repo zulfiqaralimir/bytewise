@@ -165,6 +165,7 @@ const chapters = [
           { title: "Lesson 7: Logic Gates", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-7-logic-gates" },
           { title: "Lesson 8: Boolean Algebra", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-8-boolean-algebra" },
           { title: "Lesson 9: CPU Internals", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-9-cpu-internals" },
+          { title: "Lesson 10: Registers", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-10-registers" },
         ],
       },
     ],

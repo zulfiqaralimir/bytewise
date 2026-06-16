@@ -1,0 +1,402 @@
+export const metadata = {
+  title: "Lesson 10: Registers — Mastering C — ByteWise",
+  description:
+    "What a Register is, why CPUs need them, the difference between General Purpose and Special Purpose Registers (PC, IR, MAR, MDR, Status Register), how Registers participate in the Fetch-Decode-Execute cycle, and how the C register keyword relates to them.",
+  keywords: [
+    "CPU registers",
+    "general purpose registers",
+    "program counter",
+    "instruction register",
+    "memory address register",
+    "memory data register",
+    "status register flags",
+    "registers vs RAM",
+    "x86-64 registers",
+    "register keyword C",
+    "fetch decode execute registers",
+  ],
+  openGraph: {
+    title: "Lesson 10: Registers",
+    description:
+      "The CPU's working desk — tiny, ultra-fast storage that holds data, addresses, and instructions while the CPU computes.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Registers
+
+## Lesson 10: The CPU's Working Desk
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is a Register?
+- Why are Registers needed?
+- Where are Registers located?
+- How are Registers different from RAM?
+- What types of Registers exist?
+- How do Registers participate in instruction execution?
+- How do Registers relate to C programming?
+
+---
+
+## Why Do We Need Registers?
+
+Imagine solving a math problem:
+
+```text
+25 + 35
+```
+
+You could repeatedly open a notebook, read a number, write it down, and continue — but that would be slow.
+
+Instead, you keep the numbers in your mind while calculating. Your brain acts as temporary, fast storage.
+
+Registers serve the same purpose for the CPU.
+
+---
+
+## What Is a Register?
+
+A Register is a tiny, extremely fast storage location inside the CPU.
+
+It stores:
+
+- Data
+- Addresses
+- Instructions
+- Intermediate results
+
+Registers are the fastest memory available in a computer.
+
+---
+
+## CPU Storage Hierarchy
+
+```text
+Fastest
+  Registers
+    Cache
+      RAM
+        SSD
+          Hard Disk
+Slowest
+```
+
+Registers sit at the very top because they are located inside the CPU itself.
+
+---
+
+## Real-World Analogy
+
+```text
+Desk        →  Registers
+Bookshelf   →  RAM
+Library     →  Hard Disk
+```
+
+If you need information quickly, the desk is fastest, the bookshelf is slower, and the library is slowest. The CPU uses Registers like a working desk.
+
+---
+
+## Why Not Use RAM Directly?
+
+RAM is much slower than Registers.
+
+Without Registers, computing `5 + 10` would mean:
+
+```text
+Read 5 from RAM
+Read 10 from RAM
+Add
+Store result
+```
+
+With Registers:
+
+```text
+Load 5 into Register
+Load 10 into Register
+Add
+Store result
+```
+
+The addition step is identical — but reading from a Register instead of RAM on every step is dramatically faster.
+
+### Example
+
+```c
+int a = 5;
+int b = 10;
+int c = a + b;
+```
+
+Internally:
+
+```text
+Register1 = 5
+Register2 = 10
+
+ALU: 5 + 10 = 15
+
+Register3 = 15
+```
+
+---
+
+## Characteristics of Registers
+
+Registers are:
+
+- Very small
+- Very fast
+- Expensive to build
+- Located inside the CPU
+
+Modern CPUs typically contain dozens to hundreds of registers.
+
+---
+
+## Register Size
+
+Registers have a fixed size — commonly 8-bit, 16-bit, 32-bit, or 64-bit.
+
+An 8-bit register can store `00000000` to `11111111`, which is `0` to `255`.
+
+---
+
+## General Purpose Registers (GPRs)
+
+GPRs store ordinary data — numbers, variables, temporary values.
+
+```c
+int x = 20;
+int y = 30;
+```
+
+May become:
+
+```text
+R1 = 20
+R2 = 30
+```
+
+---
+
+## Special Purpose Registers
+
+These registers have specific responsibilities:
+
+- Program Counter (PC)
+- Instruction Register (IR)
+- Memory Address Register (MAR)
+- Memory Data Register (MDR)
+- Status Register
+
+---
+
+## Program Counter (PC)
+
+The Program Counter stores the address of the **next** instruction to execute.
+
+```text
+100 : LOAD
+101 : ADD
+102 : STORE
+```
+
+```text
+PC = 100  →  execute  →  PC = 101  →  execute  →  PC = 102
+```
+
+The Program Counter always knows where execution should continue.
+
+---
+
+## Instruction Register (IR)
+
+The Instruction Register stores the current instruction being executed.
+
+```text
+Before execution:  IR = ADD R1, R2
+```
+
+---
+
+## Memory Address Register (MAR)
+
+MAR stores the address of the memory location that will be accessed.
+
+```text
+Read Memory[500]   →   MAR = 500
+```
+
+---
+
+## Memory Data Register (MDR)
+
+MDR stores the actual data being transferred.
+
+```text
+Memory[500] = 25   →   MDR = 25
+```
+
+MAR carries the address. MDR carries the data. They work as a pair.
+
+---
+
+## Status Register (Flags Register)
+
+Stores information about the result of operations:
+
+- Zero Flag
+- Carry Flag
+- Overflow Flag
+- Negative Flag
+
+### Example
+
+```text
+5 - 5 = 0   →   Zero Flag = 1
+```
+
+This helps with decision-making instructions like branches.
+
+---
+
+## Fetch-Decode-Execute and Registers
+
+```c
+int c = a + b;
+```
+
+Internally:
+
+```text
+1. Load a into Register
+2. Load b into Register
+3. ALU performs addition
+4. Store result in Register
+5. Write result back to memory
+```
+
+Registers participate in every instruction.
+
+### Example Instruction Execution
+
+```assembly
+ADD R1, R2
+```
+
+means `R1 = R1 + R2`. Suppose `R1 = 10` and `R2 = 5` — after execution, `R1 = 15`.
+
+---
+
+## Registers vs RAM
+
+| Feature  | Registers            | RAM             |
+|----------|-----------------------|-----------------|
+| Location | Inside CPU            | Outside CPU     |
+| Speed    | Extremely fast        | Slower          |
+| Size     | Very small             | Large           |
+| Cost     | Expensive             | Cheaper         |
+| Purpose  | Immediate processing  | General storage |
+
+---
+
+## Registers in Modern CPUs
+
+x86-64 CPUs expose general purpose registers such as:
+
+```text
+RAX  RBX  RCX  RDX  RSI  RDI  RSP  RBP
+```
+
+These are the registers compilers and assembly programs use most often.
+
+---
+
+## Registers and C Programming
+
+```c
+int sum(int a, int b)
+{
+    return a + b;
+}
+```
+
+The compiler often places `a` and `b` into registers before performing the addition — avoiding unnecessary RAM access.
+
+---
+
+## Register Keyword in C
+
+Historically:
+
+```c
+register int count;
+```
+
+This suggested to the compiler: *"Store this variable in a register if possible."*
+
+Modern compilers usually decide this automatically, so `register` has little practical effect in modern C.
+
+---
+
+## Why Are Registers Important?
+
+Registers directly affect:
+
+- Program speed
+- CPU performance
+- Assembly programming
+- Compiler optimization
+- Operating systems
+- Embedded systems
+
+Understanding Registers is essential for understanding how code actually executes.
+
+---
+
+## Common Misconceptions
+
+- Registers and RAM are not the same.
+- Registers do not store entire programs.
+- Registers are not large storage devices.
+- Not every variable always stays in a register.
+
+---
+
+## Quick Revision
+
+- Registers are tiny storage locations inside the CPU.
+- Registers are the fastest memory in a computer.
+- They store data, addresses, instructions, and results.
+- Types: General Purpose Registers, Program Counter, Instruction Register, MAR, MDR, Status Register.
+- Registers are heavily used during the Fetch-Decode-Execute cycle.
+- Compilers use Registers to improve performance.
+
+---
+
+## Interview Questions
+
+1. What is a Register?
+2. Why are Registers faster than RAM?
+3. What is the purpose of the Program Counter?
+4. What is the purpose of the Instruction Register?
+5. What is MAR?
+6. What is MDR?
+7. What information is stored in the Status Register?
+8. Why are Registers important for CPU performance?
+9. How do Registers relate to C programming?
+10. What is the difference between Registers and RAM?
+
+<ArticleNav
+  prev={{ title: "Lesson 9: CPU Internals", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-9-cpu-internals" }}
+  next={null}
+/>
