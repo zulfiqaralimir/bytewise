@@ -157,6 +157,85 @@ strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
 
 ---
 
+### 📌 Deep Dive — Understanding Space Complexity O(n · k)
+
+**n** = number of words  
+**k** = average length of each word
+
+---
+
+#### The Real Question: What Are We Storing?
+
+We are storing every single word inside the dictionary. So the memory we use depends on two things:
+
+- How many words there are → **n**
+- How many characters each word has → **k**
+
+---
+
+#### Think of It Like a Grid
+
+Imagine each word is a row and each character is a column:
+
+```
+"eat"  →  e  a  t          (3 characters)
+"tea"  →  t  e  a          (3 characters)
+"tan"  →  t  a  n          (3 characters)
+"ate"  →  a  t  e          (3 characters)
+"nat"  →  n  a  t          (3 characters)
+"bat"  →  b  a  t          (3 characters)
+```
+
+Total memory used:
+```
+6 words  ×  3 characters each  =  18 character slots
+     n   ×        k            =  n · k
+```
+
+---
+
+#### Why NOT Just O(n)?
+
+Because storing `"eat"` is not the same as storing the number `3`.
+
+- Storing **n numbers** → O(n) space — each number takes 1 slot
+- Storing **n words** → O(n · k) space — each word takes k slots
+
+```python
+# Storing numbers — each takes 1 memory slot
+[1, 2, 3, 4, 5, 6]   →  6 slots   →  O(n)
+
+# Storing words — each takes k memory slots
+["eat", "tea", "tan", "ate", "nat", "bat"]
+→  6 words × 3 characters = 18 slots  →  O(n · k)
+```
+
+---
+
+#### A Bigger Example to Make It Concrete
+
+```
+n = 4 words
+k = varies per word
+
+"hi"        →  2 characters
+"hello"     →  5 characters
+"hey"       →  3 characters
+"howdy"     →  5 characters
+
+Total characters stored = 2 + 5 + 3 + 5 = 15
+```
+
+k is not always the longest word — it is the **average length across all words**. The total memory is always the **total number of characters stored across everything**.
+
+---
+
+#### One Line Summary
+
+> O(n · k) means: **number of words × average word length** = total characters stored in memory.
+
+---
+
 ### Edge Cases
 
 | Input | Expected Output | Reason |
