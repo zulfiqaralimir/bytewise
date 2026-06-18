@@ -1,0 +1,520 @@
+export const metadata = {
+  title: "Lesson 11: Status Register (Flags Register) — Mastering C — ByteWise",
+  description:
+    "What the Status Register is, why CPUs need flags, what problem each flag solves (ZF, SF, CF, OF), why the CPU does not simply examine the result register, and how flags power comparisons, loops, and conditional jumps.",
+  keywords: [
+    "status register",
+    "flags register",
+    "zero flag",
+    "sign flag",
+    "carry flag",
+    "overflow flag",
+    "CPU flags",
+    "conditional jump",
+    "CMP instruction",
+    "ALU flags",
+    "x86 flags register",
+    "EFLAGS",
+  ],
+  openGraph: {
+    title: "Lesson 11: Status Register (Flags Register)",
+    description:
+      "Why CPUs need flags — ZF, SF, CF, OF — and how they power every if statement, loop, and comparison in your programs.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Status Register (Flags Register)
+
+## Lesson 11: Why It Exists and Why CPUs Need It
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is the Status Register?
+- Why was it invented?
+- Why doesn't the CPU simply examine the result register?
+- What problem does each flag solve?
+- What would happen if flags did not exist?
+- How do flags help with comparisons, loops, and decision making?
+
+---
+
+## The Fundamental Question
+
+Most beginners ask:
+
+> If the CPU already stores the result, why do we need flags?
+
+For example:
+
+```text
+20 - 50 = -30
+```
+
+Stored as:
+
+```text
+R1 = -30
+```
+
+The question becomes:
+
+> If R1 already contains -30, why also store:
+
+```text
+SF = 1
+```
+
+The answer is:
+
+> Flags are not storing new information.
+>
+> Flags store answers to frequently asked questions.
+
+---
+
+## Think Like a Teacher
+
+Suppose a student scores:
+
+```text
+37
+```
+
+The school can repeatedly calculate:
+
+```text
+Is 37 a passing score?
+```
+
+every time someone asks.
+
+OR the teacher can immediately write:
+
+```text
+Passed = YES
+```
+
+Now everyone checks:
+
+```text
+Passed?
+```
+
+instead of re-analysing the score.
+
+Flags work exactly like this.
+
+---
+
+## What Is the Status Register?
+
+The Status Register is a special CPU register that stores information about the most recent ALU operation.
+
+It contains small indicators called **flags**.
+
+Example:
+
+```text
+ZF = 0
+SF = 1
+CF = 0
+OF = 0
+```
+
+Each flag answers a specific question.
+
+---
+
+## Why Was It Invented?
+
+The CPU constantly needs to make decisions.
+
+Examples:
+
+```c
+if (x == y)
+
+if (result < 0)
+
+while (count != 0)
+
+if (a > b)
+```
+
+Without flags, the CPU would repeatedly inspect and analyse the result after every operation.
+
+This would make hardware more complicated and slower.
+
+Instead:
+
+```text
+Perform Calculation
+        ↓
+   Update Flags
+        ↓
+Future Instructions Check Flags
+```
+
+---
+
+## The Four Most Important Flags
+
+---
+
+## Zero Flag (ZF)
+
+**Question:** Did the result become zero?
+
+---
+
+### Example
+
+```text
+10 - 10  →  0
+```
+
+CPU automatically writes:
+
+```text
+ZF = 1
+```
+
+Meaning: the result is zero.
+
+---
+
+### Why Is It Needed?
+
+Suppose:
+
+```c
+if (x == y)
+```
+
+CPU performs:
+
+```text
+x - y
+```
+
+If result is `0` → `ZF = 1`. The CPU immediately knows `x == y`.
+
+---
+
+### What If Zero Flag Did Not Exist?
+
+The CPU would need to inspect the entire result register on every comparison to determine whether the value is zero.
+
+This would complicate hardware and slow down execution.
+
+---
+
+## Sign Flag (SF)
+
+**Question:** Is the result negative?
+
+---
+
+### Example
+
+```text
+20 - 50  →  -30
+```
+
+CPU writes:
+
+```text
+SF = 1
+```
+
+Meaning: the result is negative.
+
+---
+
+### Why Is It Needed?
+
+Suppose:
+
+```c
+if (result < 0)
+```
+
+The CPU can instantly check `SF = 1` instead of re-analysing the entire result.
+
+---
+
+### What If Sign Flag Did Not Exist?
+
+The CPU would need to inspect the most significant bit of the result register on every check.
+
+Flags eliminate that repeated work.
+
+---
+
+## Carry Flag (CF)
+
+**Question:** Did unsigned arithmetic exceed the available bits?
+
+---
+
+### Example
+
+8-bit register — maximum value is `255`.
+
+```text
+255 + 1  →  should be 256
+```
+
+But `256` requires 9 bits. The CPU writes:
+
+```text
+CF = 1
+```
+
+Meaning: a carry occurred — the result did not fit.
+
+---
+
+### Why Is It Needed?
+
+Without the Carry Flag, the CPU would not know that extra bits were lost.
+
+This is critical for:
+
+- Large integer arithmetic
+- Cryptography
+- Multi-byte calculations
+- Operating systems
+
+---
+
+### What If Carry Flag Did Not Exist?
+
+The CPU would silently compute:
+
+```text
+255 + 1 = 0
+```
+
+because the extra bit would be discarded with no warning.
+
+The Carry Flag signals: *something did not fit*.
+
+---
+
+## Overflow Flag (OF)
+
+**Question:** Did signed arithmetic exceed the valid range?
+
+---
+
+### Example
+
+8-bit signed range: `-128` to `127`.
+
+```text
+127 + 1  →  mathematically 128
+```
+
+But `128` cannot be represented in 8-bit signed form. The CPU writes:
+
+```text
+OF = 1
+```
+
+Meaning: signed overflow occurred.
+
+---
+
+### Why Is It Needed?
+
+Signed numbers follow different rules from unsigned numbers.
+
+The CPU must know when a mathematically correct result cannot be represented.
+
+---
+
+### What If Overflow Flag Did Not Exist?
+
+Programs could not reliably detect overflow situations such as:
+
+```text
+127 + 1
+
+50000 + 50000
+
+-128 - 1
+```
+
+These would silently produce incorrect results.
+
+---
+
+## Why Not Just Examine the Result Register?
+
+Suppose:
+
+```text
+Result = -30
+```
+
+The CPU could determine "negative?" by inspecting the value.
+
+But consider:
+
+```text
+Billions of instructions per second
+```
+
+Doing this repeated inspection on every instruction would increase hardware complexity.
+
+Instead:
+
+```text
+ALU already knows the answer
+          ↓
+   Store answer once (flags)
+          ↓
+   Reuse it many times
+```
+
+This is much faster.
+
+---
+
+## How CPUs Actually Use Flags
+
+Typical execution:
+
+```text
+Instruction
+    ↓
+ALU Performs Calculation
+    ↓
+Flags Updated
+    ↓
+Next Instruction Reads Flags
+    ↓
+Decision Made
+```
+
+---
+
+### Example — if Statement
+
+```c
+if (a == b)
+{
+    ...
+}
+```
+
+CPU internally:
+
+```text
+a - b
+  ↓
+Result = 0
+  ↓
+ZF = 1
+  ↓
+Jump to IF block
+```
+
+The actual decision is based on the flag, not a re-examination of the result.
+
+---
+
+### Real CPU Example — Assembly
+
+```assembly
+CMP AX, BX
+JE  Equal
+```
+
+Meaning:
+
+```text
+Compare AX and BX (compute AX - BX, discard result, keep flags)
+          ↓
+If Zero Flag = 1
+          ↓
+Jump to Equal
+```
+
+Flags make comparisons extremely efficient.
+
+---
+
+## Visual Summary
+
+```text
+Calculation
+    ↓
+Result Register — stores the actual result
+    ↓
+Status Register — stores facts about that result
+
+    ZF = Was result zero?
+    SF = Was result negative?
+    CF = Was there a carry (unsigned overflow)?
+    OF = Was there a signed overflow?
+```
+
+---
+
+## Key Insight
+
+The Status Register does **not** store values like `30`, `50`, `100`, or `-20`.
+
+Those values live in general purpose registers.
+
+The Status Register stores **facts about those values**.
+
+---
+
+## Quick Revision
+
+| Flag | Question Answered                  |
+|------|------------------------------------|
+| ZF   | Was the result zero?               |
+| SF   | Was the result negative?           |
+| CF   | Did unsigned arithmetic overflow?  |
+| OF   | Did signed arithmetic overflow?    |
+
+Flags exist because CPUs constantly need these answers when executing:
+
+- `if` statements
+- Loops
+- Comparisons
+- Conditional jumps
+- Multi-byte arithmetic
+
+Without flags, CPUs would re-analyse results repeatedly — making hardware more complex and slower.
+
+---
+
+## Interview Questions
+
+1. What is the Status Register?
+2. Why do CPUs need flags?
+3. What problem does the Zero Flag solve?
+4. What problem does the Sign Flag solve?
+5. What is the Carry Flag?
+6. What is the Overflow Flag?
+7. Why not simply examine the result register?
+8. How do flags help with comparisons?
+9. How are flags used in `if` statements?
+10. What would happen if CPUs did not have a Status Register?
+
+<ArticleNav
+  prev={{ title: "Lesson 10: Registers", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-10-registers" }}
+  next={null}
+/>
