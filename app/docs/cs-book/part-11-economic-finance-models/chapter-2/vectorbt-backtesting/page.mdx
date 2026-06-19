@@ -48,21 +48,21 @@ For quantitative analysts, algorithmic traders, data scientists, and financial e
 
 ## What is VectorBT?
 
-VectorBT is an open-source quantitative trading and portfolio analysis framework built entirely around vectorized operations.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT is an open-source quantitative trading and portfolio analysis framework</span> built entirely around vectorized operations.
 
-Unlike traditional event-driven backtesting engines that process data sequentially, VectorBT utilizes:
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Unlike traditional event-driven backtesting engines that process data sequentially,</span> VectorBT utilizes:
 
 - NumPy
 - Pandas
 - Numba
 - Vectorized Computation
 
-to perform calculations across millions of data points simultaneously.
+to perform calculations across millions of data points <span style={{color: '#f59e0b', fontWeight: 'bold'}}>simultaneously</span>.
 
 This architecture enables traders to:
 
-- Test thousands of strategy variations quickly
-- Analyze multiple assets in parallel
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Test thousands of strategy variations quickly</span>
+- Analyze multiple assets <span style={{color: '#f59e0b', fontWeight: 'bold'}}>in parallel</span>
 - Optimize parameters efficiently
 - Reduce research time significantly
 
@@ -72,7 +72,7 @@ The result is faster experimentation and more robust strategy development.
 
 ## Why Traditional Backtesting Can Be Slow
 
-Most conventional backtesting frameworks process market data one candle at a time:
+Most conventional backtesting frameworks <span style={{color: '#f59e0b', fontWeight: 'bold'}}>process market data one candle at a time:</span>
 
 1. Read candle
 2. Check conditions
@@ -81,12 +81,12 @@ Most conventional backtesting frameworks process market data one candle at a tim
 5. Update portfolio
 6. Move to next candle
 
-This approach works but becomes computationally expensive when:
+This approach works but becomes <span style={{color: '#f59e0b', fontWeight: 'bold'}}>computationally expensive</span> when:
 
 - Testing multiple assets
 - Running parameter sweeps
 - Optimizing strategies
-- Processing years of historical data
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Processing years of historical data</span>
 
 As strategy complexity increases, performance often decreases dramatically.
 
@@ -96,7 +96,7 @@ VectorBT solves this challenge through vectorization.
 
 ## Understanding Vectorization
 
-Vectorization means performing operations on entire arrays rather than individual values.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Vectorization means performing operations on entire arrays rather than individual values.</span>
 
 Instead of:
 
@@ -113,12 +113,12 @@ signals = prices > moving_average
 
 across the entire dataset instantly.
 
-Benefits include:
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Benefits include:</span>
 
-- Faster execution
-- Lower memory overhead
-- Better scalability
-- Simpler code
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Faster execution</span>
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Lower memory overhead</span>
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Better scalability</span>
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Simpler code</span>
 
 This is one of the primary reasons VectorBT can outperform many traditional backtesting frameworks.
 
