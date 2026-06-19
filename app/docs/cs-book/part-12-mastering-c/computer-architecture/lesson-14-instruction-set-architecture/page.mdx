@@ -1,0 +1,552 @@
+export const metadata = {
+  title: "Lesson 14: Instruction Set Architecture (ISA) — Mastering C — ByteWise",
+  description:
+    "What an ISA is, why CPUs need one, the difference between ISA and CPU implementation, what instructions/opcodes/operands mean, the x86 vs ARM split, CISC vs RISC, and why C programmers must understand the contract between software and hardware.",
+  keywords: [
+    "instruction set architecture",
+    "ISA",
+    "x86",
+    "x86-64",
+    "ARM",
+    "CISC RISC",
+    "opcode",
+    "operand",
+    "machine code",
+    "assembly language",
+    "CPU instructions",
+    "software hardware contract",
+    "C programming assembly",
+  ],
+  openGraph: {
+    title: "Lesson 14: Instruction Set Architecture (ISA)",
+    description:
+      "The contract between software and hardware — what ISA is, why every CPU needs one, and what x86, ARM, CISC, and RISC actually mean.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Instruction Set Architecture (ISA)
+
+## Lesson 14: The Contract Between Software and Hardware
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is an ISA?
+- Why does a CPU need an ISA?
+- What problem does ISA solve?
+- How does software communicate with hardware?
+- What is the difference between ISA and CPU implementation?
+- What are x86, x86-64, and ARM?
+- What are instructions, opcodes, and operands?
+- Why is ISA important for C programmers?
+
+---
+
+## The Fundamental Problem
+
+Imagine you buy a new CPU.
+
+How does a programmer tell it what to do?
+
+For example:
+
+```c
+a = b + c;
+```
+
+The CPU cannot understand C source code.
+
+It only understands machine instructions encoded as binary numbers.
+
+We need a common language between programs and the CPU.
+
+That language is called **Instruction Set Architecture (ISA)**.
+
+---
+
+## What Is an ISA?
+
+> **Instruction Set Architecture (ISA)** is the contract between software and hardware.
+
+It defines:
+
+- What instructions the CPU understands
+- What registers exist
+- How memory is accessed
+- How instructions are encoded in binary
+- How programs interact with the processor
+
+---
+
+## Simple Definition
+
+Think of ISA as the vocabulary and grammar of a CPU's language.
+
+Just as humans need a shared language to communicate:
+
+```text
+English · Urdu · Arabic
+```
+
+programs need a shared language to communicate with CPUs.
+
+That language is the ISA.
+
+---
+
+## The Restaurant Analogy
+
+Imagine a restaurant.
+
+The customer says: *"I want a burger."*
+
+The kitchen makes a burger.
+
+The **menu** is the contract between customer and kitchen — it defines what can be ordered and what the kitchen will produce.
+
+Similarly:
+
+```text
+Program
+
+↓
+
+ISA  (the menu)
+
+↓
+
+CPU
+```
+
+The ISA is the menu. If your program orders from it correctly, the CPU delivers the result.
+
+---
+
+## Why Do We Need an ISA?
+
+Without ISA, every program would need to know every transistor inside every CPU.
+
+That is impossible.
+
+With ISA:
+
+```text
+Program
+
+↓
+
+Issue an ISA Instruction
+
+↓
+
+CPU Executes It
+```
+
+The ISA hides all internal hardware details. The programmer works with instructions, not transistors.
+
+---
+
+## ISA vs CPU Implementation
+
+This distinction is critical.
+
+Two CPUs can have completely different internal designs but implement the **same ISA**.
+
+Example:
+
+```text
+Intel Core i9  — one internal architecture
+
+AMD Ryzen      — completely different internal architecture
+```
+
+Both implement **x86-64 ISA**.
+
+Therefore the same compiled program runs on both without any modification.
+
+---
+
+## The English Analogy
+
+Two people may think, reason, and remember things in completely different ways internally — but if both speak English, they can communicate.
+
+ISA plays the role of English.
+
+The CPU's internal hardware is the "brain" — the ISA is the "language."
+
+---
+
+## What Does an ISA Define?
+
+### Instructions
+
+Commands the CPU can execute:
+
+```assembly
+ADD   SUB   MUL   DIV   MOV   JMP
+```
+
+### Registers
+
+Named storage locations the instructions can reference:
+
+```text
+RAX   RBX   RCX   RDX
+```
+
+### Data Types
+
+The sizes of data the CPU can work with:
+
+```text
+8-bit   16-bit   32-bit   64-bit
+```
+
+### Memory Access Rules
+
+How data moves between memory and registers:
+
+```assembly
+LOAD    STORE
+```
+
+### Calling Conventions
+
+- How functions receive arguments
+- Where return values are stored
+
+---
+
+## Instructions
+
+An instruction is a command for the CPU.
+
+Example instructions:
+
+```assembly
+ADD     — addition
+SUB     — subtraction
+MOV     — move/copy data
+JMP     — jump to another location
+```
+
+Think of an instruction as a sentence in the CPU's language.
+
+---
+
+### Example
+
+```assembly
+MOV R1, 5
+```
+
+Meaning: place the value `5` into register `R1`.
+
+```assembly
+ADD R1, R2
+```
+
+Meaning: `R1 = R1 + R2`.
+
+---
+
+## Opcode
+
+Every instruction has an **opcode** — short for *operation code*.
+
+The opcode identifies which operation to perform.
+
+In:
+
+```assembly
+ADD R1, R2
+```
+
+- **Opcode:** `ADD` — the operation
+- **Operands:** `R1`, `R2` — the data
+
+---
+
+## Operand
+
+Operands are the inputs to the instruction.
+
+```assembly
+ADD R1, R2
+```
+
+- `R1` — first operand (also the destination)
+- `R2` — second operand
+
+The CPU adds the values in `R1` and `R2` and stores the result in `R1`.
+
+---
+
+## Machine Language
+
+The CPU does not actually see text like `ADD R1, R2`.
+
+It sees binary:
+
+```text
+10110010
+11001001
+00011100
+```
+
+An **assembler** converts human-readable assembly instructions into binary machine code that the CPU can execute.
+
+---
+
+## The Full Execution Stack
+
+```text
+C Program
+
+↓  Compiler
+
+Assembly Language
+
+↓  Assembler
+
+Machine Code  (binary ISA instructions)
+
+↓
+
+CPU Hardware Executes
+```
+
+---
+
+### Example
+
+C code:
+
+```c
+x = y + z;
+```
+
+The compiler may generate:
+
+```assembly
+MOV R1, y
+MOV R2, z
+ADD R1, R2
+MOV x, R1
+```
+
+These assembly instructions map directly to ISA instructions, which the CPU executes one by one.
+
+---
+
+## Popular ISAs
+
+### x86
+
+Created by Intel in 1978.
+
+Used in early personal computers such as the Intel 8086 and Intel Pentium.
+
+The foundation of most desktop and server software written before 2004.
+
+---
+
+### x86-64
+
+The 64-bit extension of x86.
+
+Used today by virtually all Intel and AMD desktop and laptop CPUs.
+
+Most C programs on Windows, Linux, and macOS compile to x86-64.
+
+---
+
+### ARM
+
+Designed for power efficiency rather than raw speed.
+
+Used in:
+
+```text
+Smartphones        — iPhone, Android
+Tablets
+Apple Silicon      — MacBook M1/M2/M3
+Embedded Systems   — microcontrollers, IoT devices
+```
+
+ARM's lower power consumption makes it dominant in battery-powered devices.
+
+---
+
+## x86 vs ARM
+
+| Feature | x86-64 | ARM |
+|---|---|---|
+| Power Usage | Higher | Lower |
+| Performance Per Watt | Lower | Higher |
+| Mobile Devices | Rare | Dominant |
+| Desktops / Servers | Dominant | Growing |
+| Instruction Complexity | High (CISC) | Lower (RISC) |
+
+---
+
+## CISC vs RISC
+
+Two philosophies for designing an ISA.
+
+---
+
+### CISC — Complex Instruction Set Computer
+
+Example: **x86**
+
+Characteristics:
+
+- Many instructions
+- Instructions can do complex operations in one step
+- One instruction might load from memory, add, and store the result
+
+```assembly
+; CISC: one instruction does a lot
+IMUL [memory_address], 5
+```
+
+---
+
+### RISC — Reduced Instruction Set Computer
+
+Example: **ARM**
+
+Characteristics:
+
+- Fewer, simpler instructions
+- Each instruction does exactly one small thing
+- More instructions needed for the same task, but each executes very fast
+
+```assembly
+; RISC: explicit load → operate → store
+LDR R1, [memory_address]
+MUL R1, R1, #5
+STR R1, [memory_address]
+```
+
+Neither is universally better — the tradeoff depends on the use case.
+
+---
+
+## Why ISA Matters to C Programmers
+
+C compiles directly to ISA instructions. There is no virtual machine in between.
+
+Understanding ISA explains:
+
+- Why certain operations are faster than others
+- How registers are used during function calls
+- Why pointers map so naturally to hardware addresses
+- What the compiler generates when you write `a + b`
+- Why C programs compiled for x86-64 cannot run on ARM without recompilation
+
+---
+
+### Example
+
+```c
+int sum(int a, int b)
+{
+    return a + b;
+}
+```
+
+The compiler turns this into ISA instructions that place `a` and `b` into registers, issue an `ADD` instruction, and return the result. Understanding this makes you a better systems programmer.
+
+---
+
+## ISA and Portability
+
+A program compiled for x86-64 cannot directly run on ARM because:
+
+```text
+x86-64 binary  →  x86-64 machine instructions
+
+ARM CPU        →  does not understand x86-64 instructions
+```
+
+The source code is portable. The compiled binary is not.
+
+This is why recompiling for a different architecture is necessary when moving code between ISAs.
+
+---
+
+## Visual Summary
+
+```text
+C Program
+
+↓  Compiler
+
+Assembly Language
+
+↓  Assembler
+
+ISA Instructions (Machine Code)
+
+↓
+
+CPU Hardware Executes
+```
+
+ISA sits between all software and all hardware. Every program ever written ultimately speaks to hardware through an ISA.
+
+---
+
+## Common Misconceptions
+
+- ISA and CPU are the same thing. — **Wrong.** ISA is the interface; the CPU is one implementation of it.
+- ISA is Assembly Language. — **Wrong.** Assembly is a human-readable representation of ISA instructions; the ISA itself is the binary encoding.
+- Intel and AMD use different ISAs. — **Wrong.** Both use x86-64.
+- ARM is faster because it has fewer instructions. — **Wrong.** Fewer instruction types does not mean fewer instructions executed — and modern x86 CPUs internally translate CISC instructions into RISC-like micro-ops.
+- Programs directly execute C code. — **Wrong.** C is compiled to machine code first.
+
+---
+
+## Quick Revision
+
+| Term | Meaning |
+|---|---|
+| ISA | Contract between software and hardware |
+| Instruction | A command the CPU can execute |
+| Opcode | The operation part of an instruction (`ADD`, `MOV`) |
+| Operand | The data the instruction operates on (`R1`, `R2`) |
+| x86-64 | 64-bit ISA used by Intel and AMD |
+| ARM | Power-efficient ISA used in phones and Apple Silicon |
+| CISC | Complex instructions, fewer steps for common tasks |
+| RISC | Simple instructions, each executes very fast |
+| Machine Code | Binary encoding of ISA instructions the CPU actually runs |
+
+---
+
+## Interview Questions
+
+1. What is an Instruction Set Architecture (ISA)?
+2. Why do CPUs need an ISA?
+3. What is the difference between ISA and CPU implementation?
+4. What is an instruction?
+5. What is an opcode?
+6. What is an operand?
+7. What is the difference between x86 and ARM?
+8. What is the difference between CISC and RISC?
+9. Why can't an x86 program run directly on an ARM CPU?
+10. Why is ISA important for C programmers and system programmers?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 13: Cache Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-13-cache-memory" }}
+  next={null}
+/>
