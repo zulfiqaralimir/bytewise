@@ -148,6 +148,12 @@ const chapters = [
           { title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" },
         ],
       },
+      {
+        chapter: "Chapter 2: Quantitative Trading & Backtesting",
+        items: [
+          { title: "Mastering Quantitative Trading with VectorBT", href: "/docs/cs-book/part-11-economic-finance-models/chapter-2/vectorbt-backtesting" },
+        ],
+      },
     ],
   },
   {

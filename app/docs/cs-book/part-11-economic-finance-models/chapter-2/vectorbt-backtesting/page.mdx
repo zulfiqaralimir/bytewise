@@ -1,0 +1,420 @@
+export const metadata = {
+  title: "Mastering Quantitative Trading with VectorBT — ByteWise CS Book",
+  description:
+    "A complete guide to VectorBT — the high-performance Python backtesting framework. Covers vectorization, parameter optimization, multi-asset analysis, performance analytics, AI integration, and best practices for quantitative traders.",
+  keywords: [
+    "VectorBT",
+    "quantitative trading",
+    "backtesting",
+    "vectorized backtesting",
+    "Python trading framework",
+    "algorithmic trading",
+    "parameter optimization",
+    "portfolio analysis",
+    "NumPy Pandas Numba",
+    "machine learning trading",
+    "quant finance",
+    "systematic trading",
+  ],
+  openGraph: {
+    title: "Mastering Quantitative Trading with VectorBT",
+    description:
+      "How VectorBT is transforming quantitative trading research — high-performance vectorized backtesting, parameter optimization, and AI integration for modern traders.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Mastering Quantitative Trading with VectorBT
+
+**How VectorBT is Transforming Quantitative Trading Research**
+
+> *Economic & Finance Models · Chapter 2 · High-Performance Backtesting for Modern Traders*
+
+---
+
+## Introduction
+
+In today's financial markets, speed, scalability, and accuracy are critical for developing profitable trading strategies. Traditional backtesting frameworks often become bottlenecks when traders need to evaluate thousands of parameter combinations, analyze multiple assets simultaneously, or optimize strategies using large datasets.
+
+This is where VectorBT comes in.
+
+VectorBT is a high-performance Python backtesting and quantitative research framework designed to leverage NumPy and Pandas vectorization. Instead of iterating through data row by row, VectorBT performs calculations across entire datasets at once, dramatically increasing speed and efficiency.
+
+For quantitative analysts, algorithmic traders, data scientists, and financial engineers, VectorBT provides a powerful platform for strategy research, portfolio analysis, optimization, and performance evaluation.
+
+---
+
+## What is VectorBT?
+
+VectorBT is an open-source quantitative trading and portfolio analysis framework built entirely around vectorized operations.
+
+Unlike traditional event-driven backtesting engines that process data sequentially, VectorBT utilizes:
+
+- NumPy
+- Pandas
+- Numba
+- Vectorized Computation
+
+to perform calculations across millions of data points simultaneously.
+
+This architecture enables traders to:
+
+- Test thousands of strategy variations quickly
+- Analyze multiple assets in parallel
+- Optimize parameters efficiently
+- Reduce research time significantly
+
+The result is faster experimentation and more robust strategy development.
+
+---
+
+## Why Traditional Backtesting Can Be Slow
+
+Most conventional backtesting frameworks process market data one candle at a time:
+
+1. Read candle
+2. Check conditions
+3. Generate signal
+4. Execute trade
+5. Update portfolio
+6. Move to next candle
+
+This approach works but becomes computationally expensive when:
+
+- Testing multiple assets
+- Running parameter sweeps
+- Optimizing strategies
+- Processing years of historical data
+
+As strategy complexity increases, performance often decreases dramatically.
+
+VectorBT solves this challenge through vectorization.
+
+---
+
+## Understanding Vectorization
+
+Vectorization means performing operations on entire arrays rather than individual values.
+
+Instead of:
+
+```python
+for price in prices:
+    calculate_signal(price)
+```
+
+VectorBT performs:
+
+```python
+signals = prices > moving_average
+```
+
+across the entire dataset instantly.
+
+Benefits include:
+
+- Faster execution
+- Lower memory overhead
+- Better scalability
+- Simpler code
+
+This is one of the primary reasons VectorBT can outperform many traditional backtesting frameworks.
+
+---
+
+## Core Components of VectorBT
+
+### Data Management
+
+VectorBT integrates seamlessly with financial data sources.
+
+Supported workflows include:
+
+- Yahoo Finance data
+- CSV files
+- Cryptocurrency exchanges
+- Broker APIs
+- Custom datasets
+
+Example assets: Stocks, ETFs, Forex, Commodities, Cryptocurrencies.
+
+---
+
+### Indicator Generation
+
+VectorBT provides built-in indicators and supports custom indicator creation.
+
+Examples:
+
+- Moving Averages
+- RSI
+- MACD
+- Bollinger Bands
+- ATR
+- Custom Indicators
+
+```python
+fast_ma = vbt.MA.run(close, 20)
+slow_ma = vbt.MA.run(close, 50)
+```
+
+Indicators are automatically vectorized for maximum performance.
+
+---
+
+### Signal Generation
+
+Signals determine when trades should be entered and exited.
+
+Example — moving-average crossover:
+
+```python
+entries = fast_ma.ma_crossed_above(slow_ma)
+exits   = fast_ma.ma_crossed_below(slow_ma)
+```
+
+VectorBT instantly generates trading signals across the entire dataset.
+
+---
+
+### Portfolio Simulation
+
+Portfolio simulation transforms signals into realistic trading results.
+
+Features include:
+
+- Position sizing
+- Commission modeling
+- Slippage simulation
+- Stop-loss rules
+- Take-profit rules
+- Multiple assets
+
+```python
+portfolio = vbt.Portfolio.from_signals(
+    close,
+    entries,
+    exits
+)
+```
+
+This creates a complete backtest with performance metrics.
+
+---
+
+## Parameter Optimization
+
+One of VectorBT's strongest capabilities is parameter optimization.
+
+Instead of testing MA(20,50), MA(30,70), and MA(40,100) individually, VectorBT evaluates hundreds or thousands of combinations simultaneously:
+
+```python
+fast_windows = range(10, 50)
+slow_windows = range(50, 200)
+```
+
+Benefits include:
+
+- Faster optimization
+- Better strategy discovery
+- Reduced research time
+- More robust models
+
+This capability is especially valuable for quantitative hedge funds and algorithmic trading teams.
+
+---
+
+## Multi-Asset Backtesting
+
+Modern portfolios rarely contain a single instrument.
+
+VectorBT enables simultaneous analysis of:
+
+- Stocks
+- ETFs
+- Forex pairs
+- Futures
+- Cryptocurrencies
+
+Examples: S&P 500 constituents, cryptocurrency baskets, sector portfolios, global equity portfolios.
+
+This allows researchers to evaluate portfolio-wide performance rather than isolated strategies.
+
+---
+
+## Performance Analytics
+
+A successful strategy requires detailed performance evaluation.
+
+VectorBT automatically calculates:
+
+### Return Metrics
+
+| Metric | Description |
+|---|---|
+| Total Return | Overall gain/loss for the period |
+| CAGR | Compound annual growth rate |
+| Annual Return | Annualized performance |
+| Monthly Return | Period-by-period breakdown |
+
+### Risk Metrics
+
+| Metric | Description |
+|---|---|
+| Volatility | Standard deviation of returns |
+| Maximum Drawdown | Largest peak-to-trough decline |
+| Downside Risk | Risk below a target return |
+| Value at Risk | Estimated worst-case loss |
+
+### Trading Metrics
+
+| Metric | Description |
+|---|---|
+| Win Rate | Percentage of profitable trades |
+| Profit Factor | Gross profit / gross loss |
+| Sharpe Ratio | Risk-adjusted return |
+| Sortino Ratio | Downside risk-adjusted return |
+
+These metrics help traders understand both profitability and risk exposure.
+
+---
+
+## Interactive Visualization
+
+Visualization is critical for understanding strategy behavior.
+
+VectorBT provides interactive charts for:
+
+- Equity Curves
+- Drawdowns
+- Trade Analysis
+- Indicator Visualization
+- Portfolio Allocation
+
+Interactive dashboards make it easier to identify weaknesses and opportunities in a strategy.
+
+---
+
+## Using VectorBT with Artificial Intelligence
+
+One of the most exciting applications of VectorBT is AI-assisted strategy development.
+
+It integrates naturally with:
+
+- Machine Learning
+- Deep Learning
+- Reinforcement Learning
+- Feature Engineering Pipelines
+
+Popular combinations:
+
+| Library | Role |
+|---|---|
+| Scikit-Learn | Classification and regression signals |
+| XGBoost | Gradient boosted prediction models |
+| TensorFlow / PyTorch | Deep learning signal generation |
+| Stable-Baselines3 | Reinforcement learning agents |
+
+AI models generate predictions; VectorBT evaluates trading performance. Together they form a complete quantitative research workflow.
+
+---
+
+## VectorBT vs Traditional Backtesting Frameworks
+
+| Feature | VectorBT | Traditional Frameworks |
+|---|---|---|
+| Speed | Extremely Fast | Moderate |
+| Vectorized Computation | Yes | Limited |
+| Parameter Optimization | Excellent | Slower |
+| Multi-Asset Analysis | Excellent | Good |
+| Portfolio Analytics | Excellent | Good |
+| Machine Learning Integration | Excellent | Moderate |
+| Interactive Visualization | Excellent | Limited |
+
+For large-scale research workloads, VectorBT often provides significant performance advantages.
+
+---
+
+## Who Should Use VectorBT?
+
+| Role | Use Case |
+|---|---|
+| Quantitative Analysts | Rapidly evaluate strategies and optimize parameters |
+| Algorithmic Traders | Develop, test, and improve automated trading systems |
+| Hedge Funds | Conduct large-scale research efficiently |
+| Financial Engineers | Build sophisticated portfolio management systems |
+| Data Scientists | Combine machine learning with financial analytics |
+| Trading Educators | Teach quantitative finance using practical examples |
+
+---
+
+## Real-World Use Cases
+
+Organizations and traders use VectorBT for:
+
+- Momentum strategies
+- Mean reversion systems
+- Trend following
+- Statistical arbitrage
+- Portfolio optimization
+- Cryptocurrency trading
+- Machine learning strategies
+- Risk management research
+
+Its flexibility makes it suitable for both retail and institutional environments.
+
+---
+
+## Best Practices When Using VectorBT
+
+### Use Clean Data
+Garbage in produces garbage out. Validate your data sources before backtesting.
+
+### Avoid Overfitting
+Optimize responsibly and validate strategies on unseen out-of-sample data.
+
+### Include Transaction Costs
+Always account for commissions and slippage — they erode real-world performance.
+
+### Perform Walk-Forward Testing
+Evaluate strategies under realistic conditions by testing on rolling time windows.
+
+### Focus on Risk Management
+Returns matter, but survival matters more. Size positions accordingly.
+
+---
+
+## The Future of Quantitative Research
+
+Financial markets continue to become more data-driven and computationally intensive.
+
+Researchers increasingly require:
+
+- Faster experimentation
+- Larger datasets
+- AI integration
+- Portfolio-level analysis
+- Scalable infrastructure
+
+VectorBT addresses these needs by combining Python's data ecosystem with high-performance vectorized computation.
+
+As algorithmic trading evolves, frameworks like VectorBT will play an increasingly important role in enabling traders and institutions to develop sophisticated strategies more efficiently than ever before.
+
+---
+
+## Conclusion
+
+VectorBT represents a significant advancement in quantitative trading research and backtesting. By leveraging vectorized computation, it allows traders to evaluate strategies, optimize parameters, analyze portfolios, and integrate machine learning models at a speed that traditional frameworks often struggle to match.
+
+Whether you are a retail trader exploring systematic strategies, a quantitative analyst conducting research, or a financial institution building advanced trading systems, VectorBT provides the tools necessary to move from idea to validated strategy quickly and efficiently.
+
+In a world where speed and data-driven decision-making are competitive advantages, VectorBT is becoming an essential tool in the modern quantitative trader's toolkit.
+
+---
+
+<ArticleNav
+  prev={{ title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" }}
+  next={null}
+/>
