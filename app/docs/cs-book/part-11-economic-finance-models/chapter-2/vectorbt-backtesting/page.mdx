@@ -132,7 +132,7 @@ VectorBT integrates seamlessly with financial data sources.
 
 Supported workflows include:
 
-- Yahoo Finance data
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Yahoo Finance data</span>
 - CSV files
 - Cryptocurrency exchanges
 - Broker APIs
@@ -144,7 +144,7 @@ Example assets: Stocks, ETFs, Forex, Commodities, Cryptocurrencies.
 
 ### Indicator Generation
 
-VectorBT provides built-in indicators and supports custom indicator creation.
+VectorBT <span style={{color: '#f59e0b', fontWeight: 'bold'}}>provides built-in indicators</span> and supports custom indicator creation.
 
 Examples:
 
@@ -160,13 +160,13 @@ fast_ma = vbt.MA.run(close, 20)
 slow_ma = vbt.MA.run(close, 50)
 ```
 
-Indicators are automatically vectorized for maximum performance.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Indicators are automatically vectorized for maximum performance.</span>
 
 ---
 
 ### Signal Generation
 
-Signals determine when trades should be entered and exited.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Signals determine when trades should be entered and exited.</span>
 
 Example — moving-average crossover:
 
@@ -175,20 +175,20 @@ entries = fast_ma.ma_crossed_above(slow_ma)
 exits   = fast_ma.ma_crossed_below(slow_ma)
 ```
 
-VectorBT instantly generates trading signals across the entire dataset.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT instantly generates trading signals across the entire dataset.</span>
 
 ---
 
 ### Portfolio Simulation
 
-Portfolio simulation transforms signals into realistic trading results.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Portfolio simulation transforms signals into realistic trading results.</span>
 
 Features include:
 
 - Position sizing
 - Commission modeling
 - Slippage simulation
-- Stop-loss rules
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Stop-loss rules</span>
 - Take-profit rules
 - Multiple assets
 
@@ -208,7 +208,7 @@ This creates a complete backtest with performance metrics.
 
 One of VectorBT's strongest capabilities is parameter optimization.
 
-Instead of testing MA(20,50), MA(30,70), and MA(40,100) individually, VectorBT evaluates hundreds or thousands of combinations simultaneously:
+Instead of testing MA(20,50), MA(30,70), and MA(40,100) individually, <span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT evaluates hundreds or thousands of combinations simultaneously:</span>
 
 ```python
 fast_windows = range(10, 50)
@@ -219,10 +219,10 @@ Benefits include:
 
 - Faster optimization
 - Better strategy discovery
-- Reduced research time
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Reduced research time</span>
 - More robust models
 
-This capability is especially valuable for quantitative hedge funds and algorithmic trading teams.
+This capability is especially <span style={{color: '#f59e0b', fontWeight: 'bold'}}>valuable for quantitative hedge funds and algorithmic trading</span> teams.
 
 ---
 
@@ -248,7 +248,7 @@ This allows researchers to evaluate portfolio-wide performance rather than isola
 
 A successful strategy requires detailed performance evaluation.
 
-VectorBT automatically calculates:
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT automatically calculates:</span>
 
 ### Return Metrics
 
@@ -266,7 +266,7 @@ VectorBT automatically calculates:
 | Volatility | Standard deviation of returns |
 | Maximum Drawdown | Largest peak-to-trough decline |
 | Downside Risk | Risk below a target return |
-| Value at Risk | Estimated worst-case loss |
+| <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Value at Risk</span> | <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Estimated worst-case loss</span> |
 
 ### Trading Metrics
 
@@ -299,14 +299,14 @@ Interactive dashboards make it easier to identify weaknesses and opportunities i
 
 ## Using VectorBT with Artificial Intelligence
 
-One of the most exciting applications of VectorBT is AI-assisted strategy development.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>One of the most exciting applications of VectorBT is AI-assisted strategy development.</span>
 
 It integrates naturally with:
 
-- Machine Learning
-- Deep Learning
-- Reinforcement Learning
-- Feature Engineering Pipelines
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Machine Learning</span>
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Deep Learning</span>
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Reinforcement Learning</span>
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Feature Engineering Pipelines</span>
 
 Popular combinations:
 
@@ -343,10 +343,10 @@ For large-scale research workloads, VectorBT often provides significant performa
 |---|---|
 | Quantitative Analysts | Rapidly evaluate strategies and optimize parameters |
 | Algorithmic Traders | Develop, test, and improve automated trading systems |
-| Hedge Funds | Conduct large-scale research efficiently |
+| Hedge Funds | <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Conduct large-scale research efficiently</span> |
 | Financial Engineers | Build sophisticated portfolio management systems |
-| Data Scientists | Combine machine learning with financial analytics |
-| Trading Educators | Teach quantitative finance using practical examples |
+| Data Scientists | <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Combine machine learning with financial analytics</span> |
+| <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Trading Educators</span> | <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Teach quantitative finance using practical examples</span> |
 
 ---
 
@@ -355,7 +355,7 @@ For large-scale research workloads, VectorBT often provides significant performa
 Organizations and traders use VectorBT for:
 
 - Momentum strategies
-- Mean reversion systems
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Mean reversion systems</span>
 - Trend following
 - Statistical arbitrage
 - Portfolio optimization
@@ -363,7 +363,7 @@ Organizations and traders use VectorBT for:
 - Machine learning strategies
 - Risk management research
 
-Its flexibility makes it suitable for both retail and institutional environments.
+Its flexibility makes it <span style={{color: '#f59e0b', fontWeight: 'bold'}}>suitable for both retail and institutional environments.</span>
 
 ---
 
@@ -379,16 +379,16 @@ Optimize responsibly and validate strategies on unseen out-of-sample data.
 Always account for commissions and slippage — they erode real-world performance.
 
 ### Perform Walk-Forward Testing
-Evaluate strategies under realistic conditions by testing on rolling time windows.
+Evaluate strategies under realistic conditions by testing on <span style={{color: '#f59e0b', fontWeight: 'bold'}}>rolling time windows</span>.
 
 ### Focus on Risk Management
-Returns matter, but survival matters more. Size positions accordingly.
+Returns matter, but survival matters more. <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Size positions accordingly.</span>
 
 ---
 
 ## The Future of Quantitative Research
 
-Financial markets continue to become more data-driven and computationally intensive.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Financial markets continue to become more data-driven and computationally intensive.</span>
 
 Researchers increasingly require:
 
@@ -396,9 +396,9 @@ Researchers increasingly require:
 - Larger datasets
 - AI integration
 - Portfolio-level analysis
-- Scalable infrastructure
+- <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Scalable infrastructure</span>
 
-VectorBT addresses these needs by combining Python's data ecosystem with high-performance vectorized computation.
+VectorBT addresses these needs by <span style={{color: '#f59e0b', fontWeight: 'bold'}}>combining Python's data ecosystem with high-performance vectorized computation.</span>
 
 As algorithmic trading evolves, frameworks like VectorBT will play an increasingly important role in enabling traders and institutions to develop sophisticated strategies more efficiently than ever before.
 
@@ -408,9 +408,9 @@ As algorithmic trading evolves, frameworks like VectorBT will play an increasing
 
 VectorBT represents a significant advancement in quantitative trading research and backtesting. By leveraging vectorized computation, it allows traders to evaluate strategies, optimize parameters, analyze portfolios, and integrate machine learning models at a speed that traditional frameworks often struggle to match.
 
-Whether you are a retail trader exploring systematic strategies, a quantitative analyst conducting research, or a financial institution building advanced trading systems, VectorBT provides the tools necessary to move from idea to validated strategy quickly and efficiently.
+Whether you are a retail trader exploring systematic strategies, a quantitative analyst conducting research, or a financial institution building advanced trading systems, VectorBT provides the <span style={{color: '#f59e0b', fontWeight: 'bold'}}>tools necessary to move from idea to validated strategy quickly and efficiently.</span>
 
-In a world where speed and data-driven decision-making are competitive advantages, VectorBT is becoming an essential tool in the modern quantitative trader's toolkit.
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>In a world where speed and data-driven decision-making are competitive advantages, VectorBT is becoming an essential tool in the modern quantitative trader's toolkit.</span>
 
 ---
 
