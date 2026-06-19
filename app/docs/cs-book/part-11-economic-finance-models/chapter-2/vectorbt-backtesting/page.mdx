@@ -414,6 +414,26 @@ Whether you are a retail trader exploring systematic strategies, a quantitative 
 
 ---
 
+---
+
+## VectorBT in the Quantitative Trading Stack
+
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT, Zipline, AlphaLens, Riskfolio, and IBAPI serve different roles within a quantitative trading stack.</span>
+
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT</span> excels at ultra-fast, vectorized backtesting and parameter optimization, making it ideal for strategy research across thousands of scenarios.
+
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Zipline</span> is a traditional event-driven backtesting engine originally developed for Quantopian, offering realistic trade simulation and portfolio management but generally slower than VectorBT for large-scale research.
+
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>AlphaLens</span> is not a backtester; instead, it focuses on factor analysis, helping quants evaluate whether signals or alpha factors have predictive power before building a strategy.
+
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>Riskfolio</span> specializes in portfolio optimization and risk management, providing advanced allocation techniques such as Mean-Variance, Risk Parity, CVaR, and Hierarchical Risk Parity, making it a powerful complement to a backtesting framework.
+
+<span style={{color: '#f59e0b', fontWeight: 'bold'}}>IBAPI</span> (Interactive Brokers API) is different from all of the above because it is primarily used for live trading and market data connectivity, allowing strategies developed in VectorBT or Zipline to connect directly to Interactive Brokers for real-world execution.
+
+In a complete quantitative trading workflow, a trader might use <span style={{color: '#f59e0b', fontWeight: 'bold'}}>AlphaLens</span> to validate factors, <span style={{color: '#f59e0b', fontWeight: 'bold'}}>VectorBT</span> to rapidly research and backtest strategies, <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Riskfolio</span> to optimize portfolio allocation, and <span style={{color: '#f59e0b', fontWeight: 'bold'}}>IBAPI</span> to deploy the final strategy into live markets, while <span style={{color: '#f59e0b', fontWeight: 'bold'}}>Zipline</span> remains a strong alternative when highly realistic event-driven simulation is required.
+
+---
+
 <ArticleNav
   prev={{ title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" }}
   next={null}
