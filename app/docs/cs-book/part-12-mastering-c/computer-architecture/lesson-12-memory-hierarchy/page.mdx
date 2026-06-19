@@ -1,0 +1,707 @@
+export const metadata = {
+  title: "Lesson 12: Memory Hierarchy — Mastering C — ByteWise",
+  description:
+    "What the Memory Hierarchy is, why computers need multiple types of memory, why neither Registers alone nor RAM alone is enough, the levels from Registers to HDD, how data moves through each layer, cache hits and misses, temporal and spatial locality, and why C programmers must understand this.",
+  keywords: [
+    "memory hierarchy",
+    "cache memory",
+    "L1 L2 L3 cache",
+    "registers vs RAM",
+    "cache hit cache miss",
+    "temporal locality",
+    "spatial locality",
+    "locality of reference",
+    "CPU cache",
+    "RAM vs SSD",
+    "memory levels",
+    "C programming memory",
+  ],
+  openGraph: {
+    title: "Lesson 12: Memory Hierarchy",
+    description:
+      "Why computers need layered memory — from ultra-fast Registers to large slow HDDs — and how understanding this makes you a better C programmer.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Memory Hierarchy
+
+## Lesson 12: Why Computers Need Layers of Memory
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is Memory Hierarchy?
+- Why do computers need multiple types of memory?
+- Why can't we build a computer using only Registers?
+- Why can't we build a computer using only RAM?
+- What are the levels of the Memory Hierarchy?
+- How does data move through the hierarchy?
+- How does Memory Hierarchy affect C programming?
+
+---
+
+## The Fundamental Problem
+
+Every computer faces a major problem.
+
+We want memory that is:
+
+- Extremely fast
+- Extremely large
+- Extremely cheap
+
+Unfortunately:
+
+```text
+Fast Memory
+     ↓
+Expensive
+Small
+```
+
+and
+
+```text
+Large Memory
+     ↓
+Cheap
+Slow
+```
+
+No memory technology gives us fast, large, and cheap all at the same time.
+
+---
+
+## Why Not Use Only Registers?
+
+Registers are the fastest memory in a computer.
+
+Example:
+
+```text
+CPU Register Access
+
+≈ 1 Clock Cycle
+```
+
+Very fast — but Registers have problems:
+
+```text
+Extremely Expensive
+
+Very Small Capacity
+```
+
+A modern CPU may have only a few hundred registers.
+
+That is nowhere near enough to store:
+
+```text
+Windows
+
+Linux
+
+Games
+
+Videos
+
+Programs
+```
+
+---
+
+## Why Not Use Only RAM?
+
+RAM is much larger — typically 8 GB, 16 GB, or 32 GB.
+
+But RAM is slower.
+
+If every CPU operation had to wait for RAM:
+
+```text
+CPU
+
+↓
+
+Wait
+
+↓
+
+Wait
+
+↓
+
+Wait
+
+↓
+
+RAM Responds
+```
+
+Most of the CPU would sit idle.
+
+---
+
+## The Solution: Memory Hierarchy
+
+Engineers created multiple layers of memory.
+
+Each layer balances:
+
+```text
+Speed
+
+Capacity
+
+Cost
+```
+
+---
+
+## Memory Hierarchy Diagram
+
+```text
+               Fastest
+                  ↑
+
+             Registers
+
+                  ↑
+
+              L1 Cache
+
+                  ↑
+
+              L2 Cache
+
+                  ↑
+
+              L3 Cache
+
+                  ↑
+
+                 RAM
+
+                  ↑
+
+                 SSD
+
+                  ↑
+
+             Hard Disk
+
+                  ↑
+
+               Slowest
+```
+
+---
+
+## The Important Rule
+
+As we move upward toward Registers:
+
+```text
+Speed      ↑ increases
+
+Cost       ↑ increases
+
+Capacity   ↓ decreases
+```
+
+As we move downward toward Hard Disk:
+
+```text
+Speed      ↓ decreases
+
+Cost       ↓ decreases
+
+Capacity   ↑ increases
+```
+
+---
+
+## Level 1: Registers
+
+Registers are inside the CPU.
+
+Examples:
+
+```text
+RAX
+
+RBX
+
+RCX
+```
+
+**Purpose:** Store data currently being processed.
+
+**Advantage:** Fastest memory available.
+
+**Disadvantage:** Extremely small capacity.
+
+---
+
+### Example
+
+```c
+int c = a + b;
+```
+
+The CPU tries to place `a`, `b`, and `c` inside registers before performing the addition.
+
+---
+
+## Level 2: Cache Memory
+
+Cache sits between the CPU and RAM.
+
+**Purpose:** Store frequently used data close to the CPU so it does not have to wait for RAM.
+
+---
+
+### Real-Life Analogy
+
+```text
+Desk
+ ↓
+Cache
+
+Bookshelf
+ ↓
+RAM
+
+Library
+ ↓
+SSD
+```
+
+You keep frequently used books on your desk rather than walking to the library each time.
+
+---
+
+### Why Cache Exists
+
+Suppose the CPU repeatedly accesses:
+
+```c
+array[i]
+```
+
+Instead of repeatedly fetching from RAM:
+
+```text
+RAM
+
+↓
+
+RAM
+
+↓
+
+RAM
+```
+
+Cache keeps a nearby copy of recently accessed data.
+
+---
+
+### L1 Cache
+
+Closest to the CPU core.
+
+```text
+Smallest cache
+
+Fastest cache
+```
+
+Typical size:
+
+```text
+32 KB – 64 KB
+```
+
+---
+
+### L2 Cache
+
+```text
+Larger than L1
+
+Slightly slower than L1
+```
+
+Typical size:
+
+```text
+256 KB – 1 MB
+```
+
+---
+
+### L3 Cache
+
+```text
+Largest cache
+
+Shared across CPU cores
+```
+
+Typical size:
+
+```text
+8 MB – 32 MB or more
+```
+
+---
+
+### Why Multiple Cache Levels?
+
+A large cache is slower and more expensive to build.
+
+Engineers compromise:
+
+```text
+Small Fast Cache  (L1)
+
++
+
+Larger Slower Cache  (L2, L3)
+```
+
+This gives the CPU fast access for the hottest data and a fallback for less-used data.
+
+---
+
+## The Cache Lookup Process
+
+When the CPU needs a value, it searches in order:
+
+```text
+Register     →  Found? Use it immediately.
+     ↓
+L1 Cache     →  Found? Use it immediately.
+     ↓
+L2 Cache     →  Found? Use it.
+     ↓
+L3 Cache     →  Found? Use it.
+     ↓
+RAM          →  Fetch from here (slow).
+```
+
+---
+
+## Cache Hit
+
+Data is found in cache.
+
+```text
+Need X
+
+↓
+
+Found in L1
+
+↓
+
+Immediate Access — Fast
+```
+
+---
+
+## Cache Miss
+
+Data is not found in cache.
+
+```text
+Need X
+
+↓
+
+Not in Cache
+
+↓
+
+Fetch from RAM — Slower
+```
+
+Every cache miss costs time. High-performance C programmers write code that minimises cache misses.
+
+---
+
+## Level 3: RAM (Main Memory)
+
+RAM stands for **Random Access Memory**.
+
+**Purpose:** Store active programs and data during execution.
+
+Examples of what lives in RAM while running:
+
+```text
+Operating System
+
+Browser
+
+Games
+
+Applications
+```
+
+**Advantage:** Large and relatively fast compared to storage.
+
+**Disadvantage:** Much slower than cache.
+
+---
+
+### Example
+
+When you launch Google Chrome:
+
+```text
+SSD
+
+↓
+
+RAM
+```
+
+The program files move from storage into RAM before the CPU begins executing them.
+
+---
+
+## Level 4: SSD Storage
+
+SSD stands for **Solid State Drive**.
+
+**Purpose:** Long-term persistent storage.
+
+Stores:
+
+```text
+Programs
+
+Videos
+
+Documents
+
+Photos
+```
+
+**Advantage:** Huge capacity and persistent (survives power-off).
+
+**Disadvantage:** Much slower than RAM.
+
+---
+
+## Level 5: Hard Disk Drive (HDD)
+
+Older magnetic disk technology.
+
+**Advantage:** Very cheap and very large capacity.
+
+**Disadvantage:** Very slow — mechanical parts must physically spin and seek.
+
+---
+
+## Data Movement Example
+
+Suppose you open `game.exe`.
+
+The file is stored on SSD.
+
+Execution follows this path:
+
+```text
+SSD
+
+↓
+
+RAM
+
+↓
+
+Cache
+
+↓
+
+Registers
+
+↓
+
+CPU Executes
+```
+
+Every program on every computer follows this exact path.
+
+---
+
+## Why Memory Hierarchy Works: Locality of Reference
+
+Most programs repeatedly access a small amount of data.
+
+This principle is called **Locality of Reference**.
+
+It is the reason caches are so effective.
+
+---
+
+## Temporal Locality
+
+If a memory location was used recently, it will likely be used again soon.
+
+Example:
+
+```c
+count++;
+count++;
+count++;
+```
+
+The same variable `count` is accessed repeatedly — it stays in cache.
+
+---
+
+## Spatial Locality
+
+If memory location `100` is used, nearby locations such as `101`, `102`, `103` will likely be used soon.
+
+Example:
+
+```c
+array[0]
+array[1]
+array[2]
+```
+
+The CPU loads a block of memory into cache at once, so accessing `array[0]` brings `array[1]`, `array[2]`, etc. along for free.
+
+---
+
+## Why C Programmers Must Understand Memory Hierarchy
+
+Memory Hierarchy affects:
+
+- Program speed
+- Cache efficiency
+- Data structure choices
+- Algorithm selection
+- Operating systems
+- Databases
+- Game engines
+
+---
+
+### Example — Cache Locality Matters
+
+These two loops perform the same arithmetic but behave very differently:
+
+**Loop 1 — Sequential access (cache-friendly):**
+
+```c
+for (i = 0; i < n; i++)
+{
+    sum += array[i];
+}
+```
+
+**Loop 2 — Random access (cache-unfriendly):**
+
+```c
+for (i = 0; i < n; i++)
+{
+    sum += array[random_index];
+}
+```
+
+Loop 1 benefits from spatial locality — each element is adjacent in memory, so cache prefetching works perfectly.
+
+Loop 2 jumps around randomly — cache misses on nearly every access.
+
+Same number of additions. Potentially very different execution times.
+
+---
+
+## Visual Summary
+
+```text
+Registers
+   ↓  Fastest · Smallest · Most Expensive
+
+L1 Cache
+   ↓
+
+L2 Cache
+   ↓
+
+L3 Cache
+   ↓
+
+RAM
+   ↓
+
+SSD
+   ↓
+
+Hard Disk
+   ↓  Slowest · Largest · Cheapest
+```
+
+---
+
+## Common Misconceptions
+
+- RAM is the fastest memory. — **Wrong.** Registers and cache are much faster.
+- Cache and RAM are the same thing. — **Wrong.** Cache is on the CPU chip; RAM is separate hardware.
+- The CPU executes programs directly from SSD. — **Wrong.** Programs must first load into RAM.
+- More RAM automatically means a faster CPU. — **Wrong.** Cache behaviour and algorithm locality matter far more for CPU performance.
+- Registers are part of RAM. — **Wrong.** Registers are inside the CPU itself.
+
+---
+
+## Quick Revision
+
+Memory Hierarchy exists because no single memory technology can be fast, large, and cheap simultaneously.
+
+| Level | Speed | Capacity | Cost |
+|---|---|---|---|
+| Registers | Fastest | Bytes (hundreds) | Highest |
+| L1 Cache | Very Fast | 32–64 KB | Very High |
+| L2 Cache | Fast | 256 KB – 1 MB | High |
+| L3 Cache | Moderate | 8–32 MB | Moderate |
+| RAM | Slower | 8–64 GB | Low |
+| SSD | Much Slower | 256 GB – 4 TB | Lower |
+| HDD | Slowest | 1–20 TB | Lowest |
+
+Programs execute by moving data upward through this hierarchy — from SSD into RAM, from RAM into cache, from cache into registers, and finally into the CPU.
+
+Understanding locality of reference is essential for writing high-performance C programs.
+
+---
+
+## Interview Questions
+
+1. What is Memory Hierarchy?
+2. Why can't computers use only Registers?
+3. Why can't computers use only RAM?
+4. What is Cache Memory?
+5. What is the difference between L1, L2, and L3 Cache?
+6. What is a Cache Hit?
+7. What is a Cache Miss?
+8. What is Temporal Locality?
+9. What is Spatial Locality?
+10. Why is Memory Hierarchy important for C programmers and system programmers?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 11: Status Register (Flags Register)", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-11-status-register" }}
+  next={null}
+/>
