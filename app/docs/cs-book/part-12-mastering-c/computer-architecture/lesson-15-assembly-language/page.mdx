@@ -1,0 +1,535 @@
+export const metadata = {
+  title: "Lesson 15: Assembly Language — Mastering C — ByteWise",
+  description:
+    "What Assembly Language is, why it was invented, what an Assembler does, how Registers are used in Assembly, what Instructions, Opcodes, and Operands mean, and why Assembly is the bridge between C and machine code.",
+  keywords: [
+    "assembly language",
+    "assembler",
+    "machine language",
+    "registers",
+    "opcodes",
+    "operands",
+    "MOV instruction",
+    "ADD instruction",
+    "CMP instruction",
+    "JMP instruction",
+    "C and assembly",
+    "systems programming",
+    "machine code",
+    "CPU instructions",
+  ],
+  openGraph: {
+    title: "Lesson 15: Assembly Language",
+    description:
+      "The bridge between C and machine code — what Assembly Language is, why it was invented, and how MOV, ADD, CMP, and JMP work.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Assembly Language
+
+## Lesson 15: The Bridge Between C and the CPU
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is Assembly Language?
+- Why was Assembly Language invented?
+- What problem does it solve?
+- Why can't humans program directly in Machine Language?
+- How does Assembly relate to C?
+- What is an Assembler?
+- What are Registers in Assembly?
+- What are Instructions, Opcodes, and Operands?
+- Why is Assembly important for systems programming?
+
+---
+
+## The Problem Before Assembly
+
+The CPU understands only:
+
+```text
+0   1
+```
+
+Example of raw machine code:
+
+```text
+10110000
+00000101
+```
+
+This is called **Machine Language**.
+
+---
+
+## Why Machine Language Is Difficult
+
+Imagine writing:
+
+```text
+10110000
+00000101
+10110001
+00000011
+00000001
+11000001
+```
+
+instead of:
+
+```c
+a = 5 + 3;
+```
+
+Humans would:
+
+- Make mistakes
+- Forget meanings
+- Take far longer to write programs
+
+Programming would be extremely difficult.
+
+---
+
+## The Solution: Assembly Language
+
+Engineers invented symbolic names.
+
+Instead of:
+
+```text
+10110000
+```
+
+you write:
+
+```assembly
+MOV
+```
+
+Instead of:
+
+```text
+00000001
+```
+
+you write:
+
+```assembly
+ADD
+```
+
+Much easier for a human to read, write, and reason about.
+
+---
+
+## What is Assembly Language?
+
+> A human-readable representation of machine instructions.
+
+Think of it as:
+
+```text
+Machine Language  →  Human-Friendly Version  →  Assembly Language
+```
+
+---
+
+### Real-Life Analogy
+
+Machine Language:
+
+```text
+01001010
+11000111
+00101010
+```
+
+Like talking in raw electrical signals.
+
+Assembly Language:
+
+```assembly
+MOV R1, 10
+ADD R1, R2
+```
+
+Like talking in words.
+
+---
+
+## Important Idea
+
+Assembly Language is still very close to the CPU.
+
+```assembly
+MOV R1, 5
+```
+
+means: *Put 5 into Register R1*.
+
+One Assembly instruction typically corresponds to exactly one CPU instruction. There is almost no abstraction layer.
+
+---
+
+## What is an Assembler?
+
+An Assembler is a program that converts Assembly into Machine Code.
+
+```text
+Assembly Program  →  Assembler  →  Machine Code  →  CPU Executes
+```
+
+Example:
+
+| Assembly | Machine Code |
+|---|---|
+| `MOV R1, 5` | `10110000 00000101` |
+
+---
+
+## Registers in Assembly
+
+Registers appear in nearly every Assembly instruction.
+
+```assembly
+MOV R1, 10
+```
+
+Meaning: store `10` in Register `R1`.
+
+Think of registers as the **CPU's working desk** — the small, ultra-fast scratchpad where all arithmetic happens — as opposed to RAM, which is a much larger but slower storage room.
+
+---
+
+## Common Assembly Instructions
+
+### MOV — Move Data
+
+```assembly
+MOV R1, 10
+```
+
+`R1 = 10`
+
+---
+
+### ADD — Addition
+
+```assembly
+ADD R1, R2
+```
+
+`R1 = R1 + R2`
+
+---
+
+### SUB — Subtraction
+
+```assembly
+SUB R1, R2
+```
+
+`R1 = R1 - R2`
+
+---
+
+### MUL — Multiplication
+
+```assembly
+MUL R1, R2
+```
+
+`R1 = R1 × R2`
+
+---
+
+### DIV — Division
+
+```assembly
+DIV R1, R2
+```
+
+`R1 = R1 ÷ R2`
+
+---
+
+### CMP — Compare
+
+```assembly
+CMP R1, R2
+```
+
+Subtracts `R2` from `R1` internally, stores no result, but updates the **Status Register flags**.
+
+Used before conditional jump instructions.
+
+---
+
+### JMP — Jump
+
+```assembly
+JMP LOOP
+```
+
+Unconditional jump: go to the label `LOOP`.
+
+Used to implement loops and branches.
+
+---
+
+## Instructions, Opcodes, and Operands
+
+Every instruction has two parts.
+
+```assembly
+ADD R1, R2
+```
+
+| Part | Value | Role |
+|---|---|---|
+| Opcode | `ADD` | Which operation to perform |
+| Operands | `R1`, `R2` | The data to operate on |
+
+Another example:
+
+```assembly
+MOV R1, 25
+```
+
+| Part | Value |
+|---|---|
+| Opcode | `MOV` |
+| Operand 1 | `R1` (destination) |
+| Operand 2 | `25` (immediate value) |
+
+---
+
+## Assembly Example: Addition
+
+Goal in C:
+
+```c
+c = a + b;
+```
+
+In Assembly:
+
+```assembly
+MOV R1, a    ; load a into R1
+MOV R2, b    ; load b into R2
+ADD R1, R2   ; R1 = R1 + R2
+MOV c, R1    ; store result in c
+```
+
+Execution steps:
+
+```text
+Load a  →  Load b  →  Add  →  Store Result
+```
+
+---
+
+## Assembly and Status Flags
+
+```assembly
+CMP R1, R2
+```
+
+Suppose `R1 = 10`, `R2 = 10`.
+
+The CPU computes `10 - 10 = 0` internally and sets the Zero Flag:
+
+```text
+ZF = 1
+```
+
+The next instruction can use that flag:
+
+```assembly
+JE Equal
+```
+
+`JE` means *Jump If Equal*. The CPU checks `ZF = 1` — if true, it jumps to `Equal`.
+
+This is exactly how `if` statements and comparisons work at the hardware level.
+
+---
+
+## Assembly and Loops
+
+C:
+
+```c
+for (i = 0; i < 10; i++) { }
+```
+
+Assembly (simplified):
+
+```assembly
+MOV R1, 0
+
+LOOP:
+  ADD R1, 1
+  CMP R1, 10
+  JL  LOOP
+```
+
+`JL` means *Jump If Less Than*. The loop continues while `R1 < 10`.
+
+---
+
+## Assembly and Memory
+
+Memory access is explicit in Assembly — nothing is hidden.
+
+```assembly
+LOAD  R1, [100]    ; read memory address 100, store in R1
+STORE [100], R1    ; write R1 to memory address 100
+```
+
+In C, the compiler generates these LOAD/STORE instructions automatically when you read or write a variable. In Assembly you write them yourself.
+
+---
+
+## Assembly and C
+
+C is often called a *portable Assembly Language* because:
+
+```c
+x = y + z;
+```
+
+compiles to something like:
+
+```assembly
+MOV R1, y
+MOV R2, z
+ADD R1, R2
+MOV x, R1
+```
+
+The compiler writes the Assembly for you. C gives you control close to the hardware while saving you from writing Assembly by hand.
+
+---
+
+## Relationship Between Languages
+
+```text
+High-Level Languages (C, C++, Rust)
+
+↓  Compiler
+
+Assembly Language
+
+↓  Assembler
+
+Machine Language (binary)
+
+↓
+
+CPU Hardware Executes
+```
+
+---
+
+## Why Modern Programmers Rarely Write Assembly
+
+Assembly is:
+
+- Hard to write
+- Hard to maintain
+- CPU-specific (x86 Assembly does not run on ARM)
+
+Compilers handle Assembly generation automatically and do it better than most humans for general-purpose code.
+
+---
+
+## Why Systems Programmers Still Learn Assembly
+
+Understanding Assembly explains:
+
+- Why certain operations are faster than others
+- How function calls use registers and the stack
+- What the compiler actually generates from your C code
+- How to read disassembly output in a debugger
+- How security exploits (buffer overflows, ROP chains) manipulate machine instructions
+- How operating systems boot and manage the CPU
+
+---
+
+## Visual Summary
+
+```text
+C Program
+
+↓  Compiler
+
+Assembly Language
+
+↓  Assembler
+
+Machine Code (binary)
+
+↓
+
+CPU Executes
+```
+
+Assembly sits exactly one step above the raw binary that the CPU runs. It is the last readable representation of a program before it becomes pure electrical signals.
+
+---
+
+## Common Misconceptions
+
+- Assembly and Machine Language are the same. — **Wrong.** Assembly is human-readable text; Machine Language is binary.
+- Assembly is portable. — **Wrong.** x86 Assembly does not work on ARM, and vice versa.
+- CPUs understand Assembly directly. — **Wrong.** The Assembler must first convert Assembly to binary machine code.
+- Assembly is obsolete. — **Wrong.** It is used in operating system kernels, embedded firmware, compilers, and security research today.
+- C programs skip Assembly entirely. — **Wrong.** A compiler produces Assembly as an intermediate step before generating machine code.
+
+---
+
+## Quick Revision
+
+| Term | Meaning |
+|---|---|
+| Assembly Language | Human-readable representation of CPU instructions |
+| Machine Language | Raw binary the CPU executes |
+| Assembler | Program that converts Assembly to Machine Code |
+| Register | Ultra-fast CPU storage used in every Assembly instruction |
+| Opcode | The operation part of an instruction (`MOV`, `ADD`) |
+| Operand | The data the instruction operates on (`R1`, `25`) |
+| MOV | Copy data into a register or memory location |
+| ADD | Add two register values |
+| CMP | Compare two values by subtracting; updates Status Flags |
+| JMP / JE / JL | Jump unconditionally or based on a flag condition |
+
+---
+
+## Interview Questions
+
+1. What is Assembly Language?
+2. Why was Assembly Language invented?
+3. What is the difference between Assembly Language and Machine Language?
+4. What is an Assembler?
+5. What is a Register and why does Assembly use it so heavily?
+6. What is an Opcode?
+7. What is an Operand?
+8. What does the `MOV` instruction do?
+9. What does the `CMP` instruction do and how does it relate to `JE`?
+10. Why is Assembly important for C programmers and systems programmers?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 14: Instruction Set Architecture (ISA)", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-14-instruction-set-architecture" }}
+  next={null}
+/>

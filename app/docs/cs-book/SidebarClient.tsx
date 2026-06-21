@@ -176,6 +176,7 @@ const chapters = [
           { title: "Lesson 12: Memory Hierarchy", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-12-memory-hierarchy" },
           { title: "Lesson 13: Cache Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-13-cache-memory" },
           { title: "Lesson 14: Instruction Set Architecture (ISA)", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-14-instruction-set-architecture" },
+          { title: "Lesson 15: Assembly Language", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-15-assembly-language" },
         ],
       },
     ],
