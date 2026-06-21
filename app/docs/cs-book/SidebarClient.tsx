@@ -178,6 +178,7 @@ const chapters = [
           { title: "Lesson 14: Instruction Set Architecture (ISA)", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-14-instruction-set-architecture" },
           { title: "Lesson 15: Assembly Language", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-15-assembly-language" },
           { title: "Lesson 16: Machine Code", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-16-machine-code" },
+          { title: "Lesson 17: Stack and Heap", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-17-stack-and-heap" },
         ],
       },
     ],
