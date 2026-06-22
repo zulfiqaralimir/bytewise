@@ -181,6 +181,7 @@ const chapters = [
           { title: "Lesson 17: Stack and Heap", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-17-stack-and-heap" },
           { title: "Lesson 18: Function Calls (Step-by-Step)", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-18-function-calls" },
           { title: "Lesson 19: Static Variables", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-19-static-variables" },
+          { title: "Lesson 20: Pointers and Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-20-pointers-and-memory" },
         ],
       },
     ],
