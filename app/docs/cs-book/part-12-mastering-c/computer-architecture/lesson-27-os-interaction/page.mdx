@@ -1,0 +1,1036 @@
+export const metadata = {
+  title: "Lesson 27: Operating System Interaction (How Programs Talk to the Operating System) — Mastering C — ByteWise",
+  description:
+    "What system calls are, why programs cannot access hardware directly, user mode vs kernel mode, how printf/malloc/fopen reach the OS, common Linux system calls, and why OS interaction is the foundation of systems programming.",
+  keywords: [
+    "system calls",
+    "user mode kernel mode",
+    "operating system interaction",
+    "printf system call",
+    "malloc OS",
+    "fopen system call",
+    "read write open fork",
+    "kernel mode protection",
+    "C standard library OS",
+    "process creation OS",
+    "hardware abstraction",
+    "systems programming C",
+    "OS and hardware",
+    "context switch system call",
+    "Linux system calls",
+  ],
+  openGraph: {
+    title: "Lesson 27: Operating System Interaction (How Programs Talk to the Operating System)",
+    description:
+      "Why programs can't touch hardware directly, how system calls bridge user mode and kernel mode, and what really happens when you call printf, malloc, or fopen.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ Operating System Interaction (How Programs Talk to the Operating System)
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is Operating System Interaction?
+* Why can't programs directly access hardware?
+* How does a C program communicate with the OS?
+* What are System Calls?
+* What is User Mode and Kernel Mode?
+* What happens when I call `printf()`, `malloc()`, or `fopen()`?
+* How does the OS help programs?
+* Why is OS interaction important for systems programming?
+
+---
+
+# 🌍 The Fundamental Problem
+
+Suppose your C program wants to:
+
+```c
+printf("Hello");
+```
+
+Question:
+
+> How does text actually appear on the screen?
+
+---
+
+Or:
+
+```c
+fopen("data.txt", "r");
+```
+
+Question:
+
+> How does your program read a file from disk?
+
+---
+
+Or:
+
+```c
+malloc(100);
+```
+
+Question:
+
+> How does your program get memory?
+
+---
+
+Your program cannot directly control:
+
+```text
+Screen
+
+Keyboard
+
+RAM
+
+Disk
+
+Network Card
+```
+
+Something else must help.
+
+That "something" is the:
+
+# Operating System
+
+---
+
+# What is Operating System Interaction?
+
+Operating System Interaction means:
+
+> Communication between a program and the operating system.
+
+---
+
+# Simple View
+
+```text
+Program
+
+↓
+
+Operating System
+
+↓
+
+Hardware
+```
+
+---
+
+# Why Can't Programs Access Hardware Directly?
+
+Imagine:
+
+```text
+Program A
+
+Program B
+
+Program C
+```
+
+all running simultaneously.
+
+---
+
+Suppose Program A decides:
+
+```text
+Overwrite Entire RAM
+```
+
+or
+
+```text
+Delete Hard Disk
+```
+
+Chaos.
+
+---
+
+Therefore:
+
+```text
+Programs
+
+↓
+
+Must Ask OS
+
+↓
+
+OS Controls Hardware
+```
+
+---
+
+# Real-Life Analogy
+
+Imagine a bank.
+
+You want money.
+
+Can you enter the vault directly?
+
+```text
+No
+```
+
+You must ask:
+
+```text
+Bank Employee
+```
+
+The employee controls access.
+
+Similarly:
+
+```text
+Program
+
+↓
+
+Operating System
+
+↓
+
+Hardware
+```
+
+---
+
+# User Mode vs Kernel Mode
+
+Modern CPUs provide:
+
+## User Mode
+
+For normal programs.
+
+---
+
+## Kernel Mode
+
+For the Operating System.
+
+---
+
+# User Mode
+
+Your program runs here.
+
+Example:
+
+```c
+int x = 10;
+```
+
+Allowed.
+
+---
+
+But:
+
+```text
+Access Disk Directly
+
+Modify Hardware
+
+Control CPU
+```
+
+Not allowed.
+
+---
+
+# Kernel Mode
+
+Operating System runs here.
+
+Privileges:
+
+```text
+Access RAM
+
+Access Disk
+
+Access Devices
+
+Control Processes
+```
+
+Full access.
+
+---
+
+# Visual
+
+```text
+User Mode
+
+Program
+
+
+-------------------
+
+
+Kernel Mode
+
+Operating System
+
+Hardware Access
+```
+
+---
+
+# The Problem
+
+Suppose:
+
+```c
+fopen("file.txt");
+```
+
+Your program needs:
+
+```text
+Disk Access
+```
+
+But User Mode cannot access disk directly.
+
+What now?
+
+---
+
+# System Calls
+
+Solution:
+
+# System Calls
+
+A System Call is:
+
+> A controlled request from a program to the operating system.
+
+---
+
+# Simple Analogy
+
+Program:
+
+```text
+Can I read this file?
+```
+
+OS:
+
+```text
+Yes
+
+or
+
+No
+```
+
+---
+
+# Visual
+
+```text
+Program
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Hardware
+```
+
+---
+
+# Example: File Reading
+
+Program:
+
+```c
+fopen("data.txt", "r");
+```
+
+---
+
+Internally:
+
+```text
+Program
+
+↓
+
+System Call
+
+↓
+
+OS
+
+↓
+
+Disk
+
+↓
+
+Data Returned
+```
+
+---
+
+# Example: Printing
+
+You write:
+
+```c
+printf("Hello");
+```
+
+---
+
+Question:
+
+> Does printf directly control the monitor?
+
+No.
+
+---
+
+Flow:
+
+```text
+printf()
+
+↓
+
+write() System Call
+
+↓
+
+Operating System
+
+↓
+
+Display Driver
+
+↓
+
+Screen
+```
+
+---
+
+# Example: Memory Allocation
+
+You write:
+
+```c
+malloc(1000);
+```
+
+---
+
+Question:
+
+> Does malloc create RAM?
+
+No.
+
+---
+
+Flow:
+
+```text
+malloc()
+
+↓
+
+Request Memory
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Memory Allocated
+```
+
+---
+
+# Example: Process Creation
+
+You write:
+
+```c
+fork();
+```
+
+---
+
+Flow:
+
+```text
+Program
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Create New Process
+```
+
+Only the OS can create processes.
+
+---
+
+# Common System Calls
+
+Linux examples:
+
+### File Operations
+
+```c
+open()
+
+read()
+
+write()
+
+close()
+```
+
+---
+
+### Process Operations
+
+```c
+fork()
+
+exec()
+
+wait()
+```
+
+---
+
+### Memory Operations
+
+```c
+mmap()
+
+brk()
+```
+
+---
+
+### Network Operations
+
+```c
+socket()
+
+connect()
+
+send()
+
+recv()
+```
+
+---
+
+# Example: Reading a File
+
+Code:
+
+```c
+FILE *f = fopen("data.txt", "r");
+```
+
+Actual chain:
+
+```text
+Your Code
+
+↓
+
+C Standard Library
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Disk Driver
+
+↓
+
+Disk Hardware
+
+↓
+
+Data Returned
+```
+
+---
+
+# What is the C Standard Library Doing?
+
+Many beginners think:
+
+```c
+printf()
+```
+
+is an Operating System feature.
+
+Wrong.
+
+---
+
+Actually:
+
+```text
+printf()
+
+↓
+
+C Library Function
+```
+
+which eventually uses:
+
+```text
+write() System Call
+```
+
+to communicate with the OS.
+
+---
+
+# Example
+
+You write:
+
+```c
+printf("Hello");
+```
+
+---
+
+Internally:
+
+```text
+printf()
+
+↓
+
+Format Text
+
+↓
+
+write()
+
+↓
+
+System Call
+
+↓
+
+OS
+
+↓
+
+Screen
+```
+
+---
+
+# Context Switch During System Call
+
+Suppose:
+
+```c
+read(fd, buffer, 100);
+```
+
+CPU changes:
+
+```text
+User Mode
+
+↓
+
+Kernel Mode
+```
+
+OS performs operation.
+
+Then:
+
+```text
+Kernel Mode
+
+↓
+
+User Mode
+```
+
+returns.
+
+---
+
+# Visual
+
+```text
+Program
+
+(User Mode)
+
+↓
+
+System Call
+
+↓
+
+Kernel Mode
+
+(OS)
+
+↓
+
+Hardware
+
+↓
+
+Return
+
+↓
+
+User Mode
+```
+
+---
+
+# Why Not Stay in Kernel Mode?
+
+Security.
+
+Without protection:
+
+```text
+Any Program
+
+Could Control Entire Computer
+```
+
+Very dangerous.
+
+---
+
+# Why Operating Systems Exist
+
+Without an OS:
+
+Programs would need to manage:
+
+```text
+RAM
+
+Disk
+
+Keyboard
+
+Screen
+
+Network
+
+Processes
+```
+
+themselves.
+
+Nearly impossible.
+
+---
+
+Operating System provides:
+
+```text
+Memory Management
+
+Process Management
+
+File Systems
+
+Networking
+
+Security
+```
+
+---
+
+# Example: Pressing a Key
+
+You press:
+
+```text
+A
+```
+
+---
+
+Flow:
+
+```text
+Keyboard
+
+↓
+
+Interrupt
+
+↓
+
+Operating System
+
+↓
+
+Program Receives Input
+```
+
+Your program never talks directly to the keyboard.
+
+---
+
+# Example: Opening a Web Page
+
+Chrome:
+
+```text
+Request URL
+```
+
+↓
+
+```text
+Socket System Call
+```
+
+↓
+
+```text
+Operating System
+```
+
+↓
+
+```text
+Network Card
+```
+
+↓
+
+```text
+Internet
+```
+
+---
+
+# Why Systems Programmers Care
+
+Understanding OS interaction helps explain:
+
+* File I/O
+* Networking
+* Processes
+* Threads
+* Memory Allocation
+* Security
+* Performance
+
+Almost everything advanced in C eventually interacts with the OS.
+
+---
+
+# Visual Summary
+
+```text
+Program
+
+↓
+
+C Library
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Device Driver
+
+↓
+
+Hardware
+```
+
+---
+
+# The Most Important Insight
+
+A C program does NOT directly control:
+
+```text
+RAM
+
+Disk
+
+Screen
+
+Keyboard
+
+Network
+```
+
+Instead:
+
+```text
+Program
+
+↓
+
+System Calls
+
+↓
+
+Operating System
+
+↓
+
+Hardware
+```
+
+The Operating System acts as a trusted manager between applications and hardware.
+
+Without this layer, modern computers would be unstable, insecure, and extremely difficult to program.
+
+---
+
+# 🧠 Quick Revision
+
+* Programs run in:
+
+  * User Mode
+
+* Operating Systems run in:
+
+  * Kernel Mode
+
+* Programs communicate with the OS using:
+
+  * System Calls
+
+* Examples:
+
+  * `read()`
+  * `write()`
+  * `open()`
+  * `fork()`
+  * `socket()`
+
+* Flow:
+
+```text
+Program
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Hardware
+```
+
+* The OS manages:
+
+  * Memory
+  * Processes
+  * Files
+  * Networking
+  * Security
+
+---
+
+# 🎯 Interview Questions
+
+1. What is Operating System Interaction?
+2. Why can't programs directly access hardware?
+3. What is User Mode?
+4. What is Kernel Mode?
+5. What is a System Call?
+6. What happens during a System Call?
+7. Why does `printf()` eventually need the OS?
+8. How does `malloc()` get memory?
+9. Why is Kernel Mode protected?
+10. What role does the Operating System play between programs and hardware?
+11. What is the relationship between the C Standard Library and System Calls?
+12. Why are System Calls essential?
+13. How does file reading work internally?
+14. How does process creation work internally?
+15. Why is understanding OS interaction important for systems programming?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 26: GPUs", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-26-gpus" }}
+  next={null}
+/>
