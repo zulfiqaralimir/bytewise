@@ -1,0 +1,565 @@
+export const metadata = {
+  title: "Lesson 18: Function Calls (Step-by-Step) — Mastering C — ByteWise",
+  description:
+    "What a Function Call is, why functions exist, what the CPU does during a call, what a Stack Frame contains, how parameters and return values are passed, and why the Stack is essential for function calls.",
+  keywords: [
+    "function call",
+    "stack frame",
+    "return address",
+    "call instruction",
+    "function parameters",
+    "return values",
+    "call stack",
+    "LIFO",
+    "stack overflow recursion",
+    "CPU function call steps",
+    "C functions",
+    "systems programming",
+    "assembly CALL instruction",
+    "local variables stack",
+  ],
+  openGraph: {
+    title: "Lesson 18: Function Calls (Step-by-Step)",
+    description:
+      "What happens when a function is called — the six CPU steps, Stack Frames, return addresses, parameters, and why recursion can cause Stack Overflow.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Function Calls (Step-by-Step)
+
+## Lesson 18: What the CPU Actually Does When You Call a Function
+
+---
+
+## Learning Objective
+
+By the end of this lesson you should be able to answer:
+
+- What is a Function Call?
+- Why do functions exist?
+- What happens when a function is called?
+- How does the CPU execute a function call?
+- What is a Stack Frame?
+- How are parameters passed?
+- How are return values returned?
+- Why is the Stack important for function calls?
+- What would happen if function calls did not exist?
+
+---
+
+## The Fundamental Problem
+
+Imagine writing:
+
+```c
+printf("Hello");
+printf("Hello");
+printf("Hello");
+printf("Hello");
+printf("Hello");
+```
+
+Suppose the same code is needed 10 times, 100 times, 1000 times.
+
+Writing it repeatedly is inefficient. Engineers invented **functions**.
+
+A function allows you to:
+
+```text
+Write Once
+
+Use Many Times
+```
+
+---
+
+## What is a Function?
+
+> A reusable block of code that performs a specific task.
+
+Example:
+
+```c
+void greet()
+{
+    printf("Hello");
+}
+```
+
+---
+
+## Function Call
+
+Using the function:
+
+```c
+greet();
+```
+
+This is called a **Function Call**.
+
+---
+
+## Real-Life Analogy
+
+Think of a restaurant.
+
+```text
+You place an order
+      ↓
+Kitchen prepares food
+      ↓
+Food is returned to you
+```
+
+A function call works the same way:
+
+```text
+Call Function
+      ↓
+Function Executes
+      ↓
+Returns Control (and possibly a value)
+```
+
+---
+
+## Example
+
+```c
+void greet()
+{
+    printf("Hello");
+}
+
+int main()
+{
+    greet();
+}
+```
+
+Execution flow:
+
+```text
+main()
+      ↓
+greet()
+      ↓
+Print Hello
+      ↓
+Return to main()
+```
+
+---
+
+## What Actually Happens?
+
+Most beginners think:
+
+```text
+greet();  →  Magic
+```
+
+No. The CPU performs a precise sequence of steps every single time.
+
+---
+
+## Step 1: Function Call Instruction
+
+For:
+
+```c
+greet();
+```
+
+the compiler generates something like:
+
+```assembly
+CALL greet
+```
+
+Meaning:
+
+```text
+Jump to greet()
+— but remember where to return
+```
+
+---
+
+## Why Remember?
+
+After `greet()` finishes, execution must continue at the next statement:
+
+```c
+greet();
+printf("Done");   /* ← must resume here */
+```
+
+The CPU must record where to come back. This is the **Return Address**.
+
+---
+
+## Return Address
+
+Before jumping to the function, the CPU stores the address of the next instruction.
+
+Example:
+
+```text
+100 → CALL greet
+101 → printf("Done")
+```
+
+CPU saves `101` — this is the **Return Address**.
+
+---
+
+## Where Is the Return Address Stored?
+
+On the **Stack**.
+
+```text
+Stack
++----------------+
+| Return Address |
++----------------+
+```
+
+---
+
+## Step 2: Create Stack Frame
+
+Every function gets its own **Stack Frame** — a private region on the Stack that holds everything the function needs.
+
+A Stack Frame stores:
+
+```text
+Return Address
+Parameters
+Local Variables
+Saved Registers
+```
+
+Example for:
+
+```c
+void greet()
+{
+    int x = 10;
+}
+```
+
+Stack after the call:
+
+```text
++----------------+
+| Return Address |
++----------------+
+| x = 10         |
++----------------+
+```
+
+---
+
+## Why Stack Frames Exist
+
+Consider:
+
+```c
+funcA()
+{
+    funcB();
+}
+```
+
+The CPU needs to know which function called which, and where each one should return. Stack Frames solve this by keeping each function's data completely separate.
+
+---
+
+## Nested Stack Frames
+
+```text
+main()  →  funcA()  →  funcB()
+```
+
+Stack at the point inside `funcB`:
+
+```text
++-----------+
+| funcB     |   ← top (most recent)
++-----------+
+| funcA     |
++-----------+
+| main      |   ← bottom (first)
++-----------+
+```
+
+---
+
+## Step 3: Execute Function
+
+After the Stack Frame is created, the CPU runs the instructions inside the function:
+
+```c
+void greet()
+{
+    printf("Hello");   /* ← executes now */
+}
+```
+
+---
+
+## Step 4: Return Statement
+
+When the function finishes:
+
+```c
+return;
+```
+
+or
+
+```c
+return 25;
+```
+
+the function signals it is done. The CPU moves to the cleanup steps.
+
+---
+
+## Step 5: Remove Stack Frame
+
+The CPU removes the Stack Frame — local variables, parameters, and temporary data are gone.
+
+Before:
+
+```text
++----------------+
+| Return Address |
++----------------+
+| x              |
++----------------+
+```
+
+After:
+
+```text
+(Removed — Stack Pointer moved back)
+```
+
+No manual cleanup needed. The CPU moves the **Stack Pointer (SP)** and the frame is gone.
+
+---
+
+## Step 6: Return to Caller
+
+The CPU reads the Return Address saved in Step 1 and jumps back to that instruction. Program execution continues from where it left off.
+
+```text
+Return Address = 101  →  CPU jumps to instruction 101
+```
+
+---
+
+## Complete Function Call Flow
+
+```text
+CALL Function
+      ↓
+Store Return Address on Stack
+      ↓
+Create Stack Frame (params, locals, saved registers)
+      ↓
+Execute Function Body
+      ↓
+Remove Stack Frame
+      ↓
+Return to Caller (using Return Address)
+```
+
+This sequence runs every single time any function is called.
+
+---
+
+## Parameters
+
+Example:
+
+```c
+void add(int a, int b)
+{
+}
+
+add(10, 20);
+```
+
+Parameters `a = 10` and `b = 20` must reach the function. They are placed in the Stack Frame:
+
+```text
++----------------+
+| Return Address |
++----------------+
+| a = 10         |
++----------------+
+| b = 20         |
++----------------+
+```
+
+The function accesses `a` and `b` from its own Stack Frame.
+
+---
+
+## Return Values
+
+Example:
+
+```c
+int add()
+{
+    return 50;
+}
+```
+
+The CPU places the return value into a special **return register**. The caller then reads that register.
+
+```text
+add()
+      ↓
+return 50
+      ↓
+Value placed in return register
+      ↓
+Caller reads register → result = 50
+```
+
+---
+
+## Nested Function Calls
+
+```text
+main()  →  funcA()  →  funcB()  →  funcC()
+```
+
+Stack:
+
+```text
++-----------+
+| funcC     |
++-----------+
+| funcB     |
++-----------+
+| funcA     |
++-----------+
+| main      |
++-----------+
+```
+
+Functions return in reverse order — `funcC` first, then `funcB`, then `funcA`, then `main`. This is **LIFO** — Last In, First Out.
+
+---
+
+## Recursion and Stack Overflow
+
+Example:
+
+```c
+void func()
+{
+    func();   /* calls itself forever */
+}
+```
+
+Every call creates a new Stack Frame. The Stack has a fixed size. Eventually:
+
+```text
+Stack Full  →  Stack Overflow  →  Program crashes
+```
+
+Recursion is powerful, but every recursive function must have a **base case** that stops the recursion.
+
+---
+
+## Why Function Calls Are Important
+
+Without function calls, every program would contain enormous repeated blocks of code — hard to read, hard to maintain, impossible to reuse. Almost everything in C relies on function calls:
+
+```c
+printf()
+scanf()
+malloc()
+free()
+fopen()
+```
+
+All of these are functions. Understanding what the CPU does when you call them is the foundation of systems programming.
+
+---
+
+## Visual Summary
+
+```text
+main()
+      ↓
+CALL greet()
+      ↓
+Save Return Address on Stack
+      ↓
+Create Stack Frame
+      ↓
+Execute greet()
+      ↓
+Destroy Stack Frame
+      ↓
+Return to main()
+```
+
+---
+
+## Common Misconceptions
+
+- Function calls do **not** create new processes — they execute within the same process.
+- Local variables live on the **Stack**, not the Heap.
+- Return addresses are stored on the **Stack**, not in random RAM.
+- Function calls cannot happen without the Stack.
+- Returning from a function does **not** restart the program — execution continues from the Return Address.
+
+---
+
+## Quick Revision
+
+| Concept | What It Means |
+|---|---|
+| Function | A reusable block of code |
+| Function Call | Invoking that block |
+| Return Address | Address of the next instruction after the call |
+| Stack Frame | Private region on the Stack holding a function's data |
+| Parameters | Values passed into a function via the Stack Frame |
+| Return Value | Passed back through a CPU register |
+| LIFO | The order Stack Frames are created and destroyed |
+| Stack Overflow | Too many Stack Frames — Stack runs out of space |
+
+---
+
+## Interview Questions
+
+1. What is a Function Call?
+2. Why do functions exist?
+3. What is a Return Address?
+4. Why must the CPU save the Return Address before jumping to a function?
+5. What is a Stack Frame?
+6. What information is stored in a Stack Frame?
+7. How are parameters passed to a function?
+8. How are return values returned to the caller?
+9. Why do recursive functions risk Stack Overflow?
+10. Why is understanding Function Calls important for systems programming and C programming?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 17: Stack and Heap", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-17-stack-and-heap" }}
+  next={null}
+/>
