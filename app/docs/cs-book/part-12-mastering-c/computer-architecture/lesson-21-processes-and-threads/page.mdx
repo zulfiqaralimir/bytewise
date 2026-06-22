@@ -1,0 +1,1006 @@
+export const metadata = {
+  title: "Lesson 21: Processes and Threads (Step-by-Step) — Mastering C — ByteWise",
+  description:
+    "What a Process and Thread are, why they exist, how they differ, race conditions, mutex, deadlock, context switching, and why C programmers must understand them.",
+  keywords: [
+    "process vs thread",
+    "what is a process",
+    "what is a thread",
+    "race condition",
+    "mutex C",
+    "deadlock",
+    "fork C",
+    "pthread_create",
+    "context switch",
+    "process isolation",
+    "thread synchronization",
+    "C programming",
+    "systems programming",
+    "POSIX threads",
+    "operating system concepts",
+  ],
+  openGraph: {
+    title: "Lesson 21: Processes and Threads (Step-by-Step)",
+    description:
+      "What processes and threads are, why threads are faster, race conditions, mutex, deadlock, and how the OS manages them all.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ Processes and Threads (Step-by-Step)
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is a Process?
+* What is a Thread?
+* Why do we need Processes?
+* Why do we need Threads?
+* What is the difference between a Process and a Thread?
+* How does the Operating System manage them?
+* Why are Threads faster than Processes?
+* What problems do Threads introduce?
+* How do Processes and Threads relate to C programming?
+
+---
+
+# 🌍 The Fundamental Problem
+
+Imagine your computer is running:
+
+```text
+Chrome
+
+VS Code
+
+Spotify
+
+Calculator
+```
+
+Question:
+
+> How can all these programs run at the same time?
+
+The answer starts with:
+
+# Processes
+
+---
+
+# What is a Process?
+
+A Process is:
+
+> A program that is currently running.
+
+Example:
+
+```text
+chrome.exe
+
+↓
+
+Running
+
+↓
+
+Process
+```
+
+---
+
+# Simple Definition
+
+Program on Disk:
+
+```text
+Chrome.exe
+```
+
+Running Program:
+
+```text
+Chrome Process
+```
+
+---
+
+# Real-Life Analogy
+
+Recipe:
+
+```text
+Program
+```
+
+Cooking:
+
+```text
+Process
+```
+
+The recipe is not doing anything.
+
+The cooking activity is.
+
+Similarly:
+
+```text
+Program
+
+↓
+
+Execution
+
+↓
+
+Process
+```
+
+---
+
+# What Does a Process Contain?
+
+Each Process gets its own:
+
+```text
+Code
+
+Data
+
+Heap
+
+Stack
+
+Registers
+
+Open Files
+```
+
+---
+
+# Process Memory Layout
+
+```text
++------------------+
+| Code Segment     |
++------------------+
+| Global Data      |
++------------------+
+| Heap             |
++------------------+
+| Stack            |
++------------------+
+```
+
+Every process has its own memory.
+
+---
+
+# Example
+
+Suppose you open:
+
+```text
+Two Chrome Windows
+```
+
+Operating System may create:
+
+```text
+Process A
+
+Process B
+```
+
+Each has separate memory.
+
+---
+
+# Why Processes Exist
+
+Without processes:
+
+```text
+One Program
+
+Could Corrupt
+
+Another Program
+```
+
+Processes provide:
+
+# Isolation
+
+---
+
+# Example
+
+Suppose Calculator crashes.
+
+Without processes:
+
+```text
+Entire Computer Crashes
+```
+
+With processes:
+
+```text
+Calculator Crashes
+
+Chrome Continues
+
+VS Code Continues
+```
+
+---
+
+# Process Isolation
+
+Process A:
+
+```text
+Address 1000
+
+↓
+
+Value 50
+```
+
+---
+
+Process B:
+
+```text
+Address 1000
+
+↓
+
+Value 900
+```
+
+Same address.
+
+Different memory.
+
+Completely isolated.
+
+---
+
+# Why Processes Are Expensive
+
+Every process needs:
+
+```text
+Separate Memory
+
+Separate Stack
+
+Separate Heap
+
+Separate Resources
+```
+
+Creating a process is expensive.
+
+---
+
+# The Next Problem
+
+Imagine Chrome.
+
+It must:
+
+```text
+Render Web Page
+
+Download Images
+
+Play Video
+
+Handle Mouse Input
+```
+
+Question:
+
+> Should Chrome create a new process for every task?
+
+Too expensive.
+
+Solution:
+
+# Threads
+
+---
+
+# What is a Thread?
+
+A Thread is:
+
+> The smallest unit of execution inside a process.
+
+Think:
+
+```text
+Process
+
+↓
+
+Container
+
+↓
+
+Threads Do The Work
+```
+
+---
+
+# Real-Life Analogy
+
+Restaurant:
+
+```text
+Restaurant
+
+↓
+
+Process
+```
+
+Workers:
+
+```text
+Chef
+
+Waiter
+
+Cashier
+```
+
+↓
+
+Threads
+
+---
+
+# Example
+
+Chrome Process:
+
+```text
+Chrome Process
+
+├── Thread 1
+├── Thread 2
+├── Thread 3
+└── Thread 4
+```
+
+---
+
+# What Threads Share
+
+Threads inside a process share:
+
+```text
+Code
+
+Heap
+
+Global Variables
+
+Files
+```
+
+---
+
+# What Threads Do NOT Share
+
+Each thread has its own:
+
+```text
+Stack
+
+Registers
+
+Program Counter
+```
+
+---
+
+# Visual
+
+```text
+Process
+
++-------------------+
+| Shared Heap       |
++-------------------+
+| Shared Code       |
++-------------------+
+
+Thread A Stack
+
+Thread B Stack
+
+Thread C Stack
+```
+
+---
+
+# Why Threads Exist
+
+Threads allow:
+
+```text
+Multiple Tasks
+
+Inside One Process
+```
+
+without creating multiple processes.
+
+---
+
+# Example
+
+Browser:
+
+```text
+Thread 1
+
+Download Page
+```
+
+---
+
+```text
+Thread 2
+
+Render HTML
+```
+
+---
+
+```text
+Thread 3
+
+Handle Mouse
+```
+
+All run simultaneously.
+
+---
+
+# Process vs Thread
+
+| Feature       | Process   | Thread    |
+| ------------- | --------- | --------- |
+| Memory        | Separate  | Shared    |
+| Heap          | Separate  | Shared    |
+| Stack         | Own Stack | Own Stack |
+| Creation Cost | High      | Low       |
+| Communication | Slow      | Fast      |
+| Isolation     | Strong    | Weak      |
+
+---
+
+# Why Threads Are Faster
+
+Suppose:
+
+```text
+Process A
+
+↓
+
+Process B
+```
+
+Communication requires OS involvement.
+
+Slow.
+
+---
+
+Threads:
+
+```text
+Thread A
+
+↓
+
+Shared Memory
+
+↓
+
+Thread B
+```
+
+Very fast.
+
+---
+
+# Example
+
+Process:
+
+```text
+Separate Houses
+```
+
+Threads:
+
+```text
+People In Same House
+```
+
+Sharing information is easier.
+
+---
+
+# Thread Example in C
+
+Using POSIX Threads:
+
+```c
+pthread_create(...)
+```
+
+creates a new thread.
+
+---
+
+Example:
+
+```text
+main()
+
+↓
+
+Thread 1
+
+Thread 2
+```
+
+Both execute simultaneously.
+
+---
+
+# The Problem With Threads
+
+Threads share memory.
+
+This creates danger.
+
+---
+
+# Race Condition
+
+Suppose:
+
+```c
+counter++;
+```
+
+Thread A:
+
+```text
+Read counter
+```
+
+---
+
+Thread B:
+
+```text
+Read counter
+```
+
+Both modify simultaneously.
+
+Result may be wrong.
+
+---
+
+# Example
+
+Expected:
+
+```text
+100
+```
+
+Actual:
+
+```text
+93
+```
+
+or
+
+```text
+97
+```
+
+This is called:
+
+# Race Condition
+
+---
+
+# Why Race Conditions Happen
+
+Because threads share memory.
+
+Example:
+
+```text
+Shared Variable
+
+↓
+
+Multiple Threads
+
+↓
+
+Same Time
+```
+
+Danger.
+
+---
+
+# Solution: Synchronization
+
+Operating Systems provide:
+
+```text
+Mutex
+
+Semaphore
+
+Condition Variable
+```
+
+to coordinate threads.
+
+---
+
+# Mutex
+
+Mutex means:
+
+```text
+Only One Thread
+
+Allowed Inside
+```
+
+at a time.
+
+---
+
+Example:
+
+```text
+Thread A
+
+↓
+
+Lock Mutex
+
+↓
+
+Modify Data
+
+↓
+
+Unlock Mutex
+```
+
+---
+
+# Deadlock
+
+Another danger.
+
+Example:
+
+```text
+Thread A
+
+Waiting For B
+```
+
+and
+
+```text
+Thread B
+
+Waiting For A
+```
+
+Result:
+
+```text
+Nobody Moves
+```
+
+This is:
+
+# Deadlock
+
+---
+
+# Process Creation
+
+Linux:
+
+```c
+fork();
+```
+
+creates a new process.
+
+---
+
+Example:
+
+```text
+Process A
+
+↓
+
+fork()
+
+↓
+
+Process A
+
+Process B
+```
+
+---
+
+# Thread Creation
+
+Linux:
+
+```c
+pthread_create();
+```
+
+creates a new thread.
+
+---
+
+Example:
+
+```text
+Process
+
+↓
+
+Thread A
+
+Thread B
+```
+
+Shared memory.
+
+---
+
+# Process Context Switch
+
+CPU switches:
+
+```text
+Process A
+
+↓
+
+Process B
+```
+
+Requires:
+
+```text
+Save Registers
+
+Load Registers
+
+Switch Memory Space
+```
+
+Expensive.
+
+---
+
+# Thread Context Switch
+
+CPU switches:
+
+```text
+Thread A
+
+↓
+
+Thread B
+```
+
+Only:
+
+```text
+Switch Registers
+
+Switch Stack
+```
+
+Much cheaper.
+
+---
+
+# Why C Programmers Must Learn This
+
+Processes and Threads are used in:
+
+* Operating Systems
+* Databases
+* Web Servers
+* Browsers
+* Games
+* Embedded Systems
+* Distributed Systems
+
+---
+
+# Real Examples
+
+Chrome:
+
+```text
+Many Processes
+
+Many Threads
+```
+
+---
+
+Linux Kernel:
+
+```text
+Thousands Of Processes
+
+Thousands Of Threads
+```
+
+---
+
+Database Server:
+
+```text
+One Request
+
+↓
+
+One Thread
+```
+
+Common design.
+
+---
+
+# Visual Summary
+
+```text
+Program
+
+↓
+
+Process
+
+↓
+
+Process Contains Threads
+
+        +------------------+
+        | Shared Code      |
+        | Shared Heap      |
+        +------------------+
+
+        Thread A Stack
+
+        Thread B Stack
+
+        Thread C Stack
+```
+
+---
+
+# The Most Important Insight
+
+A Process is:
+
+```text
+Resource Container
+```
+
+A Thread is:
+
+```text
+Actual Execution Unit
+```
+
+The CPU executes:
+
+```text
+Threads
+```
+
+not processes directly.
+
+A process simply provides the environment in which threads run.
+
+---
+
+# 🧠 Quick Revision
+
+Process:
+
+* Running Program
+* Own Memory
+* Own Heap
+* Own Resources
+
+Thread:
+
+* Execution Unit
+* Shares Process Memory
+* Own Stack
+* Own Registers
+
+Advantages of Threads:
+
+* Faster
+* Lightweight
+* Easy Communication
+
+Disadvantages:
+
+* Race Conditions
+* Deadlocks
+* Synchronization Complexity
+
+---
+
+# 🎯 Interview Questions
+
+1. What is a Process?
+2. What is a Thread?
+3. Why do Processes exist?
+4. Why do Threads exist?
+5. What memory do Threads share?
+6. What memory is private to each Thread?
+7. Why are Threads faster than Processes?
+8. What is a Race Condition?
+9. What is a Mutex?
+10. What is a Deadlock?
+11. What does `fork()` do?
+12. What does `pthread_create()` do?
+13. Why are Processes more expensive than Threads?
+14. What is Context Switching?
+15. Why are Processes and Threads important in systems programming?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 20: Pointers and Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-20-pointers-and-memory" }}
+  next={null}
+/>
