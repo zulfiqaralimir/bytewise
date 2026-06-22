@@ -952,6 +952,612 @@ Return To main()
 
 ---
 
+# ✅ What is the Runtime? (And Why Does main() Need It?)
+
+# 🎯 The Question
+
+You learned:
+
+```text
+Operating System
+
+↓
+
+main()
+```
+
+But I also said:
+
+```text
+Operating System
+
+↓
+
+Runtime
+
+↓
+
+main()
+```
+
+Question:
+
+> Why doesn't the OS directly call main()?
+
+Because before `main()` can run, many things must be prepared.
+
+The component that prepares everything is called:
+
+# Runtime
+
+---
+
+## What is Runtime?
+
+Runtime is a small piece of code that executes before your `main()` function.
+
+Its job is:
+
+```text
+Prepare Program Environment
+
+↓
+
+Call main()
+
+↓
+
+Cleanup After main()
+```
+
+Think of it as:
+
+```text
+Program Manager
+```
+
+that prepares everything before the actual work starts.
+
+---
+
+## Real Life Analogy
+
+Imagine a teacher entering a classroom.
+
+Before teaching starts:
+
+```text
+Open Classroom
+
+↓
+
+Turn On Lights
+
+↓
+
+Arrange Chairs
+
+↓
+
+Check Attendance
+
+↓
+
+Start Lecture
+```
+
+The lecture is:
+
+```text
+main()
+```
+
+Everything before the lecture is:
+
+```text
+Runtime
+```
+
+---
+
+## What Happens When You Run a Program?
+
+Suppose:
+
+```bash
+./program
+```
+
+You might think:
+
+```text
+OS
+
+↓
+
+main()
+```
+
+Wrong.
+
+Actual flow:
+
+```text
+OS
+
+↓
+
+Load Program
+
+↓
+
+Runtime Startup Code
+
+↓
+
+main()
+
+↓
+
+Runtime Cleanup
+
+↓
+
+Program Ends
+```
+
+---
+
+## Why Can't the OS Directly Call main()?
+
+Suppose your program contains:
+
+```c
+#include <stdio.h>
+
+int global = 100;
+
+int main()
+{
+    printf("%d", global);
+}
+```
+
+Before `main()` starts:
+
+```text
+global must already exist
+```
+
+Someone must initialize it.
+
+That "someone" is the Runtime.
+
+---
+
+## Runtime Responsibilities
+
+The runtime performs many tasks.
+
+---
+
+## 1. Setup Stack
+
+Functions need:
+
+```text
+Stack Frames
+
+Local Variables
+
+Function Calls
+```
+
+Before:
+
+```c
+int main()
+{
+}
+```
+
+runs, the runtime creates:
+
+```text
+Program Stack
+```
+
+Without Runtime:
+
+```text
+No Stack
+
+↓
+
+No Function Calls
+
+↓
+
+Program Crashes
+```
+
+---
+
+## 2. Setup Heap
+
+Functions like `malloc()` need Heap memory.
+
+Before `main()` starts:
+
+```text
+Heap Region Must Exist
+```
+
+Runtime prepares it.
+
+Without Runtime, `malloc(100)` would have nowhere to allocate memory.
+
+---
+
+## 3. Initialize Global Variables
+
+Example:
+
+```c
+int global = 100;
+```
+
+Before `main()`:
+
+```text
+global must become 100
+```
+
+Runtime performs this initialization.
+
+Without Runtime, global variables might contain garbage values.
+
+---
+
+## 4. Initialize Static Variables
+
+Example:
+
+```c
+static int counter = 50;
+```
+
+Before `main()`:
+
+```text
+counter must become 50
+```
+
+Runtime handles this.
+
+---
+
+## 5. Prepare Standard Library
+
+Functions:
+
+```c
+printf()
+
+scanf()
+
+malloc()
+
+fopen()
+```
+
+need internal setup.
+
+Runtime initializes the C library.
+
+Without Runtime, even `printf("Hello")` might fail.
+
+---
+
+## 6. Process Command-Line Arguments
+
+Example:
+
+```c
+int main(int argc, char *argv[])
+{
+}
+```
+
+If user runs:
+
+```bash
+./program file.txt
+```
+
+Runtime creates:
+
+```text
+argc = 2
+
+argv[0] = "./program"
+
+argv[1] = "file.txt"
+```
+
+before calling `main()`.
+
+Without Runtime, `argc` and `argv` wouldn't exist.
+
+---
+
+## 7. Call main()
+
+Only after everything is ready:
+
+```text
+Runtime
+
+↓
+
+Calls main()
+```
+
+---
+
+## What Happens When main() Returns?
+
+Example:
+
+```c
+int main()
+{
+    return 0;
+}
+```
+
+You might think:
+
+```text
+Program Ends
+```
+
+Not immediately.
+
+Control returns to:
+
+```text
+Runtime
+```
+
+Runtime performs cleanup:
+
+```text
+Close Files
+
+Flush Output Buffers
+
+Release Resources
+
+Return Exit Code To OS
+```
+
+---
+
+## Complete Flow
+
+```text
+Operating System
+
+↓
+
+Load Program Into RAM
+
+↓
+
+Runtime Startup Code
+
+↓
+
+Initialize Globals
+
+↓
+
+Setup Stack
+
+↓
+
+Setup Heap
+
+↓
+
+Initialize Libraries
+
+↓
+
+Call main()
+
+↓
+
+main() Executes
+
+↓
+
+main() Returns
+
+↓
+
+Runtime Cleanup
+
+↓
+
+Return Status To OS
+
+↓
+
+Program Ends
+```
+
+---
+
+## Visual Diagram
+
+```text
++----------------------+
+| Operating System     |
++----------------------+
+           |
+           v
++----------------------+
+| Runtime Startup Code |
++----------------------+
+           |
+           v
++----------------------+
+| main()               |
++----------------------+
+           |
+           v
++----------------------+
+| Runtime Cleanup      |
++----------------------+
+           |
+           v
++----------------------+
+| Program Ends         |
++----------------------+
+```
+
+---
+
+## Where is the Runtime Code?
+
+When you compile:
+
+```bash
+gcc main.c
+```
+
+the compiler automatically links startup files.
+
+Examples on Linux:
+
+```text
+crt0.o
+
+crti.o
+
+crtn.o
+```
+
+These contain runtime startup code. You usually don't see them.
+
+Even the smallest C program uses runtime code.
+
+---
+
+## Why Systems Programmers Care
+
+Understanding runtime helps explain:
+
+* Program startup
+* Function calls
+* Stack creation
+* Heap creation
+* Global variable initialization
+* Program termination
+* Operating system interaction
+
+---
+
+## The Most Important Insight
+
+Many beginners think:
+
+```text
+OS
+
+↓
+
+main()
+```
+
+Reality:
+
+```text
+OS
+
+↓
+
+Runtime
+
+↓
+
+main()
+
+↓
+
+Runtime
+
+↓
+
+OS
+```
+
+`main()` is not the true beginning of execution.
+
+The runtime starts first, prepares the environment, calls `main()`, and cleans up after it returns.
+
+---
+
+# 🧠 Quick Revision
+
+Runtime is responsible for:
+
+* Creating the Stack
+* Creating the Heap
+* Initializing Global Variables
+* Initializing Static Variables
+* Preparing Standard Libraries
+* Processing Command-Line Arguments
+* Calling `main()`
+* Cleaning up after `main()`
+
+Without runtime:
+
+```text
+No Stack
+
+No Heap
+
+No printf()
+
+No malloc()
+
+No Global Initialization
+
+No main()
+```
+
+would work correctly.
+
+---
+
+# 🎯 Interview Questions
+
+1. What is Runtime?
+2. Why doesn't the OS directly call `main()`?
+3. What does Runtime do before `main()` starts?
+4. What does Runtime do after `main()` returns?
+5. Who initializes global variables?
+6. Who creates the Stack?
+7. Who prepares the Heap?
+8. How are `argc` and `argv` created?
+9. What is startup code?
+10. Why is Runtime important in C programming?
+
+---
+
 <ArticleNav
   prev={{ title: "Lesson 17: Stack and Heap", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-17-stack-and-heap" }}
   next={null}
