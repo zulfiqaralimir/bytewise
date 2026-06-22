@@ -187,6 +187,7 @@ const chapters = [
           { title: "Lesson 23: Interrupts", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-23-interrupts" },
           { title: "Lesson 24: Pipelining", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-24-pipelining" },
           { title: "Lesson 25: Multi-Core Processors", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-25-multi-core-processors" },
+          { title: "Lesson 26: GPUs", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-26-gpus" },
         ],
       },
     ],

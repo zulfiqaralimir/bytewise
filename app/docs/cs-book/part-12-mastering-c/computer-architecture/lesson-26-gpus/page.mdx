@@ -1,0 +1,957 @@
+export const metadata = {
+  title: "Lesson 26: GPUs (Graphics Processing Units) — Mastering C — ByteWise",
+  description:
+    "What a GPU is, why it was invented, how it differs from a CPU, massive parallelism, VRAM, CUDA, why AI training depends on GPUs, and when to use a GPU instead of a CPU.",
+  keywords: [
+    "GPU",
+    "graphics processing unit",
+    "CPU vs GPU",
+    "CUDA",
+    "VRAM",
+    "massive parallelism",
+    "GPU cores",
+    "AI GPU training",
+    "matrix multiplication GPU",
+    "GPU programming",
+    "NVIDIA GPU",
+    "GPU memory",
+    "deep learning GPU",
+    "parallel computing",
+    "GPU vs CPU workloads",
+  ],
+  openGraph: {
+    title: "Lesson 26: GPUs (Graphics Processing Units)",
+    description:
+      "How GPUs use thousands of cores for massive parallelism, why AI training depends on them, what CUDA and VRAM are, and how CPUs and GPUs cooperate.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ GPUs (Graphics Processing Units)
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is a GPU?
+* Why were GPUs invented?
+* What problem do GPUs solve?
+* How is a GPU different from a CPU?
+* Why are GPUs so important for AI?
+* How do GPUs execute thousands of operations simultaneously?
+* What is CUDA?
+* What is GPU Memory (VRAM)?
+* When should we use a GPU instead of a CPU?
+
+---
+
+# 🌍 The Fundamental Problem
+
+Imagine you want to add:
+
+```text
+1 + 1
+
+2 + 2
+
+3 + 3
+
+...
+
+1,000,000 + 1,000,000
+```
+
+Question:
+
+> Should one CPU core perform all additions one by one?
+
+Possible.
+
+But slow.
+
+---
+
+# CPU Approach
+
+CPU:
+
+```text
+Add 1 + 1
+
+↓
+
+Add 2 + 2
+
+↓
+
+Add 3 + 3
+
+↓
+
+Continue...
+```
+
+Even with multiple cores:
+
+```text
+4
+
+8
+
+16
+
+32
+```
+
+cores are still relatively few.
+
+---
+
+# The Problem
+
+Many workloads require:
+
+```text
+Same Operation
+
+Repeated
+
+Millions Of Times
+```
+
+Examples:
+
+* Graphics Rendering
+* Video Processing
+* Scientific Simulations
+* Machine Learning
+* Neural Networks
+
+CPU is not optimized for this.
+
+---
+
+# The Solution
+
+Engineers created:
+
+# GPU
+
+(Graphics Processing Unit)
+
+---
+
+# What is a GPU?
+
+A GPU is:
+
+> A specialized processor designed to perform massive numbers of operations in parallel.
+
+---
+
+# Simple Definition
+
+CPU:
+
+```text
+Few Powerful Workers
+```
+
+GPU:
+
+```text
+Thousands Of Smaller Workers
+```
+
+---
+
+# Real-Life Analogy
+
+Suppose:
+
+```text
+10000 Boxes
+
+Need Painting
+```
+
+---
+
+# CPU
+
+```text
+8 Expert Painters
+```
+
+Each painter is highly skilled.
+
+But only a few painters exist.
+
+---
+
+# GPU
+
+```text
+5000 Simple Painters
+```
+
+Each painter is less flexible.
+
+But thousands work simultaneously.
+
+---
+
+# Why Were GPUs Invented?
+
+Originally:
+
+```text
+Video Games
+```
+
+needed millions of pixels rendered every second.
+
+Example:
+
+```text
+1920 × 1080
+
+=
+
+2 Million Pixels
+```
+
+per frame.
+
+---
+
+At:
+
+```text
+60 FPS
+```
+
+GPU processes:
+
+```text
+120 Million+
+
+Pixels Every Second
+```
+
+CPU couldn't handle this efficiently.
+
+---
+
+# CPU vs GPU
+
+## CPU
+
+Designed for:
+
+```text
+Decision Making
+
+Complex Logic
+
+Operating Systems
+
+General Purpose Tasks
+```
+
+---
+
+Characteristics:
+
+```text
+Few Cores
+
+Very Powerful Cores
+
+Large Cache
+
+Complex Control Logic
+```
+
+---
+
+## GPU
+
+Designed for:
+
+```text
+Massive Parallel Work
+```
+
+---
+
+Characteristics:
+
+```text
+Thousands Of Cores
+
+Simple Cores
+
+High Throughput
+
+Parallel Processing
+```
+
+---
+
+# Visual Comparison
+
+```text
+CPU
+
+Core
+Core
+Core
+Core
+
+
+GPU
+
+Core Core Core Core Core
+Core Core Core Core Core
+Core Core Core Core Core
+Core Core Core Core Core
+Core Core Core Core Core
+```
+
+---
+
+# CPU Example
+
+Suppose:
+
+```text
+1000 Numbers
+```
+
+must be added.
+
+CPU:
+
+```text
+Core 1
+
+↓
+
+Add Numbers
+```
+
+Sequentially or with a few cores.
+
+---
+
+# GPU Example
+
+GPU:
+
+```text
+1000 GPU Threads
+
+↓
+
+1000 Additions
+
+At Same Time
+```
+
+Much faster.
+
+---
+
+# Why GPUs Are Fast
+
+Important:
+
+GPU is NOT necessarily faster at:
+
+```text
+One Calculation
+```
+
+Instead:
+
+GPU is faster at:
+
+```text
+Many Similar Calculations
+```
+
+performed simultaneously.
+
+---
+
+# Example
+
+Bad GPU Workload:
+
+```text
+Run Operating System
+```
+
+CPU better.
+
+---
+
+Good GPU Workload:
+
+```text
+Multiply Millions Of Matrix Elements
+```
+
+GPU dominates.
+
+---
+
+# Parallel Processing
+
+GPU uses:
+
+# Massive Parallelism
+
+---
+
+Example:
+
+```text
+Image
+
+1000 × 1000 Pixels
+
+=
+
+1 Million Pixels
+```
+
+Each GPU core can process different pixels simultaneously.
+
+---
+
+# Why AI Loves GPUs
+
+Consider a neural network.
+
+Operation:
+
+```text
+Matrix × Matrix
+```
+
+multiplication.
+
+---
+
+Example:
+
+```text
+10000 × 10000 Matrix
+```
+
+Millions of calculations.
+
+---
+
+CPU:
+
+```text
+Few Powerful Cores
+```
+
+---
+
+GPU:
+
+```text
+Thousands Of Parallel Cores
+```
+
+Result:
+
+```text
+Much Faster Training
+```
+
+---
+
+# Why ChatGPT Training Uses GPUs
+
+Training AI involves:
+
+```text
+Trillions Of Multiplications
+
+Trillions Of Additions
+```
+
+GPU architecture is ideal for this.
+
+---
+
+Without GPUs:
+
+```text
+Training Modern AI
+
+Would Take Years
+```
+
+instead of weeks or months.
+
+---
+
+# GPU Memory (VRAM)
+
+Question:
+
+> Where does GPU store data?
+
+Answer:
+
+# VRAM
+
+(Video RAM)
+
+---
+
+Examples:
+
+```text
+8 GB
+
+12 GB
+
+24 GB
+
+48 GB
+
+80 GB
+```
+
+---
+
+VRAM stores:
+
+```text
+Textures
+
+Images
+
+Matrices
+
+Neural Network Weights
+```
+
+---
+
+# CPU Memory vs GPU Memory
+
+CPU:
+
+```text
+Uses RAM
+```
+
+---
+
+GPU:
+
+```text
+Uses VRAM
+```
+
+---
+
+Visual:
+
+```text
+CPU
+
+↓
+
+RAM
+
+
+GPU
+
+↓
+
+VRAM
+```
+
+---
+
+# What is CUDA?
+
+CUDA stands for:
+
+# Compute Unified Device Architecture
+
+Developed by: NVIDIA
+
+---
+
+CUDA allows programmers to:
+
+```text
+Use GPU
+
+For General Computing
+```
+
+not just graphics.
+
+---
+
+Example:
+
+```c
+CPU Code
+```
+
+↓
+
+```text
+CUDA
+```
+
+↓
+
+```text
+GPU Execution
+```
+
+---
+
+# Before CUDA
+
+GPU mainly used for:
+
+```text
+Games
+
+Graphics
+```
+
+---
+
+# After CUDA
+
+GPU used for:
+
+```text
+AI
+
+Machine Learning
+
+Scientific Computing
+
+Cryptography
+
+Simulations
+```
+
+---
+
+# GPU Threads
+
+GPU launches:
+
+```text
+Thousands
+
+or
+
+Millions
+```
+
+of threads.
+
+---
+
+Example:
+
+```text
+1000000 Elements
+```
+
+GPU:
+
+```text
+Thread 1
+
+Thread 2
+
+Thread 3
+
+...
+
+Thread 1000000
+```
+
+Each thread handles a small piece.
+
+---
+
+# Why Not Replace CPUs With GPUs?
+
+Question:
+
+> If GPUs are so powerful, why not use only GPUs?
+
+Because GPUs are specialized.
+
+---
+
+Example
+
+Task:
+
+```text
+Run Windows
+
+Handle Keyboard
+
+Manage Files
+
+Execute Browser Logic
+```
+
+CPU excels.
+
+---
+
+GPU would perform poorly.
+
+---
+
+# CPU + GPU Cooperation
+
+Modern computers use both.
+
+```text
+CPU
+
+↓
+
+Controls Program
+
+↓
+
+Sends Work
+
+↓
+
+GPU
+
+↓
+
+Returns Results
+```
+
+---
+
+# Example: Video Game
+
+CPU:
+
+```text
+Game Logic
+
+Physics
+
+AI
+
+Input Handling
+```
+
+---
+
+GPU:
+
+```text
+Render Graphics
+
+Textures
+
+Lighting
+
+Shadows
+```
+
+---
+
+# Example: AI Training
+
+CPU:
+
+```text
+Load Dataset
+
+Manage Program
+```
+
+---
+
+GPU:
+
+```text
+Matrix Operations
+
+Neural Network Computation
+```
+
+---
+
+# GPU in Modern Systems
+
+### Gaming
+
+* Rendering
+* Lighting
+* Physics
+
+### AI
+
+* Neural Networks
+* Deep Learning
+
+### Science
+
+* Simulations
+* Weather Models
+
+### Finance
+
+* Risk Analysis
+* Monte Carlo Simulations
+
+---
+
+# Visual Summary
+
+```text
+CPU
+
+Few Powerful Cores
+
+↓
+
+Complex Tasks
+
+
+
+GPU
+
+Thousands Of Smaller Cores
+
+↓
+
+Parallel Tasks
+```
+
+---
+
+# CPU vs GPU Table
+
+| Feature                 | CPU       | GPU       |
+| ----------------------- | --------- | --------- |
+| Core Count              | Few       | Thousands |
+| Single-Task Performance | Excellent | Moderate  |
+| Parallel Work           | Limited   | Excellent |
+| Operating Systems       | Yes       | No        |
+| AI Training             | Good      | Excellent |
+| Graphics                | Limited   | Excellent |
+
+---
+
+# The Most Important Insight
+
+CPU is optimized for:
+
+```text
+Thinking
+```
+
+GPU is optimized for:
+
+```text
+Doing The Same Thing
+
+Thousands Of Times
+```
+
+Modern computing relies on both:
+
+```text
+CPU
+
+↓
+
+Control
+
+GPU
+
+↓
+
+Massive Parallel Computation
+```
+
+This combination powers:
+
+* Games
+* AI
+* Scientific Research
+* Video Editing
+* Modern Operating Systems
+
+---
+
+# 🧠 Quick Revision
+
+* GPU = Graphics Processing Unit.
+* Invented for graphics rendering.
+* Contains thousands of processing cores.
+* Optimized for parallel computation.
+* Uses VRAM.
+* Excellent for:
+
+  * Graphics
+  * AI
+  * Simulations
+  * Scientific Computing
+* CPU and GPU work together.
+* CUDA enables general-purpose GPU programming.
+* Modern AI depends heavily on GPUs.
+
+---
+
+# 🎯 Interview Questions
+
+1. What is a GPU?
+2. Why were GPUs invented?
+3. What is the difference between a CPU and GPU?
+4. Why are GPUs good for AI?
+5. What is VRAM?
+6. What is CUDA?
+7. Why can't GPUs replace CPUs?
+8. What is massive parallelism?
+9. Why are GPUs useful for matrix multiplication?
+10. How do CPUs and GPUs cooperate in modern systems?
+11. Why do video games need GPUs?
+12. What types of workloads benefit most from GPUs?
+13. Why are GPUs important for machine learning?
+14. What is the difference between RAM and VRAM?
+15. Why would training large AI models be impractical without GPUs?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 25: Multi-Core Processors", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-25-multi-core-processors" }}
+  next={null}
+/>
