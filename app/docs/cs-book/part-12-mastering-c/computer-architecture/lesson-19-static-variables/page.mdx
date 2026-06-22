@@ -1,0 +1,825 @@
+export const metadata = {
+  title: "Lesson 19: Static Variables (Step-by-Step) — Mastering C — ByteWise",
+  description:
+    "What a Static Variable is, why it was invented, where it is stored, how it differs from local and global variables, and when to use it.",
+  keywords: [
+    "static variable",
+    "static keyword C",
+    "data segment",
+    "BSS segment",
+    "local variable vs static",
+    "function state",
+    "variable lifetime",
+    "encapsulation C",
+    "static storage",
+    "C programming",
+    "systems programming",
+    "stack vs data segment",
+    "runtime initialization",
+    "persistent variable",
+  ],
+  openGraph: {
+    title: "Lesson 19: Static Variables (Step-by-Step)",
+    description:
+      "Why functions forget values between calls, how static variables fix that, where they live in memory, and when to use them over globals.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ Static Variables (Step-by-Step)
+
+## Lesson 19: Why Functions Remember (and How to Make Them)
+
+---
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is a Static Variable?
+* Why was it invented?
+* What problem does it solve?
+* How is it different from a normal local variable?
+* Where is it stored?
+* Why does Runtime initialize it before `main()`?
+* When should I use static variables?
+
+---
+
+# 🌍 The Problem
+
+Consider:
+
+```c
+void counter()
+{
+    int count = 0;
+
+    count++;
+
+    printf("%d\n", count);
+}
+```
+
+Now:
+
+```c
+counter();
+counter();
+counter();
+```
+
+What will be printed?
+
+---
+
+## First Call
+
+```text
+count = 0
+
+count++
+
+↓
+
+1
+```
+
+Print:
+
+```text
+1
+```
+
+---
+
+## Second Call
+
+Function starts again:
+
+```text
+count = 0
+```
+
+Again:
+
+```text
+count++
+
+↓
+
+1
+```
+
+Print:
+
+```text
+1
+```
+
+---
+
+## Third Call
+
+Again:
+
+```text
+count = 0
+```
+
+Print:
+
+```text
+1
+```
+
+Output:
+
+```text
+1
+1
+1
+```
+
+---
+
+# Why Does This Happen?
+
+Because:
+
+```c
+int count = 0;
+```
+
+is a normal local variable.
+
+Local variables live on the:
+
+# Stack
+
+When function ends:
+
+```text
+Stack Frame Destroyed
+
+↓
+
+count Disappears
+```
+
+Next call creates a fresh variable.
+
+---
+
+# What If We Want It To Remember?
+
+Suppose we want:
+
+```text
+1
+2
+3
+```
+
+instead of:
+
+```text
+1
+1
+1
+```
+
+We need a variable that:
+
+```text
+Survives Function Calls
+```
+
+This is exactly why:
+
+# Static Variables
+
+were invented.
+
+---
+
+# What is a Static Variable?
+
+A static variable is:
+
+> A variable that is created only once and keeps its value for the entire lifetime of the program.
+
+---
+
+# Example
+
+```c
+void counter()
+{
+    static int count = 0;
+
+    count++;
+
+    printf("%d\n", count);
+}
+```
+
+---
+
+# Execution
+
+First call:
+
+```text
+count = 0
+
+count++
+
+↓
+
+1
+```
+
+Print:
+
+```text
+1
+```
+
+---
+
+Second call:
+
+```text
+count already exists
+
+count = 1
+
+count++
+
+↓
+
+2
+```
+
+Print:
+
+```text
+2
+```
+
+---
+
+Third call:
+
+```text
+count = 2
+
+count++
+
+↓
+
+3
+```
+
+Print:
+
+```text
+3
+```
+
+Output:
+
+```text
+1
+2
+3
+```
+
+---
+
+# The Big Difference
+
+Normal Variable:
+
+```c
+int count = 0;
+```
+
+Every function call:
+
+```text
+Create Variable
+
+↓
+
+Destroy Variable
+```
+
+---
+
+Static Variable:
+
+```c
+static int count = 0;
+```
+
+Only once:
+
+```text
+Create Variable
+
+↓
+
+Keep Variable
+
+↓
+
+Reuse Variable
+```
+
+---
+
+# Where Is It Stored?
+
+Normal Local Variable:
+
+```text
+Stack
+```
+
+---
+
+Static Variable:
+
+```text
+Data Segment
+```
+
+(or BSS segment if initialized to zero)
+
+---
+
+# Memory Layout
+
+```text
++--------------------+
+| Code Segment       |
++--------------------+
+| Global Variables   |
+| Static Variables   |
++--------------------+
+| Heap               |
++--------------------+
+| Stack              |
++--------------------+
+```
+
+Notice:
+
+```text
+Static Variable
+
+↓
+
+NOT on Stack
+```
+
+---
+
+# Why Runtime Initializes Static Variables
+
+Remember:
+
+```text
+OS
+
+↓
+
+Runtime
+
+↓
+
+main()
+```
+
+Before `main()` starts:
+
+Runtime initializes:
+
+```c
+static int count = 0;
+```
+
+because it must already exist when the program begins.
+
+---
+
+# Visual Example
+
+```c
+void func()
+{
+    static int x = 10;
+}
+```
+
+Program Starts:
+
+```text
+Runtime
+
+↓
+
+Create x
+
+↓
+
+x = 10
+```
+
+Even before:
+
+```c
+main()
+```
+
+runs.
+
+---
+
+# Static vs Local Variables
+
+## Local Variable
+
+```c
+void func()
+{
+    int x = 10;
+}
+```
+
+Memory:
+
+```text
+Function Call
+
+↓
+
+Create x
+
+↓
+
+Function Ends
+
+↓
+
+Destroy x
+```
+
+---
+
+## Static Variable
+
+```c
+void func()
+{
+    static int x = 10;
+}
+```
+
+Memory:
+
+```text
+Program Starts
+
+↓
+
+Create x
+
+↓
+
+Function Calls Reuse x
+
+↓
+
+Program Ends
+
+↓
+
+Destroy x
+```
+
+---
+
+# Another Example
+
+```c
+void test()
+{
+    static int x = 5;
+
+    printf("%d\n", x);
+
+    x++;
+}
+```
+
+Calls:
+
+```c
+test();
+test();
+test();
+```
+
+Output:
+
+```text
+5
+6
+7
+```
+
+Why?
+
+Because:
+
+```text
+x survives
+between function calls
+```
+
+---
+
+# Why Not Use Global Variables Instead?
+
+Example:
+
+```c
+int count = 0;
+```
+
+Global variable.
+
+Accessible from:
+
+```text
+Every Function
+```
+
+---
+
+Static Variable:
+
+```c
+void func()
+{
+    static int count = 0;
+}
+```
+
+Accessible only inside:
+
+```text
+func()
+```
+
+This provides:
+
+```text
+Better Encapsulation
+```
+
+---
+
+# Real-Life Analogy
+
+Imagine a classroom.
+
+Local Variable:
+
+```text
+Write Name
+
+↓
+
+Erase Board
+
+↓
+
+Name Gone
+```
+
+---
+
+Static Variable:
+
+```text
+Write Name
+
+↓
+
+Keep Board
+
+↓
+
+Next Day Still There
+```
+
+The value survives.
+
+---
+
+# Common Use Cases
+
+## Function Call Counter
+
+```c
+static int calls = 0;
+```
+
+Count how many times function executes.
+
+---
+
+## Caching Results
+
+Store previously computed values.
+
+---
+
+## Maintaining State
+
+Example:
+
+```text
+Menu Systems
+
+Games
+
+Embedded Devices
+```
+
+Need to remember previous state.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Thinking static means:
+
+```text
+Constant
+```
+
+Wrong.
+
+Example:
+
+```c
+static int x = 10;
+
+x++;
+```
+
+Perfectly valid.
+
+---
+
+## Mistake 2
+
+Thinking static variables are on the Stack.
+
+Wrong.
+
+Stored in:
+
+```text
+Data Segment
+```
+
+---
+
+## Mistake 3
+
+Thinking static variables disappear after function ends.
+
+Wrong.
+
+They remain until:
+
+```text
+Program Ends
+```
+
+---
+
+# Visual Comparison
+
+```text
+Local Variable
+
+Function Call
+
+↓
+
+Created
+
+↓
+
+Destroyed
+
+
+
+Static Variable
+
+Program Start
+
+↓
+
+Created Once
+
+↓
+
+Used Many Times
+
+↓
+
+Destroyed At Program End
+```
+
+---
+
+# Why Static Variables Exist
+
+Without static variables:
+
+Functions could not easily remember previous calls.
+
+Every call would start fresh.
+
+Static variables provide:
+
+```text
+Memory Across Function Calls
+```
+
+without using global variables.
+
+---
+
+# 🧠 Quick Revision
+
+Normal Local Variable:
+
+```c
+int x;
+```
+
+* Stored on Stack
+* Created on function call
+* Destroyed when function ends
+
+---
+
+Static Variable:
+
+```c
+static int x;
+```
+
+* Stored in Data Segment
+* Created once
+* Keeps value forever
+* Destroyed when program ends
+
+---
+
+Static variables were invented so functions can remember information between calls.
+
+---
+
+# 🎯 Interview Questions
+
+1. What is a static variable?
+2. Why were static variables invented?
+3. Where are static variables stored?
+4. How are static variables different from local variables?
+5. Why do static variables retain their values?
+6. Who initializes static variables?
+7. Why are static variables not stored on the Stack?
+8. What is the difference between a static variable and a global variable?
+9. When should static variables be used?
+10. What would happen if static variables did not exist?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 18: Function Calls (Step-by-Step)", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-18-function-calls" }}
+  next={null}
+/>
