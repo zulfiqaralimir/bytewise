@@ -1,0 +1,936 @@
+export const metadata = {
+  title: "Lesson 25: Multi-Core Processors (How Modern CPUs Run Multiple Tasks Simultaneously) — Mastering C — ByteWise",
+  description:
+    "What a CPU core is, why multi-core processors were invented, how processes and threads use multiple cores, OS scheduling across cores, cache coherency, race conditions, and why modern software depends on multi-core.",
+  keywords: [
+    "multi-core processor",
+    "CPU core",
+    "single-core vs multi-core",
+    "parallel execution",
+    "OS scheduler",
+    "threads and cores",
+    "cache coherency",
+    "race condition multi-core",
+    "true parallelism",
+    "pthreads multi-core",
+    "context switching",
+    "CPU performance",
+    "concurrent programming C",
+    "mutex multi-core",
+    "computer architecture",
+  ],
+  openGraph: {
+    title: "Lesson 25: Multi-Core Processors (How Modern CPUs Run Multiple Tasks Simultaneously)",
+    description:
+      "How multi-core CPUs enable true parallelism, how the OS scheduler assigns threads to cores, and the synchronization challenges that come with it.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ Multi-Core Processors (How Modern CPUs Run Multiple Tasks Simultaneously)
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is a CPU Core?
+* What is a Multi-Core Processor?
+* Why were Multi-Core CPUs invented?
+* What problem do they solve?
+* How do Multi-Core CPUs differ from Single-Core CPUs?
+* How do Processes and Threads use multiple cores?
+* How do Operating Systems schedule work across cores?
+* Why are Multi-Core CPUs important for modern software?
+
+---
+
+# 🌍 The Fundamental Problem
+
+Imagine a CPU with only:
+
+```text
+1 Core
+```
+
+and running:
+
+```text
+Chrome
+
+VS Code
+
+Spotify
+
+Game
+```
+
+Question:
+
+> Can one core truly execute all of them at the same time?
+
+Answer:
+
+```text
+No
+```
+
+A single core can execute:
+
+```text
+One Instruction Stream
+At A Time
+```
+
+---
+
+# How Single-Core CPUs Work
+
+Suppose:
+
+```text
+Chrome Needs CPU
+
+VS Code Needs CPU
+
+Spotify Needs CPU
+```
+
+The Operating System rapidly switches:
+
+```text
+Chrome
+
+↓
+
+VS Code
+
+↓
+
+Spotify
+
+↓
+
+Chrome
+
+↓
+
+VS Code
+```
+
+This is called:
+
+# Context Switching
+
+---
+
+# Visual
+
+```text
+Core
+
+Chrome
+
+↓
+
+VS Code
+
+↓
+
+Spotify
+
+↓
+
+Chrome
+```
+
+Very fast switching creates the illusion of:
+
+```text
+Parallel Execution
+```
+
+but only one thing is actually running at a time.
+
+---
+
+# The Problem
+
+As software became more complex:
+
+```text
+Games
+
+Browsers
+
+Databases
+
+Operating Systems
+```
+
+needed more CPU power.
+
+Simply increasing clock speed created problems:
+
+```text
+More Heat
+
+More Power Consumption
+
+More Cost
+```
+
+Engineers needed another solution.
+
+---
+
+# The Solution
+
+Instead of making:
+
+```text
+One Huge Core
+```
+
+Engineers built:
+
+```text
+Multiple Cores
+```
+
+inside one CPU.
+
+---
+
+# What is a CPU Core?
+
+A Core is:
+
+> An independent processing unit capable of executing instructions.
+
+Think of a core as:
+
+```text
+A Small CPU
+```
+
+inside a larger processor.
+
+---
+
+# Single-Core Processor
+
+```text
+CPU
+
+┌───────────┐
+│ Core 1    │
+└───────────┘
+```
+
+Only one execution engine.
+
+---
+
+# Dual-Core Processor
+
+```text
+CPU
+
+┌───────────┐
+│ Core 1    │
+├───────────┤
+│ Core 2    │
+└───────────┘
+```
+
+Two execution engines.
+
+---
+
+# Quad-Core Processor
+
+```text
+CPU
+
+┌───────────┐
+│ Core 1    │
+├───────────┤
+│ Core 2    │
+├───────────┤
+│ Core 3    │
+├───────────┤
+│ Core 4    │
+└───────────┘
+```
+
+Four execution engines.
+
+---
+
+# What is a Multi-Core Processor?
+
+A Multi-Core Processor is:
+
+> A CPU containing multiple independent processing cores.
+
+Examples:
+
+```text
+2-Core CPU
+
+4-Core CPU
+
+8-Core CPU
+
+16-Core CPU
+
+32-Core CPU
+```
+
+---
+
+# Why Multi-Core CPUs Were Invented
+
+Without Multi-Core:
+
+```text
+Need More Performance
+
+↓
+
+Increase Clock Speed
+
+↓
+
+More Heat
+
+↓
+
+More Power
+```
+
+Eventually this became impractical.
+
+Instead:
+
+```text
+Add More Cores
+```
+
+---
+
+# Real-Life Analogy
+
+Imagine a restaurant.
+
+Single-Core:
+
+```text
+One Chef
+```
+
+Tasks:
+
+```text
+Cook Burger
+
+Cook Pizza
+
+Cook Pasta
+```
+
+Must be done one at a time.
+
+---
+
+Multi-Core:
+
+```text
+Chef 1
+
+Chef 2
+
+Chef 3
+
+Chef 4
+```
+
+Now multiple meals are prepared simultaneously.
+
+---
+
+# Example
+
+4-Core CPU:
+
+```text
+Core 1 → Chrome
+
+Core 2 → VS Code
+
+Core 3 → Spotify
+
+Core 4 → Game
+```
+
+Now work truly happens in parallel.
+
+---
+
+# Single-Core vs Multi-Core
+
+## Single-Core
+
+```text
+Time →
+
+Chrome
+
+VS Code
+
+Spotify
+
+Chrome
+
+VS Code
+```
+
+One task at a time.
+
+---
+
+## Multi-Core
+
+```text
+Core 1 → Chrome
+
+Core 2 → VS Code
+
+Core 3 → Spotify
+
+Core 4 → Game
+```
+
+Same time.
+
+---
+
+# Relationship with Processes
+
+Remember:
+
+```text
+Process
+
+=
+
+Running Program
+```
+
+Example:
+
+```text
+Chrome Process
+
+VS Code Process
+
+Spotify Process
+```
+
+Operating System can place:
+
+```text
+Different Processes
+
+On Different Cores
+```
+
+---
+
+# Example
+
+```text
+Core 1 → Chrome
+
+Core 2 → VS Code
+
+Core 3 → Spotify
+```
+
+Each process gets its own core.
+
+---
+
+# Relationship with Threads
+
+Remember:
+
+```text
+Process
+
+Contains Threads
+```
+
+Example:
+
+```text
+Chrome Process
+
+├── Thread A
+├── Thread B
+├── Thread C
+└── Thread D
+```
+
+---
+
+# Multi-Core Example
+
+```text
+Core 1 → Thread A
+
+Core 2 → Thread B
+
+Core 3 → Thread C
+
+Core 4 → Thread D
+```
+
+Threads can execute simultaneously.
+
+---
+
+# Why Threads Benefit Most
+
+Suppose:
+
+```text
+Single Core
+```
+
+All threads take turns:
+
+```text
+Thread A
+
+↓
+
+Thread B
+
+↓
+
+Thread C
+```
+
+---
+
+Multi-Core:
+
+```text
+Thread A → Core 1
+
+Thread B → Core 2
+
+Thread C → Core 3
+```
+
+True parallel execution.
+
+---
+
+# Operating System Scheduler
+
+Question:
+
+> Who decides which core runs which task?
+
+Answer:
+
+# Scheduler
+
+inside the Operating System.
+
+---
+
+# Scheduler Example
+
+Tasks:
+
+```text
+Chrome
+
+VS Code
+
+Spotify
+
+Game
+```
+
+Scheduler assigns:
+
+```text
+Core 1 → Chrome
+
+Core 2 → VS Code
+
+Core 3 → Spotify
+
+Core 4 → Game
+```
+
+---
+
+# Core Utilization
+
+Suppose:
+
+```text
+8-Core CPU
+```
+
+but only:
+
+```text
+1 Program Running
+```
+
+Some cores may remain idle.
+
+---
+
+Example:
+
+```text
+Core 1 → Busy
+
+Core 2 → Idle
+
+Core 3 → Idle
+
+Core 4 → Idle
+```
+
+---
+
+# Why Some Programs Don't Speed Up
+
+Question:
+
+> If I have 16 cores, will every program run 16× faster?
+
+Answer:
+
+```text
+No
+```
+
+---
+
+Example:
+
+```c
+x = x + 1;
+```
+
+This operation uses:
+
+```text
+One Thread
+```
+
+Only one core may be used.
+
+---
+
+# Parallel Programs
+
+Programs designed for multiple threads can utilize multiple cores.
+
+Example:
+
+```text
+Video Rendering
+
+Scientific Simulations
+
+Databases
+
+Game Engines
+```
+
+---
+
+# Example: Video Encoding
+
+Single-Core:
+
+```text
+Frame 1
+
+↓
+
+Frame 2
+
+↓
+
+Frame 3
+```
+
+---
+
+Multi-Core:
+
+```text
+Core 1 → Frame 1
+
+Core 2 → Frame 2
+
+Core 3 → Frame 3
+
+Core 4 → Frame 4
+```
+
+Much faster.
+
+---
+
+# Shared Memory Problem
+
+Multiple cores often share:
+
+```text
+RAM
+
+Cache
+
+Data Structures
+```
+
+This creates challenges.
+
+---
+
+# Example
+
+Core 1:
+
+```text
+counter++
+```
+
+Core 2:
+
+```text
+counter++
+```
+
+Same time.
+
+Possible problem:
+
+```text
+Race Condition
+```
+
+---
+
+# Solution
+
+Synchronization:
+
+```text
+Mutex
+
+Semaphore
+
+Atomic Operations
+```
+
+---
+
+# Cache Coherency
+
+Question:
+
+> What if Core 1 updates data?
+
+How does Core 2 know?
+
+Example:
+
+```text
+Core 1 Cache
+
+counter = 10
+```
+
+---
+
+```text
+Core 2 Cache
+
+counter = 5
+```
+
+Problem.
+
+---
+
+Modern CPUs use:
+
+# Cache Coherency Protocols
+
+to keep caches consistent.
+
+---
+
+# Multi-Core and C Programming
+
+Example:
+
+```c
+pthread_create(...)
+```
+
+creates threads.
+
+Operating System may place:
+
+```text
+Thread 1 → Core 1
+
+Thread 2 → Core 2
+
+Thread 3 → Core 3
+```
+
+allowing parallel execution.
+
+---
+
+# Why Multi-Core Matters
+
+Without Multi-Core:
+
+```text
+Modern Browsers
+
+Databases
+
+Games
+
+AI Systems
+
+Cloud Servers
+```
+
+would be much slower.
+
+---
+
+# Visual Summary
+
+```text
+Single-Core
+
+CPU
+
+┌───────┐
+│ Core1 │
+└───────┘
+
+
+Multi-Core
+
+CPU
+
+┌───────┐
+│ Core1 │
+├───────┤
+│ Core2 │
+├───────┤
+│ Core3 │
+├───────┤
+│ Core4 │
+└───────┘
+```
+
+---
+
+# The Most Important Insight
+
+A Process is:
+
+```text
+Container
+```
+
+A Thread is:
+
+```text
+Unit Of Execution
+```
+
+A Core is:
+
+```text
+Hardware That Executes Threads
+```
+
+The Operating System scheduler decides:
+
+```text
+Which Thread
+
+Runs On
+
+Which Core
+```
+
+This is how modern computers perform many tasks simultaneously.
+
+---
+
+# 🧠 Quick Revision
+
+* Core = independent execution unit.
+* Multi-Core CPU = CPU with multiple cores.
+* Multi-Core CPUs were invented to increase performance without extreme clock speeds.
+* Processes and Threads can run on different cores.
+* Operating System Scheduler assigns work to cores.
+* Multi-Core enables true parallel execution.
+* Challenges:
+
+  * Race Conditions
+  * Synchronization
+  * Cache Coherency
+* Modern software is designed to take advantage of multiple cores.
+
+---
+
+# 🎯 Interview Questions
+
+1. What is a CPU Core?
+2. What is a Multi-Core Processor?
+3. Why were Multi-Core CPUs invented?
+4. How is a Multi-Core CPU different from a Single-Core CPU?
+5. What role does the Operating System Scheduler play?
+6. How do Threads benefit from multiple cores?
+7. Why doesn't every program become faster with more cores?
+8. What is true parallelism?
+9. What is Cache Coherency?
+10. What challenges do Multi-Core systems introduce?
+11. How do Mutexes help in Multi-Core programming?
+12. What is the relationship between Processes, Threads, and Cores?
+13. Why are Multi-Core CPUs essential for modern software?
+14. Can two threads execute simultaneously on different cores?
+15. What happens if multiple cores modify shared data at the same time?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 24: Pipelining", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-24-pipelining" }}
+  next={null}
+/>
