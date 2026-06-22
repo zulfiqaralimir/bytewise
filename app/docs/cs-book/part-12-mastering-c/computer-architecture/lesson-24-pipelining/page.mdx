@@ -1,0 +1,955 @@
+export const metadata = {
+  title: "Lesson 24: Pipelining (How CPUs Execute Multiple Instructions Efficiently) — Mastering C — ByteWise",
+  description:
+    "What CPU pipelining is, why it was invented, how the fetch-decode-execute-writeback stages overlap, pipeline hazards (data, control, structural), branch prediction, stalls, and flushes.",
+  keywords: [
+    "CPU pipelining",
+    "instruction pipeline",
+    "pipeline stages",
+    "fetch decode execute",
+    "data hazard",
+    "control hazard",
+    "structural hazard",
+    "branch prediction",
+    "pipeline stall",
+    "pipeline flush",
+    "CPU throughput",
+    "assembly line CPU",
+    "instruction level parallelism",
+    "computer architecture pipelining",
+    "C programming performance",
+  ],
+  openGraph: {
+    title: "Lesson 24: Pipelining (How CPUs Execute Multiple Instructions Efficiently)",
+    description:
+      "How CPUs overlap instruction execution across pipeline stages, what hazards break that overlap, and how branch prediction and forwarding fix them.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ Pipelining (How CPUs Execute Multiple Instructions Efficiently)
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is Pipelining?
+* Why was Pipelining invented?
+* What problem does it solve?
+* How does a CPU execute instructions without Pipelining?
+* How does a CPU execute instructions with Pipelining?
+* What are Pipeline Stages?
+* What are Pipeline Hazards?
+* Why is Pipelining important in modern CPUs?
+
+---
+
+# 🌍 The Fundamental Problem
+
+Suppose a CPU needs to execute:
+
+```c
+a = b + c;
+
+d = e + f;
+
+g = h + i;
+```
+
+Question:
+
+> Should the CPU completely finish the first instruction before starting the second?
+
+Early CPUs did exactly that.
+
+---
+
+# Without Pipelining
+
+Instruction 1:
+
+```text
+Fetch
+
+↓
+
+Decode
+
+↓
+
+Execute
+
+↓
+
+Store Result
+```
+
+Only after it finishes:
+
+```text
+Instruction 2 Starts
+```
+
+---
+
+# Visual
+
+```text
+Time →
+
+Instruction 1
+
+Fetch
+Decode
+Execute
+Store
+
+
+Instruction 2
+
+            Fetch
+            Decode
+            Execute
+            Store
+
+
+Instruction 3
+
+                        Fetch
+                        Decode
+                        Execute
+                        Store
+```
+
+Very slow.
+
+---
+
+# Real-Life Analogy
+
+Imagine a laundry process.
+
+Steps:
+
+```text
+Wash
+
+↓
+
+Dry
+
+↓
+
+Fold
+```
+
+---
+
+Without Pipelining:
+
+```text
+Clothes 1
+
+Wash
+
+↓
+
+Dry
+
+↓
+
+Fold
+
+↓
+
+Finished
+
+
+Then
+
+Clothes 2
+```
+
+One batch at a time.
+
+---
+
+# The Problem
+
+While:
+
+```text
+Instruction 1
+
+is Executing
+```
+
+parts of the CPU are idle.
+
+Example:
+
+```text
+Instruction Decoder
+
+Idle
+
+Fetcher
+
+Idle
+```
+
+Waste of hardware.
+
+---
+
+# The Solution: Pipelining
+
+Engineers asked:
+
+> Why not work on multiple instructions simultaneously?
+
+Just like a factory assembly line.
+
+---
+
+# What is Pipelining?
+
+Pipelining is:
+
+> A technique where multiple instructions are processed simultaneously at different stages.
+
+---
+
+# Factory Analogy
+
+Car Factory:
+
+```text
+Station 1
+
+Build Frame
+
+
+Station 2
+
+Install Engine
+
+
+Station 3
+
+Paint
+```
+
+While:
+
+```text
+Car 1
+
+Painting
+```
+
+Car 2 can be:
+
+```text
+Installing Engine
+```
+
+Car 3 can be:
+
+```text
+Building Frame
+```
+
+Same idea in CPUs.
+
+---
+
+# Basic CPU Pipeline
+
+Most simplified CPU pipeline:
+
+```text
+Fetch
+
+↓
+
+Decode
+
+↓
+
+Execute
+
+↓
+
+Write Back
+```
+
+---
+
+# Stage 1: Fetch
+
+CPU reads instruction from memory.
+
+Example:
+
+```text
+ADD R1,R2
+```
+
+Fetched from RAM/Cache.
+
+---
+
+# Stage 2: Decode
+
+CPU determines:
+
+```text
+What instruction is this?
+
+What operands are needed?
+```
+
+Example:
+
+```text
+ADD
+```
+
+means:
+
+```text
+Addition Operation
+```
+
+---
+
+# Stage 3: Execute
+
+ALU performs operation.
+
+Example:
+
+```text
+R1 + R2
+```
+
+---
+
+# Stage 4: Write Back
+
+Result stored.
+
+Example:
+
+```text
+R1 = Result
+```
+
+---
+
+# Without Pipeline
+
+Suppose each stage takes:
+
+```text
+1 Clock Cycle
+```
+
+Instruction:
+
+```text
+Fetch
+Decode
+Execute
+Write
+```
+
+Total:
+
+```text
+4 Cycles
+```
+
+---
+
+Three instructions:
+
+```text
+3 × 4
+
+=
+
+12 Cycles
+```
+
+---
+
+# With Pipeline
+
+Cycle 1:
+
+```text
+Instruction 1
+
+Fetch
+```
+
+---
+
+Cycle 2:
+
+```text
+Instruction 1
+
+Decode
+
+Instruction 2
+
+Fetch
+```
+
+---
+
+Cycle 3:
+
+```text
+Instruction 1
+
+Execute
+
+Instruction 2
+
+Decode
+
+Instruction 3
+
+Fetch
+```
+
+---
+
+Cycle 4:
+
+```text
+Instruction 1
+
+Write
+
+Instruction 2
+
+Execute
+
+Instruction 3
+
+Decode
+```
+
+---
+
+Cycle 5:
+
+```text
+Instruction 2
+
+Write
+
+Instruction 3
+
+Execute
+```
+
+---
+
+Cycle 6:
+
+```text
+Instruction 3
+
+Write
+```
+
+---
+
+# Visual Pipeline
+
+```text
+Cycle →
+
+        1   2   3   4   5   6
+
+I1      F   D   E   W
+
+I2          F   D   E   W
+
+I3              F   D   E   W
+```
+
+---
+
+# Huge Improvement
+
+Without Pipeline:
+
+```text
+12 Cycles
+```
+
+With Pipeline:
+
+```text
+6 Cycles
+```
+
+Twice as fast.
+
+---
+
+# Important Insight
+
+Pipelining does NOT make:
+
+```text
+Single Instruction Faster
+```
+
+Instruction still needs:
+
+```text
+Fetch
+
+Decode
+
+Execute
+
+Write
+```
+
+---
+
+Pipelining increases:
+
+```text
+Throughput
+```
+
+Meaning:
+
+```text
+More Instructions Completed
+Per Unit Time
+```
+
+---
+
+# Pipeline Stages in Modern CPUs
+
+Real CPUs may have:
+
+```text
+5 Stages
+
+10 Stages
+
+20 Stages
+
+30+ Stages
+```
+
+depending on architecture.
+
+---
+
+# Example
+
+Modern CPUs split:
+
+```text
+Decode
+```
+
+into several smaller stages.
+
+This allows:
+
+```text
+Higher Clock Speeds
+```
+
+---
+
+# Pipeline Hazards
+
+Question:
+
+> What if instructions interfere with each other?
+
+This creates:
+
+# Hazards
+
+---
+
+# 1. Data Hazard
+
+Example:
+
+```c
+a = b + c;
+
+d = a + e;
+```
+
+Instruction 2 needs:
+
+```text
+a
+```
+
+But Instruction 1 has not finished producing it.
+
+---
+
+# Visual
+
+```text
+I1
+
+Compute a
+
+
+I2
+
+Needs a
+```
+
+Problem.
+
+---
+
+# Solution
+
+CPU may:
+
+```text
+Wait
+
+or
+
+Forward Result
+```
+
+---
+
+# 2. Control Hazard
+
+Example:
+
+```c
+if(x > 0)
+{
+}
+```
+
+CPU doesn't know:
+
+```text
+Will Branch Happen?
+```
+
+until comparison finishes.
+
+---
+
+# Example
+
+```text
+Instruction 1
+
+Compare
+```
+
+CPU already fetched:
+
+```text
+Instruction 2
+Instruction 3
+```
+
+But branch changes execution path.
+
+Problem.
+
+---
+
+# Solution: Branch Prediction
+
+Modern CPUs guess.
+
+Example:
+
+```text
+Branch Will Happen
+```
+
+or
+
+```text
+Branch Won't Happen
+```
+
+---
+
+If guess is wrong:
+
+```text
+Pipeline Flushed
+```
+
+and restarted.
+
+---
+
+# 3. Structural Hazard
+
+Example:
+
+Two instructions need:
+
+```text
+Same Hardware Unit
+```
+
+simultaneously.
+
+Example:
+
+```text
+ALU Busy
+```
+
+Both instructions cannot use it at once.
+
+---
+
+# Pipeline Stall
+
+Sometimes CPU must pause.
+
+Example:
+
+```text
+Instruction Waiting
+```
+
+This is called:
+
+# Pipeline Stall
+
+---
+
+# Pipeline Flush
+
+Sometimes CPU must discard instructions.
+
+Example:
+
+```text
+Wrong Branch Prediction
+```
+
+Result:
+
+```text
+Clear Pipeline
+
+Restart
+```
+
+This is called:
+
+# Pipeline Flush
+
+---
+
+# Why Pipelining Matters
+
+Without Pipelining:
+
+```text
+Modern CPUs
+
+Would Be Much Slower
+```
+
+---
+
+Almost every processor today uses:
+
+```text
+Pipelining
+```
+
+including:
+
+* Intel CPUs
+* AMD CPUs
+* ARM CPUs
+* Apple Silicon
+
+---
+
+# Relation to C Programming
+
+Consider:
+
+```c
+for(int i=0;i<1000;i++)
+{
+    sum += arr[i];
+}
+```
+
+CPU executes thousands of instructions.
+
+Pipelining allows many instructions to be processed simultaneously.
+
+This greatly improves performance.
+
+---
+
+# Relation to Assembly
+
+Assembly:
+
+```assembly
+MOV R1,5
+MOV R2,10
+ADD R1,R2
+```
+
+Pipeline may process:
+
+```text
+Instruction 1
+
+Instruction 2
+
+Instruction 3
+```
+
+at different stages simultaneously.
+
+---
+
+# Visual Summary
+
+```text
+Instruction 1
+
+Fetch
+Decode
+Execute
+Write
+
+
+Instruction 2
+
+      Fetch
+      Decode
+      Execute
+      Write
+
+
+Instruction 3
+
+            Fetch
+            Decode
+            Execute
+            Write
+```
+
+Multiple instructions overlap.
+
+---
+
+# The Most Important Insight
+
+Without Pipelining:
+
+```text
+Finish One Instruction
+
+Then Start Next
+```
+
+With Pipelining:
+
+```text
+Start New Instruction
+
+Before Previous One Finishes
+```
+
+Exactly like an assembly line in a factory.
+
+This dramatically increases CPU performance.
+
+---
+
+# 🧠 Quick Revision
+
+* Pipelining = overlapping execution of instructions.
+* Goal:
+
+  * Increase throughput.
+* Typical stages:
+
+  * Fetch
+  * Decode
+  * Execute
+  * Write Back
+* Benefits:
+
+  * Better CPU utilization
+  * Higher performance
+* Hazards:
+
+  * Data Hazard
+  * Control Hazard
+  * Structural Hazard
+* Solutions:
+
+  * Forwarding
+  * Branch Prediction
+  * Stalls
+  * Pipeline Flushes
+
+---
+
+# 🎯 Interview Questions
+
+1. What is Pipelining?
+2. Why was Pipelining invented?
+3. What problem does Pipelining solve?
+4. Does Pipelining make a single instruction faster?
+5. What are the typical pipeline stages?
+6. What is a Data Hazard?
+7. What is a Control Hazard?
+8. What is a Structural Hazard?
+9. What is a Pipeline Stall?
+10. What is a Pipeline Flush?
+11. What is Branch Prediction?
+12. Why is Pipelining important for modern CPUs?
+13. How does Pipelining improve throughput?
+14. How is Pipelining similar to a factory assembly line?
+15. How does Pipelining affect the performance of C programs?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 23: Interrupts", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-23-interrupts" }}
+  next={null}
+/>
