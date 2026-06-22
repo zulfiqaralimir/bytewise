@@ -184,6 +184,7 @@ const chapters = [
           { title: "Lesson 20: Pointers and Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-20-pointers-and-memory" },
           { title: "Lesson 21: Processes and Threads", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-21-processes-and-threads" },
           { title: "Lesson 22: Virtual Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-22-virtual-memory" },
+          { title: "Lesson 23: Interrupts", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-23-interrupts" },
         ],
       },
     ],

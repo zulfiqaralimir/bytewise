@@ -1,0 +1,969 @@
+export const metadata = {
+  title: "Lesson 23: Interrupts (One of the Most Important Concepts in Operating Systems) — Mastering C — ByteWise",
+  description:
+    "What Interrupts are, why they were invented, how the CPU saves state and runs an ISR, hardware vs software interrupts, timer interrupts, the Interrupt Vector Table, and why they make modern OS possible.",
+  keywords: [
+    "interrupt",
+    "interrupt service routine",
+    "ISR",
+    "hardware interrupt",
+    "software interrupt",
+    "interrupt vector table",
+    "IVT",
+    "timer interrupt",
+    "polling vs interrupts",
+    "CPU interrupt handling",
+    "context save",
+    "multitasking interrupts",
+    "operating system interrupts",
+    "embedded systems interrupts",
+    "C programming interrupts",
+  ],
+  openGraph: {
+    title: "Lesson 23: Interrupts (One of the Most Important Concepts in Operating Systems)",
+    description:
+      "What interrupts are, why they beat polling, how the CPU saves state and runs an ISR, and how timer interrupts make multitasking possible.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ Interrupts (One of the Most Important Concepts in Operating Systems)
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+* What is an Interrupt?
+* Why were Interrupts invented?
+* What problem do Interrupts solve?
+* What happens when an Interrupt occurs?
+* How does the CPU handle an Interrupt?
+* What is an Interrupt Service Routine (ISR)?
+* What is the difference between Hardware and Software Interrupts?
+* Why are Interrupts essential for Operating Systems?
+
+---
+
+# 🌍 The Fundamental Problem
+
+Imagine a CPU running:
+
+```c
+while(1)
+{
+    // Do work
+}
+```
+
+Now suppose:
+
+```text
+Keyboard Key Pressed
+```
+
+Question:
+
+> How does the CPU know a key was pressed?
+
+---
+
+## Option 1: Constant Checking
+
+CPU repeatedly asks:
+
+```text
+Keyboard?
+
+Keyboard?
+
+Keyboard?
+
+Keyboard?
+
+Keyboard?
+```
+
+This is called:
+
+# Polling
+
+---
+
+# Why Polling Is Bad
+
+Imagine:
+
+```text
+CPU Speed
+
+3 Billion Operations/Second
+```
+
+Keyboard events:
+
+```text
+Maybe 1 Key Every Few Seconds
+```
+
+CPU wastes enormous time checking.
+
+---
+
+# Real-Life Analogy
+
+Imagine you're waiting for a delivery.
+
+Bad approach:
+
+```text
+Open Door
+
+No Package
+
+Close Door
+
+Open Door
+
+No Package
+
+Close Door
+
+Repeat Forever
+```
+
+Very inefficient.
+
+---
+
+# Better Solution
+
+Delivery person rings the bell.
+
+```text
+DING DONG!
+```
+
+Now you respond.
+
+No constant checking required.
+
+This is exactly what:
+
+# Interrupts
+
+do.
+
+---
+
+# What is an Interrupt?
+
+An Interrupt is:
+
+> A signal that temporarily stops the CPU's current work and requests immediate attention.
+
+---
+
+# Simple Definition
+
+Interrupt:
+
+```text
+"Stop what you're doing.
+
+Something important happened."
+```
+
+---
+
+# Real-Life Analogy
+
+You are studying:
+
+```text
+Reading Book
+```
+
+Suddenly:
+
+```text
+Phone Rings
+```
+
+You:
+
+```text
+Pause Reading
+
+Answer Phone
+
+Continue Reading
+```
+
+This is exactly how interrupts work.
+
+---
+
+# Example
+
+CPU executing:
+
+```c
+a = b + c;
+```
+
+Suddenly:
+
+```text
+Keyboard Key Pressed
+```
+
+Interrupt arrives.
+
+CPU:
+
+```text
+Pause Current Work
+
+Handle Keyboard
+
+Resume Previous Work
+```
+
+---
+
+# Why Were Interrupts Invented?
+
+Without interrupts:
+
+```text
+CPU Must Poll Everything
+```
+
+Examples:
+
+```text
+Keyboard
+
+Mouse
+
+Disk
+
+Network
+
+Timer
+```
+
+CPU would waste most of its time checking devices.
+
+Interrupts solve this.
+
+---
+
+# Basic Interrupt Flow
+
+```text
+CPU Running Program
+
+↓
+
+Interrupt Occurs
+
+↓
+
+Pause Current Execution
+
+↓
+
+Run Interrupt Handler
+
+↓
+
+Return To Program
+```
+
+---
+
+# Visual Example
+
+```text
+Program Running
+
+↓
+
+Line 100
+
+↓
+
+Line 101
+
+↓
+
+KEYBOARD INTERRUPT
+
+↓
+
+Handle Keyboard
+
+↓
+
+Return To Line 102
+```
+
+Notice:
+
+```text
+Program Continues
+```
+
+where it left off.
+
+---
+
+# What Happens Inside the CPU?
+
+Suppose CPU is executing:
+
+```text
+Instruction 500
+```
+
+Suddenly:
+
+```text
+Interrupt
+```
+
+arrives.
+
+CPU must remember:
+
+```text
+Where It Was
+```
+
+---
+
+# Step 1: Save Current State
+
+CPU saves:
+
+```text
+Program Counter
+
+Registers
+
+Flags
+```
+
+onto the Stack.
+
+---
+
+# Why Save Them?
+
+After handling interrupt:
+
+```text
+Program Must Continue
+```
+
+exactly where it stopped.
+
+---
+
+# Visual
+
+Before interrupt:
+
+```text
+PC = 500
+```
+
+Save:
+
+```text
+Stack
+
++--------+
+| PC=500 |
++--------+
+```
+
+---
+
+# Step 2: Find Interrupt Handler
+
+CPU asks:
+
+```text
+Which Interrupt Happened?
+```
+
+Example:
+
+```text
+Keyboard
+```
+
+CPU finds appropriate handler.
+
+---
+
+# What is an Interrupt Handler?
+
+Also called:
+
+# Interrupt Service Routine (ISR)
+
+An ISR is:
+
+> A special function that handles an interrupt.
+
+---
+
+Example:
+
+```text
+Keyboard Interrupt
+
+↓
+
+Keyboard ISR
+```
+
+---
+
+# Step 3: Execute ISR
+
+Example:
+
+```text
+Read Key
+
+Store Key
+
+Notify Operating System
+```
+
+---
+
+# Step 4: Restore State
+
+CPU restores:
+
+```text
+Program Counter
+
+Registers
+
+Flags
+```
+
+from Stack.
+
+---
+
+# Step 5: Resume Program
+
+Continue exactly where interrupted.
+
+Example:
+
+```text
+Instruction 500
+
+↓
+
+Interrupt
+
+↓
+
+Handle Interrupt
+
+↓
+
+Instruction 501
+```
+
+---
+
+# Complete Interrupt Flow
+
+```text
+Program Running
+
+↓
+
+Interrupt Signal
+
+↓
+
+Save CPU State
+
+↓
+
+Run ISR
+
+↓
+
+Restore CPU State
+
+↓
+
+Resume Program
+```
+
+---
+
+# Interrupt Vector Table
+
+Question:
+
+> How does CPU know which ISR to execute?
+
+Answer:
+
+# Interrupt Vector Table (IVT)
+
+---
+
+Think of it as:
+
+```text
+Phone Directory
+```
+
+Example:
+
+```text
+Interrupt 1 → Keyboard ISR
+
+Interrupt 2 → Mouse ISR
+
+Interrupt 3 → Timer ISR
+```
+
+---
+
+# Hardware Interrupts
+
+Generated by hardware devices.
+
+Examples:
+
+```text
+Keyboard
+
+Mouse
+
+Network Card
+
+Disk
+
+USB Device
+```
+
+---
+
+# Example
+
+You press:
+
+```text
+A
+```
+
+Keyboard sends:
+
+```text
+Interrupt
+```
+
+CPU handles it.
+
+---
+
+# Software Interrupts
+
+Generated by programs.
+
+Example:
+
+```c
+printf("Hello");
+```
+
+Eventually may request OS services.
+
+Programs can trigger interrupts intentionally.
+
+---
+
+# Why Does the OS Need Interrupts?
+
+Without interrupts:
+
+Operating System couldn't react quickly to:
+
+```text
+Keyboard Input
+
+Network Packets
+
+Disk Completion
+
+Mouse Movement
+```
+
+---
+
+# Timer Interrupt (Most Important)
+
+Suppose:
+
+```text
+Chrome Running
+```
+
+Question:
+
+> How does Windows/Linux switch to another process?
+
+Answer:
+
+# Timer Interrupt
+
+---
+
+A hardware timer periodically interrupts the CPU.
+
+Example:
+
+```text
+Every Few Milliseconds
+```
+
+Timer interrupt:
+
+```text
+Stop Current Process
+
+Run Scheduler
+
+Possibly Switch Process
+```
+
+---
+
+# Why Timer Interrupts Matter
+
+Without them:
+
+```text
+One Program
+
+Could Use CPU Forever
+```
+
+System would freeze.
+
+---
+
+# Example
+
+```text
+Chrome
+
+↓
+
+Timer Interrupt
+
+↓
+
+Scheduler
+
+↓
+
+VS Code
+
+↓
+
+Timer Interrupt
+
+↓
+
+Spotify
+```
+
+This creates multitasking.
+
+---
+
+# Interrupt Priority
+
+Some interrupts are more important.
+
+Example:
+
+```text
+Power Failure
+
+Higher Priority
+```
+
+than:
+
+```text
+Mouse Movement
+```
+
+CPU may handle urgent interrupts first.
+
+---
+
+# Nested Interrupts
+
+Sometimes:
+
+```text
+Interrupt A Running
+```
+
+Then:
+
+```text
+Higher Priority Interrupt B
+```
+
+occurs.
+
+CPU may temporarily interrupt:
+
+```text
+Interrupt A
+```
+
+to handle:
+
+```text
+Interrupt B
+```
+
+---
+
+# Why Interrupts Are Fast
+
+Interrupts avoid:
+
+```text
+Constant Polling
+```
+
+CPU only reacts when necessary.
+
+Much more efficient.
+
+---
+
+# Relation to Function Calls
+
+Function Call:
+
+```text
+Your Code
+
+↓
+
+Calls Function
+```
+
+You decide when.
+
+---
+
+Interrupt:
+
+```text
+External Event
+
+↓
+
+CPU Forced To Respond
+```
+
+CPU does not choose.
+
+---
+
+# Function Call vs Interrupt
+
+| Feature        | Function Call | Interrupt      |
+| -------------- | ------------- | -------------- |
+| Who Starts It? | Program       | Hardware/OS    |
+| Predictable?   | Yes           | Often No       |
+| Saves State?   | Yes           | Yes            |
+| Returns?       | Yes           | Yes            |
+| Purpose        | Code Reuse    | Event Handling |
+
+---
+
+# Why C Programmers Must Learn Interrupts
+
+Interrupts are used in:
+
+* Operating Systems
+* Embedded Systems
+* Device Drivers
+* Networking
+* Databases
+* Real-Time Systems
+
+---
+
+# Real Example: Pressing a Key
+
+You press:
+
+```text
+A
+```
+
+Flow:
+
+```text
+Keyboard
+
+↓
+
+Hardware Interrupt
+
+↓
+
+CPU Saves State
+
+↓
+
+Keyboard ISR
+
+↓
+
+Store Character
+
+↓
+
+Return
+
+↓
+
+Program Continues
+```
+
+All this happens extremely quickly.
+
+---
+
+# Visual Summary
+
+```text
+Program Running
+
+↓
+
+Interrupt Occurs
+
+↓
+
+Save Registers
+
+↓
+
+Save Program Counter
+
+↓
+
+Execute ISR
+
+↓
+
+Restore Registers
+
+↓
+
+Restore Program Counter
+
+↓
+
+Resume Program
+```
+
+---
+
+# The Most Important Insight
+
+Without Interrupts:
+
+```text
+CPU Must Constantly Check Devices
+```
+
+This would waste enormous CPU time.
+
+Interrupts allow devices to tell the CPU:
+
+```text
+"Something happened.
+
+Handle me now."
+```
+
+making modern operating systems efficient and responsive.
+
+---
+
+# 🧠 Quick Revision
+
+* Interrupt = signal requesting CPU attention.
+* Interrupts eliminate constant polling.
+* CPU:
+
+  * Saves state
+  * Runs ISR
+  * Restores state
+  * Continues execution
+* ISR = Interrupt Service Routine.
+* Types:
+
+  * Hardware Interrupts
+  * Software Interrupts
+* Timer Interrupts enable multitasking.
+* Interrupt Vector Table maps interrupts to handlers.
+* Interrupts are essential for operating systems.
+
+---
+
+# 🎯 Interview Questions
+
+1. What is an Interrupt?
+2. Why were Interrupts invented?
+3. What problem does Polling have?
+4. What is an ISR?
+5. What happens when an Interrupt occurs?
+6. Why does the CPU save its state?
+7. What is an Interrupt Vector Table?
+8. What is the difference between Hardware and Software Interrupts?
+9. Why are Timer Interrupts important?
+10. How do Interrupts enable multitasking?
+11. What is Interrupt Priority?
+12. What are Nested Interrupts?
+13. How are Interrupts different from Function Calls?
+14. Why are Interrupts essential for Operating Systems?
+15. What would happen if computers had no Interrupts?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 22: Virtual Memory", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-22-virtual-memory" }}
+  next={null}
+/>
