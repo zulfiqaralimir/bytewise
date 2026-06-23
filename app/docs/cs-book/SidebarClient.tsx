@@ -191,6 +191,7 @@ const chapters = [
           { title: "Lesson 27: OS Interaction", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-27-os-interaction" },
           { title: "Lesson 28: How C Maps to Hardware", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-28-how-c-maps-to-hardware" },
           { title: "Lesson 29: How Linux Uses Computer Architecture", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-29-how-linux-uses-computer-architecture" },
+          { title: "Lesson 30: Modern Processor Design", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-30-modern-processor-design" },
         ],
       },
     ],
