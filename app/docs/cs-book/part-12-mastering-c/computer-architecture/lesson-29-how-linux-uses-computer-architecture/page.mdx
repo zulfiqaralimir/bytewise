@@ -1,0 +1,708 @@
+export const metadata = {
+  title: "Lesson 29: How Linux Uses Computer Architecture — Mastering C — ByteWise",
+  description:
+    "How Linux uses the CPU, registers, cache, virtual memory, page tables, interrupts, multi-core CPUs, system calls, and device drivers — every computer architecture concept in action.",
+  keywords: [
+    "Linux computer architecture",
+    "Linux CPU registers",
+    "context switching Linux",
+    "Linux virtual memory",
+    "Linux page tables",
+    "Linux interrupts",
+    "Linux multi-core CPU",
+    "Linux system calls",
+    "Linux device drivers",
+    "Linux kernel hardware",
+    "Linux process scheduling",
+    "Linux memory management",
+    "Linux boot process",
+    "Linux kernel internals",
+    "operating system hardware",
+  ],
+  openGraph: {
+    title: "Lesson 29: How Linux Uses Computer Architecture",
+    description:
+      "How Linux uses registers for context switching, virtual memory for process isolation, interrupts for device events, and multi-core CPUs for parallel execution — computer architecture in action.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ How Linux Uses Computer Architecture
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+- Why does Linux need Computer Architecture?
+- How does Linux use the CPU?
+- How does Linux use Memory?
+- How does Linux use Registers?
+- How does Linux use Cache?
+- How does Linux use Virtual Memory?
+- How does Linux use Interrupts?
+- How does Linux use Multi-Core CPUs?
+- How does Linux interact with Hardware?
+
+---
+
+# 🌍 The Big Picture
+
+Linux is not magic.
+
+Linux is simply software.
+
+Like every program, Linux runs on:
+
+```text
+CPU
+
+Memory
+
+Cache
+
+Registers
+
+Storage
+
+Devices
+```
+
+But unlike normal programs like Chrome, VS Code, or Spotify — Linux directly controls the entire computer.
+
+---
+
+# Computer Architecture Layers
+
+```text
+Applications
+
+↓
+
+Linux Kernel
+
+↓
+
+CPU
+
+Memory
+
+Disk
+
+Network
+
+Keyboard
+
+GPU
+```
+
+Linux sits between Programs and Hardware.
+
+---
+
+# Why Linux Must Understand Hardware
+
+Suppose you press a key.
+
+Linux must know:
+
+```text
+Which Device?
+
+Which Interrupt?
+
+Which Driver?
+
+Which Process Should Receive Input?
+```
+
+Without understanding hardware:
+
+```text
+Linux Cannot Function
+```
+
+---
+
+# Linux and CPU
+
+CPU executes instructions.
+
+Linux itself is Machine Code running on the CPU.
+
+When the Linux scheduler runs:
+
+```text
+CPU
+
+↓
+
+Execute Linux Instructions
+
+↓
+
+Choose Next Process
+```
+
+Linux depends completely on CPU architecture.
+
+---
+
+# Linux and Registers
+
+Remember:
+
+```text
+Registers
+
+=
+
+Fast Storage Inside CPU
+```
+
+Examples: `RAX`, `RBX`, `RCX`, `RDX`, `RSP`, `RIP`
+
+---
+
+# Why Linux Uses Registers
+
+Suppose Chrome is running.
+
+CPU registers contain Chrome's state.
+
+When Linux switches to VS Code:
+
+Linux saves Chrome's registers and restores VS Code's registers.
+
+This is called:
+
+# Context Switching
+
+---
+
+Visual — before switch:
+
+```text
+CPU
+
+RAX = Chrome Data
+
+RBX = Chrome Data
+```
+
+Linux saves them.
+
+---
+
+Visual — after switch:
+
+```text
+CPU
+
+RAX = VS Code Data
+
+RBX = VS Code Data
+```
+
+Linux restored another process.
+
+---
+
+# Linux and Memory
+
+Linux manages RAM for all programs.
+
+Programs ask:
+
+```c
+malloc(1000);
+```
+
+Linux decides:
+
+```text
+Which Memory?
+
+Which Process?
+
+How Much?
+```
+
+Without Linux, programs could overwrite each other's memory.
+
+---
+
+# Linux and Virtual Memory
+
+Every process believes:
+
+```text
+I Own The Entire Computer
+```
+
+Linux creates this illusion using Virtual Memory.
+
+---
+
+Example:
+
+Chrome's Address 1000 and VS Code's Address 1000 — same address, different physical memory.
+
+Linux handles translation.
+
+---
+
+# Linux and Page Tables
+
+Linux maintains Page Tables for every process.
+
+```text
+Virtual Address
+
+↓
+
+Physical Address
+```
+
+Example:
+
+```text
+Chrome:  Page 1 → Frame 5
+
+VS Code: Page 1 → Frame 20
+```
+
+Linux manages all mappings.
+
+---
+
+# Linux and Cache
+
+CPU Cache — L1, L2, L3 — stores frequently used data.
+
+Linux helps CPU caches by:
+
+```text
+Scheduling Tasks
+
+Managing Memory
+
+Reducing Cache Misses
+```
+
+Why? Because cache access is thousands of times faster than RAM.
+
+---
+
+# Linux and Interrupts
+
+Remember:
+
+```text
+Interrupt = "CPU, Stop! Something Happened!"
+```
+
+Examples of interrupt sources: Keyboard, Mouse, Disk, Network.
+
+---
+
+Flow:
+
+```text
+Keyboard
+
+↓
+
+Interrupt
+
+↓
+
+CPU
+
+↓
+
+Linux Interrupt Handler
+
+↓
+
+Process Gets Input
+```
+
+Without interrupts, Linux would constantly poll devices — very inefficient.
+
+---
+
+# Linux and System Calls
+
+User programs cannot access hardware directly.
+
+Example:
+
+```c
+printf("Hello");
+```
+
+Eventually becomes a System Call.
+
+---
+
+Flow:
+
+```text
+Program
+
+↓
+
+System Call
+
+↓
+
+Linux Kernel
+
+↓
+
+Hardware
+```
+
+Linux acts as a gatekeeper.
+
+---
+
+# Linux and Processes
+
+Linux creates processes using:
+
+```c
+fork()
+```
+
+Example:
+
+```text
+Chrome
+
+↓
+
+fork()
+
+↓
+
+New Process
+```
+
+Linux allocates Memory, Registers, Page Tables, and Resources for the new process.
+
+---
+
+# Linux and Threads
+
+Linux schedules threads on CPU cores.
+
+Example:
+
+```text
+Core 1 → Thread A
+
+Core 2 → Thread B
+
+Core 3 → Thread C
+```
+
+---
+
+# Linux and Multi-Core CPUs
+
+Modern CPUs have 2, 4, 8, 16, 32+ cores.
+
+Linux must keep all cores busy.
+
+Example:
+
+```text
+Core 1 → Chrome
+
+Core 2 → VS Code
+
+Core 3 → Spotify
+
+Core 4 → Game
+```
+
+Linux scheduler handles this.
+
+---
+
+# Linux and Context Switching
+
+Suppose Chrome is running.
+
+A timer interrupt occurs.
+
+Linux:
+
+```text
+Save Registers
+
+Save Program Counter
+
+Choose New Process
+
+Restore Registers
+
+Continue Execution
+```
+
+This happens thousands of times per second.
+
+---
+
+# Linux and Storage
+
+Program:
+
+```c
+fopen("data.txt");
+```
+
+Linux:
+
+```text
+Find File
+
+Read Disk Blocks
+
+Return Data
+```
+
+Flow:
+
+```text
+Program
+
+↓
+
+Linux File System
+
+↓
+
+SSD Controller
+
+↓
+
+SSD
+```
+
+---
+
+# Linux and Networking
+
+Program:
+
+```c
+socket()
+```
+
+Linux:
+
+```text
+Create Socket
+
+Manage TCP/IP
+
+Send Packets
+
+Receive Packets
+```
+
+Without Linux, every application would need its own networking stack.
+
+---
+
+# Linux and GPUs
+
+```text
+Application
+
+↓
+
+GPU Driver
+
+↓
+
+GPU Hardware
+```
+
+Linux manages communication between applications and the GPU.
+
+---
+
+# Linux and Device Drivers
+
+Every hardware device has a driver.
+
+Examples: Keyboard Driver, Mouse Driver, GPU Driver, Network Driver.
+
+Drivers are part of Linux.
+
+Flow:
+
+```text
+Hardware
+
+↓
+
+Driver
+
+↓
+
+Linux Kernel
+
+↓
+
+Application
+```
+
+---
+
+# Linux Boot Process
+
+```text
+Power On
+
+↓
+
+CPU Reset
+
+↓
+
+Bootloader
+
+↓
+
+Linux Kernel Loaded
+
+↓
+
+Memory Initialized
+
+↓
+
+Drivers Loaded
+
+↓
+
+System Ready
+```
+
+Linux uses computer architecture from the first second.
+
+---
+
+# Linux Uses Every Architecture Concept
+
+| Architecture Concept | Linux Uses It For |
+|---|---|
+| CPU | Execute Kernel Code |
+| Registers | Context Switching |
+| Cache | Performance |
+| RAM | Process Memory |
+| Virtual Memory | Isolation |
+| Page Tables | Address Translation |
+| Interrupts | Device Events |
+| Multi-Core CPUs | Parallel Execution |
+| System Calls | User ↔ Kernel Communication |
+| Storage | File Systems |
+| Networking | Internet Communication |
+
+---
+
+# Visual Summary
+
+```text
+Applications
+
+↓
+
+System Calls
+
+↓
+
+Linux Kernel
+
+↓
+
+CPU
+Memory
+Cache
+Interrupts
+Storage
+GPU
+Network
+```
+
+---
+
+# The Most Important Insight
+
+Linux is essentially a gigantic program whose job is to manage and coordinate all computer hardware.
+
+Everything you've learned:
+
+```text
+Registers
+
+Memory
+
+Cache
+
+Virtual Memory
+
+Interrupts
+
+Processes
+
+Threads
+
+Multi-Core CPUs
+```
+
+is actively used by Linux every second.
+
+Without understanding Computer Architecture, it is impossible to fully understand how Linux works internally.
+
+---
+
+# 🧠 Quick Revision
+
+- Linux runs directly on CPU hardware.
+- Linux manages RAM using Virtual Memory.
+- Linux uses Registers during Context Switching.
+- Linux handles Interrupts from devices.
+- Linux schedules Processes and Threads.
+- Linux manages Multi-Core CPUs.
+- Linux controls Storage and Networking.
+- Linux uses Device Drivers to communicate with hardware.
+- Linux is deeply tied to Computer Architecture.
+
+---
+
+# 🎯 Interview Questions
+
+1. Why does Linux need to understand Computer Architecture?
+2. How does Linux use CPU Registers?
+3. What role does Virtual Memory play in Linux?
+4. How does Linux use Page Tables?
+5. Why are Interrupts important to Linux?
+6. What happens during a Context Switch?
+7. How does Linux use Multi-Core CPUs?
+8. What is the role of Device Drivers?
+9. How do System Calls work in Linux?
+10. Why is Computer Architecture important for Linux kernel development?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 28: How C Maps to Hardware", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-28-how-c-maps-to-hardware" }}
+  next={null}
+/>
