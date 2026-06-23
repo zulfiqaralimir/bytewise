@@ -1,0 +1,895 @@
+export const metadata = {
+  title: "Lesson 28: How C Maps to Hardware — Mastering C — ByteWise",
+  description:
+    "How C code becomes machine code, how variables map to memory addresses, how functions become CALL instructions, how pointers map to hardware addresses, and why C is called portable assembly.",
+  keywords: [
+    "C maps to hardware",
+    "C compiler assembly",
+    "variables memory addresses",
+    "pointers hardware",
+    "function call stack",
+    "C portable assembly",
+    "machine code translation",
+    "C to assembly",
+    "CPU registers C",
+    "loops jumps assembly",
+    "if statements CPU flags",
+    "malloc heap hardware",
+    "structs bytes memory",
+    "arrays contiguous memory",
+    "C operating systems embedded",
+  ],
+  openGraph: {
+    title: "Lesson 28: How C Maps to Hardware",
+    description:
+      "How every line of C eventually becomes CPU instructions — variables become addresses, functions become CALL, loops become jumps, and why C is the foundation of operating systems and embedded systems.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# ✅ How C Maps to Hardware
+
+# 🎯 Learning Objective
+
+By the end of this lesson, I should be able to answer:
+
+- How does C code become machine code?
+- How does the CPU execute C programs?
+- How do variables map to memory?
+- How do functions map to hardware?
+- How do pointers map to memory addresses?
+- Why is C called a "low-level high-level language"?
+- Why is C used for Operating Systems, Compilers, and Embedded Systems?
+
+---
+
+# 🌍 The Big Picture
+
+When you write:
+
+```c
+int x = 10;
+```
+
+the CPU does NOT understand:
+
+```c
+int x = 10;
+```
+
+The CPU only understands Machine Code such as:
+
+```text
+10110000 00001010
+```
+
+or in Assembly:
+
+```assembly
+MOV AX, 10
+```
+
+Therefore C must be translated.
+
+---
+
+# Complete Journey
+
+```text
+C Code
+
+↓
+
+Compiler
+
+↓
+
+Assembly
+
+↓
+
+Assembler
+
+↓
+
+Machine Code
+
+↓
+
+CPU
+
+↓
+
+Hardware Executes
+```
+
+---
+
+# Example
+
+C Code:
+
+```c
+int x = 10;
+```
+
+Compiler may generate:
+
+```assembly
+MOV [1000], 10
+```
+
+Machine Code:
+
+```text
+10110000 00001010
+```
+
+CPU executes it.
+
+---
+
+# Why C Is Special
+
+Languages like Python, JavaScript, and Java usually have many layers between code and hardware.
+
+C is different.
+
+C maps very closely to hardware.
+
+---
+
+Example:
+
+C:
+
+```c
+int x = 10;
+```
+
+Hardware:
+
+```text
+Memory Address
+
+↓
+
+Store Value 10
+```
+
+Very direct mapping.
+
+---
+
+# Variables and Hardware
+
+Example:
+
+```c
+int x = 10;
+```
+
+Memory:
+
+```text
+Address 1000
+
+↓
+
+10
+```
+
+CPU sees:
+
+```text
+Memory Location
+
+↓
+
+Value
+```
+
+---
+
+Visual:
+
+```text
+RAM
+
++---------+
+| 1000    |
++---------+
+| 10      |
++---------+
+```
+
+The variable name `x` exists only for programmers.
+
+The CPU only knows:
+
+```text
+Address 1000
+```
+
+---
+
+# Data Types and Hardware
+
+Example:
+
+```c
+char a;
+int b;
+double c;
+```
+
+Hardware sees different numbers of bytes:
+
+```text
+char    → 1 Byte
+
+int     → 4 Bytes
+
+double  → 8 Bytes
+```
+
+---
+
+Example:
+
+```c
+char a = 'A';
+```
+
+Memory:
+
+```text
+Address 1000
+
+↓
+
+65
+```
+
+ASCII value of A.
+
+---
+
+# Arithmetic and Hardware
+
+C:
+
+```c
+int c = a + b;
+```
+
+Compiler may generate:
+
+```assembly
+MOV AX, a
+
+ADD AX, b
+
+MOV c, AX
+```
+
+CPU executes:
+
+```text
+Load
+
+Add
+
+Store
+```
+
+---
+
+# Functions and Hardware
+
+C:
+
+```c
+void greet()
+{
+    printf("Hello");
+}
+```
+
+Call:
+
+```c
+greet();
+```
+
+Compiler generates:
+
+```assembly
+CALL greet
+```
+
+CPU:
+
+```text
+Save Return Address
+
+↓
+
+Jump To Function
+
+↓
+
+Execute Function
+
+↓
+
+Return
+```
+
+---
+
+# Function Calls and Stack
+
+C:
+
+```c
+add(10, 20);
+```
+
+Hardware:
+
+```text
+Push Parameters
+
+↓
+
+Save Return Address
+
+↓
+
+Jump To Function
+
+↓
+
+Execute
+
+↓
+
+Return
+```
+
+using the Stack.
+
+---
+
+Visual:
+
+```text
+Stack
+
++----------------+
+| Return Address |
++----------------+
+| 10             |
++----------------+
+| 20             |
++----------------+
+```
+
+---
+
+# Pointers and Hardware
+
+C:
+
+```c
+int x = 10;
+
+int *p = &x;
+```
+
+Memory:
+
+```text
+Address 1000
+
+↓
+
+10
+```
+
+Pointer:
+
+```text
+Address 2000
+
+↓
+
+1000
+```
+
+---
+
+Visual:
+
+```text
+p
+
+↓
+
+1000
+
+↓
+
+x
+
+↓
+
+10
+```
+
+---
+
+# Why Pointers Are Powerful
+
+Because hardware itself works with:
+
+```text
+Memory Addresses
+```
+
+Pointers allow C to directly manipulate addresses.
+
+---
+
+# Arrays and Hardware
+
+C:
+
+```c
+int arr[3] = {10, 20, 30};
+```
+
+Memory:
+
+```text
+1000 → 10
+
+1004 → 20
+
+1008 → 30
+```
+
+Contiguous memory.
+
+CPU loves arrays because:
+
+```text
+Addresses Are Predictable
+```
+
+---
+
+# Structures and Hardware
+
+C:
+
+```c
+struct Student
+{
+    int id;
+    int age;
+};
+```
+
+Memory:
+
+```text
+1000 → id
+
+1004 → age
+```
+
+Just consecutive bytes.
+
+Hardware doesn't know `Student`. It only sees:
+
+```text
+Bytes In Memory
+```
+
+---
+
+# Loops and Hardware
+
+C:
+
+```c
+for (int i = 0; i < 5; i++)
+{
+}
+```
+
+Compiler may generate:
+
+```assembly
+MOV i, 0
+
+LOOP:
+
+CMP i, 5
+
+JGE END
+
+INC i
+
+JMP LOOP
+```
+
+CPU executes:
+
+```text
+Compare
+
+Jump
+
+Increment
+
+Repeat
+```
+
+---
+
+# If Statements and Hardware
+
+C:
+
+```c
+if (x > y)
+{
+}
+```
+
+Compiler:
+
+```assembly
+CMP x, y
+
+JG TRUE_BLOCK
+```
+
+CPU uses the Flags Register to decide.
+
+---
+
+# Remember Status Flags?
+
+Comparison:
+
+```assembly
+CMP x, y
+```
+
+updates:
+
+```text
+ZF
+
+SF
+
+CF
+
+OF
+```
+
+Then CPU checks them.
+
+---
+
+Example:
+
+```c
+if (a == b)
+```
+
+Compiler:
+
+```assembly
+CMP a, b
+
+JE Equal
+```
+
+Meaning:
+
+```text
+Jump If Zero Flag Set
+```
+
+---
+
+# Dynamic Memory and Hardware
+
+C:
+
+```c
+malloc(100);
+```
+
+Requests 100 bytes from the Operating System.
+
+Memory returned:
+
+```text
+Heap Address
+
+↓
+
+5000
+```
+
+Pointer receives address 5000.
+
+---
+
+# File Handling and Hardware
+
+C:
+
+```c
+fopen("data.txt", "r");
+```
+
+Actually:
+
+```text
+Program
+
+↓
+
+System Call
+
+↓
+
+Operating System
+
+↓
+
+Disk Controller
+
+↓
+
+SSD/HDD
+```
+
+Hardware interaction through the OS.
+
+---
+
+# CPU Registers and C
+
+C:
+
+```c
+int x = a + b;
+```
+
+Compiler often uses registers:
+
+```assembly
+MOV EAX, a
+
+ADD EAX, b
+```
+
+Registers are tiny storage inside the CPU — the fastest memory available.
+
+---
+
+# Why C Is Called Portable Assembly
+
+People often say:
+
+> "C is portable assembly."
+
+Why?
+
+Because almost every C feature maps directly to hardware:
+
+| C Concept | Hardware Equivalent |
+|-----------|---------------------|
+| Variable | Memory |
+| Pointer | Address |
+| Function | CALL instruction |
+| Return | RET instruction |
+| Array | Contiguous Memory |
+| Struct | Bytes in Memory |
+| `if` | Compare + Jump |
+| Loop | Compare + Jump |
+| `malloc` | Heap Allocation |
+| File I/O | System Calls |
+
+---
+
+# Example: Complete Flow
+
+C:
+
+```c
+int add(int a, int b)
+{
+    return a + b;
+}
+```
+
+Compiler:
+
+```assembly
+MOV EAX, a
+
+ADD EAX, b
+
+RET
+```
+
+CPU:
+
+```text
+Load Into Register
+
+↓
+
+Add
+
+↓
+
+Return Result
+```
+
+---
+
+# Why Operating Systems Are Written in C
+
+Because C can directly control:
+
+```text
+Memory
+
+Pointers
+
+Hardware Addresses
+
+System Calls
+
+Registers
+```
+
+while still being easier than Assembly.
+
+---
+
+# Why Embedded Systems Use C
+
+Microcontrollers often require:
+
+```text
+Direct Register Access
+
+Memory-Mapped I/O
+
+Hardware Control
+```
+
+C provides this capability.
+
+---
+
+# Visual Summary
+
+```text
+C Code
+
+↓
+
+Compiler
+
+↓
+
+Assembly
+
+↓
+
+Machine Code
+
+↓
+
+CPU
+
+↓
+
+Registers
+
+↓
+
+Memory
+
+↓
+
+Hardware
+```
+
+---
+
+# The Most Important Insight
+
+Every line of C eventually becomes CPU instructions.
+
+The CPU doesn't understand `if`, `for`, `while`, `struct`, or `function` directly.
+
+The compiler converts them into:
+
+```text
+Loads
+
+Stores
+
+Adds
+
+Compares
+
+Jumps
+
+Calls
+
+Returns
+```
+
+which the hardware executes.
+
+This close relationship between C and hardware is why C remains the foundation of:
+
+- Operating Systems
+- Compilers
+- Databases
+- Embedded Systems
+- Device Drivers
+- High-Performance Software
+
+---
+
+# 🧠 Quick Revision
+
+- C is translated into machine code.
+- Variables become memory locations.
+- Pointers become addresses.
+- Functions become CALL instructions.
+- Loops become jumps and comparisons.
+- `if` statements use CPU flags.
+- Arrays become contiguous memory.
+- Structs become bytes in memory.
+- `malloc()` allocates heap memory.
+- C maps very closely to hardware.
+
+---
+
+# 🎯 Interview Questions
+
+1. How does C code become machine code?
+2. Why is C considered close to hardware?
+3. How does a variable map to memory?
+4. How does a pointer map to hardware?
+5. What does a function call become?
+6. How do loops work internally?
+7. How do `if` statements work internally?
+8. Why are pointers important in C?
+9. Why is C used for Operating Systems?
+10. Why is C called a portable assembly language?
+
+---
+
+<ArticleNav
+  prev={{ title: "Lesson 27: OS Interaction", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-27-os-interaction" }}
+  next={null}
+/>

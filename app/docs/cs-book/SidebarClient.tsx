@@ -189,6 +189,7 @@ const chapters = [
           { title: "Lesson 25: Multi-Core Processors", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-25-multi-core-processors" },
           { title: "Lesson 26: GPUs", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-26-gpus" },
           { title: "Lesson 27: OS Interaction", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-27-os-interaction" },
+          { title: "Lesson 28: How C Maps to Hardware", href: "/docs/cs-book/part-12-mastering-c/computer-architecture/lesson-28-how-c-maps-to-hardware" },
         ],
       },
     ],
