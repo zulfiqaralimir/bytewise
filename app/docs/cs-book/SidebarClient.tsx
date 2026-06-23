@@ -154,6 +154,12 @@ const chapters = [
           { title: "Mastering Quantitative Trading with VectorBT", href: "/docs/cs-book/part-11-economic-finance-models/chapter-2/vectorbt-backtesting" },
         ],
       },
+      {
+        chapter: "Chapter 3: Currency Markets & Macro Indicators",
+        items: [
+          { title: "What Is the Dollar Index (DXY)?", href: "/docs/cs-book/part-11-economic-finance-models/chapter-3/dollar-index-dxy" },
+        ],
+      },
     ],
   },
   {
