@@ -160,6 +160,12 @@ const chapters = [
           { title: "What Is the Dollar Index (DXY)?", href: "/docs/cs-book/part-11-economic-finance-models/chapter-3/dollar-index-dxy" },
         ],
       },
+      {
+        chapter: "Chapter 4: Market Research & Bubble Analysis",
+        items: [
+          { title: "Researchers Uncover a Reliable Bubble Indicator", href: "/docs/cs-book/part-11-economic-finance-models/chapter-4/researchers-uncover-reliable-market-bubble-indicator" },
+        ],
+      },
     ],
   },
   {
@@ -382,12 +388,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/69 chapters</span>
+              <span>{readCount}/70 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 69) * 100}%` }}
+                style={{ width: `${(readCount / 70) * 100}%` }}
               />
             </div>
           </div>
