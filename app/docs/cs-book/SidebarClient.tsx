@@ -226,6 +226,27 @@ const chapters = [
     ],
   },
   {
+    part: "Part 14 — Mastering Claude Code",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-14-mastering-claude-code/overview" },
+        ],
+      },
+      {
+        chapter: "Chapter 1: Claude Code CLI",
+        items: [
+          { title: "1.1 Claude Code Skills — Supercharge Productivity", href: "/docs/cs-book/part-14-mastering-claude-code/chapter-1/1-1-claude-code-skills" },
+        ],
+      },
+      {
+        chapter: "Chapter 2: Claude API & SDK",
+        items: [],
+      },
+    ],
+  },
+  {
     part: "Part 15 — Marketing Engineering",
     chapters: [
       {
@@ -256,27 +277,6 @@ const chapters = [
       },
       {
         chapter: "Chapter 6: Paid Media & Campaigns",
-        items: [],
-      },
-    ],
-  },
-  {
-    part: "Part 14 — Mastering Claude Code",
-    chapters: [
-      {
-        chapter: "Overview",
-        items: [
-          { title: "Overview & Roadmap", href: "/docs/cs-book/part-14-mastering-claude-code/overview" },
-        ],
-      },
-      {
-        chapter: "Chapter 1: Claude Code CLI",
-        items: [
-          { title: "1.1 Claude Code Skills — Supercharge Productivity", href: "/docs/cs-book/part-14-mastering-claude-code/chapter-1/1-1-claude-code-skills" },
-        ],
-      },
-      {
-        chapter: "Chapter 2: Claude API & SDK",
         items: [],
       },
     ],
