@@ -220,6 +220,41 @@ const chapters = [
     ],
   },
   {
+    part: "Part 15 — Marketing Engineering",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-15-marketing-engineering/overview" },
+        ],
+      },
+      {
+        chapter: "Chapter 1: Foundations",
+        items: [],
+      },
+      {
+        chapter: "Chapter 2: Brand & Positioning",
+        items: [],
+      },
+      {
+        chapter: "Chapter 3: Content & SEO Strategy",
+        items: [],
+      },
+      {
+        chapter: "Chapter 4: Growth & Funnel Design",
+        items: [],
+      },
+      {
+        chapter: "Chapter 5: Marketing Analytics",
+        items: [],
+      },
+      {
+        chapter: "Chapter 6: Paid Media & Campaigns",
+        items: [],
+      },
+    ],
+  },
+  {
     part: "Part 14 — Mastering Claude Code",
     chapters: [
       {
@@ -347,12 +382,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/68 chapters</span>
+              <span>{readCount}/69 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 68) * 100}%` }}
+                style={{ width: `${(readCount / 69) * 100}%` }}
               />
             </div>
           </div>
