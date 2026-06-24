@@ -1,0 +1,77 @@
+import ArticleNav from "@/app/components/ArticleNav";
+
+# Part 13 — Computer Networking: A Top-Down Approach
+
+**Based on:** *Computer Networking: A Top-Down Approach*, 8th Edition
+**Authors:** James F. Kurose & Keith W. Ross
+
+---
+
+## What Is This Part?
+
+This part follows the Kurose & Ross textbook — the gold standard for learning how the internet actually works. The "top-down" approach means we start where you already live (the web browser, apps, HTTP) and work downward to the physical signals that carry bits across the world.
+
+By the time you finish, you'll understand:
+
+- Why a webpage loads in milliseconds (or doesn't)
+- How packets find their way from your laptop to a server in another country
+- What TCP actually does behind every API call
+- How routers make decisions 100 million times per second
+- What SSL/TLS is protecting and how it works
+
+---
+
+## Book Structure — 9 Chapters
+
+| Chapter | Topic |
+|---------|-------|
+| 1 | Computer Networks and the Internet |
+| 2 | Application Layer |
+| 3 | Transport Layer |
+| 4 | The Network Layer: Data Plane |
+| 5 | The Network Layer: Control Plane |
+| 6 | The Link Layer and LANs |
+| 7 | Wireless and Mobile Networks |
+| 8 | Security in Computer Networks |
+| 9 | Multimedia Networking |
+
+---
+
+## Why Top-Down?
+
+Most networking courses start at the bottom — with electrons and cables — and work upward. That approach buries you in physical details before you understand why any of it matters.
+
+Kurose & Ross flip the order:
+
+> Start with what you use every day (HTTP, DNS, email), then ask: *what does the layer below need to provide to make this work?*
+
+Each layer is motivated by the one above it. You always know *why* you're learning something before you learn *how* it works.
+
+---
+
+## How These Pages Are Structured
+
+Each section follows the same 12-part template:
+- **What / Why / How** — core concept explained from first principles
+- **Where You'll See This** — real-world domains
+- **Real-World Example** — one company or system as a case study
+- **HLD & LLD Connections** — system design and code design angles
+- **Networking & Security** — how it links to protocols and attacks
+- **ML / Data / FinOps** — how networking concepts show up in data engineering and cloud costs
+- **The Big Picture** — key takeaways
+- **LeetCode Practice** — problems that reinforce the concept
+- **Edge Cases** — what breaks and why
+- **My Notes** — space for your own spaced-repetition notes
+
+---
+
+## Prerequisites
+
+No networking background required. If you know what a URL is and have made an HTTP request, you're ready.
+
+---
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>

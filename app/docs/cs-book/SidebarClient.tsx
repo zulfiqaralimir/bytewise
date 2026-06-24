@@ -209,7 +209,54 @@ const chapters = [
     ],
   },
   {
-    part: "Part 13 — Mastering LeetCode & NeetCode",
+    part: "Part 13 — Computer Networking: A Top-Down Approach",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/overview" },
+        ],
+      },
+      {
+        chapter: "Chapter 1: Computer Networks and the Internet",
+        items: [],
+      },
+      {
+        chapter: "Chapter 2: Application Layer",
+        items: [],
+      },
+      {
+        chapter: "Chapter 3: Transport Layer",
+        items: [],
+      },
+      {
+        chapter: "Chapter 4: The Network Layer — Data Plane",
+        items: [],
+      },
+      {
+        chapter: "Chapter 5: The Network Layer — Control Plane",
+        items: [],
+      },
+      {
+        chapter: "Chapter 6: The Link Layer and LANs",
+        items: [],
+      },
+      {
+        chapter: "Chapter 7: Wireless and Mobile Networks",
+        items: [],
+      },
+      {
+        chapter: "Chapter 8: Security in Computer Networks",
+        items: [],
+      },
+      {
+        chapter: "Chapter 9: Multimedia Networking",
+        items: [],
+      },
+    ],
+  },
+  {
+    part: "Part 14 — Mastering LeetCode & NeetCode",
     chapters: [
       {
         chapter: "Mastering NeetCode 150",
@@ -226,7 +273,7 @@ const chapters = [
     ],
   },
   {
-    part: "Part 14 — Mastering Claude Code",
+    part: "Part 15 — Mastering Claude Code",
     chapters: [
       {
         chapter: "Overview",
@@ -247,7 +294,7 @@ const chapters = [
     ],
   },
   {
-    part: "Part 15 — Marketing Engineering",
+    part: "Part 16 — Marketing Engineering",
     chapters: [
       {
         chapter: "Overview",
@@ -388,12 +435,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/70 chapters</span>
+              <span>{readCount}/71 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 70) * 100}%` }}
+                style={{ width: `${(readCount / 71) * 100}%` }}
               />
             </div>
           </div>
