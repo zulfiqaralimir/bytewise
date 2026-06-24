@@ -219,7 +219,10 @@ const chapters = [
       },
       {
         chapter: "Chapter 1: Computer Networks and the Internet",
-        items: [],
+        items: [
+          { title: "1.1 What Is the Internet?", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-1-what-is-the-internet" },
+          { title: "1.2 The Network Edge", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-2-the-network-edge" },
+        ],
       },
       {
         chapter: "Chapter 2: Application Layer",

@@ -1,0 +1,685 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+## 1.1 What Is the Internet?
+
+Before learning protocols, routing, TCP, UDP, WiFi, or network security, we must answer a fundamental question:
+
+> What exactly is the Internet?
+
+Most people say:
+
+> "The Internet is a network."
+
+While technically correct, this definition is incomplete.
+
+A more accurate definition is:
+
+> The Internet is a global system of interconnected computer networks that enables billions of devices to communicate and exchange information using standardized communication protocols.
+
+Think of the Internet as a transportation system:
+
+| Transportation System | Internet Equivalent |
+|----------------------|----------------------|
+| Roads | Communication Links |
+| Intersections | Routers |
+| Cars | Packets |
+| Traffic Rules | Protocols |
+| Cities | Networks |
+
+---
+
+## Why Do We Need the Internet?
+
+Consider the following situation:
+
+- Your laptop is in Pakistan.
+- Google's servers are located in data centers around the world.
+
+Questions arise:
+
+- How does your computer find Google's server?
+- How does data travel thousands of kilometers?
+- How does the network handle billions of users simultaneously?
+- How is communication kept reliable?
+
+The Internet provides mechanisms to solve all of these challenges.
+
+---
+
+## Two Ways to View the Internet
+
+Kurose and Ross introduce two perspectives for understanding the Internet.
+
+### 1. Nuts-and-Bolts View
+
+Focuses on:
+
+- Physical devices
+- Communication links
+- Routers
+- Switches
+- Protocols
+
+This view answers:
+
+> "How is the Internet built?"
+
+---
+
+### 2. Services View
+
+Focuses on:
+
+- Applications
+- Communication services
+- Network functionality
+
+This view answers:
+
+> "What services does the Internet provide to applications?"
+
+---
+
+# 1.1.1 Nuts-and-Bolts Description
+
+The Nuts-and-Bolts view explains the actual components that make up the Internet.
+
+---
+
+## Step 1: Hosts (End Systems)
+
+The Internet consists of billions of connected devices called:
+
+### Hosts
+
+or
+
+### End Systems
+
+Examples include:
+
+- Desktop computers
+- Laptops
+- Smartphones
+- Web servers
+- Gaming consoles
+- Smart TVs
+- IoT devices
+
+These devices exist at the edge of the Internet.
+
+### Why Are They Called End Systems?
+
+Because communication starts and ends at these devices.
+
+Example:
+
+```text
+Your Phone
+     ↓
+Internet
+     ↓
+Friend's Phone
+```
+
+Both phones are end systems.
+
+---
+
+## Step 2: Communication Links
+
+End systems must be connected together.
+
+This connection is achieved through:
+
+### Communication Links
+
+Examples include:
+
+#### Wired Links
+
+- Fiber-optic cables
+- Copper cables
+- Ethernet cables
+
+#### Wireless Links
+
+- WiFi
+- 4G
+- 5G
+- Satellite communication
+
+Communication links transport data between devices.
+
+---
+
+## Transmission Rate
+
+Every communication link has a speed.
+
+This speed is measured in:
+
+### Bits Per Second (bps)
+
+Examples:
+
+- 100 Mbps
+- 1 Gbps
+- 10 Gbps
+
+A higher transmission rate means more data can be transferred every second.
+
+---
+
+## Step 3: Packets
+
+Data is not usually transmitted as one large block.
+
+Instead, data is divided into smaller units called:
+
+### Packets
+
+Example:
+
+```text
+10 MB File
+       ↓
+Thousands of Packets
+```
+
+Each packet travels independently through the network.
+
+When packets reach their destination, they are reassembled into the original data.
+
+---
+
+## Why Use Packets?
+
+Packet-based communication provides:
+
+- Efficient network sharing
+- Improved reliability
+- Flexible routing
+- Better scalability
+
+Packet switching is one of the foundational concepts of modern computer networking.
+
+---
+
+## Step 4: Packet Switches
+
+Packets must move through the network.
+
+Devices responsible for forwarding packets are called:
+
+### Packet Switches
+
+Two important examples are:
+
+#### Routers
+
+Used throughout the Internet backbone.
+
+#### Link-Layer Switches
+
+Used within Local Area Networks (LANs).
+
+Example:
+
+```text
+Laptop
+   ↓
+Switch
+   ↓
+Router
+   ↓
+Internet
+```
+
+---
+
+## Router
+
+A router performs the following tasks:
+
+1. Receives packets.
+2. Examines destination addresses.
+3. Determines the best path.
+4. Forwards packets toward their destination.
+
+Think of a router as:
+
+> A traffic officer directing packets through the Internet.
+
+---
+
+## Step 5: A Network of Networks
+
+The Internet is not a single network.
+
+Instead, it is composed of many interconnected networks.
+
+```text
+Network A
+     +
+Network B
+     +
+Network C
+     +
+Network D
+```
+
+This is why it is called:
+
+### Internet
+
+which comes from:
+
+> Interconnected Networks
+
+---
+
+## ISP (Internet Service Provider)
+
+Users connect to the Internet through an:
+
+### Internet Service Provider (ISP)
+
+Examples:
+
+- PTCL
+- Nayatel
+- StormFiber
+
+ISPs provide Internet connectivity to homes, businesses, and organizations.
+
+Typical hierarchy:
+
+```text
+Home User
+     ↓
+Local ISP
+     ↓
+Regional ISP
+     ↓
+Global ISP
+```
+
+Together these ISPs form the global Internet infrastructure.
+
+---
+
+## Step 6: Protocols
+
+All devices must follow common communication rules.
+
+These rules are known as:
+
+### Protocols
+
+Examples include:
+
+#### TCP
+
+Provides reliable communication.
+
+#### IP
+
+Provides addressing and routing.
+
+#### HTTP
+
+Supports web communication.
+
+#### DNS
+
+Converts domain names into IP addresses.
+
+Without protocols, communication between devices would be impossible.
+
+---
+
+## Internet Standards
+
+Protocols are standardized by organizations such as:
+
+### IETF (Internet Engineering Task Force)
+
+The IETF publishes documents called:
+
+### RFCs (Request for Comments)
+
+RFCs define Internet standards and protocol specifications.
+
+Examples:
+
+- TCP RFCs
+- HTTP RFCs
+- IP RFCs
+
+---
+
+## Complete Nuts-and-Bolts View
+
+```text
+End Systems
+      ↓
+Communication Links
+      ↓
+Packets
+      ↓
+Routers and Switches
+      ↓
+Protocols
+      ↓
+Network of Networks
+```
+
+This represents the physical and technical structure of the Internet.
+
+---
+
+# 1.1.2 A Services Description
+
+Instead of asking:
+
+> "How is the Internet built?"
+
+we now ask:
+
+> "What services does the Internet provide?"
+
+---
+
+## Internet as Infrastructure
+
+Applications generally do not care about:
+
+- Routers
+- Cables
+- Switching hardware
+
+Applications simply want communication.
+
+Examples:
+
+- Web Browsers
+- Email Systems
+- WhatsApp
+- Netflix
+- YouTube
+- Zoom
+
+Applications need only:
+
+```text
+Send Data
+Receive Data
+```
+
+The Internet provides the infrastructure that makes this possible.
+
+---
+
+## Distributed Applications
+
+Most modern Internet applications are:
+
+### Distributed Applications
+
+These applications run across multiple end systems.
+
+Examples:
+
+#### Web
+
+```text
+Browser ↔ Web Server
+```
+
+#### WhatsApp
+
+```text
+Phone ↔ WhatsApp Server ↔ Phone
+```
+
+#### Zoom
+
+```text
+Client ↔ Cloud Servers ↔ Client
+```
+
+Multiple systems cooperate to provide the application's functionality.
+
+---
+
+## Communication Service
+
+Applications communicate through a programming interface called a:
+
+### Socket
+
+A socket acts as an interface between:
+
+- Application Layer
+- Network Layer
+
+Example:
+
+```text
+Application
+     ↓
+Socket
+     ↓
+Internet
+```
+
+Programmers use sockets when developing network applications.
+
+---
+
+## Service Models
+
+Different applications have different communication requirements.
+
+### Email
+
+Requires reliability.
+
+### Video Streaming
+
+Requires high throughput.
+
+### Online Gaming
+
+Requires low delay.
+
+Because applications have different needs, the Internet supports multiple service models.
+
+Later chapters discuss:
+
+- TCP
+- UDP
+
+which provide different communication characteristics.
+
+---
+
+## Abstraction
+
+Applications do not need to understand:
+
+- Routing algorithms
+- Packet forwarding
+- Link technologies
+
+The Internet hides these implementation details.
+
+This concept is known as:
+
+### Abstraction
+
+Abstraction simplifies application development by hiding underlying complexity.
+
+---
+
+# 1.1.3 What Is a Protocol?
+
+Protocols are among the most important concepts in networking.
+
+---
+
+## Human Communication Example
+
+Consider a phone conversation:
+
+```text
+You: Hello
+Friend: Hello
+You: How are you?
+Friend: Fine
+```
+
+Notice that:
+
+- Messages follow a structure.
+- Communication follows an expected order.
+- Certain responses are expected.
+
+This is a protocol.
+
+---
+
+## Networking Definition
+
+A protocol defines:
+
+### Message Format
+
+What information is included in messages.
+
+### Message Order
+
+The sequence in which messages are exchanged.
+
+### Actions
+
+What each participant does after sending or receiving messages.
+
+---
+
+## Formal Definition
+
+A protocol specifies:
+
+> The format and order of messages exchanged between communicating entities and the actions taken upon transmission or receipt of those messages.
+
+---
+
+## Example: HTTP Protocol
+
+When a browser requests a web page:
+
+```text
+GET /index.html
+```
+
+The server responds:
+
+```text
+200 OK
+```
+
+Both systems follow the HTTP protocol.
+
+---
+
+## Example: TCP Protocol
+
+TCP defines:
+
+- Connection establishment
+- Reliability
+- Acknowledgments
+- Retransmissions
+- Connection termination
+
+All communication follows predefined protocol rules.
+
+---
+
+## Why Are Protocols Important?
+
+Without protocols:
+
+- Devices would not understand each other.
+- Messages would be interpreted incorrectly.
+- Communication would fail.
+
+Protocols are the language of computer networks.
+
+---
+
+# Summary of Section 1.1
+
+```text
+Internet
+│
+├── End Systems
+├── Communication Links
+├── Packets
+├── Routers
+├── ISPs
+├── Protocols
+│
+└── Services
+      ├── Web
+      ├── Email
+      ├── Streaming
+      └── Gaming
+```
+
+The Internet can be viewed both as:
+
+1. A collection of interconnected hardware and communication technologies.
+2. A communication service platform for distributed applications.
+
+Protocols provide the rules that allow all Internet components to work together.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|--------|------------|
+| Internet | Global network of interconnected networks |
+| Host | Any device connected to a network |
+| End System | Source or destination device in communication |
+| Packet | Small unit of transmitted data |
+| Communication Link | Medium used to carry data |
+| Transmission Rate | Speed of data transfer measured in bps |
+| Bandwidth | Maximum data carrying capacity of a link |
+| Router | Device that forwards packets between networks |
+| Switch | Device that connects devices within a LAN |
+| Packet Switching | Method of transmitting data using packets |
+| ISP | Internet Service Provider |
+| Protocol | Rules governing communication |
+| TCP | Reliable transport-layer protocol |
+| UDP | Lightweight transport-layer protocol |
+| IP | Internet Protocol used for addressing and routing |
+| HTTP | Hypertext Transfer Protocol used on the Web |
+| DNS | Domain Name System used for name resolution |
+| Socket | Interface between applications and the network |
+| Distributed Application | Application running across multiple systems |
+| IETF | Internet Engineering Task Force |
+| RFC | Request for Comments document |
+| Abstraction | Hiding implementation details from users and applications |
+
+---
+
+<ArticleNav
+  prev={{ title: "Overview & Roadmap", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/overview" }}
+  next={{ title: "1.2 The Network Edge", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-2-the-network-edge" }}
+/>

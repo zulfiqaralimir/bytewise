@@ -1,0 +1,861 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 1.2 The Network Edge
+
+After understanding what the Internet is, we now move to an important part of the Internet architecture:
+
+> The Network Edge
+
+The Internet can be divided into two major parts:
+
+```text
+Internet
+│
+├── Network Edge
+│
+└── Network Core
+```
+
+The Network Edge consists of:
+
+- End Systems (Hosts)
+- Access Networks
+- Physical Media
+
+This is where users and applications interact with the Internet.
+
+---
+
+# What Is the Network Edge?
+
+The Network Edge is the collection of devices located at the boundary of the Internet.
+
+Examples:
+
+- Desktop Computers
+- Laptops
+- Smartphones
+- Web Servers
+- Cloud Servers
+- Smart TVs
+- IoT Devices
+
+These devices are called:
+
+## Hosts
+
+or
+
+## End Systems
+
+because communication starts and ends at these devices.
+
+Example:
+
+```text
+Alice's Laptop
+      ↓
+Internet
+      ↓
+Google Server
+```
+
+Both devices are located at the Network Edge.
+
+---
+
+# Role of the Network Edge
+
+The Network Edge is responsible for:
+
+- Running applications
+- Generating data
+- Receiving data
+- Communicating with other hosts
+
+Examples:
+
+| Application | Communication |
+|------------|--------------|
+| Web Browser | Browser ↔ Web Server |
+| WhatsApp | User ↔ WhatsApp Server |
+| Zoom | User ↔ Zoom Servers |
+| Netflix | User ↔ Content Servers |
+
+The Network Edge is where users experience Internet services.
+
+---
+
+# Client-Server Architecture
+
+Many Internet applications use:
+
+## Client-Server Architecture
+
+In this model:
+
+### Client
+
+Requests services.
+
+Examples:
+
+- Browser
+- Mobile App
+- Desktop Application
+
+### Server
+
+Provides services.
+
+Examples:
+
+- Google Server
+- Netflix Server
+- Facebook Server
+
+Example:
+
+```text
+Client
+   ↓ Request
+Server
+   ↑ Response
+```
+
+---
+
+## Characteristics of Servers
+
+Servers usually have:
+
+- High-performance hardware
+- Large storage capacity
+- Powerful processors
+- High-speed network connections
+
+Servers are typically located in:
+
+### Data Centers
+
+Examples:
+
+- Google Data Centers
+- Amazon AWS
+- Microsoft Azure
+
+---
+
+# Peer-to-Peer (P2P) Architecture
+
+Not all applications use client-server architecture.
+
+Another model is:
+
+## Peer-to-Peer (P2P)
+
+In P2P systems:
+
+- No permanently active server exists.
+- Peers communicate directly.
+- Every device can act as both client and server.
+
+Example:
+
+```text
+Peer A ↔ Peer B
+    ↕
+Peer C ↔ Peer D
+```
+
+---
+
+## Advantages of P2P
+
+### Self-Scalability
+
+As more users join:
+
+- More resources become available.
+
+### Cost Efficient
+
+Less dependence on expensive centralized servers.
+
+---
+
+## Examples of P2P Applications
+
+- BitTorrent
+- Early Skype
+- Blockchain Networks
+
+---
+
+# Processes Communicating
+
+Applications running on hosts are called:
+
+## Processes
+
+Examples:
+
+- Browser Process
+- WhatsApp Process
+- Zoom Process
+
+Communication actually occurs between processes.
+
+Example:
+
+```text
+Browser Process
+        ↓
+Internet
+        ↓
+Web Server Process
+```
+
+---
+
+# Client Process and Server Process
+
+A process that initiates communication is called:
+
+## Client Process
+
+A process waiting for communication is called:
+
+## Server Process
+
+Example:
+
+```text
+Browser Process
+      ↓
+Web Server Process
+```
+
+Browser = Client Process
+
+Web Server = Server Process
+
+---
+
+# Access Networks
+
+To participate in the Internet, hosts require connectivity.
+
+The network that connects end systems to the first router is called:
+
+## Access Network
+
+Think of an Access Network as:
+
+> The bridge between a user and the Internet.
+
+---
+
+# Types of Access Networks
+
+The book discusses several major access technologies.
+
+---
+
+# 1. Residential Access Networks
+
+Used in homes.
+
+Examples:
+
+- Fiber-to-the-Home (FTTH)
+- Cable Internet
+- DSL
+
+---
+
+## DSL (Digital Subscriber Line)
+
+DSL uses existing telephone lines.
+
+Example:
+
+```text
+Home
+  ↓
+Telephone Line
+  ↓
+Telephone Company
+  ↓
+Internet
+```
+
+---
+
+### Characteristics of DSL
+
+- Uses copper telephone wires.
+- Internet and telephone can operate simultaneously.
+- Speed depends on distance from telephone company.
+
+---
+
+### Advantages
+
+- Existing infrastructure.
+- Widely available.
+
+### Disadvantages
+
+- Lower speeds compared to fiber.
+- Performance decreases with distance.
+
+---
+
+# Cable Internet Access
+
+Cable Internet uses television cable infrastructure.
+
+Example:
+
+```text
+Home
+  ↓
+Cable Network
+  ↓
+ISP
+  ↓
+Internet
+```
+
+---
+
+## Characteristics
+
+Uses:
+
+### Hybrid Fiber Coaxial (HFC)
+
+Combination of:
+
+- Fiber Optic Cable
+- Coaxial Cable
+
+---
+
+### Advantages
+
+- Higher speed than DSL.
+- Widely deployed.
+
+### Disadvantages
+
+- Shared bandwidth.
+- Performance may decrease during peak hours.
+
+---
+
+# Fiber-to-the-Home (FTTH)
+
+FTTH provides Internet directly through fiber-optic cables.
+
+Example:
+
+```text
+Home
+   ↓
+Fiber Cable
+   ↓
+ISP
+```
+
+---
+
+## Advantages
+
+- Extremely high speed.
+- Very low latency.
+- High reliability.
+
+---
+
+## Typical Speeds
+
+- 100 Mbps
+- 1 Gbps
+- 10 Gbps
+
+---
+
+## Why Fiber Is Important
+
+Fiber is becoming the preferred access technology because it provides:
+
+- High bandwidth
+- Future scalability
+- Better reliability
+
+---
+
+# 2. Enterprise Access Networks
+
+Used in:
+
+- Universities
+- Offices
+- Corporations
+
+Examples:
+
+### Ethernet
+
+### WiFi
+
+---
+
+# Ethernet
+
+Ethernet is the most widely used wired LAN technology.
+
+Example:
+
+```text
+Computer
+    ↓
+Ethernet Switch
+    ↓
+Router
+```
+
+---
+
+## Ethernet Characteristics
+
+- High speed
+- Reliable
+- Low latency
+- Cost effective
+
+Common speeds:
+
+- 100 Mbps
+- 1 Gbps
+- 10 Gbps
+
+---
+
+# WiFi Access Networks
+
+WiFi provides wireless connectivity.
+
+Based on:
+
+### IEEE 802.11 Standards
+
+Example:
+
+```text
+Laptop
+   ))))
+WiFi Access Point
+      ↓
+Router
+      ↓
+Internet
+```
+
+---
+
+## Advantages
+
+- Mobility
+- Easy installation
+- No cables required
+
+---
+
+## Disadvantages
+
+- Interference
+- Limited range
+- Lower reliability than wired networks
+
+---
+
+# 3. Mobile Access Networks
+
+Used by smartphones and tablets.
+
+Examples:
+
+- 3G
+- 4G LTE
+- 5G
+
+Example:
+
+```text
+Phone
+   ↓
+Cell Tower
+   ↓
+Mobile Network
+   ↓
+Internet
+```
+
+---
+
+## Benefits
+
+- Wide coverage
+- Mobility
+- Internet access anywhere
+
+---
+
+## Challenges
+
+- Signal quality variations
+- Congestion
+- Coverage limitations
+
+---
+
+# Network Performance Metrics
+
+Access networks are often evaluated using:
+
+---
+
+## Bandwidth
+
+Bandwidth refers to:
+
+> The maximum amount of data that can be transmitted per unit time.
+
+Example:
+
+```text
+100 Mbps Link
+```
+
+Can theoretically transfer:
+
+100 million bits per second.
+
+---
+
+## Throughput
+
+Throughput refers to:
+
+> The actual data transfer rate achieved.
+
+Example:
+
+Bandwidth:
+
+```text
+100 Mbps
+```
+
+Actual Transfer:
+
+```text
+80 Mbps
+```
+
+Throughput = 80 Mbps
+
+---
+
+## Latency (Delay)
+
+Latency is:
+
+> The time required for data to travel from source to destination.
+
+Lower latency means:
+
+- Faster response
+- Better gaming
+- Better video calls
+
+---
+
+# 1.2.2 Physical Media
+
+The next question is:
+
+> How does data physically travel?
+
+The answer is:
+
+Through Physical Media.
+
+---
+
+# What Is Physical Media?
+
+Physical Media refers to:
+
+> The actual medium through which electromagnetic signals travel.
+
+Examples:
+
+- Copper Wire
+- Fiber Optic Cable
+- Wireless Radio Waves
+
+---
+
+# Guided Media
+
+Signals follow a physical path.
+
+Examples:
+
+### Twisted Pair Copper Cable
+
+### Coaxial Cable
+
+### Fiber Optic Cable
+
+---
+
+# Twisted Pair Copper Cable
+
+Most common wired medium.
+
+Example:
+
+```text
+Computer
+   ↓
+Ethernet Cable
+   ↓
+Switch
+```
+
+---
+
+## Characteristics
+
+- Inexpensive
+- Easy installation
+- Widely available
+
+Used in:
+
+- Ethernet LANs
+- Telephone Systems
+
+---
+
+# Coaxial Cable
+
+Used in:
+
+- Cable Television
+- Cable Internet
+
+Structure:
+
+```text
+Central Copper Conductor
+      ↓
+Insulation
+      ↓
+Shielding
+```
+
+---
+
+## Advantages
+
+- Better shielding
+- Higher bandwidth than twisted pair
+
+---
+
+# Fiber Optic Cable
+
+Fiber carries data using:
+
+### Light Pulses
+
+instead of electrical signals.
+
+---
+
+## How Fiber Works
+
+```text
+Laser
+   ↓
+Light Pulse
+   ↓
+Fiber Cable
+   ↓
+Receiver
+```
+
+---
+
+## Advantages
+
+### Extremely High Bandwidth
+
+Can support:
+
+- Gigabits per second
+- Terabits per second
+
+### Low Signal Loss
+
+### Immune to Electromagnetic Interference
+
+### Long Distance Transmission
+
+---
+
+## Disadvantages
+
+- Higher installation cost
+- More complex deployment
+
+---
+
+# Unguided Media
+
+Signals travel freely through space.
+
+Examples:
+
+### Radio Waves
+
+### Microwave Signals
+
+### Satellite Communication
+
+---
+
+# Radio Channels
+
+Used by:
+
+- WiFi
+- Bluetooth
+- Cellular Networks
+
+Characteristics:
+
+- Easy deployment
+- Supports mobility
+
+Challenges:
+
+- Interference
+- Signal attenuation
+- Security concerns
+
+---
+
+# Satellite Communication
+
+Used when terrestrial infrastructure is unavailable.
+
+Example:
+
+```text
+User
+   ↓
+Satellite
+   ↓
+Ground Station
+   ↓
+Internet
+```
+
+---
+
+## Advantages
+
+- Global coverage
+- Remote-area connectivity
+
+---
+
+## Disadvantages
+
+- High latency
+- Higher cost
+
+---
+
+# Summary of Section 1.2
+
+```text
+Network Edge
+│
+├── Hosts
+├── Processes
+├── Client-Server Applications
+├── Peer-to-Peer Applications
+├── Access Networks
+│     ├── DSL
+│     ├── Cable
+│     ├── FTTH
+│     ├── Ethernet
+│     ├── WiFi
+│     └── Cellular
+│
+└── Physical Media
+      ├── Twisted Pair
+      ├── Coaxial Cable
+      ├── Fiber Optic
+      ├── Radio Waves
+      └── Satellite
+```
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|--------|------------|
+| Network Edge | Part of the Internet containing end systems |
+| Host | Device connected to a network |
+| End System | Source or destination device |
+| Client | Process that initiates communication |
+| Server | Process that provides services |
+| Client-Server Architecture | Communication model using dedicated servers |
+| Peer-to-Peer (P2P) | Architecture where peers communicate directly |
+| Process | Running application instance |
+| Access Network | Network connecting end systems to the first router |
+| DSL | Digital Subscriber Line |
+| Cable Internet | Internet access using cable TV infrastructure |
+| HFC | Hybrid Fiber Coaxial |
+| FTTH | Fiber-to-the-Home |
+| Ethernet | Wired LAN technology |
+| WiFi | Wireless LAN technology |
+| IEEE 802.11 | WiFi standard family |
+| Bandwidth | Maximum data transfer capacity |
+| Throughput | Actual achieved data transfer rate |
+| Latency | Time required for data transmission |
+| Physical Media | Medium carrying network signals |
+| Guided Media | Signals travel through physical cables |
+| Unguided Media | Signals travel through open space |
+| Twisted Pair Cable | Common copper networking cable |
+| Coaxial Cable | Shielded cable used in cable networks |
+| Fiber Optic Cable | Cable that carries data using light |
+| Radio Channel | Wireless communication medium |
+| Satellite Communication | Communication through orbiting satellites |
+
+---
+
+<ArticleNav
+  prev={{ title: "1.1 What Is the Internet?", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-1-what-is-the-internet" }}
+  next={null}
+/>
