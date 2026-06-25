@@ -99,6 +99,7 @@ const chapters = [
       { title: "Case Study: Open Claw System Design", href: "/docs/cs-book/part-7-ai-and-llms/open-claude-system-design" },
       { title: "OpenClaw: Production-Ready Architecture", href: "/docs/cs-book/part-7-ai-and-llms/openclaw-production-design" },
       { title: "Case Study: Bloomberg-Style Fintech Platform", href: "/docs/cs-book/part-7-ai-and-llms/blackirontimes-fintech-platform" },
+      { title: "How AI Model Distillation Works", href: "/docs/cs-book/part-7-ai-and-llms/ai-model-distillation" },
     ],
   },
   {
