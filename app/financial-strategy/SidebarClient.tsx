@@ -74,7 +74,12 @@ const modules = [
   {
     part: "Module 12 — Mergers and Acquisitions",
     chapters: [
-      { chapter: "Financial and Strategic Implications of Mergers and Acquisitions", items: [] as { title: string; href: string }[] },
+      {
+        chapter: "Financial and Strategic Implications of Mergers and Acquisitions",
+        items: [
+          { title: "C2(a) & C2(b) — M&A, Demergers & Divestments", href: "/financial-strategy/module-12-mergers-and-acquisitions" },
+        ] as { title: string; href: string }[],
+      },
     ],
   },
   {
