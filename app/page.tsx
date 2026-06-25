@@ -165,6 +165,7 @@ export default function HomePage() {
           <div className="mt-3 flex justify-center gap-6">
             <Link href="/docs/cs-book" className="hover:text-gray-700 transition-colors">CS Book</Link>
             <Link href="/blog" className="hover:text-gray-700 transition-colors">Blog</Link>
+            <Link href="/financial-strategy" className="hover:text-amber-700 transition-colors font-semibold" style={{ color: "#b45309" }}>Financial Strategy</Link>
           </div>
         </div>
       </footer>

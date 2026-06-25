@@ -13,6 +13,7 @@ export default function BlogLayout({ children }: { children: ReactNode }) {
           <nav className="flex items-center gap-6 text-sm font-medium text-gray-600">
             <Link href="/docs/cs-book" className="hover:text-gray-900 transition-colors">CS Book</Link>
             <Link href="/blog" className="hover:text-gray-900 transition-colors text-blue-600">Blog</Link>
+            <Link href="/financial-strategy" className="hover:text-amber-700 transition-colors font-semibold" style={{ color: "#b45309" }}>Financial Strategy</Link>
           </nav>
         </div>
       </header>
