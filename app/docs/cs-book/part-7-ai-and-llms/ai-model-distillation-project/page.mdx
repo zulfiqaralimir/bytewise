@@ -527,6 +527,231 @@ The process consisted of:
 
 <span style={{color: '#d97706', fontWeight: 'bold'}}>This workflow closely mirrors the techniques used by organizations developing compact AI models</span> for education, customer support, mobile applications, and <span style={{color: '#d97706', fontWeight: 'bold'}}>edge computing.</span> By mastering this pipeline, you gain practical experience in one of the most important approaches for <span style={{color: '#d97706', fontWeight: 'bold'}}>deploying efficient, scalable, and cost-effective AI systems.</span>
 
+---
+
+## Project Cost Estimation: Distilling a Mathematics AI Model on Google Colab
+
+One of the most common questions when building a knowledge distillation project is:
+
+> **How much will it cost to train a mathematics AI model using Google Colab?**
+
+The answer depends primarily on four factors:
+
+1. The size of the teacher model.
+2. The size of the student model.
+3. The number of mathematics problems used for training.
+4. The type of GPU available in Google Colab.
+
+For this project, we assume the following configuration:
+
+| Component | Selection |
+|------------|-----------|
+| Platform | Google Colab |
+| Teacher Model | Llama 3.1 8B |
+| Student Model | Llama 3.2 1B |
+| Fine-Tuning Method | QLoRA (Recommended) |
+
+---
+
+### Why Use QLoRA?
+
+Although full fine-tuning is possible, it requires significantly more GPU memory and increases training costs.
+
+QLoRA (Quantized Low-Rank Adaptation) reduces memory consumption by training only a small number of additional parameters while keeping the base model frozen. This approach offers:
+
+- Lower GPU memory requirements
+- Faster training
+- Reduced cloud computing costs
+- Performance comparable to full fine-tuning for many tasks
+
+For individual developers, students, and researchers, QLoRA is the recommended approach.
+
+---
+
+### Scenario 1 – Beginner Learning Project
+
+This configuration is ideal for readers who want to understand the complete distillation workflow without spending a large amount of money.
+
+| Item | Value |
+|------|------|
+| Mathematics Questions | 10,000 |
+| Teacher Model | Llama 3.1 8B |
+| Student Model | Llama 3.2 1B |
+| Fine-Tuning | QLoRA |
+| GPU | Google Colab L4 or A100 |
+| Estimated Training Time | 2–4 Hours |
+| Estimated Cost | **US$10–25** |
+
+This setup produces a functional mathematics assistant capable of demonstrating the complete teacher–student distillation pipeline.
+
+---
+
+### Scenario 2 – Intermediate Research Project
+
+For users seeking higher accuracy and broader mathematical coverage, a larger dataset is recommended.
+
+| Item | Value |
+|------|------|
+| Mathematics Questions | 100,000 |
+| Teacher Response Generation | 8–12 Hours |
+| Student Training | 6–10 Hours |
+| GPU | A100 |
+| Estimated Cost | **US$60–150** |
+
+The resulting student model generally demonstrates stronger reasoning and better generalization than the beginner configuration.
+
+---
+
+### Scenario 3 – Production-Scale Model
+
+Organizations developing commercial mathematics assistants typically use much larger datasets.
+
+| Item | Value |
+|------|------|
+| Mathematics Questions | 1,000,000 |
+| Teacher Inference Time | 2–5 Days |
+| Student Training | 2–4 Days |
+| Multiple Evaluation Cycles | Yes |
+| Estimated Cost | **US$500–2,000+** |
+
+Production systems usually include additional stages such as data filtering, hyperparameter optimization, benchmark evaluation, and multiple rounds of fine-tuning.
+
+---
+
+### Google Colab GPU Pricing
+
+Google Colab provides access to several GPU types. Pricing varies by region, subscription plan, and availability, but the following estimates are representative.
+
+| GPU | Approximate Cost per Hour |
+|------|--------------------------:|
+| NVIDIA T4 | US$0.18–0.30 |
+| NVIDIA L4 | US$0.45–0.80 |
+| NVIDIA A100 | US$1.20–2.00 |
+
+For this project, an **L4** or **A100** GPU is recommended because the teacher model requires substantial computational resources.
+
+---
+
+### GPU Memory Requirements
+
+#### Teacher Model – Llama 3.1 8B
+
+The amount of GPU memory depends on the numerical precision used.
+
+| Precision | Approximate VRAM |
+|-----------|-----------------:|
+| FP16 | 16–20 GB |
+| 8-bit Quantization | 10–12 GB |
+| 4-bit Quantization | 6–8 GB |
+
+Running the teacher model using **4-bit quantization** allows it to fit comfortably on an NVIDIA L4 GPU while maintaining strong performance.
+
+---
+
+#### Student Model – Llama 3.2 1B
+
+The student model is considerably smaller and easier to train.
+
+| Training Method | Approximate VRAM |
+|----------------|-----------------:|
+| FP16 | 2–3 GB |
+| LoRA | 8–12 GB |
+| QLoRA | 6–8 GB |
+
+Because QLoRA reduces memory usage, it is the preferred method for training on Google Colab.
+
+---
+
+### Dataset Generation Time
+
+Before training begins, the teacher model must generate step-by-step solutions for every mathematics question.
+
+The approximate generation times are shown below.
+
+| Number of Questions | Estimated Time |
+|---------------------|---------------:|
+| 10,000 | 1–2 Hours |
+| 50,000 | 5–8 Hours |
+| 100,000 | 10–15 Hours |
+| 1,000,000 | 4–6 Days |
+
+The actual time depends on the average length of the generated responses and the GPU being used.
+
+---
+
+### Total Cost Breakdown
+
+The following table summarizes the expected costs for each project scale.
+
+| Project Size | Questions | Estimated Cost |
+|--------------|----------:|---------------:|
+| Beginner | 10,000 | US$10–25 |
+| Intermediate | 100,000 | US$60–150 |
+| Production | 1,000,000 | US$500–2,000+ |
+
+As the dataset grows, the cost increases primarily due to the additional time required for teacher inference.
+
+---
+
+### Recommended Configuration for This Book
+
+For readers following this book, the following configuration provides an excellent balance between affordability, performance, and educational value.
+
+| Component | Recommendation |
+|------------|----------------|
+| Platform | Google Colab Pro |
+| Teacher Model | Llama 3.1 8B (4-bit Quantized) |
+| Student Model | Llama 3.2 1B |
+| Fine-Tuning Method | QLoRA |
+| Mathematics Dataset | 20,000 Questions |
+| Estimated Training Time | 4–6 Hours |
+| Estimated Total Cost | **US$20–40** |
+
+This configuration allows readers to complete the full knowledge distillation pipeline while keeping cloud computing costs manageable.
+
+---
+
+### Scaling the Project
+
+The project can be expanded gradually as experience and resources grow.
+
+#### Stage 1 – Beginner
+
+- 1,000 mathematics questions
+- Learn the complete workflow
+- Minimal cloud computing cost
+
+#### Stage 2 – Intermediate
+
+- 20,000 mathematics questions
+- Improved reasoning quality
+- Suitable for educational applications
+
+#### Stage 3 – Advanced
+
+- 100,000 mathematics questions
+- Strong mathematical reasoning
+- Appropriate for research projects
+
+#### Stage 4 – Production
+
+- 1,000,000+ mathematics questions
+- Commercial-grade performance
+- Multiple rounds of evaluation and optimization
+
+By increasing the dataset size over time, developers can progressively improve the capabilities of the student model while controlling infrastructure costs.
+
+---
+
+### Key Takeaways
+
+- **Google Colab Pro** provides an affordable environment for experimenting with AI model distillation.
+- **Llama 3.1 8B** serves as a capable teacher model for generating high-quality mathematical reasoning.
+- **Llama 3.2 1B** is an efficient student model that can learn much of the teacher's behavior through distillation.
+- **QLoRA** significantly reduces GPU memory usage and cloud computing costs while maintaining strong performance.
+- A dataset of **20,000 mathematics questions** offers an excellent balance between cost and educational value for readers following this project.
+- The complete project can typically be completed for **approximately US$20–40**, making it accessible to students, researchers, and independent developers.
+
 <ArticleNav
   prev={{
     title: "How AI Model Distillation Works",
