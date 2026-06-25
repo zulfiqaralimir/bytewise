@@ -182,15 +182,15 @@ Example dataset:
 
 The teacher should be significantly more capable than the student.
 
-Suitable open-source teacher models include:
+Suitable <span style={{color: '#d97706', fontWeight: 'bold'}}>open-source teacher models include:</span>
 
 | Model | Parameters |
 |---------|-----------|
 | Qwen2.5-7B-Instruct | 7 Billion |
-| Llama 3.1 8B | 8 Billion |
+| <span style={{color: '#d97706', fontWeight: 'bold'}}>Llama 3.1 8B</span> | 8 Billion |
 | Mistral 7B Instruct | 7 Billion |
-| DeepSeek-R1 Distill | 8B |
-| Gemma 2 9B | 9 Billion |
+| <span style={{color: '#d97706', fontWeight: 'bold'}}>DeepSeek-R1 Distill</span> | 8B |
+| <span style={{color: '#d97706', fontWeight: 'bold'}}>Gemma 2 9B</span> | 9 Billion |
 
 The teacher is responsible for producing high-quality mathematical reasoning.
 
@@ -198,7 +198,7 @@ The teacher is responsible for producing high-quality mathematical reasoning.
 
 ## Step 5 – Generate Teacher Responses
 
-The teacher receives mathematical questions and generates detailed step-by-step solutions.
+The teacher receives mathematical questions and <span style={{color: '#d97706', fontWeight: 'bold'}}>generates detailed step-by-step solutions.</span>
 
 ```python
 from transformers import AutoTokenizer
@@ -257,7 +257,7 @@ with open("data/teacher_answers.json","w") as f:
 
 ## Step 6 – Inspect the Generated Data
 
-Your generated dataset now looks like this.
+<span style={{color: '#d97706', fontWeight: 'bold'}}>Your generated dataset now looks like this.</span>
 
 ```json
 {
@@ -286,13 +286,13 @@ Notice that the teacher does more than produce the correct answer.
 
 It also demonstrates the reasoning process.
 
-This reasoning becomes valuable training data.
+<span style={{color: '#d97706', fontWeight: 'bold'}}>This reasoning becomes valuable training data.</span>
 
 ---
 
 ## Step 7 – Create the Distillation Dataset
 
-Next, combine the question and teacher response into a format suitable for language-model training.
+Next, combine the question and teacher response into <span style={{color: '#d97706', fontWeight: 'bold'}}>a format suitable for language-model training.</span>
 
 ```python
 from datasets import Dataset
