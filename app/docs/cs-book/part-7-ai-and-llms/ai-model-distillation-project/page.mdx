@@ -338,10 +338,10 @@ Good choices include:
 | Qwen2.5-0.5B | 500 Million |
 | Qwen2.5-1.5B | 1.5 Billion |
 | SmolLM2 | 1.7 Billion |
-| Phi-3 Mini | 3.8 Billion |
-| Llama 3.2 1B | 1 Billion |
+| <span style={{color: '#d97706', fontWeight: 'bold'}}>Phi-3 Mini</span> | 3.8 Billion |
+| <span style={{color: '#d97706', fontWeight: 'bold'}}>Llama 3.2 1B</span> | 1 Billion |
 
-Smaller models train faster and require significantly less GPU memory.
+<span style={{color: '#d97706', fontWeight: 'bold'}}>Smaller models train faster and require significantly less GPU memory.</span>
 
 ---
 
@@ -407,7 +407,7 @@ trainer = Trainer(
 trainer.train()
 ```
 
-During training, the student repeatedly compares its predictions with the teacher responses and gradually learns to imitate the teacher's reasoning.
+<span style={{color: '#d97706', fontWeight: 'bold'}}>During training, the student repeatedly compares its predictions with the teacher responses and gradually learns to imitate the teacher's reasoning.</span>
 
 ---
 
@@ -458,26 +458,26 @@ Step 3
 Final Answer = 648
 ```
 
-Although much smaller than the teacher, the student can often produce high-quality reasoning for similar mathematical problems.
+<span style={{color: '#d97706', fontWeight: 'bold'}}>Although much smaller than the teacher, the student can often produce high-quality reasoning for similar mathematical problems.</span>
 
 ---
 
 ## Step 11 – Evaluate the Student
 
-Evaluation should include both correctness and efficiency.
+Evaluation should <span style={{color: '#d97706', fontWeight: 'bold'}}>include both correctness and efficiency.</span>
 
 Common metrics include:
 
 | Metric | Description |
 |----------|------------|
 | Accuracy | Percentage of correct answers |
-| BLEU / ROUGE | Text similarity to teacher outputs |
+| BLEU / ROUGE | <span style={{color: '#d97706', fontWeight: 'bold'}}>Text similarity to teacher outputs</span> |
 | Exact Match | Final answer correctness |
 | Inference Speed | Time per response |
 | Memory Usage | GPU or RAM consumption |
 | Model Size | Storage footprint |
 
-Testing on unseen mathematical problems is essential to ensure the model has learned to generalize rather than memorize.
+<span style={{color: '#d97706', fontWeight: 'bold'}}>Testing on unseen mathematical problems</span> is essential to ensure the model has learned to <span style={{color: '#d97706', fontWeight: 'bold'}}>generalize rather than memorize.</span>
 
 ---
 
