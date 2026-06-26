@@ -1,0 +1,300 @@
+export const metadata = {
+  title: "14.3 — CFO Core Curriculum | Module 14 — IFRS and IAS | Financial Strategy — ByteWise",
+  description:
+    "Section 14.3: Standards every CFO must know — Tier 1 critical deep-dives (IAS 1, 7, 8, 12, 36, 37, 38; IFRS 10, 15, 16, 24), Tier 2 important, and Tier 3 awareness standards.",
+  openGraph: {
+    title: "14.3 — CFO Core Curriculum | Financial Strategy",
+    description:
+      "Prioritized IFRS/IAS standards for CFO competence — three tiers from critical to awareness.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 14.3 — CFO Core Curriculum: Standards Every CFO Must Know
+
+This section prioritizes standards by their relevance to CFO decision-making, board reporting, audit defense, and stakeholder communication. Three tiers: **Critical** (must know deeply), **Important** (must know well), and **Awareness** (must know exists and when it applies).
+
+---
+
+## Tier 1 — Critical: Non-Negotiable CFO Standards
+
+---
+
+### IAS 1 — Presentation of Financial Statements
+
+**Why critical:** This is the container for everything. Every financial statement you sign off as CFO is governed by IAS 1. Auditors will reference it constantly.
+
+**Key concepts:**
+- The five components of a complete set of financial statements
+- Going concern assessment — CFO's responsibility to evaluate
+- Materiality and aggregation — what to show separately vs combine
+- Current vs non-current classification of assets and liabilities
+- Offsetting — when you can and cannot net assets against liabilities
+- Other Comprehensive Income (OCI) — what goes in P&L vs OCI
+- Comparative information requirements
+
+**CFO decision points:**
+- Can we classify this liability as non-current even though the covenant was breached? (IAS 1.74)
+- Do we need to restate comparatives when we change an accounting policy?
+- Is this item material enough to disclose separately?
+
+---
+
+### IAS 7 — Statement of Cash Flows
+
+**Why critical:** The cash flow statement is the hardest financial statement to manipulate and the first one sophisticated lenders and investors analyze. A CFO who cannot defend every line of it is exposed.
+
+**Key concepts:**
+- Three activities: operating, investing, financing
+- Direct vs indirect method for operating cash flows
+- Classification of interest paid, interest received, dividends paid, dividends received — IFRS permits options here, choose carefully and be consistent
+- Non-cash transactions — disclosure in notes, not in the statement itself
+- Restricted cash — presentation and disclosure
+
+**CFO decision points:**
+- Where do we classify lease payments under IFRS 16? (Split: interest portion = financing or operating; principal = financing)
+- Our bank requires a minimum cash balance — how do we present restricted cash?
+- We paid for an acquisition partly in shares — how do we show that?
+
+---
+
+### IAS 8 — Accounting Policies, Changes in Accounting Estimates and Errors
+
+**Why critical:** Every CFO will face a situation where a policy needs to change or an error needs correcting. Getting IAS 8 wrong leads to restatements, audit qualifications, and regulatory scrutiny.
+
+**Key concepts:**
+- Hierarchy for selecting accounting policies when no standard applies: IFRS standards → Conceptual Framework → other standard-setter guidance
+- Voluntary vs mandatory change in accounting policy
+- Retrospective vs prospective application
+- Prior period errors — threshold for restatement
+- Change in estimate vs change in policy — critical distinction
+
+**The key distinction:**
+
+| | Change in Policy | Change in Estimate |
+|---|---|---|
+| Example | Switch from cost model to revaluation for PPE | Revise useful life of an asset |
+| Treatment | Retrospective — restate prior periods | Prospective — apply from change date onwards |
+| Disclosure | Extensive | Moderate |
+
+---
+
+### IFRS 15 — Revenue from Contracts with Customers
+
+**Why critical:** Revenue is the number a CFO is most accountable for. Misapplying IFRS 15 is one of the most common causes of restatement and securities litigation globally.
+
+**The five-step model:**
+
+```
+Step 1: Identify the contract with the customer
+        ↓
+Step 2: Identify the performance obligations in the contract
+        ↓
+Step 3: Determine the transaction price
+        ↓
+Step 4: Allocate the transaction price to performance obligations
+        ↓
+Step 5: Recognize revenue when (or as) each performance obligation is satisfied
+```
+
+**Key concepts:**
+- Performance obligation — a promise to transfer a distinct good or service
+- Point in time vs over time recognition
+- Variable consideration — when to include in transaction price (constraint test)
+- Contract modifications — treat as new contract or modification of existing?
+- Principal vs agent — are you recognizing gross or net revenue?
+- Contract assets vs contract liabilities (previously: unbilled revenue vs deferred revenue)
+
+**Application to tech contracts:**
+- A contract to deliver a data product + 12 months of advisory = two performance obligations
+- Transaction price must be allocated based on standalone selling prices
+- The data product is likely recognized at a point in time; the advisory is recognized over time
+
+---
+
+### IFRS 16 — Leases
+
+**Why critical:** Changed the balance sheet of almost every company in 2019. Nearly all leases are now on balance sheet as right-of-use (ROU) assets and lease liabilities. This directly affects your debt covenants, leverage ratios, and EBITDA.
+
+**Key concepts:**
+- The lease definition test — does a contract contain a lease?
+- Recognition exemptions: short-term leases (≤12 months) and low-value assets
+- Initial measurement of ROU asset and lease liability
+- Discount rate: implicit rate in lease, or incremental borrowing rate
+- Subsequent measurement: ROU asset depreciated; lease liability unwound using effective interest method
+- Lease modifications
+- Sale and leaseback transactions
+
+**Balance sheet impact:**
+
+```
+Before IFRS 16:          After IFRS 16:
+Operating lease → P&L    ROU Asset → Balance Sheet
+                         Lease Liability → Balance Sheet
+                         Depreciation + Interest → P&L
+                         (EBITDA improves; profit before tax unchanged)
+```
+
+**CFO watch point:** Many debt covenants reference leverage ratios calculated on old lease treatment. IFRS 16 transition can trigger technical covenant breaches — negotiate covenant definitions before adopting.
+
+---
+
+### IAS 12 — Income Taxes
+
+**Why critical:** Deferred tax is one of the most technically complex areas in financial reporting. Auditors challenge it heavily. The CFO who cannot explain the deferred tax position will lose credibility with the audit committee.
+
+**Key concepts:**
+- Current tax vs deferred tax
+- Temporary differences: taxable vs deductible
+- Deferred tax liability (DTL): carrying amount > tax base for assets, or carrying amount < tax base for liabilities
+- Deferred tax asset (DTA): carrying amount < tax base for assets, or carrying amount > tax base for liabilities
+- Recognition of DTA — only when probable that sufficient future taxable profit will exist
+- Tax rate to use: enacted or substantively enacted rate at balance sheet date
+- Uncertain tax positions
+
+**The temporary difference concept:**
+
+```
+Example:
+Asset carrying amount (IFRS):  PKR 1,000
+Asset tax base (FBR):           PKR   600
+Taxable temporary difference:   PKR   400
+Tax rate:                             29%
+Deferred tax liability:         PKR   116
+```
+
+**Pakistan-specific note:** Pakistan's super tax and minimum tax regime create complex interactions with deferred tax. The effective tax rate in your financials will often differ significantly from the statutory 29% — you must be able to explain the reconciliation.
+
+---
+
+### IAS 36 — Impairment of Assets
+
+**Why critical:** Asset impairments are CFO-level decisions. They directly affect reported profit, balance sheet strength, and investor perception. Getting the timing wrong attracts regulatory scrutiny.
+
+**Key concepts:**
+- Impairment indicators — external and internal triggers for testing
+- Cash Generating Unit (CGU): the smallest group of assets generating independent cash inflows
+- Recoverable amount = higher of Fair Value Less Costs of Disposal (FVLCD) and Value in Use (VIU)
+- Value in Use: present value of future cash flows from the asset/CGU
+- Goodwill impairment testing: annual test regardless of indicators
+- Impairment loss recognition and reversal (reversal not permitted for goodwill)
+
+**CFO judgment call:** Value in Use calculations require management's cash flow projections and a discount rate. These are auditable and judgment-intensive. The assumptions you use (growth rates, margins, WACC) will be challenged by auditors and, if listed, by analysts.
+
+---
+
+### IAS 37 — Provisions, Contingent Liabilities and Contingent Assets
+
+**Why critical:** Provisions are judgment calls that directly affect profit. Underprovisioning or over-provisioning both carry risks — legal, regulatory, and reputational.
+
+**The recognition decision tree:**
+
+```
+Present obligation as a result of past event?
+├── No → No provision. Disclose if possible obligation exists (contingent liability)
+└── Yes ↓
+    Probable outflow of resources?
+    ├── No → Disclose as contingent liability
+    └── Yes ↓
+        Reliable estimate possible?
+        ├── No → Disclose as contingent liability (rare)
+        └── Yes → RECOGNIZE A PROVISION
+```
+
+**Key concepts:**
+- Best estimate of the expenditure required to settle the obligation
+- Discounting where the time value of money is material
+- Restructuring provisions — specific recognition criteria
+- Onerous contracts — recognize a provision when unavoidable costs exceed benefits
+
+---
+
+### IAS 38 — Intangible Assets
+
+**Why critical:** Directly relevant to any technology or AI firm. The treatment of software development costs, AI model training costs, and data assets under IAS 38 is one of the most contested areas in modern IFRS application.
+
+**Key concepts:**
+- Recognition criteria: identifiable, controlled by entity, future economic benefits probable
+- Internally generated intangibles: research phase (always expense) vs development phase (capitalize if 6 criteria met)
+- The 6 development phase capitalization criteria (mnemonic: PIRATE):
+  - **P**robability of completing the asset
+  - **I**ntention to complete and use/sell
+  - **R**esources adequate to complete
+  - **A**bility to use or sell the asset
+  - **T**echnical feasibility of completing
+  - **E**conomic benefits — how the asset will generate them
+- Amortization: finite useful life assets amortized; indefinite useful life tested annually for impairment
+- Internally generated goodwill, brands, mastheads, customer lists — never recognized
+
+**AI/Tech application:**
+- AI model development costs: research phase (training experiments, proof of concept) → expense. Development phase (building production model with defined commercial purpose) → potential capitalization if all 6 criteria met
+- Platform development: website design/content → expense; website functionality/application infrastructure → may qualify for capitalization
+
+---
+
+### IFRS 10 — Consolidated Financial Statements
+
+**Why critical:** If you have subsidiaries, you must consolidate. The control definition under IFRS 10 is broader than legal ownership — it is about economic substance.
+
+**Key concepts:**
+- Control = Power + Exposure to variable returns + Ability to use power to affect returns (all three required)
+- The investment entity exception: qualifying investment entities measure subsidiaries at fair value rather than consolidating
+- Consolidation procedures: eliminate intercompany balances, transactions, and unrealized profits
+- Non-controlling interests (NCI): presented within equity, separately from parent equity
+- Changes in ownership interest without loss of control: equity transaction, no gain/loss in P&L
+
+**Group application:** Each subsidiary must be assessed for control. Where the parent controls, consolidate. Intercompany management fees, loans, and transactions must be eliminated on consolidation.
+
+---
+
+### IAS 24 — Related Party Disclosures
+
+**Why critical:** This is a governance standard as much as an accounting standard. Failure to disclose related party transactions properly is a red flag to auditors, regulators, and investors. It has destroyed CFO careers.
+
+**Key concepts:**
+- Definition of related party: broad — includes key management personnel, their close family members, entities under common control or significant influence
+- Disclosures required: nature of relationship, amount of transaction, outstanding balances, terms and conditions
+- Compensation of key management personnel: must be disclosed in total and by category
+- No exemption for immaterial transactions with related parties — disclosure threshold is different from recognition threshold
+
+**CFO discipline:** Maintain a related party register. Every transaction between group entities, and any transaction involving directors, their families, or entities they control, must be captured and reviewed before financial statements are finalized.
+
+---
+
+## Tier 2 — Important: CFO Must Know Well
+
+| Standard | Key CFO Application |
+|---|---|
+| **IAS 16 — PPE** | Depreciation policy choice (straight-line vs reducing balance), componentization of complex assets, revaluation model decision and its implications for OCI and deferred tax |
+| **IAS 19 — Employee Benefits** | Short-term benefits (accruals for leave, bonuses), post-employment benefits (defined contribution vs defined benefit), actuarial assumptions for defined benefit schemes |
+| **IAS 21 — Foreign Exchange** | Functional currency determination, translation of foreign currency transactions, translation of foreign operations, cumulative translation reserve in OCI |
+| **IAS 23 — Borrowing Costs** | When to capitalize interest as part of asset cost (qualifying assets), which borrowings to include, commencement/suspension/cessation of capitalization |
+| **IFRS 3 — Business Combinations** | Acquisition method, fair value of consideration, identification and fair value of assets acquired and liabilities assumed, goodwill calculation, bargain purchase |
+| **IAS 27 — Separate Financial Statements** | Investment in subsidiaries in parent's own accounts: cost model vs equity method vs IFRS 9 fair value |
+| **IAS 28 — Associates and JVs** | Equity method mechanics, impairment of equity-accounted investments, how to account for JVs under IFRS 11 |
+| **IFRS 5 — Held for Sale** | Classification criteria, measurement at lower of carrying amount and FVLCD, discontinued operations presentation |
+| **IAS 10 — Post Balance Sheet Events** | Adjusting vs non-adjusting events, going concern events after reporting date, dividends declared after year end |
+| **IAS 34 — Interim Reporting** | Minimum content of interim reports, recognition and measurement in interim periods, use of estimates |
+| **IAS 33 — EPS** | Basic EPS calculation, diluted EPS (options, convertibles), presentation requirements for listed entities |
+
+---
+
+## Tier 3 — Awareness: Know When It Applies
+
+| Standard | When to engage it |
+|---|---|
+| **IAS 2 — Inventories** | If any group entity holds physical stock or work in progress |
+| **IAS 20 — Government Grants** | If accessing government financing schemes or other government assistance |
+| **IFRS 8 — Segments** | If the group lists or files a prospectus — segment reporting becomes mandatory |
+| **IAS 29 — Hyperinflation** | Pakistan has flirted with hyperinflation thresholds; monitor CPI; if cumulative 3-year inflation exceeds 100%, IAS 29 applies |
+| **IFRS 2 — Share-based Payment** | If issuing equity or options to employees, advisors, or co-founders |
+| **IAS 40 — Investment Property** | If holding real estate for rental income or capital appreciation rather than own use |
+| **IFRS 11 — Joint Arrangements** | If entering a contractual arrangement that shares control of an activity |
+| **IFRS 12 — Disclosure** | Accompanies IFRS 10/11/IAS 28 — discloses the nature and risks of interests in other entities |
+
+<ArticleNav
+  prev={{ title: "14.2 — Complete Master List of Standards", href: "/financial-strategy/module-14-ifrs-and-ias/14-2-master-list" }}
+  next={{ title: "14.4 — Quant / Hedge Fund Track", href: "/financial-strategy/module-14-ifrs-and-ias/14-4-quant-fund-track" }}
+/>

@@ -1,0 +1,330 @@
+export const metadata = {
+  title: "14.4 — Quant / Hedge Fund / Investment Advisor Track | Module 14 — IFRS and IAS | Financial Strategy — ByteWise",
+  description:
+    "Section 14.4: The FERROQUANT Capital reading list — IFRS 9, IFRS 13, IFRS 7, IAS 32, investment entity exception, and supporting standards for investment entities.",
+  openGraph: {
+    title: "14.4 — Quant / Hedge Fund / Investment Advisor Track | Financial Strategy",
+    description:
+      "Financial instruments trilogy, investment entity exception, and the full quant CFO priority table.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# 14.4 — Quant / Hedge Fund / Investment Advisor Track
+
+In investment management, financial instruments are the business — not a supporting asset class. IFRS 9, IFRS 13, and IFRS 7 form the core trilogy. Everything else is context.
+
+---
+
+## The Financial Instruments Trilogy
+
+---
+
+### IFRS 9 — Financial Instruments
+
+**The master standard for any investment entity.** IFRS 9 governs how you classify, measure, recognize impairment on, and hedge against every financial instrument you hold or issue.
+
+#### Part A: Classification and Measurement
+
+Financial assets are classified into one of three measurement categories based on two tests:
+
+```
+Test 1: Business Model Test
+What is the entity's business model for managing this financial asset?
+├── Hold to collect contractual cash flows → proceed to Test 2
+├── Hold to collect AND sell → proceed to Test 2
+└── Other (trading, fair value management) → FVTPL (automatic)
+
+Test 2: SPPI Test (Solely Payments of Principal and Interest)
+Do the contractual cash flows represent solely payments of principal
+and interest on the principal amount outstanding?
+├── Yes → Amortized Cost (if hold to collect) or FVOCI (if hold to collect and sell)
+└── No → FVTPL (mandatory)
+```
+
+**The three measurement categories:**
+
+| Category | Abbreviation | Subsequent Measurement | Gains/Losses |
+|---|---|---|---|
+| Amortized Cost | AC | Effective interest method | P&L on derecognition only |
+| Fair Value through OCI | FVOCI | Fair value | OCI (recycled to P&L on disposal for debt; NOT recycled for equity) |
+| Fair Value through Profit or Loss | FVTPL | Fair value | P&L immediately |
+
+**Investment entity application:**
+- Listed equities held for trading → FVTPL
+- Listed equities designated as long-term strategic stakes → FVOCI election (irrevocable)
+- Corporate bonds held to maturity → Amortized Cost (if SPPI passes)
+- Derivatives → Always FVTPL (unless designated as hedging instruments)
+- Fund units/LP interests → FVTPL (fail SPPI test)
+
+#### Part B: Impairment — The Expected Credit Loss (ECL) Model
+
+The ECL model requires recognizing a loss allowance based on expected future credit losses, not just losses that have already occurred.
+
+**Three-stage model:**
+
+```
+Stage 1: No significant increase in credit risk since initial recognition
+         → 12-month ECL
+Stage 2: Significant increase in credit risk (but not credit-impaired)
+         → Lifetime ECL
+Stage 3: Credit-impaired (objective evidence of impairment)
+         → Lifetime ECL (interest accrued on net carrying amount)
+```
+
+**ECL calculation:**
+
+```
+ECL = PD × LGD × EAD × Discount Factor
+
+Where:
+PD  = Probability of Default
+LGD = Loss Given Default (1 - Recovery Rate)
+EAD = Exposure at Default
+```
+
+**Quant advantage:** The ECL model is a statistical credit risk model embedded in accounting standards. Your econometrics background allows you to build more sophisticated PD curves, LGD estimates, and macroeconomic overlay models than a traditional accountant. This is a genuine competitive differentiator when presenting to auditors and investors.
+
+#### Part C: Hedge Accounting
+
+IFRS 9 hedge accounting aligns accounting with risk management. Three types:
+
+| Hedge Type | Hedged Item | Hedging Instrument | Accounting |
+|---|---|---|---|
+| Fair Value Hedge | Fixed rate asset/liability | Pay-fixed swap | Both hedged item and instrument at fair value through P&L |
+| Cash Flow Hedge | Variable cash flows | Interest rate cap/swap | Effective portion in OCI; reclassified to P&L when hedged item affects P&L |
+| Net Investment Hedge | Foreign operation | FX forward/borrowing | Effective portion in OCI until disposal of operation |
+
+**Hedge effectiveness:** Must demonstrate economic relationship between hedged item and hedging instrument, no domination by credit risk, and hedge ratio aligned with actual risk management practice.
+
+---
+
+### IFRS 13 — Fair Value Measurement
+
+**Why it defines investment management accounting.** Every mark-to-market valuation in your portfolio is governed by IFRS 13.
+
+**The definition of fair value:**
+
+> The price that would be received to sell an asset or paid to transfer a liability in an orderly transaction between market participants at the measurement date.
+
+Key words: **exit price**, **market participants** (not entity-specific), **orderly transaction** (not distressed sale), **measurement date** (not historical cost).
+
+**The Fair Value Hierarchy:**
+
+```
+Level 1 — Quoted prices in active markets for identical assets or liabilities
+          (unadjusted)
+          Examples: Listed equities on PSX, US Treasuries, exchange-traded futures
+          ↓ Most reliable, least judgment
+
+Level 2 — Observable inputs other than Level 1 quoted prices
+          (directly or indirectly observable)
+          Examples: OTC corporate bonds (matrix pricing), interest rate swaps
+          (yield curve observable), real estate (comparable sales)
+
+Level 3 — Unobservable inputs
+          (based on entity's own assumptions about market participant assumptions)
+          Examples: Private equity stakes, illiquid credit instruments,
+          complex structured products, proprietary valuation models
+          ↓ Least reliable, most judgment, most auditor scrutiny
+```
+
+**CFO watch point on Level 3:** Auditors and investors apply maximum scrutiny to Level 3 assets because they rely on management's models and assumptions. If holding Level 3 assets, you need:
+- A documented, consistent valuation policy
+- Sensitivity analysis: what happens to fair value if key inputs change by ±X%
+- An independent valuation review process
+- IFRS 7 disclosures that tell the story of Level 3 movements
+
+**Valuation techniques:**
+
+| Approach | Methods | When to use |
+|---|---|---|
+| Market approach | Comparable company multiples, precedent transactions | When market data exists for similar instruments |
+| Income approach | DCF, option pricing models (Black-Scholes, Monte Carlo) | For cash-flow-generating assets, derivatives |
+| Cost approach | Replacement cost, net asset value | For assets where market/income approaches impractical |
+
+**Highest and best use:** For non-financial assets, fair value assumes the highest and best use from a market participant's perspective — not necessarily the entity's current use.
+
+---
+
+### IFRS 7 — Financial Instruments: Disclosures
+
+**Why it matters:** IFRS 7 turns your risk management framework into required financial statement disclosures. For an investment entity, this is effectively a quantitative risk report embedded in the notes.
+
+**Required disclosures — qualitative:**
+- Classes of financial instruments and their carrying amounts
+- Nature and extent of risks arising from financial instruments
+- Risk management objectives and policies for each risk type
+
+**Required disclosures — quantitative:**
+
+*Credit risk:*
+- Maximum exposure to credit risk
+- Collateral and credit enhancements
+- Credit quality analysis
+- ECL staging and movement table
+
+*Liquidity risk:*
+- Maturity analysis of financial liabilities (contractual undiscounted cash flows)
+- How liquidity risk is managed
+
+*Market risk:*
+- Sensitivity analysis for each type of market risk (interest rate, FX, other price risk)
+- VaR disclosures if used internally for risk management
+- Methods and assumptions used in sensitivity analysis
+
+**Example disclosure structure:**
+
+```
+Note X: Financial Risk Management
+
+X.1  Risk management framework
+X.2  Credit risk
+     X.2.1  Exposure and concentration
+     X.2.2  Credit quality and ECL staging
+     X.2.3  Collateral
+X.3  Liquidity risk
+     X.3.1  Maturity analysis
+     X.3.2  Liquidity reserves
+X.4  Market risk
+     X.4.1  Interest rate risk (basis point sensitivity)
+     X.4.2  Equity price risk (portfolio beta, VaR)
+     X.4.3  Foreign exchange risk (currency exposure table)
+X.5  Capital management
+```
+
+---
+
+## Investment Entity Exception — IFRS 10
+
+**Critical for fund structure:** If your fund qualifies as an investment entity under IFRS 10, it is exempt from consolidating its portfolio company investments and instead measures them at fair value through profit or loss.
+
+**Investment entity criteria (all three must be met):**
+1. Obtains funds from investors for the purpose of providing investment management services
+2. Business purpose is investing funds solely for returns from capital appreciation, investment income, or both
+3. Measures and evaluates performance of substantially all of its investments on a fair value basis
+
+**If the investment entity exception applies:**
+- Portfolio company investments → FVTPL (not consolidated)
+- Only consolidate service subsidiaries (e.g. the management company itself)
+- Simplified financial statements focused on NAV and fair value movements
+
+**Pakistan context:** SECP has adopted IFRS 10 for listed entities. For private funds, discuss with your auditor whether investment entity status applies and what exemptions are available under the applicable regulatory framework.
+
+---
+
+## Supporting Standards for Investment Entities
+
+---
+
+### IAS 32 — Financial Instruments: Presentation
+
+**The debt vs equity question:** IAS 32 determines whether an instrument issued by an entity is classified as a financial liability or equity. This is economically critical — it affects leverage ratios, interest expense, and EPS.
+
+**The core principle:** An instrument is equity only if it does not contain a contractual obligation to deliver cash or another financial asset. If there is any obligation — even conditional — it may be a liability.
+
+**Common classification issues:**
+
+| Instrument | Classification | Key question |
+|---|---|---|
+| Ordinary shares | Equity | No contractual obligation to redeem |
+| Redeemable preference shares | Liability | Contractual obligation to redeem = liability |
+| Convertible bonds | Split: Liability + Equity | Separate the liability (PV of cash flows) from the conversion option (equity) |
+| Perpetual bonds with no maturity | Liability | If interest payments are contractually required |
+| Fund units with redemption rights | Liability | Redemption right = obligation to deliver cash |
+
+**For investment funds:** If the fund issues units with investor redemption rights, those units are financial liabilities under IAS 32, not equity. This is one of the most significant structural differences between investment fund accounting and corporate accounting.
+
+---
+
+### IAS 21 — Effects of Changes in Foreign Exchange Rates
+
+**Key concepts:**
+
+*Functional currency:* The currency of the primary economic environment in which the entity operates. Not a choice — it is determined by economic facts.
+
+*Monetary vs non-monetary items:*
+- Monetary items (cash, receivables, payables, loans) → retranslate at closing rate, difference in P&L
+- Non-monetary items at cost (PPE, inventories) → translate at historical rate, no retranslation
+- Non-monetary items at fair value (equity investments at FVOCI) → translate at closing rate, difference in OCI or P&L depending on classification
+
+*Foreign operations:* Assets and liabilities at closing rate; income and expenses at transaction date rate (or average as approximation); cumulative translation differences in OCI until disposal.
+
+---
+
+### IAS 28 — Investments in Associates and Joint Ventures
+
+**Relevant when:** Taking a strategic minority stake (20–50% typically) in a company without acquiring control.
+
+**Equity method mechanics:**
+
+```
+Initial recognition: Cost of investment
+Each period:
++ Share of associate's profit or loss (in P&L)
++ Share of associate's OCI movements (in OCI)
+- Dividends received (reduce carrying amount)
+- Impairment losses (IAS 36 applies)
+= Carrying amount of investment
+```
+
+**Upstream vs downstream transactions:** Eliminate unrealized profits on transactions between the investor and associate to the extent of the investor's interest.
+
+---
+
+### IFRS 15 — Management Fee and Performance Fee Recognition
+
+**Management fees:** Typically recognized over time as the investment management service is provided (ratably over the fee period).
+
+**Performance fees:** Variable consideration with a significant reversal risk. Apply the constraint — only include performance fees in the transaction price to the extent it is highly probable that a significant reversal will not occur when the uncertainty is resolved.
+
+- Crystallized performance fees (after high-water mark confirmed) → recognize
+- Accrued but not yet crystallized performance fees → apply constraint carefully; often recognized only at crystallization date
+
+---
+
+### IAS 12 — Deferred Tax on Investment Portfolios
+
+**Specific investment entity issue:** Unrealized gains on FVTPL investments are recognized in P&L for accounting purposes but not taxable until realized. This creates a taxable temporary difference and a deferred tax liability.
+
+**Pakistan corporate tax context:**
+- Capital gains on listed securities: tax rate varies by holding period
+- Dividend income: subject to withholding tax (rates vary by recipient type)
+- The interaction between accounting fair value gains and tax timing creates complex deferred tax positions
+
+---
+
+## Quant / Fund Priority Summary Table
+
+| Priority | Standard | Core Application for Investment Entity |
+|---|---|---|
+| 🔴 Critical | IFRS 9 | Classification, ECL, hedge accounting for all financial instruments |
+| 🔴 Critical | IFRS 13 | Fair value hierarchy, valuation techniques, Level 3 governance |
+| 🔴 Critical | IFRS 7 | Risk disclosures: credit, liquidity, market risk sensitivity |
+| 🔴 Critical | IAS 32 | Debt vs equity classification, fund unit liability status |
+| 🔴 Critical | IFRS 10 | Investment entity exception, consolidation decisions |
+| 🔴 Critical | IAS 7 | Cash flow statement, liquidity reporting |
+| 🔴 Critical | IAS 1 | NAV presentation, statement structure |
+| 🟡 Important | IFRS 15 | Management fee, performance fee recognition |
+| 🟡 Important | IAS 12 | Deferred tax on unrealized portfolio gains |
+| 🟡 Important | IAS 28 | Equity method for strategic minority stakes |
+| 🟡 Important | IFRS 3 | Acquisition accounting if controlling stakes acquired |
+| 🟡 Important | IAS 21 | Multi-currency portfolio translation |
+| 🟡 Important | IAS 36 | Impairment of equity-accounted investees |
+| 🟡 Important | IAS 37 | Derivative-related contingencies, fund guarantees |
+| 🟡 Important | IFRS 12 | Disclosure of interests in unconsolidated structures |
+| 🟡 Important | IAS 39 | Macro hedge accounting (retained from IAS 39) |
+| 🟡 Important | IAS 26 | If managing pension or endowment assets |
+| 🟡 Important | IFRS 2 | Carried interest and share-based comp for fund managers |
+| 🟢 Awareness | IFRS 5 | Disposal of portfolio company (held-for-sale classification) |
+| 🟢 Awareness | IAS 8 | Change in valuation methodology = change in accounting estimate |
+| 🟢 Awareness | IAS 24 | GP/LP related party relationships, co-investment disclosures |
+| 🟢 Awareness | IFRS 16 | Fund management office leases |
+| 🟢 Awareness | IFRS 17 | If investing in insurance-linked securities |
+
+<ArticleNav
+  prev={{ title: "14.3 — CFO Core Curriculum", href: "/financial-strategy/module-14-ifrs-and-ias/14-3-cfo-core-curriculum" }}
+  next={{ title: "14.5 — The Three Standards That Define a Quant CFO", href: "/financial-strategy/module-14-ifrs-and-ias/14-5-three-standards" }}
+/>

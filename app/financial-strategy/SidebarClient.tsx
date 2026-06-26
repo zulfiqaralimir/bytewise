@@ -89,6 +89,23 @@ const modules = [
       { chapter: "Implementation and Control Procedures", items: [] as { title: string; href: string }[] },
     ],
   },
+  {
+    part: "Module 14 — IFRS and IAS",
+    chapters: [
+      {
+        chapter: "Financial Reporting Mastery: IFRS, IAS and the Language of Capital",
+        items: [
+          { title: "14.1 — The IFRS Architecture", href: "/financial-strategy/module-14-ifrs-and-ias/14-1-ifrs-architecture" },
+          { title: "14.2 — Complete Master List of Standards", href: "/financial-strategy/module-14-ifrs-and-ias/14-2-master-list" },
+          { title: "14.3 — CFO Core Curriculum", href: "/financial-strategy/module-14-ifrs-and-ias/14-3-cfo-core-curriculum" },
+          { title: "14.4 — Quant / Hedge Fund Track", href: "/financial-strategy/module-14-ifrs-and-ias/14-4-quant-fund-track" },
+          { title: "14.5 — The Three Standards That Define a Quant CFO", href: "/financial-strategy/module-14-ifrs-and-ias/14-5-three-standards" },
+          { title: "14.6 — Recommended Study Resources", href: "/financial-strategy/module-14-ifrs-and-ias/14-6-study-resources" },
+          { title: "14.7 — Module Self-Assessment", href: "/financial-strategy/module-14-ifrs-and-ias/14-7-self-assessment" },
+        ] as { title: string; href: string }[],
+      },
+    ],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
