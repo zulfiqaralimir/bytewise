@@ -200,8 +200,8 @@ const trackB: PartEntry[] = [
   {
     part: "Part XXII — Algorithmic Trading",
     modules: [
-      { number: "Module 71", title: "Market Microstructure & Trading Systems",    description: "Order book mechanics, market impact, execution algorithms, TCA, HFT, and alternative trading venues — including PSX specifics.", href: "/financial-strategy/module-71-market-microstructure" },
-      { number: "Module 72", title: "Algorithmic & Quantitative Trading Strategies", description: "Systematic trading strategies — momentum, mean reversion, pairs trading, factor investing, and a backtesting framework that does not fool itself.", href: "/financial-strategy/module-72-algorithmic-trading-strategies" },
+      { number: "Module 71", title: "Market Microstructure & Trading Systems",    description: "Order book mechanics, market impact, execution algorithms, TCA, HFT, and alternative trading venues — including PSX specifics.", href: "/financial-strategy/module-71-market-microstructure-trading-systems" },
+      { number: "Module 72", title: "Algorithmic & Quantitative Trading Strategies", description: "Systematic trading strategies — momentum, mean reversion, pairs trading, factor investing, and a backtesting framework that does not fool itself.", href: "/financial-strategy/module-72-algorithmic-quantitative-trading-strategies" },
     ],
   },
   {

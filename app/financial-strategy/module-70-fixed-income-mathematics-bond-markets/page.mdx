@@ -1,0 +1,472 @@
+export const metadata = {
+  title: "Module 70 — Fixed Income Mathematics & Bond Markets | Financial Strategy — ByteWise",
+  description: "Yield curve construction, duration, convexity, spread analysis, term structure models, MBS, and Pakistan/Gulf fixed income markets — the complete fixed income toolkit for quantitative finance.",
+  openGraph: { title: "Module 70 — Fixed Income Mathematics & Bond Markets | Financial Strategy", description: "Yield curve, duration, convexity, credit spreads, term structure models, MBS — fixed income for quants.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 70 — Fixed Income Mathematics & Bond Markets
+
+Yield curve construction and bootstrapping, duration and convexity in depth, credit spread analysis, term structure models (Vasicek, CIR, Hull-White), mortgage-backed securities, and the fixed income markets of Pakistan and the Gulf — the quantitative foundation for rates trading, credit analysis, and portfolio management.
+
+## Learning Objectives
+
+- Price bonds and derive yield to maturity for any cash flow structure
+- Bootstrap a spot rate curve from observable market prices
+- Calculate and apply modified duration, DV01, and convexity for portfolio risk management
+- Decompose credit spreads using Z-spread and OAS
+- Understand the mechanics of mortgage-backed securities and prepayment risk
+- Navigate Pakistan PIBs, GoP Ijarah Sukuk, and Gulf fixed income markets
+
+---
+
+## 1. Bond Pricing Fundamentals
+
+### The Bond Pricing Equation
+
+A bond is simply a series of promised cash flows. Its price is the present value of all future cash flows discounted at the yield to maturity (YTM):
+
+```
+P = C/(1+y) + C/(1+y)² + ... + C/(1+y)ⁿ + F/(1+y)ⁿ
+```
+
+Where:
+- P = bond price
+- C = coupon payment (= face value × coupon rate / payment frequency)
+- y = yield to maturity per period
+- n = number of periods
+- F = face value (par value)
+
+**Key relationships:**
+- Price and yield move in **opposite directions** (when yields rise, prices fall)
+- A bond trading at par has coupon rate = YTM
+- A bond trading at a discount has coupon rate < YTM
+- A bond trading at a premium has coupon rate > YTM
+
+### Day Count Conventions
+
+Bond prices depend on how interest accrues between coupon dates. Different markets use different conventions:
+
+| Convention | Used In | Calculation |
+|---|---|---|
+| Actual/365 | UK gilts, Pakistan PIBs | Actual days / 365 |
+| Actual/360 | US money markets, most Libor | Actual days / 360 |
+| 30/360 | US corporate/agency bonds | Each month = 30 days |
+| Actual/Actual (ICMA) | Eurobonds, most government bonds | Actual / actual days in coupon period |
+
+**Clean vs dirty price:**
+- **Dirty price** (full price): what you actually pay — includes accrued interest
+- **Clean price** (flat price): quoted price — excludes accrued interest
+- Dirty price = Clean price + Accrued Interest
+
+Accrued Interest = Face Value × Coupon Rate × (Days Since Last Coupon / Days in Coupon Period)
+
+### Pakistan PIBs and Government Securities
+
+Pakistan Investment Bonds (PIBs) are the benchmark government securities:
+- Tenors: 3, 5, 7, 10, 15, 20, and 30 years
+- Coupon: semi-annual, fixed rate
+- Issued via SBP auction (primary market)
+- Secondary market: over-the-counter through SBP-approved primary dealers
+- Day count: Actual/365
+
+**GoP Ijarah Sukuk:**
+- Islamic alternative to PIBs — Shariah-compliant
+- Structure: government sells state assets to SPV, SPV leases back to government
+- Return: semi-annual rental payments (equivalent to PIB coupon)
+- Eligible for SLR (Statutory Liquidity Requirement) compliance by banks
+
+**Gulf fixed income:**
+- UAE: T-bills and FGS (Federal Government Securities) — AED-denominated
+- Saudi Arabia: SAMA bills, government sukuk — SAR-denominated
+- Qatar: T-bills, government bonds — QAR-denominated
+- All GCC sovereigns also issue in USD internationally
+
+---
+
+## 2. Yield Curve Construction
+
+### Types of Yield Curves
+
+| Curve Type | Definition | Use |
+|---|---|---|
+| Par yield curve | YTM on par bonds at each maturity | Most quoted in market |
+| Spot (zero) curve | YTM on zero-coupon bonds — no reinvestment risk | Theoretically correct for discounting |
+| Forward curve | Implied rates between two future dates | Pricing forward contracts, FRAs |
+| Discount factor curve | Present value of PKR 1 at each maturity | Derivatives pricing, swap valuation |
+
+### Bootstrapping the Spot Curve
+
+Bootstrapping derives spot rates from observable par bond prices. Starting from the shortest maturity and working forward:
+
+**Example with 3 instruments:**
+
+1. **6-month T-bill:** Price = 96.12, YTM = 8.00% → 6-month spot rate = 8.00%
+
+2. **1-year bond:** Coupon = 8.5%, semi-annual, Price = 100 (at par)
+   - Uses 6-month spot rate (8.00%) for first coupon
+   - Solve for 1-year spot rate s₁:
+   ```
+   100 = 4.25/(1.04) + 104.25/(1 + s₁)²
+   → s₁ = 8.52% annualized
+   ```
+
+3. **18-month bond:** Coupon = 9%, Price = 100
+   - Uses 6-month spot (8.00%) and 1-year spot (8.52%) for first two coupons
+   - Solve for 18-month spot rate s₁₈
+
+Continue until the full curve is bootstrapped.
+
+**Pakistan application:** SBP publishes a yield curve based on PIB auction results. Primary dealers bootstrap the spot curve from observed PIB prices across tenors.
+
+### Yield Curve Shapes and Their Meaning
+
+| Shape | Description | Implication |
+|---|---|---|
+| Normal (upward sloping) | Long rates > short rates | Expected growth, inflation rising |
+| Inverted | Short rates > long rates | Expected recession — reliable US recession predictor |
+| Flat | All maturities similar yield | Transition or uncertainty |
+| Humped | Medium term highest | Complex supply/demand dynamics |
+
+**Pakistan yield curve:** The PKR yield curve has been inverted or humped during high-rate IMF program periods (2019, 2023) as SBP raised the policy rate to 22% while the market expected eventual cuts.
+
+### Forward Rates
+
+The forward rate f(t₁, t₂) is the rate implied by spot rates for borrowing/lending between times t₁ and t₂:
+
+```
+(1 + s₂)^t₂ = (1 + s₁)^t₁ × (1 + f(t₁,t₂))^(t₂-t₁)
+```
+
+**Intuition:** If you can lock in 1-year money at 8% and 2-year money at 9%, the 1-year forward rate one year from now is approximately 10% — the market's best estimate of where 1-year rates will be in 12 months.
+
+---
+
+## 3. Duration & Convexity
+
+### Macaulay Duration
+
+Macaulay Duration (D_mac) is the weighted average time to receive the bond's cash flows, where weights are the present values of each cash flow as a share of the total bond price:
+
+```
+D_mac = (1/P) × Σ [t × CFₜ / (1+y)ᵗ]
+```
+
+**Intuition:** If a bond has Macaulay Duration of 4.5 years, the "average" investor gets their money back in 4.5 years. Zero-coupon bonds have duration equal to maturity.
+
+### Modified Duration
+
+Modified Duration (D_mod) measures the percentage price change for a 1% change in yield:
+
+```
+D_mod = D_mac / (1 + y/m)
+```
+
+Where m = payment frequency per year.
+
+```
+%ΔP ≈ −D_mod × Δy
+```
+
+**Example:** A bond with modified duration 6.5 and yield rising 25 bps (0.25%) falls approximately 6.5 × 0.25% = 1.625% in price.
+
+### DV01 (Dollar Value of a Basis Point / PVBP)
+
+DV01 = the dollar change in bond value for a 1 basis point (0.01%) change in yield:
+
+```
+DV01 = D_mod × P × 0.0001
+```
+
+DV01 is the primary risk metric for bond traders. A portfolio with DV01 of PKR 500,000 gains/loses PKR 500,000 for every 1bp move in rates.
+
+**Portfolio duration:** Portfolio DV01 = sum of individual bond DV01s.
+
+### Convexity
+
+Duration is a linear approximation. For large yield changes, convexity corrects the estimate:
+
+```
+%ΔP ≈ −D_mod × Δy + (1/2) × Convexity × (Δy)²
+```
+
+**Convexity formula:**
+```
+C = (1/P) × Σ [t(t+1) × CFₜ / (1+y)^(t+2)]
+```
+
+**Why convexity matters:**
+- Positive convexity: bond price rises more (when yields fall) than it falls (when yields rise) — bonds with positive convexity are preferable
+- For a given duration, higher convexity is always better — the price behavior is more favorable in both directions
+- Callable bonds can have **negative convexity** at low yields (issuer calls when rates fall, capping upside)
+
+| Bond Type | Convexity | Reason |
+|---|---|---|
+| Non-callable bond | Positive | Standard price-yield relationship |
+| Callable bond | Can be negative | Call option limits price appreciation |
+| MBS pass-through | Negative (at low rates) | Prepayment increases as rates fall |
+| Zero coupon bond | High positive | All cash flow at maturity, high duration |
+
+---
+
+## 4. Credit Spreads
+
+### Spread Measures
+
+**G-spread (Government spread):**
+The difference between a corporate bond's YTM and the on-the-run government bond YTM at the same maturity. Simple but ignores yield curve shape.
+
+**I-spread (Interpolated spread):**
+Spread over the interpolated swap rate (not government). More precise than G-spread for corporate bonds in markets where swaps are the benchmark.
+
+**Z-spread (Zero-volatility spread):**
+The constant spread added to every spot rate on the benchmark curve such that the present value of the bond's cash flows equals the market price:
+
+```
+P = Σ CFₜ / (1 + sₜ + Z)ᵗ
+```
+
+Z-spread is better than G-spread because it uses the full spot curve, not just one point. Z-spread = 0 for an on-the-run government bond.
+
+**OAS (Option-Adjusted Spread):**
+For bonds with embedded options (callable, putable, MBS), OAS strips out the value of the option:
+
+```
+OAS = Z-spread − Option Cost
+```
+
+For a callable bond: Z-spread > OAS (you're getting paid extra for giving away the call option to the issuer).
+For a putable bond: OAS > Z-spread (you're paying for the put option).
+
+OAS is the "true" credit spread — what you earn after adjusting for optionality.
+
+**Asset swap spread:**
+Spread in an asset swap where the bond's coupons are exchanged for Libor/SOFR + spread. Widely used by credit traders.
+
+### CDS (Credit Default Swap) Spreads
+
+A CDS spread is the annual premium paid for protection against default:
+- **Protection buyer:** pays CDS spread annually, receives par in case of default
+- **Protection seller:** receives spread, pays par at default
+
+**CDS-bond basis:**
+CDS spread − Bond spread (usually Z-spread or asset swap spread). In theory, the basis should be near zero (cash bond and CDS should be equivalent credit protection). In practice:
+- **Positive basis:** CDS > cash bond — often in stressed markets
+- **Negative basis:** CDS < cash bond — opportunity for negative basis trades
+
+**Pakistan credit:**
+Pakistan's CDS spread (USD sovereign) has ranged from 200bps (stable) to 4,000bps (2022 crisis, pre-IMF deal). Corporate CDS does not exist in Pakistan — credit analysis is bilateral with banks.
+
+---
+
+## 5. Term Structure Models
+
+Term structure models attempt to describe how short-term interest rates evolve over time.
+
+### Vasicek Model
+
+The first analytically tractable model (1977):
+
+```
+dr = κ(θ − r)dt + σdW
+```
+
+- Mean-reverting: rate pulls toward long-run mean θ at speed κ
+- Constant volatility σ
+- **Problem:** allows negative interest rates (not realistic in most environments)
+- **Advantage:** closed-form bond pricing formula exists
+
+**Calibration to Pakistan data:** High mean reversion (κ) and high long-run mean (θ ≈ 12–15%) are needed to fit the PKR curve.
+
+### CIR Model (Cox-Ingersoll-Ross, 1985)
+
+```
+dr = κ(θ − r)dt + σ√r dW
+```
+
+- Mean-reverting (same as Vasicek)
+- Volatility scales with √r — prevents negative rates (when rates are low, volatility falls)
+- Still has closed-form bond pricing
+- **More realistic** than Vasicek for non-negative rate environments
+
+### Hull-White Model
+
+```
+dr = [θ(t) − κr]dt + σdW
+```
+
+- θ(t) is a **time-varying** drift — calibrated to exactly fit the observed yield curve
+- Widely used in practice for derivatives pricing because it matches today's term structure perfectly
+- Allows negative rates (same as Vasicek)
+
+### HJM Framework (Heath-Jarrow-Morton)
+
+Models the entire forward rate curve directly:
+```
+df(t,T) = μ(t,T)dt + σ(t,T)dW
+```
+
+HJM shows that under no-arbitrage, the drift μ is determined by the volatility structure σ. The Libor Market Model (LMM/BGM) is the most important HJM model in practice — it models forward rates (caplets) directly and is used to price interest rate exotics (caps, floors, swaptions, Bermudans).
+
+---
+
+## 6. Interest Rate Derivatives
+
+### Caps and Floors
+
+**Cap:** A series of call options on the floating rate (caplets). If the floating rate (e.g., 3-month KIBOR) exceeds the strike K, the cap buyer receives the difference. CFOs use caps to limit floating-rate borrowing costs.
+
+**Floor:** A series of put options on the floating rate (floorlets). If the rate falls below K, the floor buyer receives the difference. Investors holding floating-rate bonds buy floors to protect minimum income.
+
+**Collar:** Buy a cap + sell a floor — limits the range of floating rate exposure. Reduces hedging cost to zero if cap strike = floor strike (zero-cost collar).
+
+**Pricing (Black's formula for caplets):**
+```
+Caplet value = P(0,T₂) × τ × [F × N(d₁) − K × N(d₂)]
+```
+
+Where F is the forward rate, τ is the accrual period, P(0,T₂) is the discount factor.
+
+**Pakistan application:** SBP policy rate-linked floating debt (KIBOR + spread). FERROQUANT hedges a PKR 2B floating-rate TFC by buying a KIBOR cap at 15% — if KIBOR exceeds 15%, FERROQUANT receives the excess (conceptually; OTC market in Pakistan is nascent).
+
+### Swaptions
+
+A swaption is the option to enter a swap at a future date:
+- **Payer swaption:** Option to PAY fixed / receive floating (equivalent to a call on rates)
+- **Receiver swaption:** Option to RECEIVE fixed / pay floating (equivalent to a put on rates)
+
+**Pricing:** Black's formula applied to the forward swap rate.
+
+**Uses:**
+- Liability management: locking in the right to issue debt at today's rate environment in the future
+- Cancellable swaps: embedded swaption allows early termination
+
+---
+
+## 7. Mortgage-Backed Securities
+
+### Pass-Through Structure
+
+A mortgage pass-through pools mortgage loans and passes the monthly payments (principal + interest) to investors:
+1. Originators (banks) create mortgage loans
+2. Loans are pooled and sold to a GSE (Freddie Mac, Fannie Mae) or private entity
+3. GSE issues MBS certificates backed by the pool
+4. Monthly payments from homeowners pass through to MBS holders
+
+**Key metrics:**
+- WAC (Weighted Average Coupon): average coupon of the underlying mortgages
+- WAM (Weighted Average Maturity): average remaining term
+- MBS coupon = WAC − servicing fee − guarantee fee
+
+### Prepayment Risk
+
+Homeowners can prepay their mortgage at any time (refinancing, home sale, extra payments). Prepayment creates reinvestment risk for MBS holders:
+- When rates **fall**, prepayment **increases** — investors receive principal back when they least want it (must reinvest at lower rates)
+- This creates **negative convexity** for MBS
+
+**PSA benchmark:**
+The Public Securities Association prepayment model assumes prepayment rates ramp up over 30 months to 100% PSA (= 6% CPR):
+- 200% PSA = twice the standard prepayment speed
+- 50% PSA = half the standard speed
+
+### CMOs (Collateralized Mortgage Obligations)
+
+CMOs redistribute cash flows from MBS pools into different tranches with different risk/return profiles:
+- **Sequential pay tranches:** Front-pay tranches get all principal first — shorter effective duration
+- **PAC (Planned Amortization Class):** Principal payments according to a fixed schedule within a prepayment band — most predictable, tightest OAS
+- **Support/companion tranche:** Absorbs prepayment variability to protect PAC — wider OAS for more risk
+- **Interest-only (IO) strip:** Receives only interest — value falls when prepayments rise (less interest paid on smaller balance)
+- **Principal-only (PO) strip:** Receives only principal — value rises when prepayments rise (principal returned sooner, discounted at lower rates)
+
+**WAL (Weighted Average Life):** The weighted average time to return a dollar of principal. More practical than maturity for MBS because principal is returned continuously.
+
+**OAS for MBS:** OAS strips out the negative convexity (prepayment option value). An MBS with Z-spread of 150bps and prepayment option cost of 60bps has OAS = 90bps.
+
+---
+
+## 8. Fixed Income in Pakistan & Gulf Markets
+
+### Pakistan Fixed Income Market
+
+| Instrument | Issuer | Maturity | Market |
+|---|---|---|---|
+| T-bills (MTBs) | Government | 3, 6, 12 months | SBP auction |
+| PIBs | Government | 3–30 years | SBP auction + OTC |
+| GoP Ijarah Sukuk | Government | 3, 5, 10 years | SBP auction |
+| TFCs | Corporates | 3–7 years | Privately placed / PSX |
+| Bank certificates | Commercial banks | Short-term | Bank-to-bank |
+
+**SBP Monetary Policy Committee:** Sets the policy rate (currently 12% as of early 2026, down from 22% peak in 2023). The policy rate anchors the entire yield curve.
+
+**SBP OMOs:** Open Market Operations — SBP uses repo and reverse repo to manage overnight rates. Repos inject liquidity; reverse repos absorb.
+
+**Pakistan institutional buyers:**
+- Banks: largest buyer — SLR compliance, excess liquidity parking
+- Insurance companies: duration matching
+- Pension funds: ALM-driven buying
+- Mutual funds: fixed income money market funds
+
+### Gulf Fixed Income
+
+**UAE:**
+- CBUAE manages liquidity; Dirham pegged to USD → UAE rates shadow US Fed
+- ADIB, Emirates NBD, ENBD regularly issue international bonds
+- ADNOC, Mubadala: benchmark-level USD issuers
+
+**Saudi Arabia:**
+- Saudi Arabia Debt Management Office (DMO): world-class bond program since 2016
+- SAR domestic market + USD international program
+- Aramco bonds: among the most liquid EM credits globally
+
+**Qatar:**
+- Qatar Investment Authority (QIA): significant secondary market investor
+- QNB: regional benchmark bond issuer
+- Qatar sovereign: regular USD and EUR issuance
+
+**Gulf rate linkage:**
+All GCC pegged currencies (SAR, AED, QAR, BHD, OMR) track US Fed Funds — Gulf bond markets move almost in lockstep with US Treasuries. This is very different from Pakistan where PKR rates are set independently.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT Capital holds a PKR 500 million position in a 10-year PIB with:
+   - Annual coupon: 14%, paid semi-annually
+   - YTM: 12% annualized
+   - Modified Duration: 6.8 years
+   - Convexity: 61
+   
+   (a) Is the bond trading at a premium or discount? Why?
+   (b) Calculate the DV01 of the position (use approximate price ≈ PKR 113 per PKR 100 face value).
+   (c) If the SBP unexpectedly raises the policy rate by 50bps and the yield rises by 50bps, estimate the price change using both duration alone and duration + convexity. Which is more accurate and why?
+   (d) FERROQUANT wants to hedge this interest rate exposure by shorting PIB futures. If each futures contract has a DV01 of PKR 5,000, how many contracts should FERROQUANT short?
+
+2. You are bootstrapping the PKR spot curve from the following instruments:
+   - 3-month T-bill: YTM = 11.50%
+   - 6-month T-bill: YTM = 12.00%
+   - 1-year PIB (annual coupon 12.5%, trading at par): YTM = 12.50%
+   - 2-year PIB (annual coupon 13%, trading at par): YTM = 13.00%
+   
+   (a) What is the 3-month spot rate? 6-month spot rate?
+   (b) Using bootstrapping, derive the 1-year spot rate from the 1-year PIB price.
+   (c) Using the 1-year spot rate from (b), derive the 2-year spot rate from the 2-year PIB price.
+   (d) Calculate the 1-year forward rate one year from now. If actual 1-year rates one year from now are 14%, was the market's forward rate forecast accurate? What might explain the miss?
+
+3. FERROQUANT is analyzing a PKR 5B TFC issued by a Pakistani cement company:
+   - Maturity: 5 years
+   - Coupon: KIBOR + 175bps, paid quarterly
+   - Trading at 98.50 (flat price, % of par)
+   - Current KIBOR: 12.00%
+   - 5-year PIB yield: 13.50%
+   - Assumed flat term structure for simplicity
+   
+   (a) Calculate the approximate Z-spread for this TFC (hint: treat as a floating-rate bond — Z-spread ≈ yield − benchmark rate + spread above KIBOR).
+   (b) How would you calculate the OAS if the TFC had a call option at par in year 3? Would OAS be higher or lower than Z-spread?
+   (c) FERROQUANT's credit analyst estimates the company has a 3% annual probability of default with 40% recovery. Is the Z-spread adequate compensation for the credit risk? Show your calculation.
+   (d) The TFC is rated A- by PACRA. A comparable listed bond in Turkey (B+ Moody's) trades at 450bps over local government. Does Pakistan's credit spread look cheap or expensive on a cross-market basis? What structural factors might explain the difference?
+
+<ArticleNav
+  prev={{ title: "Module 69 — Options Theory & Derivatives Pricing", href: "/financial-strategy/module-69-options-theory-derivatives-pricing" }}
+  next={{ title: "Module 71 — Market Microstructure & Trading Systems", href: "/financial-strategy/module-71-market-microstructure-trading-systems" }}
+/>

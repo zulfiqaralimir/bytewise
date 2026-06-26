@@ -325,6 +325,10 @@ const modules = [
     part: "Module 69 — Options Theory & Derivatives Pricing",
     chapters: [{ chapter: "Options Theory & Derivatives Pricing", items: [{ title: "Module 69 — Options Theory & Derivatives Pricing", href: "/financial-strategy/module-69-options-theory-derivatives-pricing" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 70 — Fixed Income Mathematics & Bond Markets",
+    chapters: [{ chapter: "Fixed Income Mathematics & Bond Markets", items: [{ title: "Module 70 — Fixed Income Mathematics & Bond Markets", href: "/financial-strategy/module-70-fixed-income-mathematics-bond-markets" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
