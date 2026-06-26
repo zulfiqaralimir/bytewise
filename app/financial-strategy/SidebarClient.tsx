@@ -312,6 +312,19 @@ const modules = [
     part: "Module 66 — The Future CFO",
     chapters: [{ chapter: "The Future CFO", items: [{ title: "Module 66 — The Future CFO", href: "/financial-strategy/module-66-future-cfo" }] as { title: string; href: string }[] }],
   },
+  // ─── TRACK B: QUANT & HEDGE FUND ────────────────────────────────────────────
+  {
+    part: "Module 67 — Probability & Statistics for Quant Finance",
+    chapters: [{ chapter: "Probability & Statistics for Quant Finance", items: [{ title: "Module 67 — Probability & Statistics for Quant Finance", href: "/financial-strategy/module-67-probability-statistics-quant-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 68 — Stochastic Calculus & Financial Mathematics",
+    chapters: [{ chapter: "Stochastic Calculus & Financial Mathematics", items: [{ title: "Module 68 — Stochastic Calculus & Financial Mathematics", href: "/financial-strategy/module-68-stochastic-calculus-financial-mathematics" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 69 — Options Theory & Derivatives Pricing",
+    chapters: [{ chapter: "Options Theory & Derivatives Pricing", items: [{ title: "Module 69 — Options Theory & Derivatives Pricing", href: "/financial-strategy/module-69-options-theory-derivatives-pricing" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

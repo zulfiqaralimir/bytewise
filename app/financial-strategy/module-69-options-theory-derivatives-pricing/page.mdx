@@ -1,0 +1,280 @@
+export const metadata = {
+  title: "Module 69 — Options Theory & Derivatives Pricing | Financial Strategy — ByteWise",
+  description: "Option Greeks, put-call parity, binomial trees, volatility surface, exotic options, interest rate derivatives — the complete options toolkit for quantitative finance.",
+  openGraph: { title: "Module 69 — Options Theory & Derivatives Pricing | Financial Strategy", description: "Greeks, put-call parity, binomial trees, vol surface, interest rate derivatives — options pricing for quants.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 69 — Options Theory & Derivatives Pricing
+
+Option Greeks, put-call parity, binomial tree pricing, the volatility surface, exotic options, interest rate derivatives — the complete options theory toolkit for quantitative finance practitioners.
+
+## Learning Objectives
+
+- Calculate and interpret all major option Greeks
+- Apply put-call parity as an arbitrage check
+- Price options using the binomial tree model
+- Understand and construct the volatility surface
+- Price interest rate derivatives: caps, floors, and swaptions
+
+---
+
+## 1. Option Fundamentals Review
+
+### The Four Basic Options
+
+| Type | Right | Exercise |
+|---|---|---|
+| Call (Long) | Right to BUY at strike K | Profitable when S_T > K |
+| Put (Long) | Right to SELL at strike K | Profitable when S_T < K |
+| Call (Short) | Obligation to SELL if exercised | Loses when S_T > K |
+| Put (Short) | Obligation to BUY if exercised | Loses when S_T < K |
+
+**European option:** Can only be exercised at expiry T.
+**American option:** Can be exercised at any time before T. Always worth ≥ European equivalent.
+
+---
+
+## 2. The Option Greeks
+
+Greeks measure the sensitivity of option value to various inputs. Every options trader needs to live and breathe Greeks.
+
+### Delta (Δ) — Price Sensitivity
+
+Delta = ∂V/∂S: Change in option value per unit change in stock price.
+
+```
+Call delta: N(d₁) ∈ [0, 1]
+Put delta: N(d₁) − 1 ∈ [−1, 0]
+```
+
+**At-the-money (ATM):** Call delta ≈ 0.50; Put delta ≈ −0.50
+**Deep in-the-money call:** Delta → 1 (moves like the stock)
+**Deep out-of-the-money call:** Delta → 0 (barely moves with the stock)
+
+**Delta hedging:** A delta-neutral portfolio has total delta = 0. If you own 100 call options (each with delta 0.5), you have delta = +50. Short 50 shares to make the portfolio delta-neutral.
+
+---
+
+### Gamma (Γ) — Delta Sensitivity
+
+Gamma = ∂²V/∂S² = ∂Δ/∂S: Rate of change of delta as stock price changes.
+
+**Always positive** for long options (calls and puts).
+
+**Practical meaning:**
+- High gamma: delta changes rapidly when stock moves — requires frequent rebalancing
+- ATM options have highest gamma (delta changes fastest near the strike)
+- OTM and ITM options have lower gamma
+
+**Gamma-delta hedging:** A position that is both delta-neutral and gamma-neutral is insensitive to small AND larger price moves.
+
+---
+
+### Theta (Θ) — Time Decay
+
+Theta = ∂V/∂t: Change in option value with passage of time (per day).
+
+**Almost always negative** for long options — options lose value as time passes (all else equal). The closer to expiry, the faster the decay for ATM options.
+
+**Time decay accelerates near expiry** for ATM options. This creates the "gamma vs theta" trade-off:
+- Long options: positive gamma (good for big moves), negative theta (paying time decay)
+- Short options: negative gamma (hurt by big moves), positive theta (collecting time decay)
+
+---
+
+### Vega (ν) — Volatility Sensitivity
+
+Vega = ∂V/∂σ: Change in option value per 1% change in implied volatility.
+
+**Always positive** for long options — higher volatility makes options more valuable.
+
+```
+Vega ≈ S × √T × N'(d₁) / 100    (per 1% change in vol)
+```
+
+**Vega is largest for ATM options** and for longer-dated options.
+
+**Practical implication:** An options portfolio with large positive vega profits when volatility rises (long volatility). Large negative vega profits when volatility falls (short volatility).
+
+---
+
+### Rho (ρ) — Interest Rate Sensitivity
+
+Rho = ∂V/∂r: Change in option value per 1% change in risk-free rate.
+
+**Calls:** Positive rho (higher rates make calls worth more — higher future stock price expectation)
+**Puts:** Negative rho
+
+Rho matters more for long-dated options and during periods of rate volatility (e.g., Pakistan's SBP rate cycles).
+
+---
+
+## 3. Put-Call Parity
+
+### The Relationship
+
+For European options on a non-dividend-paying stock:
+```
+C + PV(K) = P + S₀
+
+Where:
+C = call price
+P = put price
+PV(K) = K × e^(-rT) = present value of strike
+S₀ = current stock price
+```
+
+**Intuition:** Two portfolios with the same payoff must have the same value:
+- Portfolio A: Call + PV(K) → at expiry: gets max(S_T, K)
+- Portfolio B: Put + S₀ → at expiry: gets max(S_T, K)
+
+### Using Put-Call Parity
+
+**Arbitrage check:** If put-call parity is violated in the market, there is an arbitrage. Example:
+```
+S₀ = 100, K = 100, T = 1yr, r = 5%, Call = PKR 10
+
+PCP implies: P = C + K×e^(-rT) − S₀ = 10 + 100×e^(-0.05) − 100 = 10 + 95.12 − 100 = PKR 5.12
+
+If market put is trading at PKR 7: arbitrage (buy call, sell put, short stock, invest PV(K))
+```
+
+**Implied forward price:** PCP implies F = S₀ × e^(rT) = (C − P) × e^(rT) + K.
+
+---
+
+## 4. Binomial Tree Pricing
+
+### One-Period Binomial Tree
+
+The binomial tree model prices options without needing the Black-Scholes PDE. It is conceptually clear and extends easily to American options and exotic payoffs.
+
+```
+Setup (one period):
+  Current stock price: S = 100
+  Up move: uS = 110 (u = 1.1)
+  Down move: dS = 90 (d = 0.9)
+  Risk-free rate: r = 5% (for the period)
+  
+Risk-neutral probability of up move:
+  p* = (e^r − d) / (u − d) = (1.05 − 0.9) / (1.1 − 0.9) = 0.75
+
+Option payoffs:
+  Call (K=100): Cu = max(110 − 100, 0) = 10; Cd = max(90 − 100, 0) = 0
+
+Price:
+  C = e^(-r) × [p* × Cu + (1−p*) × Cd]
+    = (1/1.05) × [0.75 × 10 + 0.25 × 0]
+    = (1/1.05) × 7.5
+    = PKR 7.14
+```
+
+### Multi-Period Binomial Tree
+
+For T periods, build the tree forward (computing all nodes) and then work backward from the terminal payoffs. The Black-Scholes formula is the limit of the binomial tree as the number of periods approaches infinity.
+
+**American option pricing:** At each node, compare the option's continuation value (from binomial backward induction) with the immediate exercise value. Take the maximum. This is why American options are priced on trees (Black-Scholes gives no closed form for American puts).
+
+---
+
+## 5. The Volatility Surface
+
+### What the Volatility Surface Is
+
+Black-Scholes assumes constant volatility σ. In reality, implied volatility (the σ that makes the Black-Scholes price equal to the market price) varies across:
+- **Strike (K):** The "volatility smile" or "volatility skew"
+- **Maturity (T):** The "term structure of volatility"
+
+Together, these form the **volatility surface**: a 3D plot of implied volatility vs strike and maturity.
+
+### The Volatility Smile and Skew
+
+**Equity markets — volatility skew (or "smirk"):**
+- OTM puts (low strikes) have higher implied volatility than ATM options
+- OTM calls (high strikes) have lower implied volatility than ATM options
+- Reflects demand for downside protection (OTM puts are expensive)
+
+```
+Example: BIQAI Group equity options
+  Strike   80    90    100   110   120
+  Implied  35%   30%   25%   24%   23%
+  
+Skew: lower strikes have higher implied vol → reflecting crash risk premium
+```
+
+**FX markets — symmetric smile:**
+Both OTM calls and OTM puts have higher implied vol than ATM. Reflects two-way tail risk in exchange rates.
+
+### Term Structure of Volatility
+
+Short-dated options often have higher implied vol than longer-dated ones (when near-term uncertainty is elevated — e.g., around a major economic announcement). The opposite holds when long-term uncertainty dominates.
+
+---
+
+## 6. Interest Rate Derivatives
+
+### Caps and Floors
+
+A **cap** is a portfolio of call options on interest rates — it caps the maximum interest rate a borrower pays. Each sub-option (a "caplet") pays:
+```
+max(L_T − K_cap, 0) × Notional × Δt
+Where L_T = LIBOR/KIBOR at reset date, K_cap = cap strike rate, Δt = accrual period
+```
+
+A **floor** is a portfolio of put options on interest rates — it floors the minimum rate an investor receives:
+```
+Floorlet payoff: max(K_floor − L_T, 0) × Notional × Δt
+```
+
+**CFO application:** BIQAI Group has a PKR 5bn floating rate TFC at KIBOR + 200bps. If KIBOR rises to 18%, interest expense becomes punishing. Buy a cap at KIBOR = 15% to limit upside rate risk.
+
+### Swaptions
+
+A swaption is an option to enter into an interest rate swap at a future date.
+
+**Payer swaption:** Right to PAY fixed rate in a swap (analogous to a call on rates — used to hedge against rising rates)
+**Receiver swaption:** Right to RECEIVE fixed rate (analogous to a put on rates)
+
+### Black's Model for Caps and Swaptions
+
+Black's model (a modification of Black-Scholes) is the market standard for pricing caps and swaptions, treating forward rates as the underlying:
+```
+Caplet price = P(0,T) × [F × N(d₁) − K_cap × N(d₂)]
+
+Where F = forward KIBOR rate, P(0,T) = discount factor, and d₁, d₂ are analogous to Black-Scholes
+```
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT Capital holds a long position in 1,000 European call options on BIQAI Group equity (each covering 1 share). Current price: PKR 150, strike: PKR 155, T = 3 months, σ = 28%, r = 12%. 
+   
+   (a) Use Black-Scholes to calculate the call price and delta.
+   (b) How many shares does FERROQUANT need to short to delta-hedge this position?
+   (c) The next day, BIQAI Group rises to PKR 158. Recalculate delta. Why has it changed, and what must FERROQUANT do to rebalance?
+   (d) What is the gamma of this position? Why does positive gamma mean you always benefit from large moves?
+
+2. FERROQUANT identifies what appears to be a put-call parity violation:
+   - BIQAI Group: S₀ = PKR 150
+   - Strike K = PKR 150, T = 6 months, r = 12% annualized
+   - Market call price: PKR 12.50
+   - Market put price: PKR 16.00
+   
+   (a) What does put-call parity imply the put should be worth?
+   (b) Is there an arbitrage? If so, describe exactly which trades you would execute today and at expiry.
+   (c) Why do put-call parity violations in Pakistan markets persist longer than in developed markets?
+
+3. The FERROQUANT options desk observes this implied volatility surface for BIQAI Group equity:
+   - 1-month options: ATM vol = 32%, OTM put (80% moneyness) vol = 45%
+   - 6-month options: ATM vol = 28%, OTM put vol = 36%
+   - 1-year options: ATM vol = 25%, OTM put vol = 30%
+   
+   Interpret: (a) the volatility skew in 1-month options vs 1-year options, (b) the term structure (1-month vs 1-year ATM), (c) one trading strategy that would profit if you believe the 1-month skew is too steep, and (d) one trading strategy if you believe the term structure will flatten.
+
+<ArticleNav
+  prev={{ title: "Module 68 — Stochastic Calculus & Financial Mathematics", href: "/financial-strategy/module-68-stochastic-calculus-financial-mathematics" }}
+  next={{ title: "Module 70 — Fixed Income Mathematics & Bond Markets", href: "/financial-strategy/module-70-fixed-income-mathematics-bond-markets" }}
+/>

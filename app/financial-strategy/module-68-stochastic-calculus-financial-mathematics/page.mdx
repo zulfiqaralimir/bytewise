@@ -1,0 +1,258 @@
+export const metadata = {
+  title: "Module 68 — Stochastic Calculus & Financial Mathematics | Financial Strategy — ByteWise",
+  description: "Brownian motion, geometric Brownian motion, Itô's lemma, Black-Scholes derivation, risk-neutral pricing, and the mathematical foundations of quantitative finance.",
+  openGraph: { title: "Module 68 — Stochastic Calculus & Financial Mathematics | Financial Strategy", description: "Brownian motion, GBM, Itô's lemma, Black-Scholes, risk-neutral pricing — stochastic calculus for quant finance.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 68 — Stochastic Calculus & Financial Mathematics
+
+Brownian motion and its properties, geometric Brownian motion as the stock price model, Itô's lemma (the chain rule of stochastic calculus), Black-Scholes PDE derivation, and risk-neutral pricing — the mathematical backbone of derivatives pricing.
+
+## Learning Objectives
+
+- Understand Brownian motion and why it models randomness in financial markets
+- Apply geometric Brownian motion to model stock price dynamics
+- Use Itô's lemma to find the dynamics of functions of stochastic processes
+- Follow the derivation of the Black-Scholes PDE
+- Understand risk-neutral pricing and the change of measure
+
+---
+
+## 1. Brownian Motion (Wiener Process)
+
+### What Brownian Motion Is
+
+Brownian motion (W_t) is a continuous-time stochastic process named after botanist Robert Brown, who observed pollen grains moving randomly in water (1827). Mathematically formalized by Norbert Wiener.
+
+**Properties:**
+1. W₀ = 0 (starts at zero)
+2. W_t has independent increments: (W_t − W_s) is independent of W_s for t > s
+3. W_t − W_s ~ N(0, t − s): increments are normally distributed with variance proportional to time
+4. Paths are continuous but nowhere differentiable (can't take the ordinary derivative)
+
+**The key intuition:** Over a small time interval dt, the change in W is:
+```
+dW = ε × √dt     where ε ~ N(0,1)
+```
+
+Volatility scales with the **square root** of time — this is why a 1-day VaR multiplied by √252 gives an annual volatility estimate.
+
+### Quadratic Variation
+
+Unlike ordinary functions where (dt)² is negligible, for Brownian motion:
+```
+(dW)² = dt   (exactly, not approximately)
+```
+
+This is the crucial difference from ordinary calculus and is the source of Itô's correction term.
+
+---
+
+## 2. Geometric Brownian Motion (GBM)
+
+### The Stock Price Model
+
+Black and Scholes (1973) and Merton (1973) assumed stock prices follow Geometric Brownian Motion:
+```
+dS = μ × S × dt + σ × S × dW
+
+Where:
+S = stock price
+μ = drift (expected return)
+σ = volatility
+dW = Brownian motion increment
+```
+
+**Why "geometric"?** The drift and diffusion terms are proportional to S (not absolute). This ensures:
+- S can never become negative (prices can't go below zero)
+- Percentage returns are normally distributed (log-returns are normal)
+
+### From GBM to the Log-Normal Price Distribution
+
+Applying Itô's lemma (next section) to f(S) = ln(S):
+```
+d(ln S) = (μ − σ²/2) dt + σ dW
+
+Integrating from 0 to T:
+ln(S_T) − ln(S₀) = (μ − σ²/2)T + σ W_T
+
+S_T = S₀ × exp[(μ − σ²/2)T + σ√T × ε]    where ε ~ N(0,1)
+```
+
+This shows: S_T is **log-normally distributed** — the log of the terminal price is normally distributed.
+
+---
+
+## 3. Itô's Lemma
+
+### The Problem: Chain Rule Doesn't Work
+
+In ordinary calculus, if f(x) is a function of x and x changes by dx, then:
+```
+df = f'(x) × dx
+```
+
+For stochastic processes, this fails because (dW)² = dt is non-negligible. The correction is Itô's lemma.
+
+### Itô's Lemma (Single Variable)
+
+For a smooth function f(S, t) where S follows a general Itô process:
+```
+df = (∂f/∂t + μS × ∂f/∂S + ½σ²S² × ∂²f/∂S²) dt + σS × ∂f/∂S × dW
+```
+
+**The key extra term:** ½σ²S² × ∂²f/∂S²
+This is the "Itô correction" — it arises from the (dW)² = dt property and has no analogue in ordinary calculus.
+
+### Applying Itô's Lemma: Deriving Log Returns
+
+Let f(S) = ln(S):
+```
+∂f/∂t = 0
+∂f/∂S = 1/S
+∂²f/∂S² = −1/S²
+
+Applying Itô's lemma:
+d(ln S) = [0 + μS × (1/S) + ½σ²S² × (−1/S²)] dt + σS × (1/S) dW
+         = [μ − σ²/2] dt + σ dW
+```
+
+The −σ²/2 term (the Itô correction) is why the expected value of ln(S_T) is (μ − σ²/2)T, not μT.
+
+---
+
+## 4. The Black-Scholes PDE
+
+### The Replication Argument
+
+Black, Scholes, and Merton's key insight: an option can be replicated by a continuously rebalanced portfolio of stock and cash (the "delta-hedged portfolio"). If replication is perfect, the replicating portfolio and the option must have the same value to avoid arbitrage.
+
+**The hedged portfolio:**
+```
+Π = V(S, t) − Δ × S
+
+Where:
+V = option value (unknown)
+Δ = hedge ratio (units of stock sold short)
+```
+
+**Change in portfolio:**
+```
+dΠ = dV − Δ × dS
+```
+
+Apply Itô's lemma to V(S, t), substitute GBM for dS, and choose Δ = ∂V/∂S (the "delta") to eliminate the random dW term.
+
+The remaining terms must equal the risk-free rate (to avoid arbitrage):
+```
+dΠ = r × Π × dt
+```
+
+This gives the **Black-Scholes PDE:**
+
+```
+∂V/∂t + ½σ²S² × ∂²V/∂S² + rS × ∂V/∂S − rV = 0
+```
+
+### Solving the Black-Scholes PDE
+
+With boundary condition: V(S, T) = max(S − K, 0) for a call option.
+
+The solution is the famous Black-Scholes formula:
+```
+C = S₀ × N(d₁) − K × e^(-rT) × N(d₂)
+
+Where:
+d₁ = [ln(S₀/K) + (r + σ²/2)T] / (σ√T)
+d₂ = d₁ − σ√T
+
+N(·) = cumulative standard normal distribution function
+```
+
+### Interpreting the Formula
+
+**N(d₂):** The risk-neutral probability that the option expires in the money (S_T > K).
+**N(d₁):** The delta of the option — the hedge ratio.
+**K × e^(-rT) × N(d₂):** Present value of the expected exercise price payment.
+**S₀ × N(d₁):** Present value of expected stock receipt on exercise.
+
+---
+
+## 5. Risk-Neutral Pricing
+
+### The Change of Measure
+
+The most powerful idea in mathematical finance is the change of measure (Girsanov's theorem). It says: we can change the probability measure so that all assets grow at the risk-free rate. Under this "risk-neutral measure" (Q), all assets earn the risk-free rate r, and option pricing simplifies to:
+
+```
+V₀ = e^(-rT) × E^Q[payoff at T]
+```
+
+**Why this works:** If we can perfectly hedge an option, the expected return on the hedge portfolio equals r under no arbitrage. The "real world" drift μ disappears — it doesn't matter for pricing, only for hedging.
+
+### Risk-Neutral Pricing for the European Call
+
+Under Q measure, the stock price process becomes:
+```
+dS = r × S × dt + σ × S × dW^Q
+
+S_T = S₀ × exp[(r − σ²/2)T + σ√T × ε^Q]    where ε^Q ~ N(0,1) under Q
+```
+
+```
+Call price = e^(-rT) × E^Q[max(S_T − K, 0)]
+           = e^(-rT) × [S₀ × e^(rT) × N(d₁) − K × N(d₂)]
+           = S₀ × N(d₁) − K × e^(-rT) × N(d₂)
+```
+
+This reproduces the Black-Scholes formula — confirming that risk-neutral pricing and the PDE approach are equivalent.
+
+---
+
+## 6. Extensions and Limitations
+
+### Beyond Black-Scholes
+
+The Black-Scholes model assumes:
+- Constant volatility (σ is fixed)
+- Log-normal returns (no fat tails)
+- Continuous trading (no jumps)
+- No transaction costs
+- Constant interest rates
+
+**Real markets violate all these assumptions.** Extensions:
+
+**Stochastic volatility models (Heston model):**
+σ itself follows a mean-reverting stochastic process. Produces the "volatility smile" (implied volatility varying with strike) observed in real options markets.
+
+**Jump-diffusion models (Merton, Kou):**
+Add a Poisson jump process to GBM to capture sudden large moves. Better for equity indices and currencies.
+
+**Local volatility models (Dupire):**
+Volatility is a deterministic function of (S, t): σ(S, t). Exactly calibrates to all observed option prices.
+
+**Rough volatility models (Bergomi, Gatheral):**
+Recent research shows volatility is rougher (more fractal) than standard stochastic volatility models capture. Active research area.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT Capital's options desk is pricing a 3-month European call on BIQAI Group equity. Current price: PKR 150, strike: PKR 160, 3-month risk-free rate: 12% annualized, implied volatility: 30% annualized.
+   
+   (a) Calculate d₁ and d₂ using the Black-Scholes formula.
+   (b) Find N(d₁) and N(d₂) from a standard normal table (approximate to 4 decimal places).
+   (c) Calculate the call price.
+   (d) What is the delta of this call? What does it mean for hedging?
+   (e) If BIQAI Group announces a profit warning and implied volatility rises to 45%, qualitatively describe what happens to the call price and why.
+
+2. Explain in plain language why the Itô correction term (−σ²/2) appears in the log-return process. What would go wrong if you tried to use ordinary calculus instead? Specifically: what would the expected log-return be under ordinary calculus vs Itô's lemma, and why does the difference matter for option pricing?
+
+3. A junior quant at FERROQUANT argues: "We should use the real-world drift μ = 20% (our equity return expectation) instead of the risk-free rate r = 12% when pricing options — we're giving away money by using the lower discount rate." Explain clearly why this argument is wrong, using the concept of risk-neutral pricing and the delta-hedging argument.
+
+<ArticleNav
+  prev={{ title: "Module 67 — Probability & Statistics for Quantitative Finance", href: "/financial-strategy/module-67-probability-statistics-quant-finance" }}
+  next={{ title: "Module 69 — Options Theory & Derivatives Pricing", href: "/financial-strategy/module-69-options-theory-derivatives-pricing" }}
+/>

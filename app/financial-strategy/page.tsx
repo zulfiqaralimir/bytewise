@@ -186,15 +186,15 @@ const trackB: PartEntry[] = [
   {
     part: "Part XX — Mathematical Foundations",
     modules: [
-      { number: "Module 67", title: "Probability & Statistics for Quantitative Finance", description: "Probability theory, statistical inference, and the mathematical tools every quant uses — distributions, moments, multivariate statistics, copulas, and time series basics.", href: "/financial-strategy/module-67-probability-statistics-quant" },
-      { number: "Module 68", title: "Stochastic Calculus & Financial Mathematics",       description: "Brownian motion, Itô's lemma, SDEs, risk-neutral pricing, and Black-Scholes derivation from first principles.", href: "/financial-strategy/module-68-stochastic-calculus" },
+      { number: "Module 67", title: "Probability & Statistics for Quantitative Finance", description: "Probability theory, statistical inference, and the mathematical tools every quant uses — distributions, moments, multivariate statistics, copulas, and time series basics.", href: "/financial-strategy/module-67-probability-statistics-quant-finance" },
+      { number: "Module 68", title: "Stochastic Calculus & Financial Mathematics",       description: "Brownian motion, Itô's lemma, SDEs, risk-neutral pricing, and Black-Scholes derivation from first principles.", href: "/financial-strategy/module-68-stochastic-calculus-financial-mathematics" },
     ],
   },
   {
     part: "Part XXI — Derivatives Pricing",
     modules: [
-      { number: "Module 69", title: "Options Theory & Derivatives Pricing", description: "Complete options pricing — Black-Scholes, binomial trees, all Greeks, implied volatility surface, exotic options, interest rate derivatives.", href: "/financial-strategy/module-69-options-derivatives-pricing" },
-      { number: "Module 70", title: "Fixed Income Mathematics & Bond Markets", description: "Yield curve construction, duration, convexity, spread analysis, term structure models, MBS, and Pakistan/Gulf fixed income markets.", href: "/financial-strategy/module-70-fixed-income-mathematics" },
+      { number: "Module 69", title: "Options Theory & Derivatives Pricing", description: "Complete options pricing — Black-Scholes, binomial trees, all Greeks, implied volatility surface, exotic options, interest rate derivatives.", href: "/financial-strategy/module-69-options-theory-derivatives-pricing" },
+      { number: "Module 70", title: "Fixed Income Mathematics & Bond Markets", description: "Yield curve construction, duration, convexity, spread analysis, term structure models, MBS, and Pakistan/Gulf fixed income markets.", href: "/financial-strategy/module-70-fixed-income-mathematics-bond-markets" },
     ],
   },
   {

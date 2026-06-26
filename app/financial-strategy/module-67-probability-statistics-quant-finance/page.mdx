@@ -1,0 +1,247 @@
+export const metadata = {
+  title: "Module 67 — Probability & Statistics for Quantitative Finance | Financial Strategy — ByteWise",
+  description: "Probability distributions, statistical inference, regression for financial data, Monte Carlo simulation, fat tails and extreme value theory — the statistical foundations of quantitative finance.",
+  openGraph: { title: "Module 67 — Probability & Statistics for Quantitative Finance | Financial Strategy", description: "Distributions, regression, Monte Carlo, fat tails, EVT — statistics for quant finance.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 67 — Probability & Statistics for Quantitative Finance
+
+Probability distributions used in finance, statistical inference and hypothesis testing, regression models, Monte Carlo simulation, fat tails and extreme value theory — the statistical bedrock of quantitative trading and risk management.
+
+## Learning Objectives
+
+- Apply key probability distributions to model financial returns and asset prices
+- Conduct statistical inference on financial time series
+- Build and interpret regression models for financial data
+- Implement Monte Carlo simulation for pricing and risk
+- Understand fat tails and why the normal distribution fails in finance
+
+---
+
+## 1. Probability Distributions in Finance
+
+### The Normal Distribution and Why It Dominates (and Fails)
+
+The normal distribution (Gaussian) is the workhorse of quantitative finance — not because financial returns are normally distributed (they are not), but because:
+- Mathematical tractability: closed-form solutions exist for many financial problems
+- Central limit theorem: sums of many small random effects converge to normal
+- Historical convention: Black-Scholes, CAPM, and most classic models assume normality
+
+**Parameters:**
+- Mean (μ): expected return
+- Standard deviation (σ): volatility
+
+**In finance:** Daily equity returns are approximately normal in the center of the distribution — but the tails are much fatter than a normal distribution predicts. This matters enormously for risk management.
+
+### Key Distributions in Quantitative Finance
+
+**Log-normal distribution:**
+If X is normally distributed, then e^X is log-normally distributed. Asset prices (not returns) are modeled as log-normal because:
+- Prices cannot go below zero (log-normal is always positive)
+- Percentage returns are approximately normally distributed
+- This is the foundation of the Black-Scholes option pricing model
+
+**Student's t-distribution:**
+Like the normal but with heavier tails (controlled by degrees of freedom ν). As ν → ∞, t converges to normal. For financial returns, t-distribution with ν = 3–6 fits much better than normal.
+
+**Poisson distribution:**
+Models the number of rare events in a time period (e.g., number of defaults in a bond portfolio, number of large daily moves in a year). Parameter λ = average event rate.
+
+**Gamma and Exponential distributions:**
+Model waiting times (time until next default, time between trades). Used in credit modeling.
+
+**Binomial distribution:**
+The probability of k successes in n trials. Used in option pricing (binomial tree) and credit modeling.
+
+---
+
+## 2. Statistical Moments
+
+### The Four Moments
+
+| Moment | Measure | Financial Interpretation |
+|---|---|---|
+| 1st — Mean (μ) | Expected return | Average outcome |
+| 2nd — Variance (σ²) | Risk / spread | Volatility of returns |
+| 3rd — Skewness | Asymmetry | Negative skew: large negative returns more likely than large positive |
+| 4th — Kurtosis | Tail heaviness | Excess kurtosis ("fat tails"): extreme events more frequent than normal predicts |
+
+### Why Skewness and Kurtosis Matter
+
+**Equity returns:** Exhibit negative skew (crashes are more severe than rallies) and positive excess kurtosis (crashes and spikes occur more frequently than normal distribution predicts).
+
+**Risk management implication:** A portfolio optimized using only mean and variance (as Modern Portfolio Theory does) underestimates tail risk. VaR calculated using normality is systematically understated in crisis conditions.
+
+---
+
+## 3. Statistical Inference for Financial Data
+
+### Hypothesis Testing
+
+A hypothesis test asks: "Is this pattern real, or just random noise?"
+
+**Null hypothesis (H₀):** "There is no effect" — the pattern could have arisen by chance.
+**Alternative hypothesis (H₁):** "There is a real effect."
+
+**Steps:**
+1. State H₀ and H₁
+2. Choose significance level (α = 0.05 = 5% false positive rate)
+3. Calculate test statistic (t-stat, z-stat, F-stat)
+4. Compare to critical value or compute p-value
+5. If p < α: reject H₀ (the result is statistically significant)
+
+### T-Test for Return Series
+
+**Scenario:** Testing whether a trading strategy has a positive mean return.
+```
+H₀: μ = 0 (strategy has zero return)
+H₁: μ > 0 (strategy has positive return)
+
+Test statistic: t = (x̄ − 0) / (s / √n)
+Where: x̄ = sample mean return, s = sample standard deviation, n = number of periods
+
+For t-stat > 2.0 with large n: p < 0.05, reject H₀
+```
+
+### Multiple Testing Problem
+
+In quantitative finance, researchers run hundreds of back-tests. If you test 100 strategies at α = 0.05, you expect 5 false positives by chance alone. This is a severe problem:
+
+- A strategy that shows t-stat > 2.0 in a back-test may simply be one of the 5 lucky false positives
+- **Harvey, Liu, and Zhu (2016):** require t-stat > 3.0 for new factor discoveries to be credible, given the history of fishing in the factor zoo
+
+---
+
+## 4. Regression for Financial Data
+
+### Ordinary Least Squares (OLS)
+
+OLS minimizes the sum of squared residuals to fit a line through data points:
+```
+Y = α + β₁X₁ + β₂X₂ + ... + ε
+
+Where:
+α = intercept (alpha in finance — return unexplained by factors)
+β = slope coefficients (sensitivities to factors)
+ε = residual (unexplained variation)
+```
+
+### Capital Asset Pricing Model as Regression
+
+The CAPM regression estimates a security's beta (market sensitivity):
+```
+R_security = α + β × R_market + ε
+
+Estimated via OLS on historical return data.
+α (alpha): excess return above market prediction — Jensen's alpha
+β (beta): market sensitivity (1.0 = same as market; >1 = more volatile than market)
+```
+
+**Interpretation of R-squared:** The proportion of return variation explained by the market factor. Diversified equity portfolios: R² ≈ 0.9. Individual stocks: R² ≈ 0.1–0.4.
+
+### The Fama-French Three-Factor Model
+
+Eugene Fama and Kenneth French found that two additional factors explain returns beyond the market:
+
+```
+R = Rf + β_M × (R_M − Rf) + β_SMB × SMB + β_HML × HML + α + ε
+
+SMB = Small Minus Big: return of small-cap stocks minus large-cap stocks
+HML = High Minus Low: return of high book-to-market stocks minus low B/M stocks
+
+β_SMB > 0: portfolio tilted toward small-cap stocks
+β_HML > 0: portfolio tilted toward value stocks
+```
+
+---
+
+## 5. Monte Carlo Simulation
+
+### What Monte Carlo Is
+
+Monte Carlo simulation estimates the probability distribution of an outcome by simulating thousands of possible scenarios, each using random draws from input distributions.
+
+**Named for:** The Monte Carlo casino in Monaco (randomness).
+
+### Monte Carlo for Option Pricing
+
+```
+Goal: Price a European call option on a stock with S₀=100, K=105, T=1yr, σ=20%, r=5%
+
+Steps:
+1. Simulate 10,000 stock price paths under GBM:
+   S_T = S₀ × exp[(r − σ²/2)×T + σ×ε×√T]
+   where ε ~ N(0,1) random draws
+   
+2. For each simulated S_T, calculate payoff:
+   Max(S_T − K, 0)
+   
+3. Average all payoffs, discount at r:
+   Option Price ≈ e^(-rT) × Average[Max(S_T − 105, 0)]
+
+With 10,000 simulations: very close to Black-Scholes analytical price.
+With 1,000,000 simulations: virtually identical.
+```
+
+### Monte Carlo for Portfolio VaR
+
+```
+Goal: Estimate 1-day 99% VaR for a PKR 1bn portfolio
+
+1. Estimate daily return mean and covariance matrix from historical data
+2. Simulate 100,000 daily portfolio returns from multivariate normal
+3. Sort simulated returns from worst to best
+4. 99% VaR = the 1,000th worst outcome (1% of 100,000)
+
+Result: "With 99% confidence, we will not lose more than PKR X in one day."
+```
+
+---
+
+## 6. Fat Tails and Extreme Value Theory
+
+### Why Fat Tails Matter
+
+The normal distribution assigns essentially zero probability to events more than 4 standard deviations from the mean. In financial markets:
+- 5-sigma daily moves occur roughly once per year in major markets (should be once in 14,000 years under normality)
+- 2008 financial crisis: Goldman Sachs CFO described "25-sigma events occurring several days in a row"
+- Black Monday 1987: 20% single-day S&P 500 decline — probability under normality: essentially zero
+
+### The Student-t as a Fat-Tail Model
+
+A Student-t distribution with low degrees of freedom (ν = 3–6) fits equity returns much better than normal:
+- More probability mass in the tails
+- Captures the empirically observed frequency of large moves
+- Many modern risk models use t-distribution for VaR
+
+### Extreme Value Theory (EVT)
+
+EVT is a branch of statistics specifically developed to model the tails of distributions — the extreme events that determine disaster scenarios.
+
+**Generalized Pareto Distribution (GPD):**
+EVT shows that exceedances above a high threshold u converge to a Generalized Pareto Distribution, regardless of the underlying distribution. This allows us to model tail risk without assuming normality.
+
+**Application in risk management:**
+- Identify a threshold u (e.g., daily loss > 2%)
+- Fit a GPD to all losses exceeding u
+- Use fitted GPD to estimate probabilities of extremely large losses (e.g., loss > 10%)
+
+**Pakistan equity context:**
+The KSE-100 index has exhibited extreme fat tails: the 2008 crash (−55% in 2008), the 2018 correction (−27%), and COVID-19 (−30% in weeks). Any risk model assuming normality would severely underestimate these events.
+
+---
+
+## Self-Assessment
+
+1. A quantitative analyst at FERROQUANT Capital runs a back-test of a Pakistan equity momentum strategy over 10 years. The strategy shows: annualized return 18%, standard deviation 22%, Sharpe ratio 0.82, skewness −1.2, excess kurtosis 4.5. The analyst uses 100 candidate strategies before finding this one. Evaluate: (a) is the Sharpe ratio statistically significant given the t-statistic implied, (b) what does the negative skewness mean for real-world performance, (c) why is the fact that 100 strategies were tested critical to the interpretation, and (d) what additional information would you require before allocating capital to this strategy?
+
+2. FERROQUANT Capital's risk team uses a 252-day rolling window of daily KSE-100 returns to estimate VaR. The historical daily returns show: mean 0.05%, standard deviation 1.2%, skewness −0.8, excess kurtosis 5.5. Calculate: (a) the 99% 1-day VaR under the normality assumption, (b) explain why this VaR is likely underestimated, (c) how would using a t-distribution (ν=5) change the VaR estimate, and (d) describe how EVT could be applied as an alternative.
+
+3. FERROQUANT wants to price an OTC call option on a Pakistani equity basket (illiquid, no exchange-traded options available). S₀ = PKR 1,000, K = PKR 1,100, T = 6 months, σ = 35% annualized, r = 12% (PKR risk-free rate). Describe the Monte Carlo setup: (a) the stochastic process to simulate, (b) the number of simulations required for reasonable accuracy, (c) the payoff calculation, (d) the discounting approach, and (e) one key model risk in this setup.
+
+<ArticleNav
+  prev={{ title: "Module 66 — The Future CFO", href: "/financial-strategy/module-66-future-cfo" }}
+  next={{ title: "Module 68 — Stochastic Calculus & Financial Mathematics", href: "/financial-strategy/module-68-stochastic-calculus-financial-mathematics" }}
+/>
