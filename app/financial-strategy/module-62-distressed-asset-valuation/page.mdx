@@ -1,0 +1,256 @@
+export const metadata = {
+  title: "Module 62 — Distressed Asset Valuation | Financial Strategy — ByteWise",
+  description: "Fulcrum security analysis, recovery analysis, NPL valuation, Pakistan banking sector distress, restructuring alternatives, and the CFO's role in financial distress situations.",
+  openGraph: { title: "Module 62 — Distressed Asset Valuation | Financial Strategy", description: "Fulcrum security, recovery analysis, NPL valuation, debt restructuring, Pakistan banking distress — for CFOs.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 62 — Distressed Asset Valuation
+
+Fulcrum security analysis, recovery rates by creditor class, NPL valuation for Pakistan banking sector, distressed M&A, restructuring alternatives, and the CFO's role when a company is in or near financial distress.
+
+## Learning Objectives
+
+- Identify the fulcrum security in a distressed capital structure
+- Estimate recovery rates by creditor class using waterfall analysis
+- Value NPLs using discount to face value methods
+- Evaluate debt restructuring options available to distressed borrowers
+- Navigate the CFO's role and obligations in financial distress situations
+
+---
+
+## 1. What Is Financial Distress?
+
+### The Spectrum of Distress
+
+**Technical default:** A covenant breach (e.g., DSCR falls below 1.25×) without actual inability to pay. Company remains solvent — just breached a ratio covenant.
+
+**Payment default:** Missed interest or principal payment. Triggers cross-default clauses in other agreements.
+
+**Operational distress:** Negative EBITDA; business is burning cash from operations. Company may be solvent today but heading toward insolvency.
+
+**Insolvency (balance sheet):** Total liabilities exceed total assets at fair value. Technically insolvent even if current cash is sufficient.
+
+**Insolvency (cash flow):** Company cannot pay debts as they fall due. The legal definition of insolvency in most jurisdictions including Pakistan.
+
+### Warning Signs CFOs Must Monitor
+
+**Financial triggers:**
+- DSCR falling below 1.5× (approaching covenant breach)
+- Free cash flow negative for 3+ consecutive quarters
+- Net debt / EBITDA exceeding 5×
+- Short-term borrowings exceeding cash + available facilities
+
+**Non-financial triggers:**
+- Loss of a major customer (>20% of revenue)
+- Key supplier threatening to withdraw credit terms
+- Material litigation award against the company
+- Rating downgrade to sub-investment grade
+
+---
+
+## 2. Capital Structure and the Fulcrum Security
+
+### The Capital Structure Waterfall
+
+In distress, assets are distributed in strict priority order:
+
+```
+Priority 1 — Super-senior / DIP financing (in formal restructuring)
+Priority 2 — Secured creditors (first lien) — banks with charge on assets
+Priority 3 — Secured creditors (second lien) — subordinated secured debt
+Priority 4 — Unsecured creditors — trade creditors, unsecured bonds/TFCs
+Priority 5 — Subordinated debt — mezzanine, junior notes
+Priority 6 — Preferred equity / Preference shares
+Priority 7 — Common equity — founders, PE sponsors, ordinary shareholders
+
+→ In distress, equity is typically wiped out first
+→ Recovery decreases as you move down the waterfall
+```
+
+### The Fulcrum Security
+
+The **fulcrum security** is the class of debt that sits at the enterprise value inflection point — it is the class that neither gets fully repaid nor is completely wiped out. The fulcrum security holders receive the residual equity in a restructured company.
+
+**Why identify the fulcrum security?**
+In a restructuring, the fulcrum security holders are the effective "owners" of the business. They receive new equity in exchange for their debt. Everyone above them gets par; everyone below them gets wiped out.
+
+### Worked Example
+
+```
+BIQAI Group (distressed):
+  Enterprise value (going concern):  PKR 8,000M
+
+Capital structure:
+  First lien bank debt:     PKR 3,000M (Priority 2)
+  Second lien TFCs:         PKR 4,000M (Priority 3)
+  Unsecured trade creditors:PKR 2,000M (Priority 4)
+  Equity:                   PKR 1,500M book (effectively zero)
+
+Waterfall analysis:
+  EV available:             PKR 8,000M
+  Less first lien:         (PKR 3,000M) → Fully repaid ✓
+  Remaining:                PKR 5,000M
+  Less second lien (PKR 4bn): → PKR 4,000M paid → Fully repaid ✓
+  Remaining:                PKR 1,000M
+  To unsecured creditors:  PKR 1,000M / PKR 2,000M = 50 cents on dollar
+  
+FULCRUM SECURITY = Unsecured trade creditors
+  (they get partial recovery and residual equity)
+```
+
+---
+
+## 3. Recovery Rates by Creditor Class
+
+### Historical Recovery Rate Data
+
+| Creditor Class | Average Recovery (International) | Pakistan Context |
+|---|---|---|
+| Super-senior / DIP | 90–100% | N/A (formal DIP lending rare in Pakistan) |
+| First lien secured bank debt | 70–90% | 60–80% (asset realizations lower; legal process slow) |
+| Second lien secured | 40–70% | 30–60% |
+| Senior unsecured bonds | 25–50% | 20–45% |
+| Subordinated / Junior notes | 5–30% | 10–25% |
+| Preferred equity | 0–15% | Rare; typically 0% in severe distress |
+| Common equity | 0–5% | Typically 0% in formal distress |
+
+**Pakistan-specific factors affecting recovery:**
+- Asset realization: court-supervised liquidation in Pakistan is notoriously slow (years, not months)
+- Collateral enforcement: charge on land is difficult to enforce without court order
+- Going concern premium: selling as a going concern typically yields 20–40% more than liquidation
+- SECP/court process: schemes of arrangement take 18–24 months
+
+### Recovery Analysis Model
+
+To build a recovery analysis:
+1. Estimate the going concern enterprise value (using EBITDA × sector multiple)
+2. Estimate the liquidation value (assets at forced sale — typically 30–60% of book)
+3. Choose the higher value
+4. Apply the waterfall to each creditor class
+
+---
+
+## 4. NPL Valuation — Pakistan Banking Sector
+
+### What an NPL Is
+
+A Non-Performing Loan (NPL) is a loan where the borrower has not made scheduled payments for 90+ days (SBP definition). Banks must classify NPLs under SBP Prudential Regulations:
+
+| Category | Overdue | Provisioning Requirement |
+|---|---|---|
+| Other Assets Especially Mentioned (OAEM) | 30–90 days | No specific provision |
+| Substandard | 90–180 days | 25% specific provision |
+| Doubtful | 180–365 days | 50% specific provision |
+| Loss | > 365 days | 100% specific provision |
+
+### How Banks Value NPLs
+
+**Net NPL = Gross NPL − Specific Provision**
+
+When banks sell NPL portfolios (to Asset Reconstruction Companies or distressed debt funds), they sell at a discount to net book value:
+- Secured NPLs (with good collateral): 30–60 cents per net PKR (after provisioning)
+- Unsecured NPLs: 5–20 cents per net PKR
+- Mixed portfolios: depends heavily on collateral quality
+
+**Valuation methodology for NPL portfolio:**
+1. Loan-by-loan analysis: review each loan's collateral, borrower viability, overdue period
+2. Collateral valuation: independent property valuers assess collateral at forced sale value
+3. Expected recovery: probability × expected recovery amount × time to realization
+4. Discount rate: distressed investor requires 20–35% IRR
+5. NPV of expected cash flows = bid price
+
+### Pakistan NPL Context
+
+Pakistan's banking sector NPL ratio has historically ranged from 8–20% (versus a global benchmark of ~3%). Contributing factors:
+- Concentrated corporate lending (top 100 borrowers account for majority of bank credit)
+- Public sector enterprise (PSE) exposure: circulars, delayed payments
+- Informal economy leading to underdocumented collateral
+- Slow legal recovery process
+
+---
+
+## 5. Debt Restructuring Options
+
+### In-Court vs Out-of-Court Restructuring
+
+| Approach | Advantages | Disadvantages |
+|---|---|---|
+| Out-of-court (private restructuring) | Fast, confidential, preserves relationships | Requires all creditor agreement; holdout problem |
+| Scheme of arrangement (Companies Act Part IX) | Binds dissenting minority (75% threshold) | Slow (18–24 months), public process |
+| Liquidation (winding up) | Clears obligations | Destroys going concern value; employees lose jobs |
+
+### Common Restructuring Terms
+
+**Maturity extension:** Extend TFC or loan maturity by 2–5 years, buying time for recovery. Common in Pakistan — banks "extend and pretend."
+
+**Rate reduction:** Reduce interest rate from market rate to concessional rate for a period. Creditor absorbs cost; often requires SECP approval for TFCs.
+
+**Principal haircut:** Creditors agree to write off a portion of principal. Most painful for creditors — reserved for severe distress. In Pakistan, very unusual outside formal insolvency.
+
+**Debt-to-equity swap:** Creditors receive equity in exchange for canceling debt. Typical fulcrum security restructuring. Creditor becomes shareholder; dilutes existing equity.
+
+**Payment-in-kind (PIK) toggle:** Option to pay interest in additional debt instruments rather than cash — defers cash burden while compounding debt.
+
+**Standstill agreement:** Creditors agree not to enforce rights for a defined period (60–180 days) while restructuring is negotiated. Gives breathing room.
+
+### Pakistan Banking Sector — Restructuring Process
+
+SBP Prudential Regulations allow banks to restructure NPLs:
+1. **Rescheduling:** Extend maturity, no change to principal — relatively simple
+2. **Restructuring (under SBP PR):** Requires SBP approval; must meet specific conditions; provisioning released on successful restructuring
+3. **Debt-to-equity:** Requires SBP approval for bank holding of equity; Companies Act compliance for equity issuance
+
+---
+
+## 6. CFO's Role in Financial Distress
+
+### The CFO's Legal Obligations in Distress
+
+**Wrongful trading risk:** If the company continues to trade when the CFO (and board) knew (or should have known) insolvency was inevitable, directors and officers can be personally liable for increased losses to creditors.
+
+**CFO's protective steps:**
+1. Take professional insolvency advice early (legal and financial advisors)
+2. Document the board's deliberations — show you were monitoring the situation
+3. Prepare detailed cash flow forecasts (13-week and 12-month)
+4. Identify realistic restructuring alternatives before it is too late
+5. Ensure full disclosure to creditors (no hiding information once in formal process)
+
+### 13-Week Cash Flow in Distress
+
+The 13-week cash flow model becomes the primary management tool in distress:
+- Weekly granularity for the next 13 weeks
+- Shows exactly when cash runs out ("the cliff")
+- Updated every week with actuals vs. forecast
+- Shared with creditors and advisors to demonstrate management control
+
+### CFO Communication with Creditors in Distress
+
+- **Proactive:** Contact key creditors before default, not after
+- **Transparent:** Share financial information (under NDA if needed)
+- **Solution-focused:** Come with a restructuring proposal, not just a problem
+- **Coordinated:** All creditor communications should go through a single point (usually financial advisor)
+
+---
+
+## Self-Assessment
+
+1. BIQAI Group faces the following capital structure in distress:
+   - Going concern EV: PKR 12bn
+   - Liquidation value: PKR 7bn
+   - First lien bank debt: PKR 5bn
+   - TFC holders (second lien): PKR 6bn
+   - Unsecured trade creditors: PKR 3bn
+   - Equity: PKR 2bn book value
+   
+   (a) Identify the fulcrum security, (b) calculate recovery rates for each creditor class under going concern, (c) calculate recovery rates under liquidation, (d) which scenario do creditors prefer and why?
+
+2. BIQAI Group's main bank is HBL (PKR 3bn first lien loan). The company has missed two interest payments (total PKR 300M overdue). HBL is considering whether to: (a) reschedule the loan (extend by 2 years at same rate), (b) restructure (reduce rate from 17% to 12% for 3 years), or (c) declare default and enforce collateral (factory land appraised at PKR 4bn). Analyze each option from HBL's perspective, and from BIQAI Group CFO's perspective. What restructuring proposal should the CFO bring to HBL?
+
+3. A Pakistan asset reconstruction company (ARC) offers to buy BIQAI Group's receivables from a distressed counterparty: face value PKR 500M, classified as Doubtful (provisioned at 50%), current bank carrying value PKR 250M. The ARC offers PKR 150M (30 cents on the net PKR). As CFO: (a) what is the P&L impact of accepting this offer, (b) what regulatory approvals might be needed, and (c) what alternative to the ARC sale should you evaluate before accepting?
+
+<ArticleNav
+  prev={{ title: "Module 61 — Startup & Early Stage Valuation", href: "/financial-strategy/module-61-startup-early-stage-valuation" }}
+  next={{ title: "Module 63 — Intangible Asset & IP Valuation", href: "/financial-strategy/module-63-intangible-asset-ip-valuation" }}
+/>

@@ -1,0 +1,310 @@
+export const metadata = {
+  title: "Module 55 — Consolidation Accounting Workshop | Financial Strategy — ByteWise",
+  description: "Step-by-step worked consolidation — intercompany eliminations, NCI, goodwill, mid-year acquisition, disposal, and foreign subsidiary translation under IAS 21.",
+  openGraph: { title: "Module 55 — Consolidation Accounting Workshop | Financial Strategy", description: "IFRS 10 consolidation, goodwill, NCI, intercompany eliminations, IAS 21 translation — worked examples.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 55 — Consolidation Accounting Workshop
+
+Step-by-step worked consolidation — intercompany eliminations, NCI, goodwill, mid-year acquisition, disposal with partial retained interest, and foreign subsidiary translation under IAS 21.
+
+## Learning Objectives
+
+- Prepare a complete consolidated statement of financial position from scratch
+- Eliminate all intercompany transactions and balances correctly
+- Calculate and present NCI under IFRS 10
+- Account for mid-year acquisitions and disposals
+- Translate and consolidate a foreign subsidiary under IAS 21
+
+---
+
+## 1. Control Under IFRS 10
+
+### The Control Test
+
+IFRS 10 requires consolidation when the parent has **control** over an entity. Control exists when the investor has:
+1. **Power** over the investee (existing rights that give ability to direct relevant activities)
+2. **Exposure** to variable returns from its involvement
+3. **Ability to use its power** to affect those returns
+
+### Practical Rebuttable Presumptions
+
+- **> 50% voting rights:** Control presumed (rebuttable)
+- **Minority veto rights:** Protective rights (not substantive — do not give control to minority)
+- **De facto control:** May control with < 50% if remaining shares widely dispersed
+
+### Investment Entity Exception
+
+Investment entities (e.g., venture capital funds, PE funds) are exempt from consolidating portfolio companies — instead account at fair value through profit or loss. IFRS 10 para 27.
+
+---
+
+## 2. Basic Consolidation — The Eight Steps
+
+### Group Structure for This Workshop
+
+```
+BIQAI Group Holdings Ltd (Parent, 100% owned)
+├── LLM Agent Systems Ltd (100% owned subsidiary)
+├── BlackIronTimes.com Ltd (80% owned subsidiary — 20% NCI)
+└── AuditIQ Ltd (70% owned subsidiary — 30% NCI)
+```
+
+### Step 1 — Identify the Group
+
+List all entities to be consolidated (100% + partial ownership above control threshold).
+Exclude: associates (20–50%), joint ventures, investment entities.
+
+### Step 2 — Add All Assets and Liabilities 100%
+
+Add together the line-by-line assets and liabilities of the parent and ALL subsidiaries (regardless of % owned). Include 100% of each subsidiary — NCI share is accounted for separately, not by proportional inclusion.
+
+### Step 3 — Eliminate the Investment
+
+Remove the parent's "Investment in subsidiary" asset and the subsidiary's equity at acquisition date.
+
+```
+DR  Share capital (subsidiary at acquisition)
+DR  Retained earnings (subsidiary at acquisition)
+DR  Any FV adjustments to identifiable net assets (IFRS 3)
+DR  Goodwill (balancing figure)
+CR  Investment in subsidiary (parent's balance sheet)
+CR  NCI at acquisition (fair value or proportionate share)
+```
+
+### Step 4 — Calculate Goodwill
+
+```
+Consideration transferred by parent           PKR X
+PLUS NCI at acquisition (full goodwill) OR
+     NCI as % of identifiable net assets (partial goodwill)
+MINUS Identifiable net assets at fair value
+= GOODWILL (or negative goodwill / bargain purchase)
+```
+
+**Full goodwill method (IFRS 3 option):** NCI measured at fair value — produces higher goodwill and higher NCI.
+**Partial goodwill method (IFRS 3 option):** NCI measured as % of identifiable net assets — only parent's share of goodwill recognized.
+
+### Step 5 — Calculate NCI
+
+```
+NCI at acquisition date (per step 4)
+PLUS NCI share of post-acquisition retained earnings
+PLUS NCI share of other comprehensive income
+= NCI AT REPORTING DATE (presented in equity section of CSFP)
+```
+
+### Step 6 — Eliminate Intercompany Balances
+
+| Transaction | Elimination Required |
+|---|---|
+| Intercompany loans | Eliminate both sides: DR intercompany payable / CR intercompany receivable |
+| Intercompany trading | Eliminate intercompany sales and COGS |
+| Intercompany inventory (unrealized profit) | Eliminate unrealized profit in closing inventory |
+| Intercompany PPE (unrealized profit) | Eliminate unrealized profit, adjust depreciation |
+| Intercompany dividends | Eliminate dividend income and dividend paid |
+| Management fees | Eliminate fee income and fee expense |
+
+### Step 7 — Unrealized Profit Eliminations
+
+**Inventory purchased from group company:**
+```
+Selling price within group: PKR 100
+Cost to selling subsidiary: PKR 70
+Unrealized profit: PKR 30 (still in buyer's inventory)
+
+DR Cost of sales / Retained earnings   30
+CR Inventory                           30
+```
+
+**Who absorbs the elimination?**
+- If wholly owned: adjust group retained earnings
+- If partially owned: only the seller's NCI adjusts if NCI subsidiary sells to parent
+
+### Step 8 — Present Consolidated Statements
+
+- CSFP: all assets/liabilities + goodwill, with NCI as separate line in equity
+- CI&S: 100% revenue, 100% costs, then split profit between parent and NCI at bottom
+- Other: consolidate cash flows, OCI, movements in equity
+
+---
+
+## 3. Goodwill — Impairment Testing (IAS 36)
+
+### Annual Impairment Test
+
+Goodwill must be tested for impairment at least annually (or when impairment indicator exists). Test is at Cash Generating Unit (CGU) level.
+
+```
+Carrying amount of CGU (including allocated goodwill)
+vs
+Recoverable amount = HIGHER OF:
+  - Fair value less costs to sell
+  - Value in use (discounted future cash flows)
+
+If carrying amount > recoverable amount: IMPAIRMENT
+Impairment allocated: first to goodwill, then to other assets pro-rata
+```
+
+### CGU Allocation
+
+Goodwill must be allocated to CGUs that benefit from the synergies of the business combination. If BlackIronTimes.com goodwill arose from synergies with BIQAI Group's media network, allocate to the media CGU.
+
+### Sensitivity Disclosure Required
+
+IFRS requires disclosure of the key assumptions and sensitivity of the impairment test to changes in assumptions. For example: "A 100bps increase in discount rate would eliminate the existing headroom of PKR 85M."
+
+---
+
+## 4. Non-Controlling Interests (NCI)
+
+### NCI in the Consolidated Statement of Financial Position
+
+NCI is presented as a separate component of equity in the CSFP — NOT as a liability.
+
+```
+EQUITY
+Share capital           PKR X
+Retained earnings       PKR X
+Other reserves          PKR X
+Attributable to owners  PKR X
+NCI                     PKR X ← separate line
+TOTAL EQUITY            PKR X
+```
+
+### NCI Movement Schedule
+
+```
+NCI at beginning of year           PKR X
+Share of profit for year           PKR X    [% × subsidiary profit]
+Share of OCI                       PKR X    [% × subsidiary OCI]
+Dividends paid to NCI             (PKR X)  [dividends × NCI%]
+Effect of changes in ownership     PKR X    [if any]
+NCI at end of year                 PKR X
+```
+
+### Change in Ownership Without Loss of Control
+
+If the parent buys additional shares from NCI (e.g., increases from 80% to 90%):
+- This is an equity transaction — no P&L impact
+- Difference between consideration paid and NCI book value acquired: adjust parent equity
+
+---
+
+## 5. Mid-Year Acquisition
+
+### The Problem
+
+If BIQAI Group acquires AuditIQ Ltd on 1 October (9 months into the fiscal year ending 30 June), how much of AuditIQ's results appear in the consolidated income statement?
+
+**Rule:** Only include results from the acquisition date. The pre-acquisition results belong to the selling shareholders.
+
+### Worked Example
+
+AuditIQ full-year profit: PKR 120M (earned evenly throughout year)
+
+Acquisition date: 1 October (= 9 months through fiscal year, 3 months remaining)
+
+Post-acquisition profit = PKR 120M × 3/12 = PKR 30M
+
+**Revenue and costs:** Similarly time-apportion all lines of the income statement from the acquisition date only.
+
+**Balance sheet at year-end:** Include 100% of AuditIQ's assets and liabilities at year-end (no time apportionment — CSFP is a point-in-time statement).
+
+---
+
+## 6. Foreign Subsidiary Translation (IAS 21)
+
+### Translation Method — Closing Rate Method
+
+For subsidiaries with a functional currency different from the presentation currency:
+
+| Item | Rate Used |
+|---|---|
+| Assets and liabilities | **Closing rate** (year-end spot rate) |
+| Revenue, expenses | **Average rate** for the period |
+| Share capital, retained earnings at acquisition | **Historical rate** |
+
+### Cumulative Translation Reserve (CTR)
+
+All exchange differences arising from translating a foreign subsidiary are accumulated in OCI in the **cumulative translation reserve** — not taken through profit or loss.
+
+### IAS 21 Worked Example
+
+BIQAI Group (PKR functional currency) acquires a UK subsidiary in Year 1. The subsidiary's functional currency is GBP.
+
+**Year 2 Balance Sheet of UK Sub (GBP millions):**
+
+| | GBP M | Rate | PKR M |
+|---|---|---|---|
+| Net assets | 10.0 | 220 (closing) | 2,200 |
+
+**Year 2 Closing rate:** GBP/PKR 220
+**Year 1 Closing rate (acquisition):** GBP/PKR 200
+
+**Translation gain in OCI:**
+- Opening net assets translated at year 1 rate: GBP 9M × 200 = PKR 1,800M
+- Closing net assets translated at year 2 rate: GBP 10M × 220 = PKR 2,200M
+- Difference = PKR 400M: split between profit earned in the year (translated at average) and exchange movement
+
+### Recycling on Disposal
+
+When the foreign subsidiary is sold, the entire CTR that has accumulated is "recycled" from OCI to profit or loss as part of the gain or loss on disposal. This is one of the few cases where OCI items are recycled through P&L.
+
+---
+
+## 7. Disposal of Subsidiary
+
+### Full Disposal (Losing Control)
+
+```
+Proceeds received                          PKR X
+MINUS Carrying amount of NCI at disposal  (PKR X)
+MINUS Net assets disposed (at CSFP date)  (PKR X)
+PLUS  Remaining interest (if any)           PKR X
+PLUS  CTR recycled from OCI                 PKR X
+= GAIN / (LOSS) ON DISPOSAL               PKR X
+```
+
+### Partial Disposal — Retaining Control
+
+If the parent sells some shares but retains > 50% (control maintained):
+- NCI increases
+- Treated as equity transaction (no P&L gain/loss)
+- Difference between proceeds and increase in NCI: adjust parent equity directly
+
+### Partial Disposal — Losing Control
+
+If the parent sells shares below 50% (control lost):
+- Deconsolidate — remove all assets/liabilities and previous NCI
+- Recognize remaining interest at fair value on the date control is lost
+- Calculate gain/loss as above including CTR recycling
+- Remaining interest: reclassify to IAS 28 (associate) or IFRS 9 (investment)
+
+---
+
+## Self-Assessment
+
+**Full Consolidation Exercise:**
+
+BIQAI Group acquires 75% of AuditIQ Ltd on 1 April 2023 for PKR 900M. At the acquisition date:
+- AuditIQ's net assets: Share capital PKR 200M, Retained earnings PKR 800M = Total PKR 1,000M
+- FV of AuditIQ's identifiable net assets: PKR 1,100M (PKR 100M FV uplift on property)
+- FV of 25% NCI at acquisition: PKR 320M (full goodwill method)
+
+At 30 June 2024 (15 months post-acquisition):
+- AuditIQ profit after tax for the year ending 30 June 2024: PKR 200M (earned evenly)
+- Intercompany sale from AuditIQ to BIQAI: PKR 50M revenue; AuditIQ's cost PKR 30M; all inventory remaining unsold in BIQAI's books
+
+**Required:**
+1. Calculate goodwill at acquisition under both full and partial goodwill methods
+2. Calculate NCI at 30 June 2024
+3. Calculate the unrealized profit elimination and its impact on group retained earnings
+4. How much of AuditIQ's profit is included in the consolidated income statement for the year ending 30 June 2024?
+
+<ArticleNav
+  prev={{ title: "Module 54 — Financial Statement Analysis for CFOs", href: "/financial-strategy/module-54-financial-statement-analysis" }}
+  next={{ title: "Module 56 — Equity Capital Markets Deep Dive", href: "/financial-strategy/module-56-equity-capital-markets" }}
+/>

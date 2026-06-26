@@ -248,6 +248,70 @@ const modules = [
     part: "Module 50 — CFO Case Studies: Pakistan & Gulf",
     chapters: [{ chapter: "CFO Case Studies: Pakistan & Gulf", items: [{ title: "Module 50 — CFO Case Studies: Pakistan & Gulf", href: "/financial-strategy/module-50-case-studies" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 51 — CFA Exam Bridge for CFOs",
+    chapters: [{ chapter: "CFA Exam Bridge for CFOs", items: [{ title: "Module 51 — CFA Exam Bridge for CFOs", href: "/financial-strategy/module-51-cfa-exam-bridge" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 52 — ACCA, ICAP & Professional Credentials",
+    chapters: [{ chapter: "ACCA, ICAP & Professional Credentials", items: [{ title: "Module 52 — ACCA, ICAP & Professional Credentials", href: "/financial-strategy/module-52-acca-icap-credentials" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 53 — FRM, ESG Certificate & Specialist Credentials",
+    chapters: [{ chapter: "FRM, ESG Certificate & Specialist Credentials", items: [{ title: "Module 53 — FRM, ESG Certificate & Specialist Credentials", href: "/financial-strategy/module-53-frm-esg-specialist-credentials" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 54 — Financial Statement Analysis for CFOs",
+    chapters: [{ chapter: "Financial Statement Analysis for CFOs", items: [{ title: "Module 54 — Financial Statement Analysis for CFOs", href: "/financial-strategy/module-54-financial-statement-analysis" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 55 — Consolidation Accounting Workshop",
+    chapters: [{ chapter: "Consolidation Accounting Workshop", items: [{ title: "Module 55 — Consolidation Accounting Workshop", href: "/financial-strategy/module-55-consolidation-accounting-workshop" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 56 — Equity Capital Markets Deep Dive",
+    chapters: [{ chapter: "Equity Capital Markets Deep Dive", items: [{ title: "Module 56 — Equity Capital Markets Deep Dive", href: "/financial-strategy/module-56-equity-capital-markets" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 57 — Debt Capital Markets Deep Dive",
+    chapters: [{ chapter: "Debt Capital Markets Deep Dive", items: [{ title: "Module 57 — Debt Capital Markets Deep Dive", href: "/financial-strategy/module-57-debt-capital-markets" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 58 — Private Equity & Venture Capital for CFOs",
+    chapters: [{ chapter: "Private Equity & Venture Capital for CFOs", items: [{ title: "Module 58 — Private Equity & Venture Capital for CFOs", href: "/financial-strategy/module-58-private-equity-venture-capital" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 59 — Corporate Law for CFOs (Pakistan)",
+    chapters: [{ chapter: "Corporate Law for CFOs (Pakistan)", items: [{ title: "Module 59 — Corporate Law for CFOs (Pakistan)", href: "/financial-strategy/module-59-corporate-law-pakistan" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 60 — Financial Regulation & Compliance",
+    chapters: [{ chapter: "Financial Regulation & Compliance", items: [{ title: "Module 60 — Financial Regulation & Compliance", href: "/financial-strategy/module-60-financial-regulation-compliance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 61 — Startup & Early Stage Valuation",
+    chapters: [{ chapter: "Startup & Early Stage Valuation", items: [{ title: "Module 61 — Startup & Early Stage Valuation", href: "/financial-strategy/module-61-startup-valuation" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 62 — Distressed Asset Valuation",
+    chapters: [{ chapter: "Distressed Asset Valuation", items: [{ title: "Module 62 — Distressed Asset Valuation", href: "/financial-strategy/module-62-distressed-asset-valuation" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 63 — Intangible Asset & IP Valuation",
+    chapters: [{ chapter: "Intangible Asset & IP Valuation", items: [{ title: "Module 63 — Intangible Asset & IP Valuation", href: "/financial-strategy/module-63-intangible-asset-valuation" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 64 — Behavioral Finance for CFOs",
+    chapters: [{ chapter: "Behavioral Finance for CFOs", items: [{ title: "Module 64 — Behavioral Finance for CFOs", href: "/financial-strategy/module-64-behavioral-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 65 — Negotiation for CFOs",
+    chapters: [{ chapter: "Negotiation for CFOs", items: [{ title: "Module 65 — Negotiation for CFOs", href: "/financial-strategy/module-65-negotiation-for-cfos" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 66 — The Future CFO",
+    chapters: [{ chapter: "The Future CFO", items: [{ title: "Module 66 — The Future CFO", href: "/financial-strategy/module-66-future-cfo" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

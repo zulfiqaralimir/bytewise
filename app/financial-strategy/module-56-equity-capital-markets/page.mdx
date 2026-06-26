@@ -1,0 +1,277 @@
+export const metadata = {
+  title: "Module 56 — Equity Capital Markets Deep Dive | Financial Strategy — ByteWise",
+  description: "IPO mechanics: bookbuilding, greenshoe, lock-up, stabilization. Rights issues: TERP calculation. Private placements: PIPE structures. PSX listing process end-to-end.",
+  openGraph: { title: "Module 56 — Equity Capital Markets Deep Dive | Financial Strategy", description: "IPO bookbuilding, greenshoe, TERP calculation for rights issues, PIPE structures, PSX listing.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 56 — Equity Capital Markets Deep Dive
+
+IPO mechanics from CFO perspective: bookbuilding, greenshoe option, lock-up periods, and stabilization. Rights issues: TERP calculation and underwriting structures. Private placements: PIPE and accelerated bookbuilds. PSX listing process end-to-end.
+
+## Learning Objectives
+
+- Manage an IPO from CFO perspective — preparation, pricing, and aftermarket obligations
+- Calculate TERP and design a rights issue structure
+- Evaluate private placement alternatives to public markets
+- Understand PSX listing requirements and end-to-end listing process
+- Navigate post-IPO continuous disclosure obligations
+
+---
+
+## 1. IPO Mechanics — CFO Perspective
+
+### IPO Readiness Assessment
+
+Before beginning an IPO process, the CFO must honestly assess 10 dimensions:
+
+| Dimension | IPO-Ready Standard |
+|---|---|
+| Audited financials | 3 years of IFRS-compliant accounts, unqualified opinions |
+| Financial controls | Documented, tested internal controls (COSO or equivalent) |
+| Governance | Independent board members, audit committee, remuneration committee |
+| FP&A quality | Monthly management accounts within 10 days of month-end |
+| Legal structure | Clean ownership, no undisclosed related party issues |
+| Tax compliance | FBR filings current, no material disputes without disclosure |
+| ESG | Basic ESG disclosure capability |
+| Management depth | Team beyond CEO/CFO to support investor scrutiny |
+| Business quality | Stable or growing margins, clear value proposition |
+| Market conditions | IPO window open: equity markets positive, sector in favor |
+
+### IPO Preparation Timeline
+
+```
+Month 1–3:    Select advisors (investment bank, lawyers, auditors, PR)
+              Begin IFRS restatement if needed
+              Board and governance restructuring
+              Conduct IPO readiness assessment
+
+Month 4–6:    Long-form due diligence by bank
+              Financial forecasting for prospectus
+              Connected transactions review
+              Draft prospectus — first drafts
+
+Month 7–9:    SECP review process (Pakistan)
+              Pilot analyst presentations
+              Research publication preparation
+              Roadshow logistics
+
+Month 10–11:  Pre-deal investor education
+              Institutional roadshow (global for cross-listed deals)
+              Bookbuilding
+              Pricing and allocation
+
+Month 12:     Settlement and listing
+              First day of trading
+              Post-IPO lock-up period begins
+```
+
+### CFO's Key Prospectus Responsibilities
+
+The prospectus is a legal document. CFO bears personal responsibility for:
+- Accuracy of all financial statements and projections
+- Completeness of risk factors related to financial position
+- Working capital statement (typically: "The company has sufficient working capital for at least 12 months from the date of this prospectus")
+- Related party disclosure
+- Material litigation disclosure
+
+**CFO personal liability:** Under Pakistan's Securities Act 2015, the CFO (as a director or senior officer) can be personally liable for misstatements in the prospectus. This is one of the highest-stakes documents the CFO will ever sign.
+
+---
+
+## 2. Bookbuilding Process
+
+### How Bookbuilding Works
+
+The bookbuild is the process by which the underwriting bank collects demand from institutional investors before pricing the IPO.
+
+**Steps:**
+1. Launch roadshow — CFO presents company to institutional investors (fund managers, insurance companies, pension funds, family offices)
+2. Investors submit indications of interest: price they will pay and number of shares
+3. Bank maintains the "book" — aggregated demand at each price point
+4. CFO and board, advised by bank, set final IPO price based on book coverage
+5. Shares allocated to investors; settlement typically T+2
+
+### Key Bookbuilding Metrics
+
+**Book coverage:** Total demand / shares on offer. A well-run IPO targets 5–10× coverage. Undersubscribed books (< 1×) are typically pulled (postponed) rather than priced at lower end.
+
+**Price revision:** If book is 8× covered at the top of the range, the IPO is "well covered" — strong institutional demand. If 90% of demand is at the mid or low end of the price range, pricing may be at lower end.
+
+**Cornerstone investors:** Anchor investors who commit to a fixed allocation pre-roadshow. They provide confidence to the book and receive allocation certainty in exchange for a lock-up (typically 6 months).
+
+### Pakistan Retail Tranche
+
+PSX-listed IPOs in Pakistan have a mandatory retail investor tranche: typically 20–30% of total offer size allocated to Pakistani retail investors (individuals), distributed via lottery if oversubscribed.
+
+---
+
+## 3. Greenshoe Option (Over-Allotment Option)
+
+### How the Greenshoe Works
+
+The greenshoe is a 30-day stabilization mechanism named after the Green Shoe Manufacturing Company (first company to use it, 1960).
+
+**Mechanics:**
+1. The IPO allocates 15% more shares than originally planned (the "over-allotment")
+2. The stabilization agent (usually the bookrunner bank) has a 30-day option to buy shares from the issuer at the IPO price
+3. Simultaneously, the bank short-sells the over-allotted shares into the market at the IPO price
+
+**Two scenarios after IPO:**
+
+**Scenario A — Stock trades below IPO price:**
+- The bank buys shares in the market (supporting the price) to cover its short position
+- Bank does NOT exercise the greenshoe option
+- Result: stabilization support for the stock price; bank makes money on the spread
+
+**Scenario B — Stock trades above IPO price:**
+- Buying shares in market would cost more than the greenshoe exercise price
+- Bank exercises the greenshoe — buys shares from issuer at IPO price
+- Issuer receives additional proceeds (up to 15% more than planned)
+- Result: company gets additional capital; no aftermarket support needed (price is already up)
+
+### SECP Stabilization Framework
+
+Pakistan SECP allows greenshoe/stabilization subject to disclosure in prospectus and SECP notification. The stabilization agent must maintain a stabilization account and report all transactions.
+
+---
+
+## 4. Rights Issues
+
+### When Companies Use Rights Issues
+
+Rights issues are used to raise equity capital from existing shareholders:
+- Deleveraging: reducing debt-to-equity by paying down debt with equity proceeds
+- Growth funding: capex program too large to fund from internal cash
+- Regulatory capital: banks often issue rights to meet Basel III capital requirements
+- Distressed equity raise: company needs capital to avoid covenant breach
+
+### TERP Calculation
+
+The Theoretical Ex-Rights Price (TERP) is the price at which the shares theoretically trade after the rights issue, incorporating the dilution from new shares at the subscription price.
+
+```
+TERP = (Existing shares × Pre-rights price + New shares × Subscription price)
+        ÷ (Existing shares + New shares)
+
+Worked Example:
+Existing shares: 100M at PKR 50/share = PKR 5,000M market cap
+New shares: 25M at PKR 40/share (20% discount to market) = PKR 1,000M proceeds
+
+TERP = (100M × 50 + 25M × 40) / (100M + 25M)
+     = (5,000 + 1,000) / 125
+     = PKR 48.00
+
+Nil-paid rights value = TERP − Subscription price = 48 − 40 = PKR 8 per right
+```
+
+### Subscription Price Discount
+
+Rights issues are typically offered at a discount to market price to incentivize take-up:
+- Typical discount: 20–40% to theoretical ex-rights price
+- Larger discount: easier to place with underwriters; more dilutive to shareholders who don't subscribe
+- Pakistan practice: SECP requires disclosure of subscription price in rights issue circular
+
+### Underwriting
+
+The company typically appoints an underwriter (usually the lead bank) to guarantee the capital raise. The underwriter commits to buy any shares not taken up by existing shareholders.
+
+**Underwriting economics:**
+- Underwriting fee: typically 1.5–3% of total capital raised
+- Sub-underwriting: the lead underwriter distributes risk to institutional sub-underwriters
+
+### Nil-Paid Rights Trading
+
+Between announcement and close of the rights offer, existing shareholders can:
+1. **Take up their rights:** Pay the subscription price, receive new shares
+2. **Sell their rights** (nil-paid rights) in the market: receive the nil-paid rights value (TERP − subscription price) as cash
+3. **Do nothing:** Rights lapse; shareholder is diluted
+
+---
+
+## 5. Private Placements
+
+### Accelerated Bookbuild (ABB)
+
+An ABB is a rapid (typically overnight) placement of shares with institutional investors:
+- Used for secondary offerings (existing shareholders selling) or primary capital raises
+- Launch after market close, price and allocate by market open next morning
+- No prospectus required in most jurisdictions (using existing listing documents)
+- Discount to market: typically 3–8% to compensate investors for speed and lack of information
+- **CFO involvement:** Approve the price, the allocation, and manage post-announcement disclosure
+
+### PIPE — Private Investment in Public Equity
+
+A negotiated placement with one or few institutional investors:
+- Negotiated price (discount to market), no public bookbuild
+- Often includes warrants, registration rights, information rights, anti-dilution provisions
+- Common in FinTech/growth equity raises
+- **Pakistan:** Preferential allotment under Companies Act 2017, Section 83 — EGM approval, SECP notification, price must not be below par value
+
+### Private Placement for Pre-IPO Companies
+
+Pre-IPO companies raise equity via private placements without public listing:
+- Angel/seed round: informal, no regulatory framework
+- VC rounds (Series A, B, C): SAFE or convertible note or priced round
+- Pre-IPO placement to anchor institutional investors: builds investor base before listing
+- SECP exemptions: Companies Act 2017 allows private offerings to sophisticated investors
+
+---
+
+## 6. PSX Listing Requirements
+
+### Main Board Eligibility (Pakistan Stock Exchange)
+
+| Requirement | Standard |
+|---|---|
+| Minimum paid-up capital | PKR 200 million (post-IPO) |
+| Profitable track record | Profitability in at least 2 of last 3 years |
+| Minimum free float | At least 25% of post-IPO capital offered to public |
+| Audited accounts | 3 years of audited financials (ICAP-registered auditor) |
+| Corporate governance | Comply with SECP Listed Companies Code of Corporate Governance |
+
+### Growth Enterprise Market (GEM)
+
+For smaller companies:
+- Minimum paid-up capital: PKR 25 million
+- Less stringent profitability requirement
+- Suitable for tech startups, smaller companies seeking public capital
+
+### PSX Listing Process — Typical Timeline
+
+```
+Week 1–2:    Initial eligibility review with PSX
+             Appoint lead manager (regulated by SECP)
+Week 3–8:    Due diligence, prospectus drafting
+             SECP review of draft prospectus
+Week 9–12:   SECP approval of prospectus
+             Roadshow to institutional investors
+Week 13–14:  Retail subscription period (typically 3–5 days)
+Week 15:     Allotment, SECP filing, listing on PSX
+```
+
+### Post-Listing Obligations
+
+Once listed on PSX, ongoing obligations include:
+- **Quarterly financial results:** Within 30 days of quarter end (PSX Regulations)
+- **Annual results:** Within 4 months of financial year end
+- **Material information disclosure:** Immediate notification of any price-sensitive information
+- **AGM:** Within 6 months of financial year end
+- **Dividend announcements:** Board announcement and notification to PSX
+- **SECP filings:** Form A (annual return), Form B (balance sheet confirmation)
+
+---
+
+## Self-Assessment
+
+1. BIQAI Group plans a rights issue to raise PKR 2 billion. Current share count: 400 million shares. Current market price: PKR 75 per share. The subscription price will be set at a 25% discount to TERP. Calculate: (a) the subscription price, (b) the number of new shares to be issued, (c) the TERP, (d) the nil-paid rights value, and (e) total underwriting fees at 2%.
+
+2. BIQAI Group has a cornerstone investor committed to 30% of the IPO at PKR 60 per share, with a 6-month lock-up. The IPO total size is PKR 5 billion. On day 15 post-IPO, the stock has risen to PKR 72 per share. The greenshoe agent has been buying shares in the market to cover the short. Should the greenshoe option be exercised? Who benefits and how?
+
+3. As CFO, you receive a call from a Gulf family office offering a PIPE at a 10% discount to the 30-day VWAP (PKR 68/share vs current PKR 75) for a PKR 500M investment. The PIPE comes with a demand registration right (forcing you to list their shares within 12 months) and anti-dilution ratchet. Analyze the pros and cons and your recommendation to the board.
+
+<ArticleNav
+  prev={{ title: "Module 55 — Consolidation Accounting Workshop", href: "/financial-strategy/module-55-consolidation-accounting-workshop" }}
+  next={{ title: "Module 57 — Debt Capital Markets Deep Dive", href: "/financial-strategy/module-57-debt-capital-markets" }}
+/>
