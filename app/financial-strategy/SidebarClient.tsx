@@ -425,6 +425,10 @@ const modules = [
     part: "Module 94 — The Investment Banking Industry",
     chapters: [{ chapter: "The Investment Banking Industry", items: [{ title: "Module 94 — The Investment Banking Industry", href: "/financial-strategy/module-94-investment-banking-industry" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 95 — IB Analyst & Associate Toolkit",
+    chapters: [{ chapter: "IB Analyst & Associate Toolkit", items: [{ title: "Module 95 — IB Analyst & Associate Toolkit", href: "/financial-strategy/module-95-ib-analyst-toolkit" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

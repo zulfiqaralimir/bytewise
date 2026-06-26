@@ -1,0 +1,262 @@
+export const metadata = {
+  title: "Module 95 — IB Analyst & Associate Toolkit | Financial Strategy — ByteWise",
+  description: "Day-to-day IB reality — Excel modeling conventions, PowerPoint pitch book standards, document management, working with senior bankers, managing up, and IB work culture.",
+  openGraph: { title: "Module 95 — IB Analyst & Associate Toolkit | Financial Strategy", description: "Excel conventions, pitch book standards, managing up, IB work culture, and day-in-the-life reality for analysts and associates.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 95 — IB Analyst & Associate Toolkit
+
+Investment banking technical skills — DCF, LBO, trading comps — are necessary but not sufficient. What separates the analyst who makes it from the one who doesn't is execution discipline: building models that don't break, making decks that communicate clearly under pressure, managing a demanding team without burning out, and knowing how to navigate the culture. This module covers the operational toolkit every IB analyst and associate needs from Day 1.
+
+## Learning Objectives
+
+- Apply professional Excel modeling conventions used in investment banking
+- Build a PowerPoint pitch book that communicates clearly and withstands senior review
+- Manage your workflow on a live transaction with multiple concurrent workstreams
+- Navigate the analyst-associate-VP-MD hierarchy effectively
+- Understand IB compensation, culture, and what to expect in the first 1–3 years
+- Apply professional standards to Pakistan and Gulf IB environments
+
+---
+
+## 1. Excel Modeling Conventions
+
+### Why Conventions Matter
+
+In a live deal, multiple analysts, associates, and VPs work in the same model simultaneously. Models get inherited when analysts leave. Models are shared with clients and outside advisors. Without strict conventions, models become unmaintainable, error-prone, and impossible to audit.
+
+**The core principle:** A model should be auditable by someone who has never seen it before.
+
+### Color Coding (The Universal Standard)
+
+Every professional IB model uses this color system:
+
+| Cell Type | Color | Meaning |
+|---|---|---|
+| Hard-coded input | Blue font | Number typed directly — no formulas |
+| Formula | Black font | Calculated from other cells |
+| Link from another sheet | Green font | Cross-sheet reference |
+| External link | Red font | Links to another Excel file — fragile |
+
+**Why this matters:** When reviewing a model, you can instantly identify inputs vs. calculations. If a "formula" cell has blue font, something is wrong.
+
+### Structural Conventions
+
+**Sheet organization:**
+- **Inputs sheet:** All assumptions in one place — hard-coded in blue
+- **Supporting schedules:** Revenue build, cost build, debt schedule, depreciation, working capital
+- **Output sheet:** Income statement, balance sheet, cash flow, valuation — pulling from schedules
+
+**Never hard-code a number in a formula:**
+```
+WRONG: =B5 * 0.30
+RIGHT: =B5 * Inputs!B12
+```
+
+The wrong version hides where 30% came from. The right version makes it auditable.
+
+**Time flows left to right:** Year 1 in column C, Year 2 in column D. Never break this convention.
+
+**Circular references:** Models with cash sweeps or interest calculations may create circular references. Use an iteration toggle in the Inputs sheet to control this deliberately.
+
+### Financial Statement Integrity Checks
+
+**Balance sheet check:**
+```
+Assets - (Liabilities + Equity) = 0
+```
+Build this as a highlighted row. Red fill if non-zero. Never deliver a model with a non-zero balance sheet check.
+
+**Cash flow tie-out:**
+```
+Ending Cash (Cash Flow Statement) = Cash on Balance Sheet
+```
+
+**EBITDA reconciliation:**
+```
+EBITDA = Net Income + Tax + Interest + D&A
+```
+Cross-check from the top down and bottom up.
+
+### Common Analyst Errors
+
+- **Wrong sign:** Cash outflows must be negative. Maintain sign convention throughout.
+- **Gross vs. net:** Is revenue gross or net of returns? Is debt gross or net of fees?
+- **Wrong fiscal year end:** Pakistani companies often end June 30 or September 30, not December 31.
+- **Off-by-one year in discounting:** Year 1 cash flow should be discounted at 0.5 periods under mid-year convention, not 1.0.
+
+---
+
+## 2. PowerPoint Pitch Books
+
+### What a Pitch Book Does
+
+A pitch book presents analysis to clients. The three main types:
+
+- **Mandate pitch book:** Presented to win a mandate. Purpose — convince the client to hire the bank.
+- **Process book:** Used during a live transaction (information memo, management presentation, board book).
+- **Fairness opinion book:** Presented to the board supporting a transaction recommendation.
+
+### Standard M&A Pitch Book Structure
+
+1. **Executive summary:** 1–2 pages. The entire message in one place — executives often read only this.
+2. **Market and industry context:** 3–5 pages. Where the industry is going, why now is the right time.
+3. **Company overview:** 3–5 pages. Business description, financial highlights.
+4. **Transaction rationale:** 5–8 pages. Strategic fit, synergies.
+5. **Valuation analysis:** 5–10 pages. Trading comps, transaction comps, DCF, LBO if applicable. The "football field."
+6. **Process and next steps:** 2–3 pages. Recommended structure and timeline.
+7. **Appendix:** Supporting detail — full financials, industry data, management bios.
+
+### Design Standards
+
+**The "So What?" test:**
+Every slide needs a clear conclusion in its title. Not "Historical Revenue" — instead "Revenue Growth Has Accelerated, Driven by X and Y." The title states the conclusion; the chart provides the evidence.
+
+**Consistency:**
+- One font family throughout (Arial, Helvetica Neue)
+- 3–4 colors maximum — use the bank's brand colors
+- Every page: page number, confidentiality footer, date
+- Maximum 6–8 bullets per slide
+
+**Chart selection:**
+- Time series: line or bar chart
+- Peer comparison: bar chart
+- Composition: stacked bar (use pie sparingly)
+- Valuation vs. performance: scatter plot
+- When precision matters more than visuals: table
+
+### The Review Process
+
+**Junior → VP → MD.** Never show a client anything that hasn't been reviewed by an MD.
+
+**Handling comments:**
+- Accept all comments without argument unless you have a factual correction
+- Mark every change clearly so the reviewer can find it quickly
+- If a comment is unclear, ask — never guess
+
+---
+
+## 3. Deal Execution: Managing Workstreams
+
+### The Analyst's Role on a Live Deal
+
+On a live M&A deal the analyst owns:
+1. Financial model — building and maintaining
+2. Due diligence requests — drafting and tracking
+3. Information memorandum sections — drafting
+4. Data room management — organizing documents
+5. Transaction calendar — tracking all deadlines
+
+### Sell-Side M&A Timeline
+
+```
+Weeks 1–4:   Preparation — model, CIM, marketing materials
+Weeks 4–8:   First round — CIM distributed, IOIs received
+Weeks 8–12:  Management presentations with shortlisted bidders
+Weeks 12–16: Final round — binding bids received
+Weeks 16–20: Exclusivity — DD, SPA negotiation
+Weeks 20–24: Signing → Regulatory approvals → Closing
+```
+
+### Managing Multiple Deals
+
+Analysts are typically staffed on 2–4 live transactions simultaneously plus pitches.
+
+**Priority framework:**
+1. Live deals with today's deadline
+2. Live deals with this-week deadlines
+3. Pitches
+4. Internal requests
+
+**Communication rule:** Never go dark. If you're overwhelmed, tell your VP early — not after missing a deadline. "I can have X by 11pm and Y by 6am" is a professional response to competing priorities.
+
+---
+
+## 4. Working with Senior Bankers
+
+### What MDs Want
+
+- **Accuracy above everything.** A wrong number in a client deck is catastrophic.
+- **No surprises.** If a deadline is at risk, communicate immediately.
+- **Anticipation.** Pre-build the sensitivity table the MD will ask for. Pre-check the data room for a missing document. Don't wait to be asked.
+
+### Managing Up
+
+**Taking instruction:**
+- Write down every instruction immediately — never rely on memory at 10pm.
+- Repeat back key deliverables at the end of every conversation: "Just to confirm — DCF with 3% terminal growth, comps with 5 peers, football field, all by 6am?"
+- Ask clarifying questions before starting — not after 3 hours in the wrong direction.
+
+**Delivering work:**
+- Always deliver with a brief email: what you built, what assumptions you used, what questions remain.
+- Flag issues proactively: "The model works but Company X's most recent quarterly wasn't available — I used their last annual. Should I flag this in the comps?"
+
+---
+
+## 5. IB Compensation and Culture
+
+### Analyst Compensation (US Reference)
+
+| Level | Base | Bonus | Total |
+|---|---|---|---|
+| Analyst 1 | $110K | $80–100K | ~$200K |
+| Analyst 2 | $115K | $90–110K | ~$215K |
+| Associate (MBA) | $175–225K | $100–175K | $275–400K |
+| VP | $250–350K | $200–400K | $450–750K |
+| MD | $350–500K+ | $500K–$2M+ | $1M–$2.5M+ |
+
+### Gulf IB Compensation
+
+Gulf pay is at or above US levels — with zero income tax:
+- **Analyst/Associate:** $150–250K all-in (tax-free) + housing allowance
+- **VP:** $300–500K all-in (tax-free)
+- **MD:** $600K–$2M+ (tax-free)
+
+A $400K package in Dubai is equivalent to $550K+ in New York after US federal/state tax.
+
+### Pakistan IB Compensation
+
+- **Analyst:** PKR 150K–300K/month ($500–$1,100)
+- **Associate/VP equivalent:** PKR 500K–1.5M/month ($1,800–$5,400)
+- **Senior banker:** PKR 2–5M+/month ($7,000–$18,000)
+
+Diaspora bankers returning from Gulf often take nominal pay cuts but find deal exposure and quality of life compelling at senior levels.
+
+### Hours and Culture
+
+- **Normal week:** 70–90 hours
+- **Live deal sprint:** 100–110 hours, overnights common
+- **Weekends:** Required on live deals; occasional otherwise
+
+Culture is improving — most banks now have protected weekends and mental health resources. But IB remains demanding and the culture of high expectations is real.
+
+---
+
+## Self-Assessment
+
+1. You receive a model from a colleague. Identify every convention violation:
+   
+   - Cell B12 contains `=B10 * 0.275` in black font
+   - Cell C8 has blue font but contains `=B8 * 1.05`
+   - Balance sheet shows Assets: PKR 5,200M vs. Liabilities + Equity: PKR 5,185M
+   - The tax row hard-codes 27.5% inside the formula with black font
+   - Revenue cells in column C use a different font size than columns D through H
+   
+   (a) List each violation and explain why it matters operationally.
+   (b) The balance sheet shows a PKR 15M discrepancy. List the three most common causes and how you would systematically find the error.
+   (c) Rewrite cell B12's formula correctly if the 27.5% tax rate lives at `Inputs!B18`.
+   (d) Your VP asks why the model has circular references. Explain in two sentences what a circular reference is and when it legitimately arises.
+
+2. You are building a pitch book for Nishat Mills (NML) seeking a PSX rights issue:
+   
+   (a) List six sections for the rights issue pitch book. For each, write a one-sentence description of its purpose.
+   (b) The MD says: "Make sure the valuation slide shows we can get them PKR 60–70 per share." Identify the ethical and practical problem with this instruction and how you would respond.
+   (c) The draft has a slide titled "Historical Revenue" showing a 5-year bar chart. Apply the "So What?" test — rewrite the title and identify what additional information the chart needs.
+   (d) You email a draft deck to your VP at 2am. At 8am you receive 47 tracked changes and "Completely restructure Section 3." How should you handle this professionally?
+
+<ArticleNav
+  prev={{ title: "Module 94 — The Investment Banking Industry", href: "/financial-strategy/module-94-investment-banking-industry" }}
+  next={{ title: "Module 96 — Financial Statement Analysis for IB", href: "/financial-strategy/module-96-fsa-investment-banking" }}
+/>
