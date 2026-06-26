@@ -365,6 +365,10 @@ const modules = [
     part: "Module 79 — Risk Management for Investment Managers",
     chapters: [{ chapter: "Risk Management for Investment Managers", items: [{ title: "Module 79 — Risk Management for Investment Managers", href: "/financial-strategy/module-79-risk-management-investment-managers" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 80 — Regulation for Investment Managers",
+    chapters: [{ chapter: "Regulation for Investment Managers", items: [{ title: "Module 80 — Regulation for Investment Managers", href: "/financial-strategy/module-80-regulation-investment-managers" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
