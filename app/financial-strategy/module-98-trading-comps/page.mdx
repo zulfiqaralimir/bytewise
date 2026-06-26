@@ -1,0 +1,303 @@
+export const metadata = {
+  title: "Module 98 — Comparable Company Analysis | Financial Strategy — ByteWise",
+  description: "Peer group selection, spreading financials, Enterprise Value calculation, key trading multiples (EV/EBITDA, P/E, P/BV), benchmarking, and presenting comps output — with Pakistan cement and Gulf banking worked examples.",
+  openGraph: { title: "Module 98 — Comparable Company Analysis | Financial Strategy", description: "How to build, spread, and present trading comps — with Pakistan cement sector and Gulf banking full worked examples.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 98 — Comparable Company Analysis
+
+Comparable company analysis (trading comps) is the most widely used valuation methodology in investment banking. Its logic is simple: if similar public companies trade at certain multiples of their earnings or revenue, a private company with similar characteristics should be worth a comparable multiple. The devil is in the execution — selecting the right peers, spreading financials consistently, calculating EV correctly, and presenting the output in a way that withstands client and board scrutiny.
+
+## Learning Objectives
+
+- Select appropriate peer companies using four criteria
+- Calculate Enterprise Value correctly from market data
+- Spread trailing, LTM, and forward financial metrics consistently
+- Calculate and interpret EV/EBITDA, EV/Revenue, P/E, and P/BV multiples
+- Apply discounts and premiums to the comps range
+- Build and present a comps output table for Pakistan and Gulf companies
+
+---
+
+## 1. The Logic of Trading Comps
+
+### Why Public Market Comparables Matter
+
+Public markets represent the collective judgment of thousands of informed investors about what a business is worth. If the market consistently values cement companies at 7–9x EBITDA, that is powerful evidence that a cement company is worth approximately 7–9x EBITDA.
+
+**Trading comps give you:**
+- A market-based reference range for valuation
+- A benchmark to assess whether a private company is cheap or expensive relative to peers
+- A reality check on DCF assumptions (if your DCF gives 15x EBITDA but peers trade at 8x, your assumptions need scrutiny)
+
+**Limitations:**
+- Public market sentiment affects multiples (bull markets → high multiples; bear markets → low multiples)
+- No perfect comparable exists — every company is unique
+- Minority discount: public market prices represent minority stakes; M&A typically requires a control premium (20–40% above the trading price)
+
+---
+
+## 2. Step 1 — Peer Group Selection
+
+### The Four Selection Criteria
+
+A peer group should consist of companies that are similar to the target on all four dimensions:
+
+**1. Business similarity:**
+- Same industry or sub-industry
+- Similar products/services
+- Similar business model (asset-heavy vs. asset-light, B2B vs. B2C)
+
+**2. Geographic similarity:**
+- Operate in the same country or at minimum the same economic region
+- A Pakistan cement company should be compared to other Pakistan/regional cement companies — not US cement companies (different cost structures, growth rates, capital costs)
+
+**3. Financial profile similarity:**
+- Similar revenue scale (±1–2 orders of magnitude)
+- Similar growth rates
+- Similar margins
+- Similar capital intensity (capex/revenue)
+
+**4. Lifecycle stage:**
+- High-growth startups vs. mature, dividend-paying businesses should never be in the same comp set
+- A 30% revenue growth company trades at very different multiples than a 3% growth company
+
+### Tier the Peer Group
+
+Not all peers are equally comparable. Structure the comp table in tiers:
+
+- **Tier 1 (Core comps):** Most directly comparable — same business, same geography, similar scale. Use this range for primary valuation.
+- **Tier 2 (Secondary comps):** Similar business but different geography or scale. Use as a sanity check.
+- **Tier 3 (Reference comps):** Tangentially related — different sub-sector or significantly different scale. Show in appendix for context.
+
+---
+
+## 3. Step 2 — Calculating Enterprise Value
+
+### Enterprise Value Formula
+
+```
+Enterprise Value = Market Capitalization
+                + Total Debt (gross)
+                + Minority Interest
+                + Preferred Stock
+                − Cash and Cash Equivalents
+```
+
+**Market capitalization:**
+```
+Market Cap = Share Price × Diluted Shares Outstanding
+```
+
+Diluted shares include: basic shares + in-the-money options (treasury stock method) + convertible securities (if-converted method).
+
+**Minority interest:** If the company consolidates a subsidiary it doesn't fully own, the minority's share of the subsidiary is included in EV (because the consolidated EBITDA includes the subsidiary's full earnings).
+
+**Total debt:** Use gross debt (Module 96 definition) — all interest-bearing obligations.
+
+**Cash:** Deduct only freely available cash. Restricted cash stays in debt-side adjustments.
+
+### EV in Pakistan Context
+
+**PSX-listed company EV example:**
+- Engro Fertilizers share price: PKR 85
+- Diluted shares: 1,400M
+- Market Cap: PKR 119B
+- Net debt (short-term + long-term − cash): PKR 12B
+- Enterprise Value: PKR 131B
+
+**Important:** When spreading comps for a Pakistani company, always use the same currency for all peers (USD or PKR) and specify the exchange rate and date.
+
+---
+
+## 4. Step 3 — Spreading Financials
+
+### Time Periods
+
+**Historical periods:**
+- LTM (Last Twelve Months): The most recent 12 months. Calculated as: Last annual + YTD current year − YTD prior year.
+- Prior full fiscal year (FY-1): The last complete fiscal year.
+- Two years ago (FY-2): For trend analysis.
+
+**Forward-looking periods (consensus estimates):**
+- NTM (Next Twelve Months): Analyst consensus estimate for the next 12 months. Often more relevant for growth companies.
+- CY+1 (Calendar Year +1): Next full calendar year estimates.
+- CY+2: The year after.
+
+**Source for estimates:** Bloomberg consensus, Refinitiv (IBES), company guidance.
+
+### Metrics to Spread
+
+For each comp company, spread:
+
+```
+Revenue (LTM, CY+1, CY+2)
+EBITDA (LTM, CY+1, CY+2)
+EBITDA margin % (LTM, CY+1, CY+2)
+EBIT (LTM)
+D&A (LTM)
+Net Income (LTM, CY+1, CY+2)
+EPS (LTM, CY+1, CY+2)
+Book Value per Share (latest balance sheet)
+Free Cash Flow (LTM)
+```
+
+**Consistency is critical:** Apply the same adjustments to all companies. If you exclude restructuring charges for one company, you must apply the same treatment across all peers.
+
+---
+
+## 5. Step 4 — Calculating Multiples
+
+### EV-Based Multiples
+
+```
+EV/EBITDA = Enterprise Value / EBITDA
+EV/EBIT   = Enterprise Value / EBIT
+EV/Revenue = Enterprise Value / Revenue
+```
+
+**EV/EBITDA** is the most widely used M&A valuation multiple because:
+- It is capital structure-neutral (uses EV, which adds back debt, rather than equity value)
+- It is comparable across companies with different leverage levels
+- It approximates "what multiple of annual cash earnings am I paying?"
+
+**Typical EV/EBITDA ranges by sector:**
+| Sector | Typical Range |
+|---|---|
+| Software/SaaS (growth) | 15–40x |
+| FMCG / consumer staples | 10–18x |
+| Healthcare | 10–20x |
+| Industrial/manufacturing | 6–10x |
+| Energy (E&P) | 4–8x |
+| Cement | 6–10x |
+| Banking | Not applicable (P/BV used instead) |
+| Telecom | 5–9x |
+
+### Equity-Based Multiples
+
+```
+P/E = Share Price / Earnings Per Share
+P/BV = Share Price / Book Value Per Share
+```
+
+**P/E:** Most intuitive — how many years of earnings does the market price imply? Volatile because EPS is affected by capital structure (interest expense) and tax.
+
+**P/BV:** Most relevant for banks, insurance companies, and asset-heavy businesses where balance sheet value is a better anchor than earnings.
+
+---
+
+## 6. Worked Example: Pakistan Cement Sector Comps
+
+### Peer Group
+
+| Company | Ticker | Market Cap (PKR B) | Net Debt (PKR B) | EV (PKR B) |
+|---|---|---|---|---|
+| Lucky Cement | LUCK | 185 | 8 | 193 |
+| DG Khan Cement | DGKC | 62 | 15 | 77 |
+| Cherat Cement | CHCC | 28 | 6 | 34 |
+| Maple Leaf Cement | MLCF | 22 | 12 | 34 |
+| Bestway Cement | BWCL | 38 | 4 | 42 |
+
+### Spreading LTM Financials (PKR billions, illustrative)
+
+| Company | Revenue | EBITDA | EBITDA Margin | Net Income |
+|---|---|---|---|---|
+| Lucky Cement | 105 | 28 | 26.7% | 18 |
+| DG Khan Cement | 55 | 13 | 23.6% | 7 |
+| Cherat Cement | 28 | 7 | 25.0% | 4 |
+| Maple Leaf Cement | 32 | 7 | 21.9% | 3 |
+| Bestway Cement | 42 | 10 | 23.8% | 6 |
+
+### Calculating Multiples
+
+| Company | EV/EBITDA | EV/Revenue | P/E |
+|---|---|---|---|
+| Lucky Cement | 6.9x | 1.84x | 10.3x |
+| DG Khan Cement | 5.9x | 1.40x | 8.9x |
+| Cherat Cement | 4.9x | 1.21x | 7.0x |
+| Maple Leaf Cement | 4.9x | 1.06x | 7.3x |
+| Bestway Cement | 4.2x | 1.00x | 6.3x |
+| **Median** | **4.9x** | **1.21x** | **7.3x** |
+| **Mean** | **5.4x** | **1.30x** | **8.0x** |
+| **Min** | **4.2x** | **1.00x** | **6.3x** |
+| **Max** | **6.9x** | **1.84x** | **10.3x** |
+
+**Key observation:** Lucky Cement trades at a premium (6.9x vs. sector median 4.9x) — reflects its superior margins, export capability, and stronger management track record.
+
+### Valuing a Private Target
+
+If a private cement company has LTM EBITDA of PKR 9B:
+```
+At 25th percentile (4.9x): EV = PKR 44B
+At median (4.9x):           EV = PKR 44B
+At 75th percentile (5.9x): EV = PKR 53B
+At maximum (6.9x):          EV = PKR 62B
+```
+
+The comps suggest an EV range of approximately PKR 44–62B. The midpoint (PKR 48–53B) would be the analyst's base case recommendation before applying any control premium.
+
+---
+
+## 7. Presenting Comps Output
+
+### The Comps Table Format
+
+Every IB comps table includes:
+1. Company name, ticker, market cap, EV
+2. Revenue (LTM, NTM)
+3. EBITDA (LTM, NTM) with margin %
+4. EPS (LTM, NTM) if P/E is relevant
+5. All calculated multiples (EV/EBITDA, P/E, P/BV where relevant)
+6. Summary row: Mean, Median, 25th percentile, 75th percentile
+
+**Highlight outliers:** If one company is clearly an outlier (e.g., distressed balance sheet, recent M&A disruption), flag it and explain whether to include or exclude from the median calculation.
+
+### Applying Benchmarks to Target Company
+
+Apply a selected multiple range to the target's metrics:
+
+```
+Target's LTM EBITDA: PKR 9B
+Selected multiple range: 5.0x – 6.0x (median to 75th percentile)
+
+Implied EV range: PKR 45B – PKR 54B
+Less: Net Debt (PKR 8B)
+Implied Equity Value range: PKR 37B – PKR 46B
+```
+
+**Premium/discount adjustments:**
+- Target is smaller than peers → apply 10–15% size discount
+- Target has better margins than peers → apply 5–10% premium
+- Private company vs. public peers → typically no separate discount (control premium in M&A offsets the private company discount)
+
+---
+
+## Self-Assessment
+
+1. You are building a comps analysis for a potential acquisition of a Pakistani beverage company (similar to Pepsi Pakistan or Coca-Cola Pakistan bottlers). The company has LTM revenue of PKR 45B, LTM EBITDA of PKR 9B, and a 20% EBITDA margin.
+   
+   You identify the following potential peer companies:
+   - (A) Nestle Pakistan (PSX-listed, food & beverages, diversified portfolio)
+   - (B) Coca-Cola Icecek (Turkey-listed, bottler, similar geography/demographics)
+   - (C) Britvic PLC (UK-listed, beverages, mature market)
+   - (D) Gul Ahmed Textile (PSX-listed, textile manufacturer)
+   - (E) PepsiCo Inc. (NYSE-listed, global beverage conglomerate)
+   
+   (a) Rank these five companies from most to least comparable to the Pakistan beverage target, using the four peer selection criteria. Exclude any that should not be in the comp set and explain why.
+   (b) For your Tier 1 and Tier 2 comps, what additional information would you need to calculate EV for each? List the specific data inputs required.
+   (c) Nestle Pakistan is listed on PSX with its last trade 3 days ago. Its fiscal year ends December 31 but only Q2 results (January–June) are available. Explain how you would calculate Nestle Pakistan's LTM EBITDA.
+   (d) Using the Pakistan cement comps example as a template, if the beverage sector median EV/EBITDA is 9.5x and the target's LTM EBITDA is PKR 9B with net debt of PKR 5B, calculate the implied equity value at 25th percentile (8.5x), median (9.5x), and 75th percentile (11.0x).
+
+2. Analyze the Pakistan cement comps table from this module:
+   
+   (a) Lucky Cement trades at a 41% premium to the sector median EV/EBITDA (6.9x vs. 4.9x). Identify three company-specific factors that could justify this premium. What would need to change for Lucky's premium to compress?
+   (b) If you are advising the acquirer of Cherat Cement (4.9x EV/EBITDA), they argue the multiple should be discounted 20% because Cherat is "smaller and less liquid." Evaluate this argument — when is a size discount appropriate and when does it double-count a factor already reflected in the multiple?
+   (c) Pakistan's cement sector is cyclical. Current multiples reflect a trough in construction activity. How should you communicate this cyclicality to an acquirer relying on the comps analysis? What additional metric would you show alongside the LTM multiples?
+   (d) A seller argues: "Our company should be valued at Lucky Cement's multiple (6.9x) because we have similar margins." You disagree. Write the two-paragraph response you would give in a valuation meeting.
+
+<ArticleNav
+  prev={{ title: "Module 97 — IB Industry Coverage Groups", href: "/financial-strategy/module-97-coverage-groups" }}
+  next={{ title: "Module 99 — Precedent Transaction Analysis", href: "/financial-strategy/module-99-transaction-comps" }}
+/>
