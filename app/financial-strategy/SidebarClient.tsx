@@ -341,6 +341,10 @@ const modules = [
     part: "Module 73 — Portfolio Construction & Optimization",
     chapters: [{ chapter: "Portfolio Construction & Optimization", items: [{ title: "Module 73 — Portfolio Construction & Optimization", href: "/financial-strategy/module-73-portfolio-construction-optimization" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 74 — Hedge Fund Strategies In Depth",
+    chapters: [{ chapter: "Hedge Fund Strategies In Depth", items: [{ title: "Module 74 — Hedge Fund Strategies In Depth", href: "/financial-strategy/module-74-hedge-fund-strategies-in-depth" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

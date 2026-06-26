@@ -1,0 +1,356 @@
+export const metadata = {
+  title: "Module 74 — Hedge Fund Strategies In Depth | Financial Strategy — ByteWise",
+  description: "Long/short equity, global macro, event-driven, relative value, CTA — mechanics, return drivers, risk characteristics, and how to evaluate hedge funds as an allocator or practitioner.",
+  openGraph: { title: "Module 74 — Hedge Fund Strategies In Depth | Financial Strategy", description: "L/S equity, global macro, event-driven, relative value, CTA — hedge fund strategies for practitioners and allocators.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 74 — Hedge Fund Strategies In Depth
+
+The five major hedge fund strategy families — their mechanics, where their returns come from, their distinctive risks, and how they behave in different market environments. Whether you are building a hedge fund, allocating to one, or working at one, understanding these strategies at the level of a practitioner is essential.
+
+## Learning Objectives
+
+- Explain the mechanics and return drivers of each major hedge fund strategy
+- Understand how long/short equity generates alpha vs beta
+- Identify the specific risks in global macro, event-driven, and relative value strategies
+- Evaluate a CTA's crisis alpha and diversification properties
+- Assess a hedge fund across all dimensions a sophisticated allocator would examine
+- Apply hedge fund strategy concepts to FERROQUANT Capital's design
+
+---
+
+## 1. Long/Short Equity
+
+### Mechanics
+
+Long/short equity (L/S) is the largest hedge fund strategy by AUM. The manager:
+- Goes **long** stocks expected to outperform
+- Goes **short** stocks expected to underperform
+- The combination reduces — but does not eliminate — market exposure
+
+**Gross exposure:** Sum of long + short positions as % of capital
+**Net exposure:** Long minus short positions as % of capital
+
+**Example:**
+- PKR 3B fund
+- Longs: PKR 3.6B (120% gross long)
+- Shorts: PKR 1.8B (60% gross short)
+- Gross exposure: 180% (uses leverage)
+- Net exposure: +60% (meaningfully long the market)
+
+### Net Exposure and Market Beta
+
+A 60% net long fund has ~60% of the market's return as a tailwind (or headwind). This is **beta** — market exposure the investor is not paying alpha fees for.
+
+**Net exposure management:**
+- **High net long (60–100%):** Bullish, more market-dependent
+- **Market neutral (net ~0%):** Pure alpha, low correlation to market
+- **Variable net:** Manager adjusts exposure based on conviction — higher skill requirement
+
+**PSX context:** PSX short selling is limited to securities available in the margin financing system. FERROQUANT can only short certain large-cap PSX stocks, and borrow availability is thin. This is a structural constraint unique to frontier markets.
+
+### Alpha Generation in L/S Equity
+
+The alpha in L/S equity comes from:
+1. **Stock selection:** Picking longs that outperform and shorts that underperform
+2. **Pair selection:** Creating synthetic pairs (long A / short B) that are market-neutral by design
+3. **Catalyst identification:** Trading around earnings, management changes, restructuring before the market prices it in
+
+**Gross vs net return attribution:**
+```
+Net return = Alpha + Beta × Market Return − Short Borrow Cost − Management Fee
+```
+
+Short borrow cost (stock lending fees) can range from 25bps (liquid large-caps) to 10%+ (hard-to-borrow small-caps). This is a real cost the manager must overcome.
+
+### Short Selling Mechanics
+
+**Borrow mechanics:**
+1. Manager instructs prime broker to "locate" shares to borrow
+2. Prime broker borrows shares from a lender (custodian, pension fund)
+3. Manager sells the borrowed shares in the market
+4. If stock falls, manager buys back at lower price and returns the shares
+5. Manager earns the price difference, minus borrow fee
+
+**Short squeeze:** If many funds are short the same stock and it starts rising, they all rush to cover (buy back) simultaneously — amplifying the upward move. GameStop (2021) was the most famous short squeeze. PSX short squeezes can be violent given thin liquidity.
+
+**Hard-to-borrow stocks:** Stocks with limited available borrow trade with negative rebate — the short seller pays a fee to the lender rather than earning the rebate. This significantly increases the cost of the short position.
+
+---
+
+## 2. Global Macro
+
+### What Global Macro Is
+
+Global macro funds make directional bets on macroeconomic trends using the full range of instruments: FX, rates, equities, commodities. They may be:
+
+**Discretionary global macro:** A senior portfolio manager (George Soros, Stanley Druckenmiller) expresses macro views based on their analysis of economies, policy, and geopolitics. High conviction, concentrated, qualitative.
+
+**Systematic macro:** Quantitative models identify macro regime signals (carry, trend, value) across asset classes. More diversified, rule-based, lower per-trade conviction.
+
+### Classic Macro Trades
+
+**Currency carry trade:**
+Borrow in a low-yield currency (JPY at 0.1%), invest in a high-yield currency (PKR at 12%). Earn the interest rate differential as long as the exchange rate doesn't move against you.
+
+**Pakistan carry trade:**
+International investors have periodically done carry trades into PKR (borrowing USD at low rates, converting to PKR, investing in T-bills at 20%+). The risk: PKR devaluation wipes out the carry in one move. This happened in 2018, 2022 — the carry worked until it didn't.
+
+**Rates macro:**
+Express a view on whether central banks will raise or cut rates. If FERROQUANT believes SBP will cut rates by 300bps over 12 months (rates fall → bond prices rise), they go long PIBs with duration exposure.
+
+**Equity macro:**
+Express a view on an equity market without stock selection. Long KSE-100 futures (or ETF) to express bullish Pakistan view; short for bearish.
+
+**Commodity macro:**
+Oil price impacts Pakistan significantly (import costs, energy sector equities). Going long oil futures as a hedge against Pakistan macro deterioration (high oil → bad for Pakistan current account but good for oil sector equities on PSX).
+
+### Risk in Global Macro
+
+**Tail risk:** Macro regime changes can be sudden and severe. A central bank intervention (SNB removing CHF peg in 2015), a geopolitical shock (Ukraine 2022), or a sovereign default — macro funds face "gap risk" where positions move beyond stop-loss levels instantaneously.
+
+**Correlation breakdown:** In crises, correlations converge toward 1. The diversification across asset classes that made the portfolio stable disappears exactly when you need it most.
+
+**Conviction management:** Discretionary macro requires holding through short-term adversity while being right on the long-term thesis. Cutting positions too early (before the macro thesis plays out) is the most common discretionary macro mistake.
+
+---
+
+## 3. Event-Driven Strategies
+
+### Merger Arbitrage
+
+When Company A announces it will acquire Company B at PKR 100/share, and Company B currently trades at PKR 93/share, the PKR 7 spread is the merger arb opportunity.
+
+**Why the spread exists:**
+- Deal risk: the acquisition may fail (regulatory rejection, financing failure, target board resistance)
+- Time value: the deal takes 3–12 months to close
+- Opportunity cost: capital is locked up
+
+**Spread calculation:**
+```
+Annualized return = (Spread / Deal Price) × (365 / Days to Close)
+= (7/100) × (365/180) = 14.2% annualized
+```
+
+**Deal failure risk:** If the deal fails, Company B's stock typically falls back to its pre-announcement level (PKR 70–75). From PKR 93, that's a −20% loss. The distribution of returns in merger arb: many small gains, occasional large losses.
+
+**Due diligence for merger arb:**
+- Regulatory: CCPA (Pakistan), DFSA (Gulf), DOJ/FTC (if US-listed) approval probability
+- Financing: Is the acquirer's financing firm? MAC clauses?
+- Strategic rationale: Is the deal genuinely synergistic or a vanity acquisition?
+- Alternative bidders: Could a competing bid emerge at a higher price?
+
+**PSX M&A arbitrage:** Pakistan M&A activity is growing (SBP-directed bank mergers, PE-backed transactions). SECP Takeover Regulations 2017 require a mandatory 25% tender offer when a buyer crosses the 25% threshold. This creates predictable spread opportunities.
+
+### Activist Investing
+
+An activist investor takes a significant stake (typically 5–15%) in a company and publicly campaigns for change: strategic (sell the company, spin off a division), financial (return cash to shareholders, improve capital allocation), or governance (board changes, CEO replacement).
+
+**P&L drivers:**
+- Initial stake at market price
+- Value re-rating if the activist thesis is accepted
+- Timeline: 6–24 months typical
+- Risk: management resistance, no change, or the stock falls further
+
+**PSX activism:** Minority shareholder activism is rare in Pakistan (concentrated ownership, founder-controlled companies, limited legal protections). However, institutional investors are increasingly pushing for governance changes through engagement rather than public campaigns.
+
+### Distressed Debt
+
+Buy the debt of companies in or near financial distress at a discount, with the expectation of either:
+1. Recovery through a restructuring (you receive new equity or new debt)
+2. Operational turnaround (company recovers, debt par value restored)
+
+**Fulcrum security:** The debt tranche where the enterprise value "breaks" — senior debt is fully covered, equity is worthless, and the fulcrum security receives a mix of recovery value. Distressed funds target the fulcrum.
+
+**Pakistan distressed:** Pakistan banks have high NPL ratios (historically 8–12%). Distressed debt funds have targeted corporate NPL portfolios from HBL, NBP, and MCB when these banks have sold portfolios at 15–40 cents on the rupee.
+
+---
+
+## 4. Relative Value Strategies
+
+### Convertible Arbitrage
+
+A convertible bond is a corporate bond that can be converted into equity at a specified price. It has both a bond floor (value if never converted) and an equity option component.
+
+**The trade:**
+- Long the convertible bond
+- Short the underlying equity (delta hedge the embedded equity option)
+- Net position: isolated credit and volatility exposure, market-neutral
+
+**P&L sources:**
+- Coupon income from the bond
+- Positive theta (time value decay of the equity option you're long)
+- Positive gamma (you benefit from volatility — the equity option you're long gains value from moves)
+- Spread tightening if the company's credit improves
+
+**Risks:** Delta hedge needs constant rebalancing. Credit default blows up the long bond position. Short borrow availability can dry up.
+
+### Fixed Income Relative Value
+
+Exploit mispricings within the fixed income universe:
+- **Yield curve steepener/flattener:** If the 2s10s spread is abnormally steep, go long 2-year bonds and short 10-year bonds, bet on flattening
+- **On-the-run/off-the-run spread:** Newly issued (on-the-run) Treasuries are more liquid than older issues and trade at a slight premium. Short on-the-run, long off-the-run, convergence trade
+- **Swap spread:** Difference between interest rate swap rates and government bond yields — can temporarily dislocate
+- **Pakistan PIB curve trades:** FERROQUANT can express a view on PIB curve shape by going long 5-year PIBs and short 10-year PIBs (or vice versa) funded through repo
+
+**LTCM (1998):** The largest fixed income relative value blowup. Positions were correct but spreads widened due to the Russia default and global deleveraging. LTCM was forced to unwind at the worst possible prices. Key lesson: being right is not enough — timing and leverage management are equally critical.
+
+### Volatility Arbitrage
+
+The implied volatility of options is consistently above realized volatility on average — selling options (short volatility) has historically been profitable. Volatility arbitrage exploits specific deviations:
+
+- **Implied vs realized vol premium:** Short straddles/strangles, delta hedge, pocket the difference
+- **Skew trades:** The implied vol for OTM puts is typically higher than for OTM calls (put skew). Trade the difference.
+- **Term structure trades:** Short near-term vol (high implied), long long-term vol (lower implied)
+- **Cross-asset vol:** Correlations implied by options are often higher than realized correlations
+
+**Risk:** Short volatility strategies have negative skewness — many small profits and occasional catastrophic losses. The VIX spike in February 2018 ("Volmageddon") wiped out several short-vol products in a day.
+
+---
+
+## 5. CTA & Managed Futures
+
+### What CTAs Do
+
+Commodity Trading Advisors (CTAs) are systematic trend-following funds that trade liquid futures across equity indices, bonds, currencies, and commodities. They follow price trends — buy what is going up, sell what is going down.
+
+**Instruments:** Futures contracts on:
+- Equity indices (S&P 500, Euro Stoxx, Nikkei, potentially KSE futures)
+- Government bonds (US Treasuries, German Bunds)
+- Currencies (EUR/USD, USD/JPY)
+- Commodities (crude oil, gold, copper, soybeans)
+
+### Crisis Alpha
+
+The defining characteristic of CTAs: they provide **crisis alpha** — they tend to perform well during extended bear markets. Why?
+
+1. Equity markets fall gradually before crashing. CTAs go short early in the trend.
+2. During flight to quality, bonds rally. CTAs are long bonds.
+3. Commodities spike during supply crises. CTAs are long commodity trends.
+
+**Historical evidence:**
+- 2001–2002 equity bear market: CTAs up 10–20% while equities −40%
+- 2008 GFC: CTAs up 15–25% while equities −50%
+- 2022: CTAs up 20–40% while equities −20% and bonds −15%
+
+**Why they fail:** Trend following fails in range-bound, choppy markets. If asset prices oscillate without sustained trends, CTAs are whipsawed — they enter trends that immediately reverse. 2009–2013 was difficult for CTAs.
+
+### Diversification Value
+
+CTAs have low average correlation to equities (around 0 to slightly negative) and bonds (around 0). This makes them valuable portfolio diversifiers, particularly in the tail:
+
+```
+Equity crash → CTAs go short equities → CTA positive return
+              → Flight to quality → bond rally → CTA profits on long bonds
+              → Commodity spike or crash → CTA captures the trend
+```
+
+**FERROQUANT as a CTA:** FERROQUANT could run a Pakistan-centric CTA: trend-following on KSE stock futures, PIBs, PKR/USD (NDF market), and commodity futures that affect Pakistan (oil, LNG, cotton, wheat).
+
+---
+
+## 6. Hedge Fund Evaluation Framework
+
+### Performance Metrics
+
+| Metric | Formula | What It Measures |
+|---|---|---|
+| Sharpe Ratio | (Return − Rf) / Volatility | Risk-adjusted return per unit of total volatility |
+| Information Ratio | Alpha / Tracking Error | Quality of active decisions |
+| Sortino Ratio | (Return − Rf) / Downside Dev | Penalizes downside volatility only |
+| Calmar Ratio | Annual Return / Max Drawdown | Return per unit of worst-case loss |
+| Omega Ratio | Expected gain / Expected loss | Full distribution measure |
+| Max Drawdown | Peak-to-trough decline | Worst-case scenario for an investor |
+
+**Interpreting hedge fund performance:**
+- Sharpe > 1.0: Exceptional (rare in practice)
+- Sharpe 0.5–1.0: Good
+- Sharpe 0.3–0.5: Acceptable for diversifying strategies (CTA, macro)
+- Negative Sharpe: Manager is destroying value
+
+### Style Drift Detection
+
+Style drift: the manager is no longer doing what they said they would do.
+
+**Detection methods:**
+- **Returns-based style analysis (Sharpe):** Regress fund returns on asset class returns. The coefficients reveal the fund's implicit factor exposures over time. If they change, the fund has drifted.
+- **Holdings-based analysis:** If the fund reports holdings, track sector and factor exposures over time
+- **Volatility change:** If a fund's volatility doubles, something fundamental changed
+- **Correlation change:** If a market-neutral fund's correlation to the equity market increases from 0 to 0.5, it is no longer market neutral
+
+### Operational Due Diligence (ODD)
+
+Beyond performance, allocators must evaluate operational risk:
+
+| ODD Category | Key Questions |
+|---|---|
+| Fund structure | LP/GP structure, auditors, fund administrator independence |
+| Valuation | Who prices positions? Independent administrator? Illiquid asset methodology? |
+| Prime broker | Who holds assets? Rehypothecation limits? Multi-prime? |
+| Technology | OMS, risk system, data backup, cybersecurity |
+| Key person risk | What happens if the portfolio manager leaves? |
+| Compliance | CCO independence, personal account dealing, trade surveillance |
+| Business continuity | Disaster recovery plan, key system backups |
+
+**FERROQUANT ODD checklist:**
+- Administrator: independent fund administrator (not an affiliate)
+- Auditor: Big Four or equivalent (KPMG Pakistan, A.F. Ferguson)
+- Prime broker: domestic custody through CDC (Central Depository Company Pakistan)
+- Valuation: daily NAV using PSX market prices (liquid) + independent pricing for any OTC instruments
+- Compliance: dedicated compliance officer, SBP/SECP reporting protocols
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT runs a long/short equity fund on PSX with the following positions:
+   
+   | Position | Market Value (PKR M) | Direction |
+   |---|---|---|
+   | OGDC | 450 | Long |
+   | HBL | 380 | Long |
+   | Lucky Cement | 320 | Long |
+   | MCB | 280 | Long |
+   | Engro Fertilizers | 170 | Short |
+   | PSO | 200 | Short |
+   
+   Fund NAV: PKR 1,200M.
+   
+   (a) Calculate gross exposure and net exposure as a percentage of NAV.
+   (b) If the KSE-100 falls 10% and the portfolio's beta is 0.65, estimate the P&L impact on NAV.
+   (c) FERROQUANT wants to reduce net exposure to 20% without selling any longs. How much additional short exposure must they add? Which stocks are eligible for shorting on PSX, and what practical constraints exist?
+   (d) The fund earned 18% last year. The KSE-100 returned 22%. Calculate alpha (using beta = 0.65 and risk-free rate = 13%) and explain whether this is a good result.
+
+2. A global macro fund is considering a Pakistan carry trade:
+   - 3-month T-bill rate in Pakistan: 18%
+   - 3-month USD SOFR: 5.25%
+   - PKR/USD spot: 280
+   - 3-month NDF (non-deliverable forward) implies PKR/USD of 295
+   
+   (a) Calculate the implied annual PKR depreciation priced into the NDF.
+   (b) Calculate the carry trade return if the PKR stays at 280 over 3 months.
+   (c) Calculate the carry trade return if the PKR depreciates to 295 over 3 months.
+   (d) What is the "breakeven depreciation" — the PKR/USD rate at which the carry trade breaks even? Show your calculation.
+   (e) Given Pakistan's history, rate this carry trade's risk-reward. What macro signals would make you more or less confident?
+
+3. FERROQUANT is allocating 10% of its fund to a CTA manager. The manager has the following track record:
+   - 5-year annualized return: 8.5%
+   - Volatility: 14%
+   - Sharpe ratio: 0.39
+   - Max drawdown: −18%
+   - Correlation to KSE-100: −0.12
+   - Correlation to Pakistan PIBs: +0.15
+   - Best year: +42% (2022 — energy/commodities trend)
+   - Worst year: −11% (2019 — choppy markets)
+   
+   (a) Evaluate the manager's Sharpe ratio — is it attractive on its own?
+   (b) Why might this CTA still be attractive despite the moderate Sharpe ratio?
+   (c) Calculate the expected impact on FERROQUANT's Sharpe ratio of adding this 10% allocation, given FERROQUANT's existing Sharpe of 0.65 and volatility of 18%.
+   (d) The CTA's worst year (−11%) occurred simultaneously with FERROQUANT's best year (+35%). What does this suggest about the diversification value of this allocation?
+
+<ArticleNav
+  prev={{ title: "Module 73 — Portfolio Construction & Optimization", href: "/financial-strategy/module-73-portfolio-construction-optimization" }}
+  next={{ title: "Module 75 — Performance Measurement & Attribution", href: "/financial-strategy/module-75-performance-measurement-attribution" }}
+/>
