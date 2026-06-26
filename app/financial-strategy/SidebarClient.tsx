@@ -329,6 +329,10 @@ const modules = [
     part: "Module 70 — Fixed Income Mathematics & Bond Markets",
     chapters: [{ chapter: "Fixed Income Mathematics & Bond Markets", items: [{ title: "Module 70 — Fixed Income Mathematics & Bond Markets", href: "/financial-strategy/module-70-fixed-income-mathematics-bond-markets" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 71 — Market Microstructure & Trading Systems",
+    chapters: [{ chapter: "Market Microstructure & Trading Systems", items: [{ title: "Module 71 — Market Microstructure & Trading Systems", href: "/financial-strategy/module-71-market-microstructure-trading-systems" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
