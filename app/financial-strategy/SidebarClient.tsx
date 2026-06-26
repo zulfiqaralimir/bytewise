@@ -433,6 +433,10 @@ const modules = [
     part: "Module 96 — Financial Statement Analysis for IB",
     chapters: [{ chapter: "Financial Statement Analysis for IB", items: [{ title: "Module 96 — Financial Statement Analysis for IB", href: "/financial-strategy/module-96-fsa-investment-banking" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 97 — IB Industry Coverage Groups",
+    chapters: [{ chapter: "IB Industry Coverage Groups", items: [{ title: "Module 97 — IB Industry Coverage Groups", href: "/financial-strategy/module-97-coverage-groups" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
