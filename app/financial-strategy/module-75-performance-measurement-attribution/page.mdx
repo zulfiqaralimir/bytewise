@@ -1,0 +1,449 @@
+export const metadata = {
+  title: "Module 75 — Performance Measurement & Attribution | Financial Strategy — ByteWise",
+  description: "GIPS 2020 compliance, TWR vs MWR, Brinson-Hood-Beebower attribution, factor-based attribution, risk-adjusted metrics, and benchmark construction for investment managers.",
+  openGraph: { title: "Module 75 — Performance Measurement & Attribution | Financial Strategy", description: "GIPS, TWR vs MWR, Brinson attribution, factor attribution, Sharpe/IR/Sortino — performance measurement for quants and fund managers.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 75 — Performance Measurement & Attribution
+
+How to measure investment performance accurately and decompose it into its true sources — was the fund manager's skill in market timing, sector selection, or stock picking? GIPS standards ensure comparability across managers. Attribution analysis turns a single number (return) into a story that separates luck from skill.
+
+## Learning Objectives
+
+- Calculate time-weighted and money-weighted returns correctly for any cash flow pattern
+- Understand GIPS 2020 requirements and implement them for FERROQUANT Capital
+- Apply Brinson-Hood-Beebower attribution to decompose active returns
+- Build a factor-based attribution model
+- Interpret and compare Sharpe, Information Ratio, Sortino, and Calmar
+- Design a benchmark that is fair, investable, and not gameable
+
+---
+
+## 1. Return Calculation
+
+### Simple vs Log Returns
+
+**Simple (arithmetic) return:**
+```
+R = (P₁ − P₀ + D) / P₀
+```
+
+**Log (continuously compounded) return:**
+```
+r = ln(P₁/P₀)
+```
+
+**When to use each:**
+- Simple returns: portfolio aggregation across assets (weights × returns = portfolio return)
+- Log returns: time aggregation (log returns are additive across time periods), statistical modeling (more normally distributed), option pricing
+
+**Relationship:**
+```
+r = ln(1 + R)   →   R = eʳ − 1
+```
+
+For small returns, r ≈ R. For larger returns (monthly, annual), the difference matters.
+
+### Time-Weighted Return (TWR)
+
+The TWR measures portfolio performance regardless of client cash flows — it reflects the manager's skill, not the client's timing decisions.
+
+**Calculation:**
+1. Divide the period into sub-periods wherever a cash flow occurs
+2. Calculate the return for each sub-period
+3. Chain-link (compound) the sub-period returns
+
+```
+TWR = [(1 + R₁) × (1 + R₂) × ... × (1 + Rₙ)] − 1
+```
+
+**Example:**
+- Jan 1: Portfolio = PKR 10M
+- Mar 1: Client deposits PKR 5M, portfolio value just before deposit = PKR 10.5M
+- Jun 30: Portfolio = PKR 17M
+
+Sub-period 1 (Jan 1 – Mar 1): R₁ = (10.5 − 10) / 10 = 5.0%
+Sub-period 2 (Mar 1 – Jun 30): R₂ = (17 − 15.5) / 15.5 = 9.68%
+
+TWR = (1.05 × 1.0968) − 1 = 15.2%
+
+This reflects the manager's performance: 5% in the first period, 9.68% in the second.
+
+**Why TWR for manager evaluation:** The deposit timing was the client's decision, not the manager's. TWR eliminates this distortion.
+
+### Money-Weighted Return (MWR / IRR)
+
+The MWR is the internal rate of return — the discount rate that makes the present value of all cash flows equal to the ending portfolio value.
+
+**Same example:**
+Solve for r such that:
+```
+10 × (1+r)^0.5 + 5 × (1+r)^0.25 = 17
+```
+
+(Solving numerically: MWR ≈ 12.8%)
+
+**Why MWR is lower in this case:** The client added PKR 5M just before the portfolio performed well. The large cash inflow benefited from the good second period, but also increased the base, pulling down the overall return relative to TWR.
+
+**When MWR matters:** Private equity and illiquid fund performance reporting. Since the GP controls when to call capital (the "cash flow timing"), MWR properly attributes the timing benefit/harm to the GP.
+
+**GIPS rule:** GIPS requires TWR for standard pooled fund reporting. MWR (IRR) is permitted for private equity, real estate, and other illiquid strategies.
+
+### Modified Dietz Method
+
+For periods without exact valuations at every cash flow, Modified Dietz approximates TWR:
+
+```
+R = (EMV − BMV − CF) / (BMV + Σ(CF_i × W_i))
+```
+
+Where:
+- EMV = ending market value
+- BMV = beginning market value
+- CF = net cash flows during the period
+- W_i = weight = (days remaining in period) / (total days in period)
+
+This avoids requiring a full portfolio valuation every time a cash flow occurs, while still adjusting for the timing of flows.
+
+---
+
+## 2. GIPS 2020 Standards
+
+### What GIPS Is and Why It Matters
+
+The Global Investment Performance Standards (GIPS) are voluntary ethical standards developed by CFA Institute for investment management firms. They create a standardized way of calculating and presenting performance so that investors can compare managers on a like-for-like basis.
+
+**Core purpose:** Prevent cherry-picking. Without GIPS, a manager could show only their best portfolios, exclude bad periods, or link performance from a predecessor firm. GIPS forces complete, consistent disclosure.
+
+### Key GIPS Requirements
+
+**Composites:**
+All fee-paying, discretionary portfolios with a similar strategy must be grouped into a **composite** and presented together. You cannot show only your best portfolio.
+
+- Composite must include all accounts meeting the criteria (no cherry-picking)
+- Terminated accounts must remain in the composite for the periods they were managed
+- Composites must have a defined creation date
+
+**Required presentation (minimum 5 years, building to 10 years):**
+- Composite return (annual, gross and net of fees)
+- Composite dispersion (standard deviation of account returns within the composite)
+- Composite 3-year ex-post standard deviation
+- Benchmark return and benchmark 3-year standard deviation
+- Number of accounts in the composite
+- Composite assets and firm AUM
+
+**Fee presentation:**
+- Gross-of-fees: before management fees, after trading costs
+- Net-of-fees: after management fees and trading costs (but before custodian fees)
+- GIPS requires showing net-of-fees prominently (most relevant for the investor)
+
+### GIPS for FERROQUANT Capital
+
+FERROQUANT would set up the following composites:
+1. **FERROQUANT Pakistan Equity Composite** — all Pakistan long/short equity accounts
+2. **FERROQUANT Quant Multi-Strategy Composite** — all systematic multi-asset accounts
+3. **FERROQUANT Fixed Income Composite** — all PIB/fixed income accounts
+
+**Claim of compliance:**
+```
+"FERROQUANT Capital claims compliance with the Global Investment 
+Performance Standards (GIPS®) and has prepared and presented this 
+report in compliance with the GIPS standards."
+```
+
+**Verification:** An independent verifier (typically an accounting firm) can verify GIPS compliance — not required but increasingly expected by institutional allocators.
+
+**GIPS 2020 update — key changes:**
+- Extended to cover alternative investment funds (pooled funds)
+- New requirements for private market strategies (real estate, PE, infrastructure)
+- Overlay/completion strategies now covered
+- More explicit guidance on composite construction for complex strategies
+
+---
+
+## 3. Brinson-Hood-Beebower Attribution
+
+### The Classic Attribution Model
+
+Brinson, Hood, and Beebower (1986) decomposed active portfolio return relative to a benchmark into three effects:
+
+```
+Active Return = Allocation Effect + Selection Effect + Interaction Effect
+```
+
+**Setup:**
+- Portfolio: actual weights (wₚ) and actual returns (Rₚ) for each sector/country
+- Benchmark: benchmark weights (wᵦ) and benchmark returns (Rᵦ) for each sector/country
+- Total benchmark return: Rᵦ_total = Σ wᵦᵢ × Rᵦᵢ
+
+**Allocation effect (tactical asset allocation):**
+Did the manager add value by overweighting/underweighting sectors relative to benchmark?
+
+```
+A_i = (wₚᵢ − wᵦᵢ) × (Rᵦᵢ − Rᵦ_total)
+```
+
+Positive if: overweighted a sector that outperformed, or underweighted a sector that underperformed.
+
+**Selection effect (security selection):**
+Did the manager add value by picking better securities within each sector?
+
+```
+S_i = wᵦᵢ × (Rₚᵢ − Rᵦᵢ)
+```
+
+Positive if: portfolio return within a sector exceeded the benchmark sector return.
+
+**Interaction effect:**
+The combined effect of both overweighting and outperforming (or underweighting and underperforming):
+
+```
+I_i = (wₚᵢ − wᵦᵢ) × (Rₚᵢ − Rᵦᵢ)
+```
+
+**Total active return:**
+```
+R_active = Σ (A_i + S_i + I_i)
+```
+
+### Worked Example: FERROQUANT Pakistan Equity
+
+| Sector | Portfolio Weight | Benchmark Weight | Portfolio Return | Benchmark Return |
+|---|---|---|---|---|
+| Banks | 35% | 25% | 18% | 15% |
+| Energy | 25% | 30% | 12% | 14% |
+| Cement | 20% | 20% | 22% | 16% |
+| Fertilizer | 10% | 15% | 8% | 10% |
+| Other | 10% | 10% | 11% | 11% |
+
+Benchmark total return = 0.25×15% + 0.30×14% + 0.20×16% + 0.15×10% + 0.10×11% = 13.7%
+
+**Banks sector attribution:**
+- Allocation: (0.35 − 0.25) × (15% − 13.7%) = 0.10 × 1.3% = **+0.13%**
+- Selection: 0.25 × (18% − 15%) = 0.25 × 3% = **+0.75%**
+- Interaction: (0.35 − 0.25) × (18% − 15%) = 0.10 × 3% = **+0.30%**
+- Total Banks contribution: +1.18%
+
+**Energy sector attribution:**
+- Allocation: (0.25 − 0.30) × (14% − 13.7%) = −0.05 × 0.3% = **−0.015%**
+- Selection: 0.30 × (12% − 14%) = 0.30 × −2% = **−0.60%**
+- Interaction: (0.25 − 0.30) × (12% − 14%) = −0.05 × −2% = **+0.10%**
+
+**Interpretation:** FERROQUANT's alpha came primarily from stock selection in Banks and Cement. Energy selection was a drag — underperforming within the sector despite reducing exposure.
+
+### Multi-Period Attribution
+
+Single-period attribution is straightforward. Multi-period attribution requires **geometric linking** (not arithmetic linking) to avoid residuals over longer periods.
+
+**Geometric Brinson (Menchero, 2005):**
+Uses a linking factor to ensure attribution effects sum to the exact active return over multiple periods without a residual. This is the standard used by performance attribution systems (FactSet, Bloomberg PORT, BARRA).
+
+---
+
+## 4. Factor-Based Attribution
+
+### Why Factor Attribution?
+
+Brinson attribution tells you WHERE (sector, country) returns came from. Factor attribution tells you WHY — which risk factors drove the portfolio's performance.
+
+### Building a Factor Return Attribution
+
+**Step 1 — Estimate factor exposures:**
+For each stock i in the portfolio, estimate its exposure to each factor k:
+```
+Exposure(i,k) = β(i,k) from factor model
+```
+
+**Step 2 — Portfolio factor exposure:**
+```
+Portfolio exposure(k) = Σ w_i × β(i,k)
+```
+
+**Step 3 — Attribution:**
+```
+Factor contribution(k) = Portfolio exposure(k) × Factor return(k)
+```
+
+**Step 4 — Alpha:**
+```
+Alpha = Total return − Σ Factor contributions
+```
+
+**Example — FERROQUANT factor attribution (annual):**
+
+| Factor | Portfolio Exposure | Factor Return | Contribution |
+|---|---|---|---|
+| Market (Beta) | 0.82 | 22% (KSE-100) | +18.0% |
+| Value | +0.35 | 6% | +2.1% |
+| Momentum | +0.28 | 8% | +2.2% |
+| Size (small-cap) | −0.15 | −3% | +0.5% |
+| Quality | +0.40 | 4% | +1.6% |
+| **Factor total** | | | **+24.4%** |
+| **Alpha (residual)** | | | **+1.6%** |
+| **Total fund return** | | | **+26.0%** |
+
+**Interpretation:** Only PKR 1.6% of the 26% return was true alpha. The rest was compensation for market, value, momentum, and quality factor exposures — which the investor could have gotten cheaper through a passive factor ETF. A sophisticated allocator would ask: "Are you paying alpha fees for what is really just factor beta?"
+
+---
+
+## 5. Risk-Adjusted Performance Metrics
+
+### Sharpe Ratio
+
+```
+Sharpe = (R_p − R_f) / σ_p
+```
+
+- Measures excess return per unit of total portfolio volatility
+- **Problem:** Penalizes upside volatility equally with downside volatility
+- **Problem:** Can be gamed by strategies with fat left tails (selling options looks great until the blow-up)
+- **Appropriate for:** Long-only funds, diversified strategies where total volatility matters
+
+**Annualization:** Multiply monthly Sharpe by √12 to annualize (assumes returns are i.i.d., which is approximately true for diversified portfolios).
+
+### Information Ratio
+
+```
+IR = Active Return / Tracking Error
+= (R_p − R_benchmark) / σ(R_p − R_benchmark)
+```
+
+- Measures quality of active decisions relative to a benchmark
+- More relevant than Sharpe for active managers measured against a benchmark
+- **Target:** IR > 0.5 is good, IR > 1.0 is exceptional
+
+### Sortino Ratio
+
+```
+Sortino = (R_p − R_target) / Downside Deviation
+```
+
+Downside deviation only counts returns below the target (usually risk-free rate or 0). Ignores upside volatility — a better measure for strategies with asymmetric return profiles.
+
+**When to use:** Hedge funds, strategies where upside volatility is desirable (e.g., long vol strategies).
+
+### Calmar Ratio
+
+```
+Calmar = Annualized Return / Max Drawdown (absolute value)
+```
+
+Measures return earned per unit of worst-case peak-to-trough loss. Particularly relevant for CTAs and macro funds where drawdowns are significant.
+
+**Example:** FERROQUANT earns 15% annually with a max drawdown of 20% → Calmar = 0.75. A CTA earns 8% with max drawdown 18% → Calmar = 0.44. FERROQUANT has better risk-reward on this measure.
+
+### Omega Ratio
+
+```
+Ω(L) = ∫(L to ∞)(1 − F(R))dR / ∫(−∞ to L)F(R)dR
+```
+
+Measures the ratio of gains above a threshold L to losses below it. Uses the full return distribution — captures skewness and kurtosis that Sharpe ignores.
+
+**Interpretation:** Ω > 1 means the probability-weighted gains exceed losses at threshold L. For threshold L = risk-free rate: Ω > 1 means the strategy creates value above the risk-free.
+
+---
+
+## 6. Benchmark Construction
+
+### Properties of a Good Benchmark
+
+A benchmark must be:
+- **Investable:** You can actually buy the benchmark (replicate it passively)
+- **Unambiguous:** Every constituent and weight is clearly specified
+- **Measurable:** Returns are published regularly and reliably
+- **Appropriate:** Reflects the investment universe the manager operates in
+- **Pre-specified:** Agreed before the performance period (no benchmark gaming)
+- **Owned by the manager:** The manager should agree the benchmark fairly reflects their opportunity set
+
+### Common Benchmarks for Pakistan Strategies
+
+| Strategy | Natural Benchmark |
+|---|---|
+| Pakistan L/S Equity | KSE-100 Total Return Index |
+| Pakistan multi-factor | KSE-100 or custom factor-weighted index |
+| Pakistan macro | Blended (50% KSE-100 + 50% PIB Total Return) |
+| Pakistan fixed income | SBP PIB composite index or 5-year PIB yield |
+| Gulf equity | S&P GCC Composite or custom Gulf index |
+
+### Benchmark Gaming
+
+Without care, managers optimize for benchmark performance rather than investor returns. Common gaming tactics:
+
+- **Hugging the benchmark:** Taking almost no active risk to guarantee not underperforming — zero active return for the investor paying alpha fees
+- **Style drift:** Moving to a different benchmark when the current one looks bad
+- **Window dressing:** Buying outperformers at month/quarter-end so they appear in the holdings
+- **Benchmark selection:** Choosing a benchmark that the strategy is expected to beat easily
+
+**Detecting benchmark gaming:**
+- Low tracking error with low IR = closet indexing (charging alpha fees for index exposure)
+- Benchmark changed mid-period without explanation = benchmark gaming
+- Holdings at month-end look different from intra-month trading = window dressing
+
+### Custom Benchmark for FERROQUANT
+
+FERROQUANT Capital's Pakistan Quant Fund might use:
+- Primary benchmark: KSE-100 Total Return Index
+- Secondary benchmark: FERROQUANT Pakistan Quant Index (custom factor-weighted KSE-100 construction)
+- Risk-free rate: 3-month MTB rate (SBP T-bill yield)
+- Reporting currency: PKR (with USD equivalent)
+
+The secondary benchmark helps separate factor beta from true alpha — if FERROQUANT simply tilts toward value and momentum, those factor returns should not count as alpha.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT manages a PKR 2B Pakistan equity fund. The following cash flows occurred in the year:
+   
+   | Date | Event | Portfolio Value (before CF) |
+   |---|---|---|
+   | Jan 1 | Start | PKR 2,000M |
+   | Apr 1 | Client adds PKR 500M | PKR 2,300M |
+   | Aug 1 | Client withdraws PKR 400M | PKR 2,700M |
+   | Dec 31 | Year end | PKR 2,500M |
+   
+   (a) Calculate the Time-Weighted Return (TWR) for the year. Show each sub-period return.
+   (b) Calculate the Money-Weighted Return (MWR/IRR) for the year. Set up the equation and solve numerically (approximate to nearest 0.5%).
+   (c) Why do TWR and MWR differ here? Which is more relevant for evaluating the portfolio manager's skill?
+   (d) The KSE-100 returned 15% over the same period. Using TWR, did FERROQUANT outperform? Calculate the information ratio if tracking error was 8%.
+
+2. FERROQUANT Pakistan Equity Fund vs KSE-100 benchmark — annual Brinson attribution for the year:
+   
+   | Sector | Port Weight | Bench Weight | Port Return | Bench Return |
+   |---|---|---|---|---|
+   | Banks | 30% | 22% | 25% | 18% |
+   | Energy | 20% | 28% | 8% | 12% |
+   | Cement | 25% | 18% | 30% | 20% |
+   | Technology | 10% | 8% | 45% | 35% |
+   | Other | 15% | 24% | 12% | 14% |
+   
+   Benchmark total return = 17.2%
+   
+   (a) Calculate Allocation, Selection, and Interaction effects for the Banks sector. Show all calculations.
+   (b) Calculate the same three effects for the Energy sector. What story do the results tell about FERROQUANT's energy calls?
+   (c) Technology shows a large selection effect but a small allocation effect. What does this mean for FERROQUANT's skill assessment?
+   (d) Sum up all effects across all sectors to find total active return. What was FERROQUANT's total portfolio return?
+
+3. FERROQUANT reports the following annual performance metrics:
+   - Annual return: 24%
+   - Benchmark return (KSE-100): 18%
+   - Risk-free rate (3-month MTB): 14%
+   - Portfolio volatility: 22%
+   - Tracking error: 9%
+   - Maximum drawdown: −16%
+   - Downside deviation: 11%
+   - Skewness: −0.8
+   - Excess kurtosis: 2.5
+   
+   (a) Calculate: Sharpe ratio, Information ratio, Sortino ratio, and Calmar ratio.
+   (b) A Gulf SWF allocator says "your Sharpe ratio looks good, but I'm concerned about the skewness and kurtosis." Explain what these statistics reveal that the Sharpe ratio hides.
+   (c) FERROQUANT's competitor has Sharpe = 0.75, IR = 0.85, Sortino = 1.10, Calmar = 0.90. Based on these metrics alone, who has the stronger risk-adjusted track record? Be specific.
+   (d) Design a composite and GIPS-compliant performance presentation for FERROQUANT. What must be included in the composite definition, and what disclosures are required?
+
+<ArticleNav
+  prev={{ title: "Module 74 — Hedge Fund Strategies In Depth", href: "/financial-strategy/module-74-hedge-fund-strategies-in-depth" }}
+  next={{ title: "Module 76 — Fund Operations & Infrastructure", href: "/financial-strategy/module-76-fund-operations-infrastructure" }}
+/>

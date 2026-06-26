@@ -215,7 +215,7 @@ const trackB: PartEntry[] = [
   {
     part: "Part XXIV — Fund Operations",
     modules: [
-      { number: "Module 76", title: "Fund Operations & Infrastructure",        description: "Prime brokerage, fund administration, NAV calculation, securities lending, fund accounting, technology systems, and operational due diligence.", href: "/financial-strategy/module-76-fund-operations" },
+      { number: "Module 76", title: "Fund Operations & Infrastructure",        description: "Prime brokerage, fund administration, NAV calculation, securities lending, fund accounting, technology systems, and operational due diligence.", href: "/financial-strategy/module-76-fund-operations-infrastructure" },
       { number: "Module 77", title: "Investor Relations for Investment Managers", description: "LP communication, DDQ preparation, capital raising, side letters, ILPA standards, and IR infrastructure for FERROQUANT Capital.", href: "/financial-strategy/module-77-fund-investor-relations" },
     ],
   },

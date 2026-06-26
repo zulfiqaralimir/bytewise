@@ -345,6 +345,10 @@ const modules = [
     part: "Module 74 — Hedge Fund Strategies In Depth",
     chapters: [{ chapter: "Hedge Fund Strategies In Depth", items: [{ title: "Module 74 — Hedge Fund Strategies In Depth", href: "/financial-strategy/module-74-hedge-fund-strategies-in-depth" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 75 — Performance Measurement & Attribution",
+    chapters: [{ chapter: "Performance Measurement & Attribution", items: [{ title: "Module 75 — Performance Measurement & Attribution", href: "/financial-strategy/module-75-performance-measurement-attribution" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
