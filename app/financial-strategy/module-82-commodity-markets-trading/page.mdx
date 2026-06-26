@@ -1,0 +1,435 @@
+export const metadata = {
+  title: "Module 82 — Commodity Markets & Trading | Financial Strategy — ByteWise",
+  description: "Commodity markets structure, futures curves, contango/backwardation, roll yield, convenience yield, weather derivatives, and commodity trading strategies for quant funds.",
+  openGraph: { title: "Module 82 — Commodity Markets & Trading | Financial Strategy", description: "Futures curves, roll yield, convenience yield, commodity risk premia, weather derivatives, and Pakistan agricultural and energy commodities.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 82 — Commodity Markets & Trading
+
+Commodities are the raw inputs of the global economy — energy, metals, and agricultural products. They are also a distinct asset class with unique structural features: physical delivery, storage costs, seasonal demand, geopolitical concentration risk, and weather dependence. For FERROQUANT, commodities offer both diversification benefits and systematic trading opportunities through the futures market.
+
+## Learning Objectives
+
+- Explain the cost of carry model and how it prices commodity futures
+- Distinguish contango from backwardation and identify their drivers
+- Calculate roll yield and explain why it dominates commodity returns over time
+- Apply the theory of storage and convenience yield to commodity pricing
+- Understand weather derivatives and their use in agricultural risk management
+- Identify tradable systematic premia in commodity futures markets
+- Navigate Pakistan's commodity markets (PMEX, agricultural commodities, energy imports)
+
+---
+
+## 1. Commodity Market Structure
+
+### Physical vs. Derivatives Markets
+
+**Physical (spot) market:** Actual commodity is bought and sold for immediate delivery. Buyers are end users (refineries buying crude, mills buying wheat), sellers are producers (oil companies, farmers).
+
+**Futures market:** Standardized contracts to buy/sell a commodity at a future date at a price agreed today. 95%+ of futures contracts are closed out before delivery — used for price discovery and hedging, not physical delivery.
+
+**Key commodity exchanges:**
+| Exchange | Location | Key Contracts |
+|---|---|---|
+| CME/NYMEX | New York | Crude oil (WTI), natural gas, gold, copper, grains |
+| ICE | London/Atlanta | Brent crude, natural gas, sugar, coffee, cocoa |
+| LME | London | Aluminum, copper, zinc, nickel, tin, lead |
+| SHFE | Shanghai | Copper, aluminum, gold, rubber, rebar |
+| PMEX | Karachi | Gold, crude oil, palm oil (Pakistan) |
+
+### Commodity Market Participants
+
+**Hedgers (commercial participants):**
+- **Producers:** Oil companies, mining companies, farmers — sell futures to lock in sale prices, protecting against price falls
+- **Consumers:** Airlines (jet fuel), food manufacturers (wheat), copper wire makers — buy futures to lock in input costs, protecting against price rises
+
+**Speculators (financial participants):**
+- **Commodity Trading Advisors (CTAs):** Systematic trend-followers, typically long commodities in uptrends
+- **Commodity index funds:** Passive long exposure via futures rolling (S&P GSCI, Bloomberg Commodity Index)
+- **Hedge funds:** Fundamental and quantitative strategies across commodity complex
+- **FERROQUANT:** Quantitative strategies, carry trades, momentum, curve trades
+
+**Risk transfer:** Hedgers pay a risk premium to speculators for taking on commodity price risk. This structural risk transfer is the theoretical basis for commodity risk premia.
+
+---
+
+## 2. Commodity Futures Pricing: The Cost of Carry Model
+
+### Futures Pricing Formula
+
+For a commodity with no convenience yield or storage costs (like a financial asset), the futures price should equal the spot price compounded at the risk-free rate:
+```
+F = S × e^(r × T)
+```
+
+For a commodity with storage costs (u) and convenience yield (y):
+```
+F = S × e^((r + u − y) × T)
+```
+
+Where:
+- **r** = risk-free interest rate (financing cost)
+- **u** = storage cost rate (warehousing, insurance, spoilage — expressed as % of spot price per year)
+- **y** = convenience yield (the non-monetary benefit of holding the physical commodity)
+- **T** = time to futures maturity (in years)
+
+### Contango and Backwardation
+
+**Contango:** F > S (futures price > spot price)
+- Occurs when: storage costs + financing costs > convenience yield
+- The futures curve slopes upward (near-dated contracts cheaper than far-dated)
+- Common in: crude oil (large storage costs), natural gas (storage and seasonality), base metals
+
+**Backwardation:** F < S (futures price < spot price)
+- Occurs when: convenience yield > storage costs + financing costs
+- The futures curve slopes downward (near-dated contracts more expensive than far-dated)
+- Common in: agricultural commodities at harvest time, crude oil during supply shocks
+- Signal: the market is willing to pay a premium for physical commodity now (scarcity, urgency)
+
+**Full contango:** F = S × e^((r + u) × T) — the maximum contango when convenience yield = 0.
+
+**Crude oil futures curve (illustrative):**
+```
+Spot:  $80/barrel
+1-month future:  $80.50  (mild contango)
+3-month future:  $81.50
+6-month future:  $83.00
+12-month future: $85.00
+24-month future: $87.00  (full contango)
+```
+
+---
+
+## 3. Roll Yield: The Hidden Driver of Commodity Returns
+
+### Why Roll Yield Dominates
+
+Most commodity futures investors never take delivery. They hold a "rolling" position — buying the front month contract and rolling it to the next month before expiry.
+
+**The roll:** Before the front month expires, sell the front month and buy the next month contract.
+
+**Roll yield:** The return earned (or lost) from rolling from one contract to the next.
+
+```
+Roll Yield = (F_near − F_far) / F_near    [if rolling from near to far month]
+```
+
+In backwardation:
+- Near month trades at a PREMIUM to the far month
+- Rolling means: sell high (near month), buy low (far month)
+- **Positive roll yield** — rolling is profitable
+
+In contango:
+- Near month trades at a DISCOUNT to the far month
+- Rolling means: sell low (near month), buy high (far month)
+- **Negative roll yield** — rolling is expensive ("roll bleed")
+
+**Why this matters enormously:**
+The S&P GSCI index (the main commodity index) lost approximately 0% total return from 2000–2014 while spot commodity prices roughly doubled. The reason: severe negative roll yield in crude oil and natural gas (both in contango) consumed all the spot price gains.
+
+**Roll yield decomposition of commodity total return:**
+```
+Total Return = Spot Return + Roll Return + Collateral Return
+```
+
+- Spot Return: change in spot commodity price
+- Roll Return: gain/loss from rolling futures positions
+- Collateral Return: risk-free rate earned on the margin posted (treasury bills)
+
+**Implication for quant strategy:** A commodity futures position that earns positive roll yield (backwardated markets) has a structural tailwind. A position in deep contango has a structural headwind.
+
+### Measuring Roll Yield
+
+**Front-to-second-month roll yield (annualized):**
+```
+Annualized Roll Yield = [(F_1 − F_2) / F_2] × (12 / months_between)
+```
+
+**Example — Crude oil:**
+- WTI front month (M1): $83.00
+- WTI second month (M2): $84.20
+- Monthly roll cost: (83.00 − 84.20) / 84.20 = −1.43% per month
+- Annualized roll bleed: −1.43% × 12 = −17.1% per year
+
+This is the "drag" a passive long crude oil ETF would experience if spot prices stayed flat — 17% annual loss from rolling alone.
+
+---
+
+## 4. Convenience Yield and the Theory of Storage
+
+### Convenience Yield
+
+Convenience yield (y) is the implicit benefit of holding the physical commodity rather than a futures contract. It captures:
+- **Production flexibility:** A refinery holding crude oil can adjust production schedules
+- **Supply assurance:** A manufacturer holding copper inventory avoids production shutdowns if spot prices spike
+- **Embedded optionality:** The option to sell into a sudden price spike is only available with physical inventory
+
+**High convenience yield → backwardation:**
+When convenience yield is high (inventory is low, supply is tight), the market pays a premium for physical commodity now. Backwardation signals tight current supply.
+
+**Low convenience yield → contango:**
+When inventory is abundant, the convenience yield is near zero (there's no urgency to hold physical). Storage costs dominate, pushing the curve into contango.
+
+### Theory of Storage (Kaldor-Working)
+
+The **theory of storage** says that the shape of the futures curve is determined by inventory levels:
+
+```
+y (convenience yield) = max(0, c − u)
+```
+
+Where c is the marginal value of a unit of inventory (falls as inventory rises, rises as inventory falls) and u is the physical storage cost.
+
+**The Working Curve:** Plots the basis (spot − futures price) against inventory levels. At low inventory, backwardation is strong. At high inventory, full contango. This non-linear relationship is one reason commodity futures curves change shape dramatically in supply shocks.
+
+**FERROQUANT application:** Track crude oil inventory data (EIA weekly in the US, SECP/PSO data in Pakistan) as a leading indicator of crude oil futures curve shape and roll yield.
+
+---
+
+## 5. Systematic Commodity Strategies
+
+### 1. Commodity Carry (Roll Yield Strategy)
+
+**Principle:** Go long backwardated commodities (positive carry), go short contangoed commodities (negative carry).
+
+**Construction:**
+1. For each commodity in the universe, calculate the 1-month annualized roll yield
+2. Rank commodities by roll yield
+3. Long top quintile (highest roll yield / most backwardated)
+4. Short bottom quintile (most negative roll yield / deepest contango)
+5. Rebalance monthly
+
+**Historical performance:** Commodity carry has generated positive Sharpe ratios (~0.5–0.8) historically, with returns uncorrelated to equity momentum.
+
+**Risks:**
+- Roll yield is backward-looking — curve shape can shift quickly on inventory data or supply news
+- Position concentration in energy (largest weight in most commodity universes)
+- Crowding: many CTAs run similar strategies, leading to correlated unwinds
+
+### 2. Commodity Momentum (Trend Following)
+
+**Principle:** Commodity prices trend over medium horizons (1–12 months). CTAs exploit these trends systematically.
+
+**Typical implementation:**
+1. Calculate 12-month (or 3/6/12-month average) return signal
+2. Go long commodities with positive momentum, short those with negative momentum
+3. Size positions by inverse volatility (risk parity across commodities)
+4. Rebalance monthly or weekly
+
+**Why trends exist in commodities:**
+- Slow supply response: a copper supply deficit cannot be solved immediately — new mines take 5–7 years to build, so supply shortfalls persist
+- Inventory draw/build cycles: once inventory starts declining (rising prices signal physical tightness), the trend can persist for months
+- Hedger behavior: producers aggressively hedge when prices rise (sell futures), but this selling is gradual, not instantaneous
+
+### 3. Commodity Term Structure Strategy
+
+**Principle:** Exploit predictable patterns in how the commodity futures curve reshapes over time.
+
+**Curve steepening trade:**
+- If a commodity is in backwardation but spot supply tightness is easing (inventory building), the curve will likely flatten (front month weakens relative to back months)
+- Short front month, long back months
+
+**Seasonal roll strategy:**
+- Natural gas has predictable seasonality (heating season demand in winter)
+- Buy the March–April spread (shoulder season, often contango) and sell the November–January spread (winter, often backwardation)
+- Capture the seasonal roll premium systematically
+
+### 4. Commodity Risk Premia: The Hedging Pressure Hypothesis
+
+**Theory (Cootner/Keynes):** Commodity producers are natural sellers of futures (hedging production). Speculators are risk-takers who buy futures. Producers must offer a risk premium to attract speculators, causing futures to be priced below expected future spot prices.
+
+**Backwardation as a risk premium:** When futures are in backwardation, a speculator who goes long earns the risk premium that producers pay to offload price risk.
+
+**Empirical evidence:** Mixed. Markets where producers are dominant hedgers (crude oil, natural gas) tend to show positive long-side returns. Markets where consumers dominate hedging (copper, aluminum) tend to show negative long-side returns from hedging pressure.
+
+---
+
+## 6. Weather Derivatives
+
+### Weather Risk in Commodities
+
+Weather is the dominant fundamental driver of agricultural commodity prices, natural gas demand (heating/cooling), and hydroelectric power generation.
+
+**Weather risk exposures:**
+- **Natural gas:** Cold winters increase heating demand, driving up gas prices; mild winters = weak demand
+- **Corn/wheat:** Drought or flooding during growing season can devastate crop yields
+- **Hydroelectric power (Pakistan):** Low water levels in Tarbela/Mangla dams reduce power generation capacity
+- **FERROQUANT:** Long agricultural commodity positions face weather-driven price spikes
+
+### Weather Derivative Instruments
+
+**Heating Degree Days (HDD) and Cooling Degree Days (CDD):**
+Standard weather indices used in energy markets:
+```
+HDD_daily = max(0, 65°F − Average Daily Temperature)  [US, Fahrenheit]
+CDD_daily = max(0, Average Daily Temperature − 65°F)
+```
+
+Monthly HDD/CDD accumulates daily readings. High HDD = cold month → high gas demand.
+
+**Weather derivative types:**
+- **HDD/CDD swaps:** Pay fixed HDD/CDD, receive realized HDD/CDD (or vice versa) → hedge energy demand uncertainty
+- **Temperature options:** Call/put on monthly average temperature
+- **Rainfall swaps:** Pay fixed rainfall index, receive actual rainfall → hedge agricultural revenue
+- **Catastrophe bonds (CAT bonds):** Triggered by specified weather events (hurricane making landfall, earthquake) — principal at risk if trigger occurs
+
+**Pricing challenge:** Weather derivatives cannot be priced by no-arbitrage (no tradeable underlying). Actuarial methods are used, combining historical weather data with pricing models.
+
+### Pakistan Agricultural Weather Derivatives
+
+Pakistan's agriculture sector (wheat, cotton, rice, sugarcane) is highly sensitive to:
+- **Monsoon variability:** Deficient or excessive rainfall in Sindh/Punjab
+- **Temperature extremes:** Heat stress on wheat during grain-fill in March–April
+- **Water availability:** Indus River flow for irrigation (linked to Himalayan snowmelt)
+
+**SECP and agriculture derivatives:** PMEX lists some agricultural futures (wheat, maize). Weather derivatives remain undeveloped in Pakistan's formal market. Agricultural insurance (PCIC — Pakistan Central Insurance Company) provides some weather risk transfer for farmers.
+
+**FERROQUANT application:**
+- Monitor IMD/Pakistan Met Department seasonal forecasts as signals for CBOT wheat/corn positioning
+- Consider agricultural commodity positions when El Niño/La Niña forecasts suggest supply disruptions in Pakistan or global agricultural markets
+- Long wheat futures as a hedge when FERROQUANT has Pakistan credit exposure to agricultural companies sensitive to crop yields
+
+---
+
+## 7. Energy Commodities Deep Dive
+
+### Crude Oil: Brent vs. WTI
+
+**WTI (West Texas Intermediate):**
+- Delivered at Cushing, Oklahoma (landlocked pipeline hub)
+- Lighter, sweeter crude (higher gasoline yield)
+- Primary US crude benchmark
+
+**Brent Crude:**
+- North Sea crude, seaborne delivery
+- Global benchmark (used for pricing ~70% of world's crude, including Pakistan's RLNG imports)
+- Typically trades at a slight premium to WTI due to global pricing relevance
+
+**Brent-WTI spread:** Varies with US domestic supply/demand and shipping logistics. A widening spread signals US supply glut (Cushing filling up) or global demand strength.
+
+### Natural Gas
+
+**The storage cycle:** Natural gas is injected into storage April–October (injection season) and withdrawn October–March (heating season). This creates predictable seasonality in the futures curve.
+
+**Henry Hub (US benchmark):** Most liquid natural gas futures market. Highly volatile — natural gas prices have shown greater percentage volatility than crude oil.
+
+**LNG pricing:** Pakistan imports LNG priced off the JKM (Japan Korea Marker) or Brent-linked formula. PSO/SSGC manage LNG import contracts. JKM/Henry Hub spread indicates LNG arbitrage economics.
+
+### Pakistan Energy Commodities
+
+**Pakistan's energy exposure:**
+- Pakistan imports ~50% of its oil needs as crude or refined products (PSO is the dominant importer)
+- LNG imports through Port Qasim LNG terminal (SSGC, SNGPL)
+- Coal imports for power generation (China-Pakistan CPEC power projects)
+- Hydro (Tarbela, Mangla, Warsak) provides ~25% of electricity generation
+
+**Circular debt problem:** Pakistan's power sector accumulated PKR 2.3 trillion+ in "circular debt" — unpaid bills cascading from consumers → DISCOs → CPPA-G → IPPs → fuel suppliers. This makes Pakistani energy companies high-credit-risk despite their strategic importance.
+
+**FERROQUANT energy positioning:**
+- Global crude oil view expressed through NYMEX/ICE WTI/Brent futures
+- Pakistan rupee-denominated exposure: PSO, OGDCL, PPL equities as proxy for oil & gas earnings
+- PIB yield curve trades incorporating Pakistan's import bill sensitivity to oil prices (higher oil = larger current account deficit = rupee pressure = higher domestic rates)
+
+---
+
+## 8. Metals Markets
+
+### Precious Metals
+
+**Gold:** The "fear trade" — gold typically rises during USD weakness, geopolitical uncertainty, and real interest rate declines.
+
+**Gold-rate relationship:**
+```
+Gold price is inversely related to US real interest rates (TIPS yield)
+Real Rate = Nominal Rate − Inflation Expectations
+```
+
+Rising real rates raise the opportunity cost of holding gold (no yield) → gold falls.
+Falling real rates or negative real rates → gold rises.
+
+**Silver:** Industrial metal + store of value. More volatile than gold. Gold-silver ratio (oz of silver to buy 1 oz of gold) mean-reverts — a high ratio suggests silver is cheap relative to gold.
+
+**Pakistan gold market:** Pakistan is a major gold importing country. PSX has no gold ETF — Pakistanis access gold through jewelry, physical bullion, or PMEX gold futures. SBP holds USD gold reserves (~$4–5B).
+
+### Base Metals (LME Metals)
+
+**Copper:** Often called "Dr. Copper" — its price is a leading indicator of global industrial activity. Copper demand is driven by construction (China), EVs (electrification), and infrastructure.
+
+**Aluminum:** Energy-intensive to produce (smelting requires massive electricity). High energy prices → aluminum production cuts → aluminum price rises. Used in packaging, aerospace, automotive.
+
+**LME forward curve:** LME trades daily forwards from spot to 3 months, then monthly out to 63 months. Cash-3-month spread (the "cash-to-three") is the key indicator of tightness in physical metal markets.
+
+**Base metals and China:** China consumes 50–60% of global copper and aluminum. Chinese PMI data, housing starts, and infrastructure spending are the key fundamental drivers of base metals prices.
+
+---
+
+## 9. Commodity Indices and Passive Investing
+
+### Major Commodity Indices
+
+| Index | Weighting | Key Features |
+|---|---|---|
+| S&P GSCI | Production-weighted | Heavy energy tilt (~70% energy) |
+| Bloomberg Commodity Index | Diversified | Capped sector weights, 15% max single commodity |
+| DBIQ Optimum Yield | Roll-optimized | Selects best roll point on the futures curve |
+| SummerHaven SDCI | Term structure-based | Only holds backwardated commodities |
+
+**The index roll schedule:** Passive commodity indices roll their positions on a fixed schedule (GSCI rolls over 5 business days mid-month). Large roll volumes are visible in advance, creating price pressure on near-dated contracts just before the roll (front-month weakens as index sellers pile up).
+
+**Alpha opportunity:** Anticipating and front-running index roll schedules is a classic commodity trading strategy — short the near month (which the index is selling) and long the next month (which the index is buying) just before the roll window.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT is analyzing crude oil futures. The following data is available:
+   
+   | Contract | Price ($/barrel) |
+   |---|---|
+   | Spot | $82.00 |
+   | 1-month future | $82.80 |
+   | 3-month future | $84.20 |
+   | 6-month future | $86.00 |
+   | 12-month future | $88.50 |
+   
+   Risk-free rate: 5% per year. Storage cost: $0.80/barrel/month.
+   
+   (a) Calculate the implied convenience yield for the 12-month crude oil contract using the cost of carry formula.
+   (b) Is the crude oil market in contango or backwardation? What does this signal about current inventory levels?
+   (c) FERROQUANT holds a long position in 1-month crude oil futures and needs to roll it to the 3-month contract. Calculate the roll yield (annualized) from this roll. Is this positive or negative carry?
+   (d) A commodity analyst argues: "Even if crude oil prices rise 10% over the next year, our long futures position might not make money." Explain why this is possible, using roll yield arithmetic.
+
+2. FERROQUANT is constructing a commodity carry portfolio using the following data:
+   
+   | Commodity | 1M Future | 2M Future | Roll Yield (ann.) |
+   |---|---|---|---|
+   | Crude Oil | 82.00 | 83.20 | −17.6% |
+   | Natural Gas | 2.80 | 2.65 | +64.3% |
+   | Copper | 8,450 | 8,380 | +10.0% |
+   | Wheat | 580 | 595 | −31.0% |
+   | Gold | 2,050 | 2,055 | −2.9% |
+   
+   (a) Construct a simple commodity carry portfolio: long the top 2 by roll yield, short the bottom 2, equal weight. What are the four positions?
+   (b) Describe the primary risk factor this portfolio is exposed to (aside from commodity-specific risk). How would you monitor and manage this risk?
+   (c) Crude oil suddenly moves from contango into backwardation due to a major OPEC supply cut. What happens to FERROQUANT's crude oil carry position, and why?
+   (d) FERROQUANT's CIO wants to add this carry portfolio to a PIB/equity portfolio. What correlation properties would you expect between commodity carry and (i) Pakistan equity returns, and (ii) PIB returns? Explain your reasoning.
+
+3. Pakistan's agriculture sector faces increasing weather risk. FERROQUANT is advising a Pakistani agricultural company (Engro Fertilizers' downstream distributor) on weather risk management:
+   
+   - The company's annual profit is highly sensitive to Punjab wheat yields
+   - Good monsoon year (above average rainfall): PKR 500M profit
+   - Normal year: PKR 200M profit
+   - Bad monsoon/drought year: PKR −100M loss (debt covenant breach risk)
+   - Historical probability: 20% good, 50% normal, 30% bad
+   
+   (a) Calculate the expected annual profit and the standard deviation of annual profit.
+   (b) The company asks about weather derivatives. Since no Pakistan-specific weather derivative exists, FERROQUANT proposes a CBOT wheat futures overlay. Explain the logic: why would long CBOT wheat futures provide a partial hedge? What basis risk remains?
+   (c) A Gulf Islamic finance house offers a "Takaful" weather-linked sukuk at a cost of PKR 20M/year. If triggered (bad monsoon), the sukuk pays PKR 300M. Using expected value analysis, is this a good deal for the company? Should expected value be the only criterion?
+   (d) Design a simple systematic "weather signal" strategy that FERROQUANT could use to time agricultural commodity futures positions based on Pakistan Met Department seasonal forecasts. What are the risks of such a strategy?
+
+<ArticleNav
+  prev={{ title: "Module 81 — Interest Rate & Credit Derivatives", href: "/financial-strategy/module-81-interest-rate-credit-derivatives" }}
+  next={{ title: "Module 83 — Global Macro Trading", href: "/financial-strategy/module-83-global-macro-trading" }}
+/>

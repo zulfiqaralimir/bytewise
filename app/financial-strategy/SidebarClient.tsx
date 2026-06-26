@@ -373,6 +373,10 @@ const modules = [
     part: "Module 81 — Interest Rate & Credit Derivatives",
     chapters: [{ chapter: "Interest Rate & Credit Derivatives", items: [{ title: "Module 81 — Interest Rate & Credit Derivatives", href: "/financial-strategy/module-81-interest-rate-credit-derivatives" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 82 — Commodity Markets & Trading",
+    chapters: [{ chapter: "Commodity Markets & Trading", items: [{ title: "Module 82 — Commodity Markets & Trading", href: "/financial-strategy/module-82-commodity-markets-trading" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
