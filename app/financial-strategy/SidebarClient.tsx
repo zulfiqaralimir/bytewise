@@ -357,6 +357,10 @@ const modules = [
     part: "Module 77 — Investor Relations for Investment Managers",
     chapters: [{ chapter: "Investor Relations for Investment Managers", items: [{ title: "Module 77 — Investor Relations for Investment Managers", href: "/financial-strategy/module-77-investor-relations-investment-managers" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 78 — Machine Learning for Finance",
+    chapters: [{ chapter: "Machine Learning for Finance", items: [{ title: "Module 78 — Machine Learning for Finance", href: "/financial-strategy/module-78-machine-learning-for-finance" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

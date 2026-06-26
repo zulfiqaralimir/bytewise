@@ -1,0 +1,516 @@
+export const metadata = {
+  title: "Module 78 — Machine Learning for Finance | Financial Strategy — ByteWise",
+  description: "Supervised, unsupervised, and reinforcement learning for financial problems — return prediction, regime detection, NLP on financial text, alternative data, and ML model risk management.",
+  openGraph: { title: "Module 78 — Machine Learning for Finance | Financial Strategy", description: "XGBoost, LSTM, FinBERT, HMM regime detection, RL trading, SHAP, purged k-fold CV — machine learning for quant finance.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 78 — Machine Learning for Finance
+
+Machine learning has reshaped quantitative finance — not by replacing human judgment, but by processing signals at a scale and speed that humans cannot. This module covers the full ML toolkit for finance: supervised learning for return prediction, unsupervised learning for regime detection, NLP for extracting signal from text, alternative data sources, reinforcement learning for trading, and — critically — how to avoid fooling yourself with ML in finance.
+
+## Learning Objectives
+
+- Apply supervised learning models (LASSO, XGBoost, LSTM) to return prediction problems
+- Use unsupervised learning for regime detection and factor extraction
+- Extract sentiment signals from financial text using NLP and LLMs
+- Identify, source, and process alternative data for alpha generation
+- Understand reinforcement learning applied to trading and execution
+- Apply rigorous ML validation techniques that account for financial data's serial structure
+
+---
+
+## 1. Supervised Learning for Return Prediction
+
+### The Financial Prediction Problem
+
+Supervised learning in finance: given a set of features (X) available at time t, predict a target (y) at time t + h. The target might be:
+- Raw return: R(t+1, t+h)
+- Direction: sign of return (classification)
+- Volatility: realized vol at t+h
+- Default probability: 1 if default within h months
+
+**The challenge:** Financial returns have very low signal-to-noise ratio. IC of 0.05 (5% correlation between prediction and outcome) is valuable at scale. This means overfitting is catastrophic — a model that learned noise will fail expensively in live trading.
+
+### Feature Engineering
+
+Raw price and volume data are rarely used directly. Feature engineering transforms them into meaningful predictors:
+
+**Technical features:**
+- Momentum signals: 1-month, 3-month, 6-month, 12-month returns (skip last month)
+- Mean reversion: distance from moving average (price / 50-day MA − 1)
+- Volatility: realized vol (20-day), vol-of-vol, Parkinson range estimator
+- Volume: volume relative to 20-day average, price-volume trend
+
+**Fundamental features:**
+- Valuation: P/E, P/B, EV/EBITDA, FCF yield
+- Quality: ROE, gross margin, accruals ratio
+- Growth: revenue growth, earnings revision momentum
+- Leverage: net debt/EBITDA, interest coverage
+
+**Macro features:**
+- SBP policy rate change (1-month lag)
+- PKR/USD change (1-month lag)
+- KSE-100 momentum (3-month)
+- Oil price change (relevant for Pakistan's current account)
+
+**Feature normalization:**
+Always cross-sectionally normalize features (z-score within each date):
+```python
+X_normalized = (X - X.mean()) / X.std()  # within each time period
+```
+
+This ensures features are on comparable scales and removes any level effect.
+
+### Linear Models: LASSO and Ridge
+
+**Ridge regression (L2 regularization):**
+Minimizes: MSE + λ × Σβᵢ²
+
+Shrinks all coefficients toward zero. Good when many features are weakly predictive — keeps all of them but with smaller magnitudes.
+
+**LASSO regression (L1 regularization):**
+Minimizes: MSE + λ × Σ|βᵢ|
+
+Produces sparse solutions — many coefficients become exactly zero. Acts as automatic feature selection. Useful when you have many candidate features and want to identify the most important ones.
+
+**Elastic Net:** Combines L1 and L2. Practical choice when features are correlated (pure LASSO may arbitrarily select one of a correlated pair; Elastic Net handles this better).
+
+**Hyperparameter selection:** Use cross-validation to choose λ. For financial data, use **purged k-fold CV** (covered in Section 6) rather than standard k-fold.
+
+### Tree Models: XGBoost
+
+XGBoost (Extreme Gradient Boosting) is the dominant model in structured/tabular financial data competitions and industry practice. It builds an ensemble of decision trees sequentially, where each tree corrects the errors of the previous.
+
+**Why XGBoost works well in finance:**
+- Handles non-linear interactions between features
+- Robust to outliers (uses decision splits, not squared errors)
+- Built-in handling of missing values (relevant for Pakistan financial data with gaps)
+- Feature importance scores (which features actually drive predictions)
+- Fast training, scales to large datasets
+
+**Key hyperparameters:**
+| Parameter | Function | Typical Range |
+|---|---|---|
+| n_estimators | Number of trees | 100–1000 |
+| max_depth | Maximum tree depth (controls complexity) | 3–8 |
+| learning_rate | Step size per tree | 0.01–0.3 |
+| subsample | Fraction of data per tree | 0.6–0.9 |
+| colsample_bytree | Fraction of features per tree | 0.6–0.9 |
+| min_child_weight | Minimum samples in leaf node | 1–10 |
+
+**Regularization:** XGBoost has built-in L1/L2 regularization (reg_alpha, reg_lambda) — use them. In finance, the risk of overfitting is high; err on the side of more regularization.
+
+### LSTM for Time Series
+
+Long Short-Term Memory (LSTM) networks are recurrent neural networks designed to capture long-range temporal dependencies. In finance, they can learn patterns in sequential data that fixed-window models miss.
+
+**Architecture:**
+- Input: sequence of T time steps, each with F features
+- LSTM layers: learn temporal patterns
+- Dense layers: convert learned representations to predictions
+- Output: predicted return or direction
+
+**LSTM gates:**
+- **Forget gate:** Decides what to discard from memory
+- **Input gate:** Decides what new information to store
+- **Output gate:** Decides what to output from memory
+
+**When LSTM beats XGBoost in finance:**
+- When the order and timing of events matters (not just their levels)
+- Time series with long-range dependencies (trend + mean reversion interacting)
+- When your features are raw time series rather than engineered cross-sectional features
+
+**In practice:** For cross-sectional stock selection, XGBoost usually matches or beats LSTM because the temporal structure is captured in the engineered features (momentum, mean reversion). LSTMs shine in time series forecasting tasks (macro, volatility forecasting).
+
+**FERROQUANT application:** LSTM for volatility forecasting on PSX stocks — predicting which stocks will be volatile next week to adjust position sizing.
+
+---
+
+## 2. Unsupervised Learning
+
+### PCA for Factor Extraction
+
+Principal Component Analysis (PCA) extracts the dominant patterns from a covariance matrix of returns.
+
+**In finance:**
+- Input: T × N matrix of asset returns (T dates, N assets)
+- PCA extracts orthogonal "statistical factors" that explain the variance
+- First PC: usually the market factor (all assets move together)
+- Second PC: often a sector rotation factor
+- Third PC: often value vs growth
+
+**Uses:**
+1. **Factor extraction:** Build statistical factors without relying on predefined factor definitions
+2. **Dimensionality reduction:** Reduce 100 correlated stocks to 10 uncorrelated factors for portfolio construction
+3. **Risk model:** Use PC exposures as risk factors for attribution
+
+**Ledoit-Wolf + PCA:** Apply shrinkage to the covariance matrix before PCA to get more stable principal components on limited data.
+
+**PSX application:** Running PCA on KSE-100 constituent returns typically reveals 3–5 meaningful factors: overall market, banking sector, energy sector, commodity-linked stocks, and a defensive factor. This is useful for building market-neutral strategies that don't inadvertently load on sector risk.
+
+### K-Means Clustering for Regime Detection
+
+K-means clustering groups time periods or assets into k clusters based on similarity. In finance:
+
+**Market regime clustering:**
+- Features: rolling volatility, rolling correlation, momentum, macro variables (PKR vol, interest rate level)
+- K-means identifies k distinct market regimes (e.g., bull market, high-vol correction, crisis, range-bound)
+- Once regimes are identified, run different strategy parameters or risk budgets per regime
+
+**Stock clustering:**
+- Group stocks by similar return patterns, fundamental characteristics, or factor exposures
+- More fundamental than traditional sector classification — captures true economic linkages
+
+### Hidden Markov Model (HMM) for Regime Detection
+
+HMMs are probabilistic models where an unobserved (hidden) state drives observable outputs. In finance, the hidden state is the market regime.
+
+**Setup:**
+- Hidden states: Bull market (State 1), Bear market (State 2), Crisis (State 3) — typically 2–4 states
+- Observable: daily/weekly returns
+- HMM learns: transition probabilities between states, and the return distribution (mean, variance) within each state
+
+**Output:** Probability of being in each state at each time point. This drives position sizing:
+- High probability of being in bear market → reduce exposure
+- High probability of bull market → maintain/increase exposure
+
+**PSX HMM example:**
+- State 1 (Bull): mean return +0.08%/day, σ = 0.8% — low vol, positive drift
+- State 2 (Bear): mean return −0.12%/day, σ = 1.8% — higher vol, negative drift
+- State 3 (Crisis): mean return −0.35%/day, σ = 3.5% — very high vol, crash
+
+The HMM allows FERROQUANT to dynamically de-risk before a full crash materializes.
+
+### Autoencoders
+
+An autoencoder is a neural network that learns a compressed representation of the input by training to reconstruct its own input through a bottleneck layer.
+
+**Financial uses:**
+- **Anomaly detection:** If a trade or position reconstructs poorly (high reconstruction error), it may be anomalous — a potential data error or unusual market event
+- **Dimensionality reduction:** Like PCA but can capture non-linear structure
+- **Return decomposition:** Separate systematic (compressed) from idiosyncratic (reconstruction error) components
+
+---
+
+## 3. NLP for Financial Text
+
+### The Signal in Financial Text
+
+Text contains rich information about corporate performance, management sentiment, regulatory risk, and market expectations:
+- **Earnings call transcripts:** CEO and CFO language signals conviction, uncertainty, or evasion
+- **Annual reports:** Changes in risk factor language year-on-year can signal emerging problems
+- **News articles:** Sentiment signals before price moves
+- **Regulatory filings:** SECP filings, PSX announcements
+- **Social media:** Twitter/X, LinkedIn, financial forums (cautious use — high noise)
+
+### Text Preprocessing
+
+Before any NLP model, text must be cleaned:
+1. **Tokenization:** Split text into words/sub-words
+2. **Lowercasing:** "Revenue" and "revenue" are the same
+3. **Stop word removal:** Remove "the", "and", "is" — no signal
+4. **Stemming/Lemmatization:** "running" → "run", "better" → "good"
+5. **Special character removal:** Remove punctuation, HTML tags
+6. **Domain-specific handling:** Keep financial terms intact ("EBITDA", "Q3 guidance")
+
+### TF-IDF for Document Similarity
+
+TF-IDF (Term Frequency-Inverse Document Frequency) assigns weights to words:
+```
+TF-IDF(word, doc) = TF(word, doc) × IDF(word)
+= (count of word in doc / total words in doc) × log(N docs / docs containing word)
+```
+
+Words that appear frequently in a document but rarely across all documents get high weight — they are distinctive to that document.
+
+**Application:** Compare two earnings call transcripts. High cosine similarity = management language hasn't changed much. Low similarity = significant language shift. Sudden language changes often precede earnings surprises or guidance changes.
+
+### FinBERT and Financial Sentiment
+
+BERT (Bidirectional Encoder Representations from Transformers) is a pre-trained language model. **FinBERT** is BERT fine-tuned specifically on financial text (Bloomberg news, financial filings).
+
+**FinBERT output:** For any financial sentence, FinBERT produces a sentiment score: Positive, Negative, Neutral (with probabilities for each).
+
+**Signal construction:**
+```python
+from transformers import pipeline
+sentiment = pipeline("sentiment-analysis", model="ProsusAI/finbert")
+
+result = sentiment("OGDC reports record quarterly profit driven by high oil prices")
+# Output: [{'label': 'positive', 'score': 0.97}]
+```
+
+**Alpha from sentiment:**
+- Aggregate FinBERT scores across all news for a stock over the past week
+- Z-score the sentiment across stocks
+- Combine with price momentum as a confirming signal
+
+**Pakistan application:** Pakistan financial news is predominantly in English (Dawn Business, The News, Tribune), making FinBERT directly applicable to PSX-listed companies. However, many informal channels (WhatsApp groups, Urdu social media) are not yet accessible to systematic NLP.
+
+### Named Entity Recognition (NER)
+
+NER identifies and classifies entities in text: companies, people, locations, monetary amounts, dates.
+
+**Financial NER applications:**
+- Extract which companies are mentioned in news (company-specific event detection)
+- Identify transaction amounts ("PKR 5 billion acquisition")
+- Extract management changes ("John Smith appointed as CEO")
+- Map supply chain relationships from news ("OGDC signs agreement with PSO")
+
+### LLM Applications in Finance
+
+Large Language Models (GPT-4, Claude, Llama) can:
+
+**Document analysis:**
+- Summarize 200-page annual reports to key financial changes
+- Extract specific data points from unstructured filings
+- Identify risk factor changes year-on-year
+
+**Due diligence automation:**
+- Screen thousands of company filings for specific red flags
+- Extract covenant terms from lengthy credit agreements
+- Generate structured data from unstructured management commentary
+
+**FERROQUANT LLM use cases:**
+- Automated PSX announcement screening (LLM classifies announcements as material/immaterial)
+- Earnings call sentiment extraction and comparison to historical language
+- Regulatory filing monitoring (flag changes in going concern language, auditor qualifications)
+
+**Important caveat:** LLMs hallucinate — they can generate plausible-sounding but incorrect financial data. Never use LLM-extracted numbers without verification against the source document.
+
+---
+
+## 4. Alternative Data
+
+### What Alternative Data Is
+
+Alternative data is any data source beyond traditional financial data (prices, volumes, financial statements). It provides information about economic activity, consumer behavior, corporate operations, or sentiment before it appears in official statistics.
+
+### Alternative Data Taxonomy
+
+| Category | Examples | Signal Type |
+|---|---|---|
+| Satellite imagery | Parking lot fullness, oil tank levels, ship tracking | Economic activity leading indicator |
+| Credit/debit card data | Consumer spending by merchant category | Revenue nowcasting |
+| Web scraping | Job postings, product reviews, pricing | Growth/sentiment signals |
+| Mobile app data | App downloads, usage patterns | Revenue proxy for tech companies |
+| Shipping/logistics | Port activity, freight rates | Trade volume leading indicator |
+| Weather data | Agricultural yields, energy demand | Commodity impact |
+| Social media | Twitter/X sentiment, Reddit mentions | Short-term sentiment |
+| Email data (permissioned) | Receipt data, purchasing patterns | Retail revenue |
+
+### Pakistan Alternative Data Sources
+
+**Mobile money (JazzCash, Easypaisa):**
+Transaction volume data from Pakistan's dominant mobile wallets provides real-time consumer spending signals. JazzCash processes tens of millions of transactions daily — a signal for consumer sentiment and economic activity.
+
+**HESCO/LESCO/IESCO power consumption:**
+Electricity distribution company data (DISCO reports) signals industrial and commercial activity. High power consumption = economic activity. Available with a lag but ahead of official GDP figures.
+
+**PSX order flow:**
+Retail vs institutional order flow imbalance on PSX provides short-term demand/supply signals. Unlike developed markets, PSX has higher retail participation — retail sentiment shifts are tradable signals.
+
+**SECP/SBP filings:**
+PSX announcements (PDMA, SECP filings, board meetings) are public real-time data. NLP on announcement timing, language, and content provides event-driven signals.
+
+**Port data (Karachi Port Trust):**
+Import/export volumes, container counts, commodity import data (LNG, oil, wheat) — available with some delay but signals the external sector health.
+
+### Signal Construction from Alternative Data
+
+Raw alternative data is not investable — it must be transformed into tradable signals:
+
+**Step 1 — Clean and normalize:** Remove errors, fill gaps, normalize to comparable units
+
+**Step 2 — Map to securities:** Connect data observations to investable assets (e.g., JazzCash volume → Engro Corp, HBL, MCB)
+
+**Step 3 — Engineer features:** Create prediction-relevant transformations (YoY change, momentum, z-score vs history)
+
+**Step 4 — Test for signal:** Measure IC between the alternative data signal and forward returns
+
+**Step 5 — Combine with other signals:** Alternative data signals work best in combination with traditional signals (momentum, value) — not in isolation
+
+**Legal and compliance considerations:**
+- Material non-public information (MNPI): if alternative data constitutes MNPI, trading on it is insider trading
+- SECP rules: Pakistani securities laws prohibit trading on material non-public information
+- Expert networks: paying experts for company-specific insights requires careful legal review
+- Permissioned data: ensure data providers have obtained appropriate consent from data sources
+
+---
+
+## 5. Reinforcement Learning for Trading
+
+### The RL Framework
+
+Reinforcement Learning (RL) is a framework where an **agent** learns to make **actions** in an **environment** to maximize cumulative **reward**.
+
+| RL Component | Finance Equivalent |
+|---|---|
+| Agent | Trading algorithm |
+| Environment | Financial market |
+| State | Current portfolio, prices, features |
+| Action | Buy, sell, hold, position size |
+| Reward | P&L, Sharpe ratio, or risk-adjusted return |
+| Policy | The mapping from state to action |
+
+**Why RL is interesting for finance:**
+- Learns optimal decisions without requiring explicit models of future returns
+- Can handle sequential decision-making (today's action affects tomorrow's state)
+- Can be trained end-to-end from raw features to trading decisions
+
+### DQN for Discrete Trading Decisions
+
+Deep Q-Network (DQN) learns a Q-function: Q(state, action) = expected cumulative reward from taking action in state.
+
+**Applied to trading:**
+- State: current position, recent returns, technical features, market conditions
+- Actions: {buy, sell, hold} or {−1, −0.5, 0, +0.5, +1} (position sizes)
+- Reward: risk-adjusted P&L change
+
+**DQN training:**
+1. Initialize neural network Q(s, a; θ)
+2. Observe state s, take action a (ε-greedy exploration)
+3. Observe reward r and new state s'
+4. Store (s, a, r, s') in replay buffer
+5. Sample mini-batch, compute target: r + γ × max_a' Q(s', a')
+6. Update Q network to minimize: (Q(s,a) − target)²
+7. Repeat
+
+### PPO for Portfolio Management
+
+Proximal Policy Optimization (PPO) is a more stable RL algorithm suited to continuous action spaces (continuous position sizing).
+
+**Applied to portfolio rebalancing:**
+- State: portfolio weights, asset returns, risk metrics
+- Actions: weight changes for each asset (continuous)
+- Reward: portfolio Sharpe ratio improvement
+
+**FERROQUANT RL application:** Train a PPO agent on historical PSX data to learn when to:
+- Increase position size (high-conviction, low-vol environment)
+- Reduce position size (high uncertainty, drawdown regime)
+- Switch strategy exposure (momentum vs mean reversion based on detected regime)
+
+### Optimal Execution with RL
+
+RL is particularly promising for trade execution optimization — learning to execute large orders while minimizing market impact:
+
+- State: remaining shares to trade, current price, time remaining, order book depth
+- Action: how many shares to trade in this period
+- Reward: total execution cost vs arrival price
+
+An RL agent can learn non-obvious execution patterns — e.g., slowing down when bid-ask spread widens, speeding up when volume spikes, adapting to intraday patterns it discovers from data.
+
+**Research finding (Nevmyvaka et al., 2006):** RL-based execution outperforms VWAP by 5–50bps depending on market conditions — modest but economically meaningful at scale.
+
+---
+
+## 6. ML Risk Management: Avoiding Fooling Yourself
+
+### The Core Problem
+
+In finance, there is almost always a backtest that looks good. The question is whether it reflects real signal or data-mined noise. ML amplifies this problem — with enough features and enough model complexity, you can fit any historical dataset perfectly while having zero predictive power.
+
+### Combinatorial Purged Cross-Validation (CPCV)
+
+Standard k-fold CV applied to financial time series has two problems:
+1. **Data leakage:** Training and test sets overlap in time — information from the test period "leaks" into training data through serial correlation
+2. **Too few test scenarios:** Standard k-fold with k=5 gives only 5 backtest scenarios
+
+**Purging:** Remove training samples whose labels overlap with the test period's forward return window.
+
+**Embargo:** Add a gap between the training set and test set to prevent any leakage from execution impact or cross-serial correlation.
+
+**Combinatorial splits (López de Prado, 2018):**
+Instead of k sequential splits, use all possible combinations of k groups as test sets. With 10 groups and 2 test groups at a time, you get C(10,2) = 45 backtest scenarios — much better statistical power to detect overfitting.
+
+```python
+# Conceptual CPCV structure
+from mlfinlab.cross_validation import PurgedKFold
+
+cv = PurgedKFold(n_splits=5, samples_info_sets=t1, pct_embargo=0.01)
+for train_indices, test_indices in cv.split(X):
+    X_train, X_test = X[train_indices], X[test_indices]
+    y_train, y_test = y[train_indices], y[test_indices]
+    model.fit(X_train, y_train)
+    score = model.score(X_test, y_test)
+```
+
+### SHAP Values for Model Interpretability
+
+SHAP (SHapley Additive exPlanations) values explain the output of any ML model by attributing the prediction to each input feature.
+
+**Why this matters in finance:**
+- **Model validation:** If SHAP shows the model is relying on unexpected features (e.g., ticker symbol, filing date), there may be data leakage
+- **Regulatory compliance:** Regulators and LPs increasingly require model explainability
+- **Research insight:** Understanding what drives predictions can suggest new hypotheses
+
+**SHAP interpretation:**
+- Positive SHAP value for a feature: it pushed the prediction higher
+- Negative SHAP value: it pushed the prediction lower
+- SHAP magnitude: importance of the feature for this particular prediction
+
+```python
+import shap
+explainer = shap.TreeExplainer(xgb_model)
+shap_values = explainer.shap_values(X_test)
+shap.summary_plot(shap_values, X_test, feature_names=feature_names)
+```
+
+### Model Risk Management
+
+ML models in production introduce new risks beyond traditional quant models:
+
+**Concept drift:** The relationship between features and returns changes over time. A model trained on 2010–2020 may not work in 2022 (rising rates, correlation breakdown). Monitor IC in rolling windows — if IC consistently falls below historical average, the model may have drifted.
+
+**Feature drift:** The distribution of inputs changes. If the model was trained when KIBOR was 8% and now it's 22%, the model's learned relationships may not hold.
+
+**Overfitting detection:** Track the ratio of in-sample to out-of-sample performance over time. If IS/OOS ratio is increasing, the model is likely overfitting to recent noise.
+
+**Ensemble approaches:** Combine multiple models (XGBoost + LASSO + LSTM + factor model) with equal or optimized weights. Ensembles are more robust to individual model overfitting and tend to have more stable out-of-sample performance.
+
+**Shadow models:** Run new models in parallel with the live model (in "shadow" mode) for 3–6 months before allocating real capital. Observe real-time IC without taking risk.
+
+### The Deflated Sharpe Ratio
+
+If you test N strategies and select the best, the selected strategy's Sharpe ratio is upward-biased. The Deflated Sharpe Ratio (DSR) adjusts for this:
+
+```
+DSR = SR × [1 − γ × SR² × (skewness/6 − kurtosis/24)]
+    where γ accounts for the number of trials
+```
+
+**Rule of thumb:** If you tested 100 strategies and found one with Sharpe = 1.5, the probability this is a spurious result (pure luck) at standard significance is very high. The DSR framework quantifies this precisely.
+
+**FERROQUANT governance rule:** For any new strategy added to the live book, document exactly how many parameter combinations were tested. Include this in the strategy memo. The investment committee should assess DSR before approving capital allocation.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT's quant team wants to predict 1-month forward returns for KSE-100 stocks using XGBoost. They propose 120 candidate features: 30 price/volume technical features, 40 fundamental features from financial statements, 30 macro features, and 20 alternative data features.
+
+   (a) Why is cross-sectional normalization of features (z-scoring within each date) important before training? What specific problem does it solve?
+   (b) The team plans to use standard 5-fold cross-validation on 10 years of monthly data. Identify two specific data leakage problems in this approach and describe how purged k-fold CV addresses each.
+   (c) After training, the model has in-sample IC of 0.18 and out-of-sample IC of 0.04. What does this gap tell you? Should FERROQUANT deploy this model with real capital?
+   (d) SHAP analysis reveals that the top feature by importance is "stock ticker encoded as an integer." What does this reveal about the model, and what should the team do?
+
+2. FERROQUANT wants to build a market regime detection system for PSX using an HMM with 3 states.
+
+   (a) Describe the three states you would expect the HMM to identify for Pakistan equities, including typical return and volatility characteristics of each state.
+   (b) How would you use the regime probabilities to dynamically adjust position sizing? Give a specific rule.
+   (c) The HMM was trained on 2015–2022 data and worked well. In 2023, the model identifies "regime 2 (bear)" when in reality the market is recovering after the IMF deal. What does this suggest about the model, and how would you address it?
+   (d) Compare HMM regime detection to a simpler rule-based approach (e.g., "if 50-day MA < 200-day MA, reduce exposure"). What are the advantages of HMM over the simple rule?
+
+3. FERROQUANT is evaluating a sentiment signal built from PSX company announcements using FinBERT.
+
+   (a) The raw signal has IC of 0.06 over the next 1 day and IC of 0.02 over the next 5 days. What does this pattern tell you about how fast the market incorporates the sentiment information?
+   (b) A SECP enforcement lawyer asks: "How are you ensuring that the NLP signals from company announcements do not constitute trading on material non-public information?" Explain the key distinction between public announcement NLP and MNPI.
+   (c) You notice the sentiment signal has IC of 0.10 for small-cap stocks and 0.01 for large-cap stocks. Provide two explanations for this difference.
+   (d) FERROQUANT wants to add a JazzCash transaction volume signal for retail/consumer stocks. Design the pipeline: how would you obtain the data, normalize it, map it to PSX securities, and test whether it adds information beyond traditional factors?
+
+<ArticleNav
+  prev={{ title: "Module 77 — Investor Relations for Investment Managers", href: "/financial-strategy/module-77-investor-relations-investment-managers" }}
+  next={{ title: "Module 79 — Risk Management for Investment Managers", href: "/financial-strategy/module-79-investment-risk-management" }}
+/>
