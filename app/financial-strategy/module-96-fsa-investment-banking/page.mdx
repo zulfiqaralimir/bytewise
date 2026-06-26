@@ -1,0 +1,350 @@
+export const metadata = {
+  title: "Module 96 — Financial Statement Analysis for Investment Banking | Financial Strategy — ByteWise",
+  description: "Reading financials through an IB lens — Quality of Earnings, normalizing EBITDA, net debt calculation, working capital analysis, and forensic red flags in M&A due diligence.",
+  openGraph: { title: "Module 96 — Financial Statement Analysis for IB | Financial Strategy", description: "QoE analysis, EBITDA normalization, net debt, working capital cycles, and forensic accounting red flags for IB deal work.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 96 — Financial Statement Analysis for Investment Banking
+
+Reading financial statements for investment banking is fundamentally different from reading them for academic or audit purposes. An IB analyst isn't checking if the numbers comply with IFRS — they're asking: what is this business actually worth, what would a buyer pay for it, and where are the bodies buried? This module teaches financial statement analysis through the lens of deal-making: quality of earnings, EBITDA normalization, net debt, working capital, and the forensic signals that warn you when something is wrong before you've committed to a transaction.
+
+## Learning Objectives
+
+- Perform Quality of Earnings (QoE) analysis on a target company
+- Normalize EBITDA by identifying and adjusting non-recurring items
+- Calculate net debt correctly including all debt-like items
+- Analyze working capital trends and calculate normalized working capital
+- Identify forensic accounting red flags that signal financial manipulation or business deterioration
+- Apply these techniques to Pakistani and Gulf company financial statements
+
+---
+
+## 1. Quality of Earnings (QoE) Analysis
+
+### What QoE Is
+
+A Quality of Earnings analysis is typically performed by an accounting firm (Big 4 or boutique advisory firm) during M&A due diligence. Its purpose: verify whether reported earnings are real, recurring, and sustainable — or whether they are inflated by one-time items, aggressive accounting choices, or favorable timing.
+
+For an IB analyst, understanding QoE is essential because:
+- Valuation multiples are applied to normalized EBITDA, not reported EBITDA
+- A 20% difference in normalized EBITDA = 20% difference in deal value
+- Missing a QoE issue means advising a client to pay the wrong price
+
+### The QoE Bridge
+
+The QoE bridge starts with reported EBITDA and adjusts to arrive at a "clean" run-rate EBITDA:
+
+```
+Reported EBITDA
++ Add back non-recurring charges (one-time costs)
+- Remove non-recurring gains (one-time income)
++/- Owner-specific adjustments (owner salary above market, personal expenses)
++/- Accounting policy normalization (revenue recognition, inventory method)
++/- Run-rate adjustments (full-year impact of partial-year events)
+= Adjusted / Normalized EBITDA
+```
+
+### Common EBITDA Adjustments
+
+**Add-backs (increase EBITDA):**
+- Restructuring charges: "one-time" severance and facility exit costs
+- M&A transaction fees: advisory fees, legal fees — non-recurring
+- Litigation settlements: one-time legal expenses or settlements
+- Owner compensation above market: if the owner-CEO pays himself PKR 50M/year and a replacement would cost PKR 15M, add back PKR 35M
+- Costs of a discontinued operation (if genuinely wound down)
+- Natural disaster insurance claims received (and losses)
+
+**Deductions (reduce EBITDA):**
+- One-time revenue: a large government contract that won't recur
+- Insurance proceeds included in revenue
+- Gain on sale of assets (adds to EBITDA if not excluded above the line)
+- Under-investment in maintenance: if capex has been cut to boost EBITDA, the "reported" EBITDA overstates sustainable earnings
+
+**Run-rate adjustments:**
+- New facility opened mid-year: annualize the contribution
+- Major customer lost mid-year: remove the revenue that won't recur
+- Price increase effective October 1: annualize the additional revenue for the full year
+
+**Pakistan QoE context:**
+Pakistani companies often have significant related-party transactions at non-market rates. In a conglomerate (like Engro Group), a subsidiary may buy inputs from a sister company at favorable rates — these must be normalized to market rates in the QoE analysis. Audit quality also varies: non-Big 4 auditors may not have caught all adjustments, requiring more intensive QoE work.
+
+---
+
+## 2. EBITDA and Its Variations
+
+### The EBITDA Family
+
+| Metric | Formula | Use |
+|---|---|---|
+| EBITDA | Revenue − COGS − SG&A + D&A | Operating earnings proxy, most common M&A metric |
+| Adjusted EBITDA | EBITDA + QoE adjustments | Normalized run-rate for valuation |
+| EBITDAR | EBITDA + Rent | For businesses with significant operating leases (retail, airlines) |
+| EBITDAC | EBITDA + Capex | Rarely used — treats all capex as expense |
+| Underlying EBIT | Adjusted EBITDA − Normalized D&A | After depreciation — useful for capital-intensive businesses |
+
+**EBITDA limitations:**
+- Ignores capex: a high-EBITDA, high-capex business (e.g., steel plant requiring constant reinvestment) is worth less than a high-EBITDA, low-capex business (e.g., software)
+- Ignores working capital changes: a growing business consuming working capital is less cash-generative than EBITDA implies
+- Can be manipulated: companies have wide discretion in what they classify as "one-time"
+
+**Free Cash Flow (FCF) is more reliable for capital-intensive businesses:**
+```
+FCF = EBITDA − Tax − Capex − Change in Working Capital
+```
+
+### Revenue Recognition Red Flags
+
+**Aggressive revenue recognition:**
+- Recognizing revenue before delivery (bill-and-hold)
+- Channel stuffing: shipping more than distributors need at year-end → inflates reported revenue, reverses next year
+- Long-term contract revenue recognized faster than work completed
+- Related-party revenue at above-market rates
+
+**Pakistan-specific:** Companies selling to government entities sometimes recognize revenue before government sign-off on deliverables. Accounts receivable aging analysis reveals if government receivables are >90 days old (likely not collected).
+
+---
+
+## 3. Net Debt Calculation
+
+### Why Net Debt Matters for M&A
+
+**Enterprise Value = Equity Value + Net Debt**
+
+When a buyer acquires a company, they acquire the business (equity) but also assume the debt. Net debt is the "bridge" between Enterprise Value (what the business is worth) and Equity Value (what the shareholders receive).
+
+**If you miscalculate net debt → you miscalculate what the buyer actually pays.**
+
+### Standard Net Debt Formula
+
+```
+Net Debt = Financial Debt − Cash and Cash Equivalents
+```
+
+But in practice, "financial debt" and "cash" are more complex:
+
+**Financial debt includes:**
+- Bank loans (short-term and long-term)
+- Bonds and TFCs issued
+- Finance lease liabilities (under IFRS 16)
+- Convertible notes (at principal, not converted value)
+- Preference shares (if debt-like in nature — fixed dividend, no voting)
+- Unfunded pension obligations (if material)
+- Deferred consideration on past acquisitions
+
+**Cash excludes:**
+- Restricted cash (pledged against loans, cannot be freely used)
+- Cash trapped in foreign subsidiaries (repatriation restrictions)
+- Minimum operating cash (some buyers argue the business needs a floor of cash to operate)
+
+**Debt-like items (often missed):**
+- Earn-outs payable to sellers from prior acquisitions
+- Letters of credit (contingent liabilities)
+- Off-balance-sheet commitments
+- Environmental remediation liabilities
+
+**Pakistan net debt nuance:**
+- TFCs (Term Finance Certificates) are debt and must be included
+- Worker's Profit Participation Fund (WPPF) liabilities may be debt-like
+- Liabilities under long-term contracts with government may have debt characteristics
+- Related-party balances due (if interest-bearing, they are debt; if equity-like advances, may be excluded)
+
+### Net Debt in the Waterfall
+
+In M&A, the final payment to sellers is calculated through the equity value waterfall:
+
+```
+Enterprise Value (from valuation)
+− Net Debt (at closing)
+− Pension deficit
+− Minority interest
+± Working capital adjustment (actual vs. agreed normalized)
+= Equity Value paid to sellers
+```
+
+Every PKR of additional debt found during due diligence reduces what sellers receive. This is why sellers fight hard over net debt definitions in the SPA (Share Purchase Agreement).
+
+---
+
+## 4. Working Capital Analysis
+
+### Why Working Capital Matters
+
+Working capital (WC) is the operational cash a business needs to function day-to-day:
+
+```
+Net Working Capital = Current Assets − Current Liabilities
+                    = (Receivables + Inventory + Prepaid)
+                      − (Payables + Accrued Liabilities + Deferred Revenue)
+```
+
+**In M&A, the buyer and seller agree on a "normalized working capital" peg:**
+- If actual WC at closing > normalized WC: seller owes buyer the excess (it was financed by the business)
+- If actual WC at closing < normalized WC: buyer owes seller the shortfall (they need more cash to operate)
+
+**Typical working capital adjustment: $1–10M on a $200M deal** — material enough to fight over.
+
+### Working Capital Analysis Framework
+
+**Step 1 — Calculate trailing 12-month average WC:**
+Seasonal businesses (FMCG before Eid, cement before construction season) have volatile WC. Use a 12-month average as the "normalized" level.
+
+**Step 2 — Identify non-recurring working capital:**
+- Receivables from a one-time large order that has since been collected
+- Inventory build-up for a product line being discontinued
+- Payables deferred at year-end to improve appearance (stretch payables)
+
+**Step 3 — Days metrics:**
+```
+DSO (Days Sales Outstanding) = Accounts Receivable / (Revenue / 365)
+DPO (Days Payable Outstanding) = Accounts Payable / (COGS / 365)
+DIO (Days Inventory Outstanding) = Inventory / (COGS / 365)
+Cash Conversion Cycle = DSO + DIO − DPO
+```
+
+**Deteriorating DSO** (receivables growing faster than revenue): collecting cash is slowing — channel stuffing or credit quality deterioration.
+**DPO extending** (payables growing relative to COGS): stretching supplier payments to improve short-term cash flow — unsustainable.
+
+**Pakistan working capital dynamics:**
+- Government receivables: Pakistan companies selling to government agencies typically have DSO of 180–360+ days. The receivable is "real" but collecting is unpredictable.
+- Circular debt exposure: utilities and energy companies with receivables from DISCOs or CPPA-G face extreme collection risk.
+- Advance income tax recoverable: some Pakistani companies carry large FBR tax refund receivables — these are technically current assets but take years to recover and should often be reclassified as long-term.
+
+---
+
+## 5. Forensic Red Flags in Due Diligence
+
+### The Red Flag Framework
+
+Forensic accounting applies investigative techniques to identify intentional misstatement, aggressive accounting, or business deterioration disguised in financial statements. In M&A, red flags don't necessarily mean fraud — they mean investigate further before paying.
+
+### Revenue Red Flags
+
+| Red Flag | What It Signals |
+|---|---|
+| Revenue growing faster than cash collections (AR growing faster than revenue) | Revenue recognition without cash receipt — collectability risk |
+| Revenue spike in Q4 each year | Year-end stuffing — pushing sales into fiscal year-end |
+| Related-party revenue as significant % of total | Transactions at non-market rates; may not survive post-acquisition |
+| Customer concentration >30% in top 3 | Revenue risk if any key customer churns |
+| Contract modifications reversing prior-period revenue | Restatement risk; aggressive original recognition |
+
+### Expense and Liability Red Flags
+
+| Red Flag | What It Signals |
+|---|---|
+| Capex classified as operating expense (or vice versa) | P&L manipulation — expensing capex improves cash flow, capitalizing opex improves EBITDA |
+| Provisions reversing repeatedly | Provisions created and reversed to manage earnings — cookie-jar accounting |
+| Prepaid expenses growing faster than revenue | Costs being deferred to boost current earnings |
+| Off-balance-sheet liabilities (guarantees, indemnities) | True debt not captured in net debt calculation |
+| Related-party payables/receivables with unclear terms | Potential hidden distributions or debts |
+
+### Cash Flow Red Flags
+
+| Red Flag | What It Signals |
+|---|---|
+| Operating cash flow consistently below reported net income | Accrual-based earnings without cash generation |
+| Capex consistently low vs. D&A (capex/D&A < 0.5x for years) | Under-investment in maintenance — deferred capex is hidden future cost |
+| Frequent "other" or "investing" cash inflows | Asset sales being used to supplement operating cash |
+| Changing working capital classification year to year | Reclassifying items to manage operating cash flow presentation |
+
+### Pakistan-Specific Red Flags
+
+**Auditor changes:** A listed company switching from a Big 4 auditor to a smaller firm is a significant red flag. Often signals the Big 4 raised issues management didn't want to disclose.
+
+**Frequent "exceptional items":** If a company has large "exceptional" charges every year, they're not exceptional — they're part of the normal cost structure being hidden below the EBITDA line.
+
+**FBR tax disputes:** Companies with large disputed tax liabilities (disclosed in notes as contingencies) may face material claims not in the balance sheet.
+
+**Inventory write-offs:** Pakistan manufacturing companies sometimes carry old inventory at cost. An inventory aging analysis (not required in SECP filings but requested in DD) often reveals large non-performing stock.
+
+**Director loans:** PSX company annual reports often disclose loans to directors. In controlled companies, director loans are essentially cash extracted from the business — a form of related-party cash extraction.
+
+---
+
+## 6. Building the Adjusted Financials Table
+
+### The Standard Deal Financials Template
+
+In every IB deal, the analyst builds a table showing:
+
+```
+                          Year 1    Year 2    Year 3    LTM
+Revenue                   X         X         X         X
+  Growth %                X%        X%        X%        X%
+Gross Profit              X         X         X         X
+  Gross Margin %          X%        X%        X%        X%
+EBITDA (Reported)         X         X         X         X
+  QoE Adjustments         (X)       (X)       (X)       (X)
+EBITDA (Adjusted)         X         X         X         X
+  Adjusted EBITDA Margin  X%        X%        X%        X%
+D&A                       (X)       (X)       (X)       (X)
+EBIT (Adjusted)           X         X         X         X
+Net Interest              (X)       (X)       (X)       (X)
+PBT                       X         X         X         X
+Tax                       (X)       (X)       (X)       (X)
+Net Income                X         X         X         X
+```
+
+**LTM (Last Twelve Months):** The most recent trailing 12 months of financials, calculated as:
+```
+LTM = Last Annual + Year-to-Date Current Year − Year-to-Date Prior Year
+```
+
+LTM is almost always more relevant for valuation than the last full fiscal year, because it captures recent performance trends.
+
+---
+
+## Self-Assessment
+
+1. You are conducting M&A due diligence on a Pakistani FMCG company. The reported EBITDA is PKR 1.2B. You discover the following items:
+   
+   - Owner-CEO draws PKR 80M salary; a replacement CEO would cost PKR 25M
+   - Restructuring charge of PKR 45M (redundancies from factory consolidation 18 months ago — unlikely to recur)
+   - Management claims a new product line launched in March added PKR 30M EBITDA in 9 months (full-year contribution would be PKR 40M)
+   - One-time gain on sale of a non-core property: PKR 120M (included in EBITDA)
+   - Consulting fees to a related party: PKR 60M/year (investigation shows market rate is PKR 20M)
+   
+   (a) Build the EBITDA bridge. What is the normalized EBITDA?
+   (b) The buyer is paying 8.0x EV/EBITDA. How much value is at stake from the QoE adjustment?
+   (c) Which single adjustment has the most impact? Which is the most likely to be disputed by the seller?
+   (d) The seller argues: "The related-party consulting fees are for strategic advice that will continue post-acquisition." How should you handle this in the QoE and in the SPA negotiation?
+
+2. A Pakistani cement company's balance sheet shows the following (PKR millions):
+
+   | Item | Amount |
+   |---|---|
+   | Short-term bank borrowings | 800 |
+   | Long-term bank loans (current portion) | 200 |
+   | Long-term bank loans (non-current) | 2,400 |
+   | TFC (subordinated, 5-year) | 500 |
+   | Finance lease liabilities | 150 |
+   | Cash and bank balances | 680 |
+   | Short-term investments (T-bills, 60-day) | 220 |
+   | Restricted cash (pledged against loan covenant) | 80 |
+   | Government receivable (collected 2 weeks post-close) | 350 |
+   | WPPF payable | 45 |
+
+   (a) Calculate gross debt. Include all debt instruments.
+   (b) Calculate net debt. Which items from the cash line should be excluded, and why?
+   (c) If Enterprise Value is PKR 15B, calculate the implied equity value.
+   (d) Due diligence reveals an unfunded pension obligation of PKR 180M not on the balance sheet. How does this change the equity value, and how should it be treated in the SPA?
+
+3. You are analyzing the working capital of a PSX-listed textile exporter over 3 years:
+
+   | Metric | Year 1 | Year 2 | Year 3 |
+   |---|---|---|---|
+   | DSO (days) | 45 | 58 | 78 |
+   | DPO (days) | 60 | 55 | 48 |
+   | DIO (days) | 35 | 42 | 55 |
+   | Revenue growth | +15% | +18% | +12% |
+
+   (a) Calculate the Cash Conversion Cycle for each year. What trend does this reveal?
+   (b) The company claims DSO has grown because "customers are larger and pay on 60–90 day terms." What additional analysis would you do to test this claim?
+   (c) DPO has been declining (supplier terms shortening). What are two possible explanations, and which is more concerning in a deal context?
+   (d) Based purely on the working capital trends, what normalized working capital peg would you recommend for the SPA? Explain your methodology.
+
+<ArticleNav
+  prev={{ title: "Module 95 — IB Analyst & Associate Toolkit", href: "/financial-strategy/module-95-ib-analyst-toolkit" }}
+  next={{ title: "Module 97 — IB Industry Coverage Groups", href: "/financial-strategy/module-97-coverage-groups" }}
+/>

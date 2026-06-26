@@ -429,6 +429,10 @@ const modules = [
     part: "Module 95 — IB Analyst & Associate Toolkit",
     chapters: [{ chapter: "IB Analyst & Associate Toolkit", items: [{ title: "Module 95 — IB Analyst & Associate Toolkit", href: "/financial-strategy/module-95-ib-analyst-toolkit" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 96 — Financial Statement Analysis for IB",
+    chapters: [{ chapter: "Financial Statement Analysis for IB", items: [{ title: "Module 96 — Financial Statement Analysis for IB", href: "/financial-strategy/module-96-fsa-investment-banking" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
