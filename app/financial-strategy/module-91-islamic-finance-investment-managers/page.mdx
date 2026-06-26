@@ -1,0 +1,329 @@
+export const metadata = {
+  title: "Module 91 — Islamic Finance for Investment Managers | Financial Strategy — ByteWise",
+  description: "Shariah-compliant fund structures, Islamic equity screening, sukuk portfolio construction, profit-sharing contracts (mudarabah/musharakah), and the Gulf Islamic fund market.",
+  openGraph: { title: "Module 91 — Islamic Finance for Investment Managers | Financial Strategy", description: "Shariah screening, sukuk portfolio construction, Islamic fund structures, AAOIFI standards, and Gulf Islamic capital markets for FERROQUANT.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 91 — Islamic Finance for Investment Managers
+
+Pakistan is the fifth-largest Muslim-majority country in the world and home to the world's second-largest Islamic banking sector by domestic market share (~30% of banking assets). The Gulf Cooperation Council (GCC) hosts the largest concentration of Islamic finance globally — with Bahrain, Malaysia, and Saudi Arabia as the three largest Islamic finance markets. For FERROQUANT to access Pakistani HNWI capital and Gulf institutional capital, understanding Islamic finance is not optional. It is a market access requirement.
+
+## Learning Objectives
+
+- Explain the core Shariah principles that govern Islamic finance
+- Apply the major Islamic contracts (mudarabah, musharakah, murabahah, ijarah, istisna, salam)
+- Screen equities for Shariah compliance using quantitative financial ratios
+- Price and analyze sukuk (Islamic bonds)
+- Understand Islamic fund structures and AAOIFI/IFSB standards
+- Apply Islamic finance to FERROQUANT's Pakistan and Gulf investment mandate
+
+---
+
+## 1. Shariah Principles Governing Finance
+
+### The Prohibition of Riba (Interest)
+
+**Riba** is the Arabic term for any guaranteed, predetermined return on a loan or investment — most commonly translated as interest or usury. The prohibition of riba is derived from the Quran (2:275) and prohibits:
+
+- Fixed interest on debt instruments (conventional bonds are not permissible)
+- Charging or paying interest on bank deposits or loans
+- Late payment penalties on commercial transactions that exceed the actual loss
+
+**Why riba is prohibited:**
+Shariah views money as a medium of exchange, not a commodity. Charging a fixed return for lending money — regardless of whether the borrower's project succeeds — creates unjust enrichment and shifts risk entirely to the borrower. Islamic finance replaces interest with risk-sharing.
+
+### Gharar (Excessive Uncertainty)
+
+**Gharar** prohibits contracts with excessive uncertainty about the subject matter, price, or delivery:
+- Conventional futures and options (which have uncertainty about future prices) → require careful structuring for Shariah compliance
+- Insurance contracts (conventional) → replaced by Takaful (mutual insurance cooperatives)
+- Derivative contracts with purely speculative intent → generally impermissible
+
+**Acceptable uncertainty:** Normal commercial uncertainty in trade is permissible. The prohibition targets contracts where the uncertainty is a defining feature that creates potential for exploitation.
+
+### Maysir (Gambling)
+
+**Maysir** prohibits gambling and pure speculation. An investment is permissible if it has underlying economic value creation. An investment that is purely zero-sum — where one party's gain is entirely another's loss — is generally impermissible.
+
+**Implication for derivatives:** Vanilla options and futures (for genuine hedging purposes) are debated among scholars. Speculative derivatives — especially credit default swaps, exotic options, and leveraged derivative strategies — are generally not permissible.
+
+### Halal Sectors (Permissible Industries)
+
+**Prohibited (Haram) sectors:**
+- Conventional banking and insurance (interest-based)
+- Alcohol production and distribution
+- Pork products
+- Conventional weapons
+- Gambling and casinos
+- Tobacco
+- Adult entertainment/pornography
+
+**Permissible sectors:** Everything else — manufacturing, retail, technology, halal food, healthcare, construction, energy (renewable and conventional), telecom, agriculture.
+
+---
+
+## 2. Islamic Contracts: The Building Blocks
+
+### Mudarabah (Profit-Sharing)
+
+**Definition:** One party (the Rab al-Mal / investor) provides capital; the other party (the Mudarib / manager) provides labor and expertise. Profits are shared according to a pre-agreed ratio. Losses are borne entirely by the investor (unless the manager is negligent or fraudulent).
+
+**Fund management application:**
+The classic Islamic fund structure uses mudarabah between the investor and the fund manager:
+- Investor provides capital
+- Manager provides management expertise
+- Profits split: e.g., 80% investor / 20% manager (comparable to carry in a conventional fund, but structured differently)
+- If the fund loses money: the investor bears the loss; the manager loses his time but not capital
+
+### Musharakah (Joint Partnership)
+
+**Definition:** Two or more parties contribute capital and share profits and losses in proportion to their capital contribution (or as agreed). All parties are involved in the business.
+
+**Diminishing Musharakah:**
+Used in home finance — the bank and customer co-own a property. The customer buys out the bank's share gradually, making payments that include:
+- Rent to the bank for using the bank's share of the property (ijarah element)
+- Repayment of the bank's equity share (diminishing musharakah element)
+
+No interest is charged — income to the bank comes from rent, not interest.
+
+### Murabahah (Cost-Plus Sale)
+
+**Definition:** The financier buys an asset and sells it to the customer at cost-plus-markup. The markup (profit) is agreed upfront. Payment may be deferred (installment). Crucially, the financier must actually own the asset before selling it.
+
+**Most common Islamic finance structure:** ~80% of Islamic finance transactions use murabahah or its variant tawarruq.
+
+**Trade finance application:** A Pakistani importer needs to buy machinery from Germany. An Islamic bank:
+1. Buys the machinery from the German supplier
+2. Sells it to the Pakistani importer at cost + 12% markup
+3. Pakistani importer pays in 24 equal monthly installments
+
+No interest is charged. The bank's profit is the markup — fixed at the time of the transaction.
+
+**Tawarruq (Commodity Murabahah):**
+A reverse murabahah used to provide cash funding:
+1. Bank buys a commodity (typically metals on the LME) at spot price
+2. Sells to client at deferred price (spot + markup)
+3. Client immediately sells the commodity back into the market for cash
+
+Net effect: client receives cash today, repays more later — economically equivalent to a loan, but structured as a commodity trade to comply with Shariah.
+
+### Ijarah (Leasing)
+
+**Definition:** One party leases an asset to another for a fixed period in exchange for rent. The lessor retains ownership risk. The lessee pays rent.
+
+**Sukuk application:** Ijarah sukuk is the most common sukuk structure — the underlying asset (land, building, aircraft) is leased to the issuer, and the sukuk holders receive the rental payments as their return.
+
+### Salam and Istisna (Forward Sales)
+
+**Salam:** A contract where the buyer pays the full price upfront for goods to be delivered in the future. Permissible exception to gharar because full payment occurs at inception. Used in agriculture finance (pay farmer now, receive crop at harvest).
+
+**Pakistan agriculture application:** Islamic banks in Pakistan use salam to finance small farmers — advance payment for future crop delivery, replacing the informal "arthi" (middleman lending at usurious rates) system.
+
+**Istisna:** A contract for the manufacture or construction of a specific asset. The financier pays in installments; the asset is delivered upon completion. Used in construction, shipbuilding, and infrastructure finance.
+
+---
+
+## 3. Islamic Equity Screening
+
+### Two-Stage Screening Process
+
+**Stage 1 — Business Activity Screen (Qualitative)**
+Exclude companies deriving significant revenue from prohibited sectors:
+
+| Threshold | Rationale |
+|---|---|
+| >5% revenue from haram activities | Strict screen (AAOIFI standard) |
+| >5–33% revenue from gray areas (defense, tobacco supply chain) | Varies by Shariah board |
+
+**Gray areas requiring scholar judgment:**
+- Hotels (may serve alcohol — 5% revenue threshold typically applied)
+- Diversified conglomerates with minority haram exposure
+- Conventional banks (some scholars allow if financial sector exposure is indirect)
+
+**Stage 2 — Financial Ratio Screen (Quantitative)**
+Even if a company is in a permissible sector, its balance sheet must meet certain financial screens to exclude companies with excessive debt (interest-bearing) or cash-based speculative assets:
+
+| Ratio | Threshold | What It Screens |
+|---|---|---|
+| Debt / Market Cap | < 33% | Excessive interest-bearing debt |
+| Cash + Interest Securities / Market Cap | < 33% | Cash and near-cash assets (deemed too close to interest-based) |
+| Accounts Receivable / Market Cap | < 33% (some use 49%) | Company primarily trading in receivables |
+
+**Purification:**
+If a Shariah-compliant company earns a small amount from impermissible activities (e.g., interest on bank deposits), investors must "purify" their returns by donating the proportionate impermissible income to charity.
+
+**Pakistan market application:**
+- Most Pakistani commercial banks (HBL, UBL, MCB) are NOT Shariah-compliant (primarily conventional interest-based)
+- Islamic banks (Meezan Bank, Bank Islami) are Shariah-compliant
+- PSX Shariah Index: SECP and Pakistan Stock Exchange maintain the **KMI-30 Index** (Karachi Meezan Index) — the 30 largest Shariah-compliant companies
+- KMI-30 constituents: Mostly energy (OGDCL, PPL), fertilizers (Engro, FFC), food (Nestlé Pakistan), and manufacturing companies
+
+---
+
+## 4. Sukuk: Islamic Bonds
+
+### Sukuk vs. Conventional Bonds
+
+| Feature | Conventional Bond | Sukuk |
+|---|---|---|
+| Nature | Debt obligation | Ownership/beneficial interest in an asset |
+| Return | Interest (riba — impermissible) | Rent, profit-sharing, or sale proceeds |
+| Asset backing | Not required | Required (sukuk must represent ownership of a real asset) |
+| Principal guarantee | Yes (debt) | Varies by structure |
+
+### Major Sukuk Structures
+
+**Ijarah Sukuk (Most Common):**
+```
+1. Issuer (borrower) sells an asset to an SPV
+2. SPV issues sukuk to investors (investors "own" the asset through the SPV)
+3. Issuer leases the asset back from the SPV (ijarah)
+4. Lease rentals → SPV → distributed to sukuk holders as "profit"
+5. At maturity: Issuer buys back the asset; sukuk holders receive principal
+```
+
+Net economic effect: Like a secured bond, but structured as an asset sale + leaseback to avoid interest.
+
+**Mudarabah Sukuk:**
+The sukuk holders are the rab al-mal (investors) and the issuer is the mudarib (manager). Returns are a share of profits from the underlying business. Cannot guarantee returns — return risk is borne by the investors.
+
+**Musharakah Sukuk:**
+Investors and issuer are partners in an asset or project. Returns are proportional to project profits and losses.
+
+**Pakistan Sukuk (GOP Ijarah Sukuk):**
+The Government of Pakistan issues **Government Ijarah Sukuk (GIS)** — sovereign sukuk used by Islamic financial institutions to manage Shariah-compliant liquidity (they cannot hold conventional T-bills or PIBs due to interest prohibition).
+
+- GIS structure: Government sells real estate (land, buildings) to SBP, SBP issues sukuk to investors, government leases back the real estate
+- GIS return: Rental income from the underlying real estate
+- Tenure: 3 years, 5 years
+- Used by Islamic banks for SLR (Statutory Liquidity Ratio) compliance
+
+**Pakistan corporate sukuk:** Large Pakistani companies (ENGRO, Lucky Cement, PSO) have issued corporate sukuk in the local market. These provide an Islamic alternative to conventional TFCs.
+
+### Sukuk Pricing
+
+Sukuk are priced relative to KIBOR in Pakistan's market:
+```
+Sukuk return ≈ KIBOR + Spread (similar to a conventional bond spread)
+```
+
+The spread reflects credit risk of the issuer (just as for conventional bonds). The key difference: the "return" is technically rental income or profit-sharing, not interest — but market pricing converges to conventional bond spreads in practice.
+
+**FERROQUANT sukuk portfolio:**
+- GIS (Government Ijarah Sukuk): Risk-free equivalent for Islamic mandates — substitute for PIBs for Islamic investors
+- Corporate sukuk (Engro, Lucky, PSO): Corporate credit exposure through Shariah-compliant instruments
+- International sukuk (Gulf sovereign sukuk — UAE, Qatar, Saudi Arabia): USD-denominated, higher yield than US Treasuries, Shariah-compliant
+
+---
+
+## 5. Islamic Fund Structures
+
+### SECP Islamic Fund Framework
+
+SECP has a specific framework for Shariah-compliant collective investment schemes:
+- Must appoint a **Shariah Supervisory Board (SSB)** — minimum 1 Shariah scholar (SECP requires AAOIFI-certified Shariah advisors for AMCs)
+- Investment universe restricted to KMI-30 or custom-screened universe
+- Portfolio purification: Any impermissible income donated to charity
+- Annual Shariah audit alongside financial audit
+
+**Leading Shariah scholars in Pakistan:**
+Major Pakistani Islamic banks and funds have SSBs chaired by prominent scholars — Mufti Taqi Usmani (Meezan Bank), Mufti Najeeb Khan, and others.
+
+### Islamic Hedge Fund Structures
+
+**Can a hedge fund be Shariah-compliant?**
+
+The challenges:
+1. **Short selling:** Classical Islamic scholars prohibit selling something you don't own (bai al-inah). Most short selling → impermissible
+2. **Derivatives for speculation:** Pure speculation derivatives → impermissible
+3. **Leverage from interest-bearing borrowing:** Conventional prime brokerage margin → impermissible
+
+**Solutions:**
+1. **Short selling via Arbun (put option alternative):** A down payment on a sale contract with the right to cancel. Functionally similar to a put option — some scholars permit it with conditions.
+2. **Waad (promise) structure:** A unilateral promise to sell at a future price, used for FX hedging in some Gulf markets.
+3. **Islamic prime brokerage:** Wakala (agency) or commodity murabahah-based financing instead of conventional interest-bearing margin
+4. **Long-biased approach:** Most Islamic funds are long-only, avoiding short selling entirely
+
+### AAOIFI and IFSB Standards
+
+**AAOIFI (Accounting and Auditing Organization for Islamic Financial Institutions):**
+Bahrain-based standard setter. Issues accounting, auditing, governance, and Shariah standards for Islamic finance institutions.
+
+**IFSB (Islamic Financial Services Board):**
+Malaysia-based prudential standard setter. Issues capital adequacy, risk management, and supervisory standards for Islamic banks, takaful (insurance), and capital markets.
+
+**For FERROQUANT:** AAOIFI standards are the reference point for product structures and Shariah screening ratios. An AAOIFI-certified Shariah advisor on the SSB signals international credibility for Gulf institutional investors.
+
+---
+
+## 6. Gulf Islamic Capital Markets
+
+### Saudi Arabia (Vision 2030 and Capital Markets Authority)
+
+**Saudi Capital Market:** World's largest GCC equity market by capitalization (~$2T+). Saudi Arabia's Vision 2030 drives privatization and capital market development.
+
+**Tadawul (Saudi Exchange):**
+- Islamic-first market: most listed companies are Shariah-compliant
+- Foreign institutional investment allowed since 2015 (Qualified Foreign Investor — QFI framework)
+- FERROQUANT can access Saudi equities via QFI registration
+
+**Saudi sukuk market:** Saudi Arabia is the largest sovereign sukuk issuer globally. Saudi Aramco issued $6B in sukuk in 2019.
+
+### Malaysia (Bursa Malaysia and SC)
+
+**Bursa Malaysia:** The most developed Islamic capital market globally. Over 75% of Bursa-listed companies are Shariah-compliant. Malaysia has the deepest Shariah screening infrastructure.
+
+**Malaysia is relevant for FERROQUANT as a benchmark:** The Malaysian Securities Commission's Shariah screening methodology is a global reference standard.
+
+### FERROQUANT's Islamic Finance Offering
+
+**Islamic FERROQUANT strategy:**
+1. **Equity book:** KMI-30 screened universe + Gulf Shariah-compliant equities
+2. **Fixed income:** GIS portfolio + Gulf sovereign/corporate sukuk
+3. **Liquidity management:** Islamic money market instruments (Murabahah-based interbank placements)
+4. **Performance fee structure:** Mudarabah-based (20% profit share to manager, no guaranteed fee from impermissible sources)
+5. **Leverage:** None from conventional margin; commodity murabahah if needed
+
+**Target investors:** Pakistani Islamic banking customers (~5M+ active Islamic bank accounts), Gulf Islamic family offices, Gulf Islamic pension/endowment funds.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT is screening PSX stocks for its Islamic equity fund. Two companies are being evaluated:
+   
+   **Company X (Fertilizer):**
+   - Revenue: PKR 50B, of which 98% from fertilizer (permissible), 2% from conventional deposits' interest
+   - Debt: PKR 8B (conventional interest-bearing), Market Cap: PKR 35B
+   - Cash + Govt Securities (PIBs): PKR 12B
+   - Accounts receivable: PKR 4B
+   
+   **Company Y (Textile):**
+   - Revenue: PKR 30B, all from textile (permissible)
+   - Debt: PKR 18B (conventional + Islamic), Market Cap: PKR 40B
+   - Cash: PKR 3B
+   - Accounts receivable: PKR 6B
+   - 5% of revenue from hotel operations (hotel serves alcohol to some guests)
+   
+   (a) Apply the AAOIFI business activity screen to both companies. Identify any issues.
+   (b) Apply the three financial ratio screens (debt/market cap, cash+securities/market cap, receivables/market cap) to both companies. Which passes all three screens?
+   (c) Company X passes the screens but earns 2% of revenue from bank deposit interest. Calculate the purification amount if FERROQUANT holds PKR 10M of Company X and earns a 15% annual return.
+   (d) Company Y derives 5% revenue from hotel operations where alcohol is served. Under the strict AAOIFI threshold (5% maximum), is this permissible or impermissible? What would your recommendation be, and would you seek a Shariah opinion before investing?
+
+2. FERROQUANT wants to add a Pakistan Government Ijarah Sukuk (GIS) position to its Islamic fund alongside its Shariah-compliant equity book:
+   
+   - GIS: 3-year sukuk, issued at par (PKR 100), rental yield 13% p.a. (paid semi-annually)
+   - Equivalent 3-year PIB yield: 14%
+   - FERROQUANT plans to hold PKR 500M of GIS
+   
+   (a) Why is the GIS yield (13%) lower than the equivalent PIB yield (14%)? Identify at least two structural reasons.
+   (b) Calculate the semi-annual rental payment FERROQUANT receives from PKR 500M GIS.
+   (c) One year after purchase, market sukuk yields rise to 15% due to SBP rate hike. Estimate the approximate mark-to-market loss on the GIS position (use duration ≈ 2.7 years for the remaining 2-year sukuk).
+   (d) A prospective investor asks: "Is a GIS really Shariah-compliant if its yield is tied to KIBOR (an interest rate)? Isn't that just interest dressed up in religious language?" Draft a response that accurately explains the structure and addresses the investor's concern honestly.
+
+<ArticleNav
+  prev={{ title: "Module 90 — ESG for Investment Managers", href: "/financial-strategy/module-90-esg-investment-managers" }}
+  next={{ title: "Module 92 — Quant Finance in Pakistan & Gulf", href: "/financial-strategy/module-92-quant-finance-pakistan-gulf" }}
+/>

@@ -409,6 +409,10 @@ const modules = [
     part: "Module 90 — ESG for Investment Managers",
     chapters: [{ chapter: "ESG for Investment Managers", items: [{ title: "Module 90 — ESG for Investment Managers", href: "/financial-strategy/module-90-esg-investment-managers" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 91 — Islamic Finance for Investment Managers",
+    chapters: [{ chapter: "Islamic Finance for Investment Managers", items: [{ title: "Module 91 — Islamic Finance for Investment Managers", href: "/financial-strategy/module-91-islamic-finance-investment-managers" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
