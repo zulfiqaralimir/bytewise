@@ -417,6 +417,10 @@ const modules = [
     part: "Module 92 — Quant Finance in Pakistan & Gulf",
     chapters: [{ chapter: "Quant Finance in Pakistan & Gulf", items: [{ title: "Module 92 — Quant Finance in Pakistan & Gulf", href: "/financial-strategy/module-92-quant-finance-pakistan-gulf" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 93 — The Future of Quantitative Finance ✓ Track B Complete",
+    chapters: [{ chapter: "The Future of Quantitative Finance", items: [{ title: "Module 93 — The Future of Quantitative Finance", href: "/financial-strategy/module-93-future-quantitative-finance" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
