@@ -349,6 +349,10 @@ const modules = [
     part: "Module 75 — Performance Measurement & Attribution",
     chapters: [{ chapter: "Performance Measurement & Attribution", items: [{ title: "Module 75 — Performance Measurement & Attribution", href: "/financial-strategy/module-75-performance-measurement-attribution" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 76 — Fund Operations & Infrastructure",
+    chapters: [{ chapter: "Fund Operations & Infrastructure", items: [{ title: "Module 76 — Fund Operations & Infrastructure", href: "/financial-strategy/module-76-fund-operations-infrastructure" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
