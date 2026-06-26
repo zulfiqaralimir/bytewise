@@ -1,0 +1,414 @@
+export const metadata = {
+  title: "Module 85 — Portfolio Risk Reporting | Financial Strategy — ByteWise",
+  description: "Risk reporting infrastructure, P&L attribution, risk factor decomposition, regulatory reporting frameworks, and board-level risk communication for investment managers.",
+  openGraph: { title: "Module 85 — Portfolio Risk Reporting | Financial Strategy", description: "Daily P&L attribution, VaR decomposition, Greeks reporting, fund NAV reporting, SECP/AIFMD regulatory frameworks, and risk communication for FERROQUANT.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 85 — Portfolio Risk Reporting
+
+Risk reporting is the operational backbone of every professional investment operation. Without it, portfolio managers are flying blind, investors can't trust their capital is being managed prudently, and regulators can't verify compliance. Great risk reports don't just aggregate numbers — they tell a story about where risk lives in the portfolio, what happened to P&L, and whether the fund is operating within its risk mandate.
+
+## Learning Objectives
+
+- Build a complete daily risk reporting framework for an investment fund
+- Decompose P&L into attribution factors (Greeks, factor exposure, carry)
+- Construct VaR decomposition reports by asset, strategy, and risk factor
+- Design investor-facing risk reports that communicate without jargon
+- Understand SECP and international (AIFMD, SEC) regulatory risk reporting requirements
+- Apply the full reporting stack to FERROQUANT's multi-strategy fund
+
+---
+
+## 1. The Risk Reporting Stack
+
+### Audience Hierarchy
+
+Different stakeholders need different levels of detail:
+
+| Audience | Frequency | Depth | Format |
+|---|---|---|---|
+| Portfolio Manager | Real-time + EOD | Full Greek/factor decomposition | Blotter + dashboard |
+| Risk Manager | Intraday + EOD | VaR, limit utilization, stress tests | Risk report + limit breach alerts |
+| CIO / Board | Weekly + Monthly | Summary P&L, drawdown, factor exposure | Executive summary + charts |
+| Investors (LPs) | Monthly + Quarterly | NAV, returns, risk metrics, commentary | Investor letter + factsheet |
+| Regulator (SECP/FCA) | Monthly + Annual | Prescribed formats, leverage, exposure | Regulatory filings |
+
+### Core Daily Reports
+
+**1. Daily P&L Report**
+**2. Risk Limit Utilization Report**
+**3. Position-Level Greeks/Factor Report**
+**4. VaR Decomposition Report**
+**5. Liquidity Report**
+
+---
+
+## 2. P&L Attribution: Understanding the Source of Returns
+
+### Why Attribution Matters
+
+Without P&L attribution, you know the fund made (or lost) money but not why. Attribution answers:
+- Which trades contributed most?
+- Did the fund profit from the view it intended (e.g., rates fell as expected) or from an unintended factor?
+- Is the fund's return decomposable into systematic (beta) and specific (alpha) components?
+
+### Daily P&L Attribution Framework
+
+**Total daily P&L sources:**
+
+```
+Total P&L = Greeks P&L + Carry/Roll P&L + Unexplained (Residual)
+```
+
+**For a derivatives-heavy fund (like FERROQUANT):**
+```
+Total P&L = Delta P&L + Gamma P&L + Vega P&L + Theta P&L + Rho P&L + Residual
+```
+
+**Delta P&L (directional):**
+```
+Delta P&L = Portfolio Delta × ΔS
+
+Where ΔS = change in underlying asset price
+```
+
+This is the "first-order" P&L — how much the portfolio made from directional price moves.
+
+**Gamma P&L (convexity):**
+```
+Gamma P&L = (1/2) × Portfolio Gamma × ΔS²
+```
+
+Gamma P&L is always positive (for long gamma positions) — a long options position benefits from large moves in either direction.
+
+**Theta P&L (time decay):**
+```
+Theta P&L = Portfolio Theta × Δt
+```
+
+For long options positions, theta is negative — the position loses value each day as time passes.
+
+**Vega P&L (volatility moves):**
+```
+Vega P&L = Portfolio Vega × Δσ
+```
+
+Gains if implied volatility rises (long vega) or falls (short vega).
+
+**Carry/Roll P&L:**
+For fixed income and FX positions:
+- **Accrual:** Interest earned/paid on bond positions
+- **Roll-down:** The pull-to-par effect as bonds approach maturity
+- **FX carry:** Interest rate differential earned on FX positions
+
+### Factor Attribution for Equity/Multi-Asset Portfolios
+
+**Barra-style factor attribution:**
+```
+Portfolio Return = Σ_k (β_k × F_k) + α + ε
+
+Where:
+β_k = portfolio factor loading on factor k
+F_k = return of factor k
+α = portfolio-specific return (alpha)
+ε = residual return
+```
+
+**Common factors:**
+- **Market beta:** Exposure to overall market direction (KSE-100 beta)
+- **Size:** Small-cap vs. large-cap exposure
+- **Value:** Cheap vs. expensive stock exposure
+- **Quality:** High ROE/low leverage vs. low quality
+- **Momentum:** Recent winners vs. recent losers
+- **Sector:** Financial, industrial, energy, consumer sector tilts
+
+**FERROQUANT factor attribution example:**
+
+| Factor | Factor Return | Portfolio Loading | Factor P&L |
+|---|---|---|---|
+| KSE-100 | +1.8% | 0.65 | +1.17% |
+| Small-cap | −0.5% | −0.2 | +0.10% |
+| Value | +0.9% | +0.4 | +0.36% |
+| Momentum | +1.2% | +0.3 | +0.36% |
+| Alpha | — | — | +0.25% |
+| **Total** | | | **+2.24%** |
+
+The attribution shows that FERROQUANT's return came mostly from market beta (+1.17%) and factor tilts, with an additional 0.25% of alpha.
+
+---
+
+## 3. VaR Decomposition Reports
+
+### Marginal VaR and Component VaR
+
+**Marginal VaR of position i:**
+```
+MVaR_i = ρ(Rᵢ, R_portfolio) × σ_Rᵢ × VaR_scaling_factor
+```
+
+The marginal VaR measures how much portfolio VaR would change if position i were removed.
+
+**Component VaR:**
+```
+CVaR_i = Marginal VaR_i × w_i × Portfolio Value
+Σ CVaR_i = Portfolio VaR
+```
+
+Component VaR tells you how much each position contributes to total portfolio VaR. It sums to total VaR — making it the building block of risk decomposition.
+
+**Diversification benefit:**
+```
+Diversification P&L = Σ Undiversified Position VaR − Portfolio VaR
+```
+
+A well-diversified portfolio has large diversification benefits (correlations reduce risk). A concentrated portfolio has minimal diversification benefit.
+
+### VaR Decomposition by Dimension
+
+**By asset class:**
+| Asset Class | Component VaR | % of Total VaR |
+|---|---|---|
+| Pakistan equities | PKR 12.5M | 45% |
+| PIBs | PKR 8.2M | 30% |
+| FX (PKR/USD) | PKR 4.1M | 15% |
+| Commodity futures | PKR 2.8M | 10% |
+| Diversification benefit | −PKR 3.5M | −13% |
+| **Total Portfolio VaR** | **PKR 24.1M** | **100%** |
+
+**By strategy (for multi-strategy funds):**
+| Strategy | Component VaR | % of Total |
+|---|---|---|
+| PIB duration/carry | PKR 10.5M | 44% |
+| PSX equity momentum | PKR 7.8M | 32% |
+| KIBOR IRS curve trades | PKR 3.2M | 13% |
+| FX carry | PKR 2.1M | 9% |
+| Diversification | −PKR 2.5M | −10% |
+| **Total** | **PKR 21.1M** | **100%** |
+
+**By risk factor:**
+| Risk Factor | Component VaR | % of Total |
+|---|---|---|
+| Interest rate (parallel shift) | PKR 9.5M | 40% |
+| Equity market beta | PKR 7.2M | 30% |
+| Credit spreads | PKR 2.8M | 12% |
+| FX rate (PKR/USD) | PKR 2.1M | 9% |
+| Volatility (vega) | PKR 1.5M | 6% |
+| Residual | PKR 0.8M | 3% |
+
+---
+
+## 4. Stress Testing Reports
+
+### Stress Test Report Structure
+
+**Historical scenario stress tests:**
+
+| Scenario | Key Drivers | Portfolio P&L | VaR Multiple |
+|---|---|---|---|
+| 2008 GFC (Sep–Oct 2008) | Equities −40%, credit widened 500bps, EM selloff | −PKR 85M | −3.5x VaR |
+| 2018 EM Selloff (Aug–Sep) | EM FX −15%, equities −25%, rates volatile | −PKR 32M | −1.3x VaR |
+| Pakistan 2023 Crisis | PKR −35%, policy rate +1200bps, equities −20% | −PKR 45M | −1.9x VaR |
+| COVID Crash (Mar 2020) | Global equities −35%, oil −50%, volatility spike | −PKR 28M | −1.2x VaR |
+
+**Hypothetical scenario stress tests:**
+| Scenario | Assumptions | Portfolio P&L |
+|---|---|---|
+| Pakistan IMF Program Collapse | PKR −25%, PIB yields +400bps, equities −30% | −PKR 62M |
+| Oil price spike ($120/barrel) | Crude +50%, Pakistan CA deficit widens, PKR −15% | −PKR 18M |
+| Global recession (2025) | Global equities −30%, credit widened, rates fall | +PKR 8M (hedge benefit) |
+
+**Reverse stress test:**
+What scenario would cause a 30% fund NAV loss?
+
+Typical answer: A simultaneous 30% PKR devaluation + 500bps PIB yield spike + 40% equity market decline.
+
+Is this scenario plausible? Yes — it approximates Pakistan's 2022–2023 crisis at a larger scale.
+
+---
+
+## 5. Fund NAV Reporting and Reconciliation
+
+### NAV Calculation Process
+
+**Daily NAV = Total Assets − Total Liabilities**
+
+**Step 1 — Mark-to-Market all positions:**
+- Listed equities: Closing price on PSX/international exchanges
+- PIBs: MUFAP (Mutual Fund Association of Pakistan) published prices OR SBP treasury rate curve
+- Derivatives (swaps, options): Model mark using market inputs
+- Illiquid assets: Stale pricing concern — must be disclosed
+
+**Step 2 — Accrue income:**
+- Bond interest accrued (coupon/365 per day)
+- FX carry accrued
+- Management fee and performance fee accrued (debited from NAV)
+
+**Step 3 — Reconcile with prime broker:**
+Every position and cash balance must match between FERROQUANT's internal books and the prime broker's records.
+
+**Step 4 — Calculate per-unit NAV:**
+```
+NAV per unit = Total NAV / Units outstanding
+Daily return = (NAV_today / NAV_yesterday) − 1
+```
+
+**Step 5 — Publish to investors:**
+NAV published at T+1 (next business day after valuation date) in Pakistan's mutual fund industry.
+
+### Pricing Policy and Valuation Committee
+
+For hard-to-price assets (illiquid bonds, OTC derivatives, distressed positions):
+- A **Valuation Committee** (portfolio manager, risk officer, independent director) approves fair value prices
+- Must follow IFRS 9 / IFRS 13 fair value hierarchy:
+  - **Level 1:** Quoted prices in active markets (PSX equities)
+  - **Level 2:** Observable inputs other than Level 1 (PIB yield curve interpolation)
+  - **Level 3:** Unobservable inputs (management assumptions) — highest disclosure requirement
+
+---
+
+## 6. Investor Risk Reporting
+
+### Monthly Investor Report Structure
+
+**1. Performance Summary**
+- Month, YTD, Inception returns (net of fees)
+- Benchmark comparison (KSE-100 + PKRV for a hybrid fund)
+- Peer comparison (if available — MUFAP peer group)
+
+**2. Risk Metrics**
+- Annualized volatility (trailing 12 months)
+- Sharpe ratio (trailing 12 months)
+- Maximum drawdown (from inception)
+- Current drawdown (from last NAV high)
+- VaR (99%, 1-day, as % of NAV)
+- Beta to KSE-100
+
+**3. Portfolio Positioning**
+- Top 10 holdings (by % of NAV)
+- Asset allocation pie chart (equities, PIBs, cash, derivatives)
+- Sector allocation chart
+- Duration profile (for fixed income exposure)
+
+**4. Risk Commentary**
+- What drove performance this month
+- What risks the fund faces looking forward
+- Any limit breaches or near-breaches during the period
+- Changes to the portfolio strategy (if any)
+
+**Investor reporting compliance:**
+- Pakistan NBFC/mutual fund regulation: monthly accounts + NAV publication
+- AIFMD (for EU-facing AIFs): quarterly investor disclosure (Annex IV)
+- SEC (for US-registered funds): quarterly 13F filing, annual Form ADV
+
+---
+
+## 7. Regulatory Reporting
+
+### SECP Regulatory Reporting (Pakistan)
+
+**For NBFC-registered funds (SECP framework):**
+- Monthly financial statements submitted to SECP within 30 days
+- Annual audited accounts
+- Material events disclosure (>10% NAV loss, breach of investment limits, key person changes)
+- Investment limits compliance report:
+  - Maximum 10% NAV in a single issuer (concentration limit)
+  - Maximum 35% in a single sector
+  - Derivative exposure limits (net exposure cannot exceed 100% NAV for most fund types)
+
+**SECP disclosure requirements:**
+- Fund characteristics (strategy, risk profile, fee structure)
+- NAV publication (daily for open-end funds)
+- Key information document (KID) for retail investors
+- Related party transactions disclosure
+
+### AIFMD Reporting (EU)
+
+**Annex IV reporting:**
+Required quarterly for AIFMs managing EU funds or marketing to EU investors:
+- Fund details (strategy type, leverage, liquidity profile)
+- Risk exposure breakdown
+- Leverage calculation (gross method and commitment method)
+- Liquidity stress testing results
+- Investor concentration data
+
+**Leverage calculation:**
+```
+Gross leverage = Σ |Gross notional exposures| / Fund NAV
+
+Commitment leverage = Σ |Netting-adjusted exposures| / Fund NAV
+```
+
+Both measures required under AIFMD. Both cannot exceed prescribed limits (typically 3x for UCITS, higher for AIFs).
+
+### Basel IV / Risk Framework (For Bank-Related Funds)
+
+If FERROQUANT manages a fund on behalf of a Pakistani commercial bank (as a sub-advisor or through an SMA), the bank's regulatory capital calculations may incorporate FERROQUANT's risk outputs:
+- VaR and ES figures feed into the bank's market risk capital calculation
+- Counterparty credit risk (CVA) calculations for OTC derivative positions
+- Stress testing data for the bank's ICAAP (Internal Capital Adequacy Assessment Process)
+
+---
+
+## 8. Risk Limit Framework
+
+### Limit Structure
+
+**Hard limits (automatic stop/alert):**
+- Daily VaR > 2% of NAV → risk manager review and potential position reduction
+- Single position > 10% of NAV → immediate review
+- Drawdown from high water mark > 15% → CIO escalation + mandatory de-risking
+- Overnight FX open position > 20% of NAV → currency risk review
+
+**Soft limits (monitor and explain):**
+- Tracking error > 8% annualized vs. benchmark
+- Sector concentration > 30% of equity book
+- Average daily liquidity < 3 days for the full portfolio
+
+**Limit breach reporting:**
+All breaches reported same-day to CIO, risk committee, and (if regulatory) to SECP.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT's PKR 2B fund has the following positions on a given day:
+   
+   | Position | Size | Daily P&L | VaR (99%, 1-day) |
+   |---|---|---|---|
+   | KSE-100 basket long | PKR 800M | +PKR 12.5M | PKR 18M |
+   | 10-year PIB long | PKR 500M | +PKR 5.2M | PKR 9M |
+   | KIBOR receiver swap | PKR 300M notional | +PKR 1.8M | PKR 5M |
+   | USD/PKR short USD | USD 5M | −PKR 3.1M | PKR 7M |
+   | Portfolio VaR (diversified) | — | — | PKR 28M |
+   
+   (a) Calculate the diversification benefit (in PKR and as a % of undiversified VaR). What does this tell you about the correlations within FERROQUANT's portfolio?
+   (b) Using component VaR logic (allocate portfolio VaR proportionally to undiversified VaRs), calculate the approximate % of portfolio VaR attributable to each position.
+   (c) The total daily P&L is +PKR 16.4M. Attribute this using a simple Greeks-based framework: the KSE-100 rose 1.5%, 10-year PIB yields fell 8bps, KIBOR fell 5bps, and PKR appreciated 0.2% vs USD. Show whether the P&L is consistent with the positions and your attribution math.
+   (d) An investor calls asking: "What risk am I taking?" Write a 3-sentence investor-facing description of FERROQUANT's current risk profile using the data above.
+
+2. FERROQUANT is preparing its monthly investor report. Using the data below, build the key sections:
+   
+   | Metric | Value |
+   |---|---|
+   | Fund NAV | PKR 2.15B |
+   | Month return (net) | +3.8% |
+   | YTD return (net) | +18.2% |
+   | KSE-100 YTD | +12.5% |
+   | PKRV 10yr YTD return | +8.2% |
+   | Annualized volatility (12M) | 14.5% |
+   | Maximum drawdown (inception) | −22.5% |
+   | Current drawdown | −2.1% |
+   | 99% 1-day VaR | 1.8% of NAV |
+   | Fund beta (KSE-100) | 0.65 |
+   
+   (a) Calculate the Sharpe ratio (assume risk-free rate = 12% annualized KIBOR). Is this an attractive Sharpe ratio? Justify.
+   (b) The fund is outperforming its equity benchmark (KSE-100) by 5.7% and fixed income (PKRV) by 10.0% YTD. Given a beta of 0.65, estimate the approximate alpha vs. KSE-100. Is this alpha statistically meaningful from one year of data?
+   (c) Draft a 3-paragraph risk commentary section for the investor report covering: (i) what drove the month's P&L, (ii) current risk positioning, and (iii) forward-looking risks.
+   (d) A potential institutional investor asks for SECP-required disclosure documents before investing. List the five specific documents FERROQUANT must provide and explain the key risk information in each.
+
+<ArticleNav
+  prev={{ title: "Module 84 — Quantitative Risk Models: EVT & Copulas", href: "/financial-strategy/module-84-quantitative-risk-models-evt-copulas" }}
+  next={{ title: "Module 86 — Alternative Data Sourcing & Signals", href: "/financial-strategy/module-86-alternative-data-sourcing-signals" }}
+/>

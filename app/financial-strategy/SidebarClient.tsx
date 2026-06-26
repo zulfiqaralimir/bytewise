@@ -385,6 +385,10 @@ const modules = [
     part: "Module 84 — Quantitative Risk Models: EVT & Copulas",
     chapters: [{ chapter: "Quantitative Risk Models: EVT & Copulas", items: [{ title: "Module 84 — Quantitative Risk Models: EVT & Copulas", href: "/financial-strategy/module-84-quantitative-risk-models-evt-copulas" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 85 — Portfolio Risk Reporting",
+    chapters: [{ chapter: "Portfolio Risk Reporting", items: [{ title: "Module 85 — Portfolio Risk Reporting", href: "/financial-strategy/module-85-portfolio-risk-reporting" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
