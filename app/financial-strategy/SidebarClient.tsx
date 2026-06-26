@@ -639,13 +639,13 @@ export function FinancialStrategySidebar() {
       />
 
       {/* Mobile header */}
-      <header className="md:hidden fixed top-1 left-0 right-0 z-40 bg-[#0a0f1e] border-b border-amber-900/40 flex items-center justify-between px-4 py-3">
-        <Link href="/financial-strategy" className="font-black text-lg text-white">
-          <span className="text-amber-400">Financial</span> Strategy
+      <header className="md:hidden fixed top-1 left-0 right-0 z-40 bg-white border-b border-amber-200 flex items-center justify-between px-4 py-3">
+        <Link href="/financial-strategy" className="font-black text-lg text-slate-800">
+          <span className="text-amber-600">Financial</span> Strategy
         </Link>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-lg text-amber-400 hover:bg-amber-400/10"
+          className="p-2 rounded-lg text-amber-600 hover:bg-amber-100"
           aria-label="Toggle menu"
         >
           {mobileOpen ? "✕" : "☰"}
@@ -664,22 +664,22 @@ export function FinancialStrategySidebar() {
       <aside
         className={`fixed top-0 left-0 bottom-0 w-72 z-40 flex flex-col transition-transform duration-300
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
-        style={{ background: "#0d1630", borderRight: "1px solid #1e2d45" }}
+        style={{ background: "#ffffff", borderRight: "1px solid #e5e7eb" }}
       >
         {/* Brand */}
-        <div className="p-6" style={{ borderBottom: "1px solid #1e2d45" }}>
+        <div className="p-6" style={{ borderBottom: "1px solid #e5e7eb" }}>
           <Link href="/" className="block mb-4">
-            <div className="font-black text-xl text-white">
-              Byte<span className="text-blue-400">Wise</span>
+            <div className="font-black text-xl text-slate-800">
+              Byte<span className="text-blue-500">Wise</span>
             </div>
-            <div className="text-xs text-slate-500 mt-0.5">Programming from First Principles</div>
+            <div className="text-xs text-slate-400 mt-0.5">Programming from First Principles</div>
           </Link>
           <Link href="/financial-strategy" className="block">
             <div className="font-black text-lg leading-tight">
-              <span className="text-amber-400">Financial</span>
-              <span className="text-white"> Strategy</span>
+              <span className="text-amber-600">Financial</span>
+              <span className="text-slate-800"> Strategy</span>
             </div>
-            <div className="text-xs text-amber-700/70 mt-0.5 uppercase tracking-widest">
+            <div className="text-xs text-amber-700/60 mt-0.5 uppercase tracking-widest">
               Premium Finance Track
             </div>
           </Link>
@@ -691,8 +691,8 @@ export function FinancialStrategySidebar() {
             href="/financial-strategy"
             className={`block px-6 py-2 text-sm font-semibold mb-2 transition-colors ${
               pathname === "/financial-strategy"
-                ? "text-amber-400"
-                : "text-slate-400 hover:text-amber-300"
+                ? "text-amber-700"
+                : "text-slate-500 hover:text-amber-700"
             }`}
           >
             Overview
@@ -703,7 +703,7 @@ export function FinancialStrategySidebar() {
               <button
                 onClick={() => toggleCollapse(module.part)}
                 className="w-full flex items-center justify-between px-6 py-2 text-xs font-bold uppercase tracking-widest transition-colors"
-                style={{ color: collapsed[module.part] ? "#6b5a2e" : "#d97706" }}
+                style={{ color: collapsed[module.part] ? "#92400e" : "#b45309" }}
               >
                 <span>{module.part}</span>
                 <span className="text-base leading-none">
@@ -715,11 +715,11 @@ export function FinancialStrategySidebar() {
                 <div>
                   {module.chapters.map((ch) => (
                     <div key={ch.chapter}>
-                      <div className="px-6 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-amber-900/80">
+                      <div className="px-6 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-amber-800/70">
                         {ch.chapter}
                       </div>
                       {ch.items.length === 0 ? (
-                        <div className="pl-8 pr-6 py-1.5 text-xs text-slate-600 italic">
+                        <div className="pl-8 pr-6 py-1.5 text-xs text-slate-400 italic">
                           Coming soon
                         </div>
                       ) : (
@@ -734,16 +734,16 @@ export function FinancialStrategySidebar() {
                                   onClick={() => setMobileOpen(false)}
                                   className={`flex items-center gap-3 pl-8 pr-6 py-2 text-sm transition-colors ${
                                     isActive
-                                      ? "text-amber-400 border-r-2 border-amber-400"
-                                      : "text-slate-400 hover:text-amber-300"
+                                      ? "text-amber-700 border-r-2 border-amber-600"
+                                      : "text-slate-600 hover:text-amber-700"
                                   }`}
                                   style={
                                     isActive
-                                      ? { background: "rgba(245,158,11,0.08)" }
+                                      ? { background: "rgba(180,83,9,0.07)" }
                                       : undefined
                                   }
                                 >
-                                  <span className="text-xs text-slate-600 w-4 flex-shrink-0">
+                                  <span className="text-xs text-slate-400 w-4 flex-shrink-0">
                                     {globalIdx + 1}.
                                   </span>
                                   <span className="flex-1">{item.title}</span>
@@ -762,20 +762,20 @@ export function FinancialStrategySidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 space-y-2" style={{ borderTop: "1px solid #1e2d45" }}>
+        <div className="p-4 space-y-2" style={{ borderTop: "1px solid #e5e7eb" }}>
           <Link
             href="/docs/cs-book"
-            className="block text-xs text-slate-500 hover:text-amber-400 transition-colors text-center"
+            className="block text-xs text-slate-500 hover:text-amber-700 transition-colors text-center"
           >
             CS Book →
           </Link>
           <Link
             href="/blog"
-            className="block text-xs text-slate-500 hover:text-amber-400 transition-colors text-center"
+            className="block text-xs text-slate-500 hover:text-amber-700 transition-colors text-center"
           >
             Blog →
           </Link>
-          <div className="text-xs text-slate-600 text-center">By Zulfiqar Ali Mir</div>
+          <div className="text-xs text-slate-400 text-center">By Zulfiqar Ali Mir</div>
         </div>
       </aside>
     </>
