@@ -1,0 +1,69 @@
+export const metadata = {
+  title: "12.1 — Overview of Module | Module 12 — Mergers and Acquisitions | Financial Strategy — ByteWise",
+  description:
+    "Section 12.1: Overview of mergers and acquisitions — types of merger, terminology, and indicative syllabus content.",
+  openGraph: {
+    title: "12.1 — Overview of Module | Financial Strategy",
+    description:
+      "Types of merger and acquisition, key terminology, and syllabus content for Module 12.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+# 12.1 — Overview of Module
+
+<MermaidDiagram title="Module 12 — Overview" chart={`
+graph TD
+  A[Synergy] --> B[Mergers and Acquisitions]
+  B --> C[Regulation of Takeovers]
+  B --> D[Financing of Takeovers]
+  B --> E[Defences Against Takeover]
+  D --> F[Cash]
+  D --> G[Share for Share Exchange]
+`} />
+
+## Types of Merger / Acquisition
+
+Mergers and acquisitions can be classified according to the nature of the enlarged group.
+
+<MermaidDiagram title="Types of Merger / Acquisition" chart={`
+graph TD
+  A[Types of Merger / Acquisition] --> B[Horizontal Integration]
+  A --> C[Vertical Integration]
+  A --> D[Conglomerate]
+`} />
+
+**Horizontal Integration** — Results when two entities in the same line of business combine. Example: Recent bank and building society mergers.
+
+**Vertical Integration** — Results from the acquisition of one entity by another that is at a different level in the chain of supply. Example: UK breweries have moved heavily into the distribution of their products through public houses.
+
+**Conglomerate** — Results when two entities operating in unrelated businesses combine.
+
+---
+
+## Terminology
+
+The term **'merger'** is usually used to describe the joining together of two or more entities.
+
+Strictly, if one entity acquires a majority shareholding in another, the second is said to have been **acquired** (or **'taken over'**) by the first. If the two entities join together to submerge their separate identities into a new entity, the process is described as a **merger**.
+
+In fact, the term **'merger'** is often used even when an acquisition/takeover has actually occurred, because of the cultural impact on the acquired entity—the word **merger** makes the arrangement sound like a partnership between equals.
+
+## Indicative Syllabus Content
+
+- Recognition of the interests of different stakeholder groups in mergers, acquisitions and company valuations.
+- The reasons for merger or acquisitions (e.g. synergistic benefits).
+- Forms of consideration and terms for acquisitions (e.g. cash, shares, convertibles and earn-out arrangements), and their financial effects.
+- The post-merger or post-acquisition integration process (e.g. management transfer and merger of systems).
+- The function/role of management buy-outs and venture capitalists.
+- Types of exit strategy and their implications.
+- The reasons for (e.g. strategic change, opportunity cost of investment) and mechanisms of demerger or divestment.
+- The implications of regulation for business combinations. (Note: Detailed knowledge of the City Code and EU competition rules will not be tested).
+
+<ArticleNav
+  prev={{ title: "Module 12 — Mergers and Acquisitions", href: "/financial-strategy/module-12-mergers-and-acquisitions" }}
+  next={{ title: "12.2 — The Reasons for Growth by Acquisition or Merger", href: "/financial-strategy/module-12-mergers-and-acquisitions/12-2-reasons-for-growth" }}
+/>

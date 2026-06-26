@@ -77,7 +77,8 @@ const modules = [
       {
         chapter: "Financial and Strategic Implications of Mergers and Acquisitions",
         items: [
-          { title: "C2(a) & C2(b) — M&A, Demergers & Divestments", href: "/financial-strategy/module-12-mergers-and-acquisitions" },
+          { title: "12.1 — Overview of Module", href: "/financial-strategy/module-12-mergers-and-acquisitions/12-1-overview" },
+          { title: "12.2 — The Reasons for Growth by Acquisition or Merger", href: "/financial-strategy/module-12-mergers-and-acquisitions/12-2-reasons-for-growth" },
         ] as { title: string; href: string }[],
       },
     ],
