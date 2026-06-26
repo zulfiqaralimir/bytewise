@@ -445,6 +445,10 @@ const modules = [
     part: "Module 99 — Precedent Transaction Analysis",
     chapters: [{ chapter: "Precedent Transaction Analysis", items: [{ title: "Module 99 — Precedent Transaction Analysis", href: "/financial-strategy/module-99-transaction-comps" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 100 — Discounted Cash Flow Valuation",
+    chapters: [{ chapter: "Discounted Cash Flow Valuation", items: [{ title: "Module 100 — Discounted Cash Flow Valuation", href: "/financial-strategy/module-100-dcf-valuation" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

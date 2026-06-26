@@ -1,0 +1,399 @@
+export const metadata = {
+  title: "Module 100 — Discounted Cash Flow Valuation | Financial Strategy — ByteWise",
+  description: "FCF projection, WACC calculation, terminal value (Gordon Growth and Exit Multiple), sensitivity analysis, and full DCF model walkthrough for a Pakistani industrial company.",
+  openGraph: { title: "Module 100 — Discounted Cash Flow Valuation | Financial Strategy", description: "Step-by-step DCF methodology — free cash flow forecasting, WACC, terminal value, sensitivity tables — with a Pakistan industrial company worked example.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 100 — Discounted Cash Flow Valuation
+
+DCF (Discounted Cash Flow) valuation is the foundational intrinsic value methodology in investment banking. The premise is elegant: a business is worth the present value of all the cash it will ever generate for its owners. The execution is where analysts earn their keep — every assumption in the model (revenue growth, margins, capex, WACC, terminal value) requires judgment, and small changes in assumptions can swing the valuation 20–40%.
+
+## Learning Objectives
+
+- Build a 5-year free cash flow forecast from a financial model
+- Calculate WACC (Weighted Average Cost of Capital) using CAPM and Pakistan/Gulf market data
+- Calculate terminal value using both the Gordon Growth Model and Exit Multiple Method
+- Build a sensitivity analysis table (WACC vs. terminal growth rate)
+- Interpret and present DCF output in an IB pitch book
+- Understand the limitations and common manipulations of DCF
+
+---
+
+## 1. The DCF Framework
+
+### The Core Equation
+
+```
+Intrinsic Value = Σ [FCF_t / (1 + WACC)^t]  +  Terminal Value / (1 + WACC)^n
+```
+
+Where:
+- **FCF_t** = Free Cash Flow in year t
+- **WACC** = Weighted Average Cost of Capital (the discount rate)
+- **n** = length of the explicit forecast period (typically 5–10 years)
+- **Terminal Value** = value of all cash flows beyond year n
+
+**The two phases of DCF:**
+1. **Explicit forecast period (years 1–5 or 1–10):** Detailed year-by-year projections of revenue, margins, capex, and working capital. You model each driver explicitly.
+2. **Terminal value:** A single number capturing all value beyond the forecast period. Typically represents 60–80% of total DCF value — which is why terminal value assumptions are so important and so disputed.
+
+### Free Cash Flow to the Firm (FCFF)
+
+DCF in IB typically uses FCFF — the cash available to both debt and equity holders — which is then discounted at WACC (which reflects the blend of debt and equity costs).
+
+```
+FCFF = EBIT × (1 − Tax Rate)
+     + Depreciation & Amortization
+     − Capital Expenditure
+     − Change in Net Working Capital
+```
+
+Or equivalently:
+
+```
+FCFF = NOPAT + D&A − Capex − ΔNWC
+
+NOPAT = Net Operating Profit After Tax = EBIT × (1 − t)
+```
+
+**Why use FCFF rather than net income?**
+- Net income is affected by capital structure (interest expense)
+- FCFF is capital-structure neutral — consistent with using WACC as the discount rate
+- D&A is added back (non-cash); capex and WC changes are deducted (actual cash outflows)
+
+---
+
+## 2. Building the Explicit Forecast
+
+### Revenue Forecasting
+
+**Bottom-up approach (preferred):**
+1. Volume growth: unit sales driven by market size and market share assumptions
+2. Price growth: inflation pass-through, competitive pricing dynamics
+3. Revenue = Volume × Price
+
+**Top-down approach:**
+1. Total addressable market (TAM) growth rate
+2. Company's market share trajectory
+3. Revenue = TAM × Market Share
+
+**For Pakistani companies:**
+Always model revenue in PKR. If the company has dollar-denominated revenue (exporters, dollar-linked contracts like IPPs), model in USD then convert at the projected exchange rate.
+
+**Pakistan-specific revenue drivers:**
+- Inflation: Pakistan's CPI has averaged 15–25% in 2022–2024; FMCG and services companies can pass through inflation to pricing
+- Population growth: ~2% annually, relevant for consumer staples
+- Currency depreciation: PKR/USD has moved from ~160 to ~280 over 2020–2024; exporter revenue benefits, importer costs rise
+
+### Margin Forecasting
+
+**EBITDA margin expansion/contraction drivers:**
+| Factor | Drives Margin Up | Drives Margin Down |
+|---|---|---|
+| Scale | Fixed costs spread over more revenue | — |
+| Input costs | Falling commodity prices | Rising coal, energy prices |
+| Pricing power | Pass-through pricing | Competitive pressure |
+| Operational efficiency | Process improvement | New capacity ramp-up costs |
+| Currency | For exporters: PKR depreciation | For importers: PKR depreciation |
+
+**Pakistan margin pitfall:** Energy costs (gas, electricity, furnace oil) are a major COGS component for manufacturers. Include NEPRA tariff assumptions and circular debt risk explicitly.
+
+### Capex and D&A
+
+**Maintenance capex:** The minimum capex to keep existing assets running. Approximated as: Depreciation × (1 + inflation).
+
+**Growth capex:** Investment in new capacity. Model explicitly for announced projects; use a % of incremental revenue as a proxy for unannounced expansion.
+
+**D&A:** Typically modeled as a % of gross fixed assets, or from an asset schedule if you have the asset base.
+
+### Working Capital Changes
+
+```
+Change in NWC = NWC_t − NWC_{t−1}
+```
+
+A growing business typically has increasing NWC (more receivables, more inventory) → negative impact on FCF.
+
+**Modeling approach:** Hold DSO, DIO, and DPO constant at normalized levels. Apply to growing revenue and COGS to project WC balances, then calculate the annual change.
+
+---
+
+## 3. WACC Calculation
+
+### The WACC Formula
+
+```
+WACC = (E/V) × Ke  +  (D/V) × Kd × (1 − t)
+```
+
+Where:
+- E = market value of equity
+- D = market value of debt
+- V = E + D (total capital)
+- Ke = cost of equity
+- Kd = cost of debt (pre-tax)
+- t = marginal tax rate
+
+### Cost of Equity: CAPM
+
+```
+Ke = Rf  +  β × (Rm − Rf)  +  CRP
+```
+
+**Risk-free rate (Rf):**
+- Use the long-term government bond yield in the same currency as the cash flows
+- Pakistan (PKR model): Pakistan 10-year PIB yield (~12–14% in 2024 market)
+- Gulf (USD model): US 10-year Treasury yield (~4.0–4.5% in 2024)
+- Note: Pakistan's Rf is high because it already incorporates country risk in the government bond yield
+
+**Beta (β):**
+- Measures the stock's sensitivity to market movements
+- β = 1.0: moves exactly with the market
+- β &gt; 1.0: more volatile than market (cyclical companies)
+- β &lt; 1.0: less volatile (utilities, staples)
+- **If target is private:** Use average unlevered beta of public comparables, then re-lever for the target's capital structure
+
+**Unlevering and relevering beta:**
+```
+β_unlevered = β_levered / [1 + (1 − t) × (D/E)]
+β_relevered = β_unlevered × [1 + (1 − t) × (D/E)_target]
+```
+
+**Equity risk premium (ERP or Rm − Rf):**
+- Historical long-run premium of equities over risk-free rate
+- Pakistan: Damodaran estimates ~7.5–8.5% for Pakistan (2024)
+- UAE: ~5.5–6.5%
+- Saudi Arabia: ~5.5–7.0%
+
+**Country risk premium (CRP):**
+- Additional premium for investing in an emerging market vs. a developed market
+- Pakistan CRP: ~4–6% (based on CDS spreads and Damodaran sovereign default spread method)
+- UAE/Saudi CRP: ~1–2% (investment grade sovereigns, strong balance sheets)
+- **If using Pakistani government bond as Rf, CRP is already embedded — do not double-count**
+
+### Cost of Debt (Kd)
+
+- For publicly traded bonds: yield-to-maturity on the company's outstanding debt
+- For bank loans: the weighted average interest rate on drawn credit facilities
+- For private companies: reference lending rates (KIBOR + spread for Pakistan; SOFR + spread for USD)
+
+**Pakistan cost of debt context:**
+KIBOR 3-month was ~22% in early 2024 before SBP rate cuts began. A typical large Pakistani manufacturing company might borrow at KIBOR + 1.5–2.5%, giving a Kd of ~20–22% at peak rates. As of mid-2025, with rate cuts, this has declined meaningfully.
+
+### Tax Rate
+
+Use the company's effective marginal tax rate. Pakistan corporate tax: 29% standard; 35% for banking companies; concessional rates for export-oriented sectors.
+
+### Sample WACC Calculation — Pakistani Industrial Company
+
+**Inputs:**
+| Parameter | Value | Notes |
+|---|---|---|
+| Risk-free rate (Rf) | 12.0% | Pakistan 10-year PIB yield |
+| Equity beta | 0.95 | PSX peer group average, relevered |
+| Equity risk premium | 8.0% | Pakistan EM premium |
+| Country risk premium | 0% | Already in Rf (PIB yield) |
+| Cost of equity (Ke) | 19.6% | = 12.0% + 0.95 × 8.0% |
+| Pre-tax cost of debt (Kd) | 18.5% | KIBOR 3M + 2.5% spread |
+| Tax rate | 29% | Standard Pakistan corporate tax |
+| After-tax Kd | 13.1% | = 18.5% × (1 − 29%) |
+| Debt / (Debt + Equity) | 35% | Target capital structure |
+| Equity / (Debt + Equity) | 65% | Target capital structure |
+| **WACC** | **17.3%** | = 65% × 19.6% + 35% × 13.1% |
+
+---
+
+## 4. Terminal Value
+
+### Method 1: Gordon Growth Model (Perpetuity Growth)
+
+```
+Terminal Value = FCF_{n+1} / (WACC − g)
+```
+
+Where:
+- FCF_{n+1} = free cash flow in the first year beyond the forecast period
+- g = perpetual growth rate
+
+**Choosing the growth rate (g):**
+- g must be less than WACC (otherwise the formula breaks — infinite value)
+- g should approximate the long-run nominal GDP growth of the economy
+- Pakistan: nominal GDP growth ~10–14% (real ~3–4% + inflation ~8–10%) — but terminal growth in a DCF is often capped lower to be conservative
+- Typical range for Pakistan PKR model: 6–10%
+- For USD-denominated models: 2–4% (US/global nominal GDP)
+
+**Terminal value as % of total DCF:** In Pakistan high-WACC environments, the terminal value is a smaller % of total value because future cash flows are discounted more heavily. In low-rate USD models, terminal value can be 75–85% of total value.
+
+### Method 2: Exit Multiple Method
+
+```
+Terminal Value = EBITDA_n × Exit Multiple
+```
+
+Where:
+- EBITDA_n = EBITDA in the last year of the forecast
+- Exit Multiple = the EV/EBITDA multiple at which the business will be sold or valued at end of forecast
+
+**Choosing the exit multiple:**
+- Use the current trading comps range (or a slight discount for conservatism)
+- This method anchors the terminal value to market pricing — which is why IB practitioners often prefer it
+- Drawback: it's circular (uses market multiples to determine value, which the comps analysis already did)
+
+**Implied terminal growth rate check:**
+After using Exit Multiple method, always solve for the implied g:
+```
+Implied g = WACC − [FCF_{n+1} / Terminal Value]
+```
+If the implied g is unreasonably high (e.g., 15% for a Pakistan company), the exit multiple is too generous.
+
+---
+
+## 5. Worked Example: Cherat Cement DCF
+
+### Assumptions
+
+| Item | Year 1 | Year 2 | Year 3 | Year 4 | Year 5 |
+|---|---|---|---|---|---|
+| Revenue (PKR B) | 30.0 | 33.0 | 36.3 | 38.1 | 39.9 |
+| Revenue growth | — | +10% | +10% | +5% | +5% |
+| EBITDA margin | 25% | 26% | 27% | 27% | 28% |
+| EBITDA (PKR B) | 7.5 | 8.6 | 9.8 | 10.3 | 11.2 |
+| D&A (PKR B) | 1.2 | 1.3 | 1.4 | 1.5 | 1.6 |
+| EBIT (PKR B) | 6.3 | 7.3 | 8.4 | 8.8 | 9.6 |
+| Tax (29%) | 1.8 | 2.1 | 2.4 | 2.6 | 2.8 |
+| NOPAT (PKR B) | 4.5 | 5.2 | 6.0 | 6.2 | 6.8 |
+| + D&A | 1.2 | 1.3 | 1.4 | 1.5 | 1.6 |
+| − Capex | 2.5 | 2.5 | 2.0 | 1.8 | 1.8 |
+| − ΔNWC | 0.3 | 0.4 | 0.4 | 0.2 | 0.2 |
+| **FCFF (PKR B)** | **2.9** | **3.6** | **5.0** | **5.7** | **6.4** |
+
+**WACC: 17.3%** (from sample calculation above)
+
+### Discounting FCF
+
+| Year | FCFF (PKR B) | Discount Factor (1/1.173^t) | PV (PKR B) |
+|---|---|---|---|
+| 1 | 2.9 | 0.853 | 2.5 |
+| 2 | 3.6 | 0.727 | 2.6 |
+| 3 | 5.0 | 0.620 | 3.1 |
+| 4 | 5.7 | 0.529 | 3.0 |
+| 5 | 6.4 | 0.451 | 2.9 |
+| **Sum PV of FCF** | | | **14.1** |
+
+### Terminal Value (Gordon Growth, g = 7%)
+
+```
+FCF_{Year 6} = 6.4 × 1.07 = PKR 6.8B
+Terminal Value = 6.8 / (17.3% − 7.0%) = 6.8 / 10.3% = PKR 66.0B
+PV of Terminal Value = 66.0 × 0.451 = PKR 29.8B
+```
+
+### Enterprise Value
+
+```
+PV of FCF (years 1–5):  PKR 14.1B
+PV of Terminal Value:   PKR 29.8B
+Enterprise Value:       PKR 43.9B
+
+Less: Net Debt:         PKR 6B
+Equity Value:           PKR 37.9B
+```
+
+**Cross-check against comps:** Module 98 showed Cherat trading at 4.9x EV/EBITDA. At LTM EBITDA of PKR 7B (approximately), that's PKR 34B EV — close to the DCF result of PKR 44B, suggesting the DCF assumptions imply modest growth and margin improvement above current run-rate.
+
+---
+
+## 6. Sensitivity Analysis
+
+A single-point DCF output is misleading — the true output is a range driven by key assumption uncertainty. Standard IB sensitivity: WACC (±1–2%) vs. terminal growth rate (±1–2%).
+
+### WACC vs. Terminal Growth Rate — Enterprise Value (PKR B)
+
+| | g = 5% | g = 6% | g = 7% | g = 8% | g = 9% |
+|---|---|---|---|---|---|
+| WACC = 15.3% | 46.2 | 51.8 | 59.4 | 70.3 | 87.2 |
+| WACC = 16.3% | 41.5 | 45.6 | 51.1 | 58.9 | 70.4 |
+| **WACC = 17.3%** | **37.7** | **40.8** | **43.9** | **48.5** | **55.7** |
+| WACC = 18.3% | 34.5 | 37.1 | 39.9 | 43.5 | 48.8 |
+| WACC = 19.3% | 31.8 | 34.0 | 36.3 | 39.2 | 43.4 |
+
+**Reading the table:** The base case (WACC 17.3%, g 7%) gives EV PKR 43.9B. The range across reasonable assumptions is PKR 34–56B. This is the valuation range you would present to the client.
+
+---
+
+## 7. DCF Limitations and Common Manipulations
+
+### Legitimate Limitations
+
+- **Garbage in, garbage out:** DCF is only as good as the underlying projections. Optimistic revenue and margin forecasts (especially in management projections) will always give a high DCF value.
+- **Terminal value dominance:** In many models, terminal value is 60–80% of total value. A 1% change in terminal growth rate swings the output significantly.
+- **WACC sensitivity:** A 1% change in WACC changes enterprise value by 5–15% — WACC inputs (beta, ERP, CRP) involve significant estimation uncertainty.
+- **Ignores optionality:** DCF captures committed cash flows well but misses option value in early-stage or resource companies.
+
+### Common Manipulations to Watch For
+
+- **Management projections are always optimistic:** Sellside IB mandates typically use management's own projections (or management-guided forecasts). These are almost always optimistic. An experienced buyer always haircuts them.
+- **Running terminal growth rate close to WACC:** Any g within 2% of WACC will generate astronomical terminal value. Flag this immediately.
+- **Using NTM EBITDA as the terminal value base:** If the last forecast year EBITDA is unusually high (step-change in profitability), using it for terminal value inflates value.
+- **Selectively excluding capex:** Some analysts model "normalized" capex well below actual capex to boost FCF. Check capex/D&A ratio — it should be close to 1.0 for a steady-state business.
+
+---
+
+## Self-Assessment
+
+1. You are building a DCF for a Pakistani pharmaceutical company (PKR-denominated model):
+
+   - Revenue Year 1: PKR 18B, growing at 15% years 1–3, then 8% years 4–5
+   - EBITDA margin: 22% years 1–2, 24% years 3–5
+   - D&A: PKR 0.8B/year (years 1–3), PKR 1.0B/year (years 4–5)
+   - Capex: PKR 2.0B/year (expansion years 1–3), PKR 1.2B/year (years 4–5)
+   - Working capital: DSO 45 days, DIO 60 days, DPO 30 days (held constant)
+   - Tax rate: 29%
+   - WACC: 16.5%
+   - Terminal growth rate: 7%
+
+   (a) Calculate FCFF for each of the 5 years. Show your workings clearly.
+   (b) Calculate the PV of each year's FCFF.
+   (c) Calculate terminal value using the Gordon Growth Model. What is the PV of terminal value?
+   (d) Calculate Enterprise Value and Equity Value (net debt is PKR 4B).
+   (e) Cross-check: if peers trade at 9.5x LTM EBITDA, does your DCF imply the company is undervalued or overvalued? What does this tell you about the growth/margin assumptions in the model?
+
+2. WACC calculation exercise:
+
+   A Pakistani cement company has the following characteristics:
+   - Market cap: PKR 40B
+   - Total debt: PKR 15B (KIBOR 3M + 2.5%, current KIBOR = 16.5%)
+   - Tax rate: 29%
+   - PSX beta for comparable cement companies: average 0.85 (levered), average D/E = 0.45x, average tax rate = 29%
+   - Pakistan PIB 10-year yield: 13.0%
+   - Damodaran Pakistan ERP: 8.0%
+   - The company's target D/E ratio: 0.40x
+
+   (a) Unlever the comparable company betas to remove the effect of their capital structure.
+   (b) Relever the unlevered beta for this company's target D/E ratio.
+   (c) Calculate the cost of equity using CAPM.
+   (d) Calculate the after-tax cost of debt.
+   (e) Calculate WACC.
+   (f) If a senior banker argues: "We should add a 4% country risk premium because Pakistan is high risk," evaluate this argument. Is it correct? Why or why not?
+
+3. You present a DCF for a Gulf solar energy company (USD-denominated):
+
+   - FCFF years 1–5: $8M, $12M, $17M, $20M, $22M
+   - WACC: 8.5% (USD model, Gulf-based, low country risk)
+   - Terminal value using 5.5% perpetuity growth: $380M (PV)
+   - PV of explicit FCF: $60M
+   - Enterprise Value: $440M
+
+   A client CFO challenges: "Your terminal value is 86% of total value. That's basically a guess."
+   
+   (a) Is the CFO right to be concerned? Explain why terminal value dominates in this model compared to typical Pakistani models.
+   (b) Cross-check the terminal value using the Exit Multiple Method. If comparable solar companies trade at 12x EBITDA, and Year 5 EBITDA is $35M, what is the Exit Multiple terminal value? Does it confirm or challenge the Gordon Growth result?
+   (c) What is the implied terminal growth rate from the Exit Multiple result?
+   (d) The CFO says: "Let's just use a 10-year model instead of 5 years to reduce terminal value dependence." Evaluate this suggestion — does extending the forecast period resolve the issue?
+
+<ArticleNav
+  prev={{ title: "Module 99 — Precedent Transaction Analysis", href: "/financial-strategy/module-99-transaction-comps" }}
+  next={{ title: "Module 101 — LBO Valuation & Sponsor Returns", href: "/financial-strategy/module-101-lbo-valuation" }}
+/>
