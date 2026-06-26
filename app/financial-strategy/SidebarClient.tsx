@@ -441,6 +441,10 @@ const modules = [
     part: "Module 98 — Comparable Company Analysis",
     chapters: [{ chapter: "Comparable Company Analysis", items: [{ title: "Module 98 — Comparable Company Analysis", href: "/financial-strategy/module-98-trading-comps" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 99 — Precedent Transaction Analysis",
+    chapters: [{ chapter: "Precedent Transaction Analysis", items: [{ title: "Module 99 — Precedent Transaction Analysis", href: "/financial-strategy/module-99-transaction-comps" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
