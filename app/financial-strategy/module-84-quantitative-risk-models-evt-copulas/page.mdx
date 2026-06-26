@@ -1,0 +1,367 @@
+export const metadata = {
+  title: "Module 84 — Quantitative Risk Models: EVT & Copulas | Financial Strategy — ByteWise",
+  description: "Extreme value theory, Peaks-Over-Threshold, GEV distribution, copula-based dependence modeling, and advanced portfolio risk aggregation for quantitative finance.",
+  openGraph: { title: "Module 84 — Quantitative Risk Models: EVT & Copulas | Financial Strategy", description: "EVT, POT, Fréchet/Gumbel/Weibull distributions, Gaussian copula failure, Archimedean copulas, and tail dependence in portfolio risk.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 84 — Quantitative Risk Models: EVT & Copulas
+
+Standard risk models assume normality — that large losses are rare and predictable from the standard deviation. Reality is different. The 2008 financial crisis produced losses that would have occurred "once every 10,000 years" under a normal distribution model. Extreme Value Theory (EVT) and copulas are the mathematical tools that take tail risk seriously. They sit at the frontier of quantitative risk management.
+
+## Learning Objectives
+
+- Explain the limitations of normal distribution-based risk models in the tails
+- Apply Extreme Value Theory (EVT) using both GEV and POT approaches
+- Estimate Value-at-Risk and Expected Shortfall using EVT
+- Understand copulas as a way to model dependence structure separately from marginal distributions
+- Identify tail dependence and explain its importance in portfolio risk
+- Apply copula models to FERROQUANT's multi-asset portfolio risk
+
+---
+
+## 1. Why Normal Distribution Fails for Tail Risk
+
+### Fat Tails in Financial Returns
+
+**Normal distribution assumption:**
+- Symmetric, bell-shaped
+- 99% of observations within ±2.58 standard deviations
+- "10-sigma events" are essentially impossible
+
+**Reality of financial returns:**
+- **Kurtosis > 3 (excess kurtosis > 0):** Financial returns have fat tails — extreme events are far more common than normal distribution predicts
+- **Negative skewness:** Large negative returns are more common than large positive returns (equity markets crash down faster than they rise)
+- **Volatility clustering:** Large returns cluster in time (crises don't happen in isolation)
+
+**Stylized facts of financial returns:**
+| Property | Normal Distribution | Actual Returns |
+|---|---|---|
+| Kurtosis (excess) | 0 | 3–10+ (equities), 5–15+ (EM FX) |
+| Skewness | 0 | Typically −0.3 to −1.5 |
+| 3-sigma events | 1 in 370 | 1 in 50–100 |
+| 5-sigma events | 1 in 3.5M | 1 in 5,000–50,000 |
+
+**Implication:** VaR models based on the normal distribution systematically underestimate extreme losses. The "100-year flood" in the normal distribution framework often happens every 10–15 years in practice.
+
+### Evidence: 2008 Financial Crisis
+
+Goldman Sachs CFO David Viniar famously said in August 2007: "We were seeing things that were 25-standard-deviation moves, several days in a row." A 25-sigma event under normality would occur once in 1.3 × 10¹³⁵ years. This is not a model that describes reality.
+
+The problem: the model was wrong, not the market.
+
+---
+
+## 2. Extreme Value Theory (EVT)
+
+### Two Fundamental Approaches
+
+**Block Maxima Method (Generalized Extreme Value — GEV):**
+Divide a time series into equal-length blocks (monthly, quarterly). Extract the maximum observation from each block. Fit a GEV distribution to these block maxima.
+
+**Peaks-Over-Threshold (POT):**
+Instead of block maxima, extract all observations that exceed a high threshold u. Fit a Generalized Pareto Distribution (GPD) to these exceedances. More data-efficient — uses more extreme observations than block maxima.
+
+### GEV Distribution
+
+The Fisher-Tippett-Gnedenko theorem states that, regardless of the underlying distribution, the normalized maximum of a large sample converges to the Generalized Extreme Value distribution:
+
+```
+G(x; μ, σ, ξ) = exp{−[1 + ξ((x − μ)/σ)]^(−1/ξ)}
+```
+
+The shape parameter ξ (xi) determines the tail behavior:
+
+| ξ > 0 | Fréchet distribution | Fat tails (power-law decay) — typical of financial returns |
+|---|---|---|
+| ξ = 0 | Gumbel distribution | Thin tails (exponential decay) — rare in finance |
+| ξ < 0 | Weibull distribution | Bounded tails (no extreme events) — physical systems |
+
+**Financial returns are Fréchet (ξ > 0):** This is the fundamental result that justifies EVT for finance. The tail decays as a power law, not as an exponential — making extreme events far more common than a normal model predicts.
+
+### Peaks-Over-Threshold (POT): The Pickands-Balkema-de Haan Theorem
+
+For exceedances over a high threshold u, the distribution of excess losses (x − u) converges to a Generalized Pareto Distribution (GPD):
+
+```
+G(y; ξ, β) = 1 − (1 + ξy/β)^(−1/ξ)   for y > 0
+```
+
+Where:
+- y = x − u (excess over threshold)
+- ξ = tail index (shape parameter — same as GEV)
+- β = scale parameter (conditional on exceeding the threshold)
+- u = threshold
+
+**Estimation:**
+1. Choose threshold u (typically the 90th or 95th percentile of loss observations)
+2. Extract all observations exceeding u
+3. Fit GPD parameters (ξ, β) using Maximum Likelihood Estimation (MLE)
+
+**Threshold selection:** Too low → the GPD approximation is poor (not yet in the tail); too high → too few observations to estimate parameters reliably. The **Mean Excess Plot** (plot of mean excess E[X − u | X > u] against u) helps identify where the threshold should be set: a straight line in the mean excess plot indicates GPD behavior.
+
+### EVT-Based VaR and Expected Shortfall
+
+**VaR at confidence level p using GPD:**
+```
+VaR_p = u + (β/ξ) × [(n/N_u × (1−p))^(−ξ) − 1]
+```
+
+Where:
+- u = threshold
+- n = total number of observations
+- N_u = number of observations exceeding the threshold
+- ξ, β = fitted GPD parameters
+
+**Expected Shortfall (ES/CVaR) using GPD:**
+```
+ES_p = VaR_p / (1 − ξ) + (β − ξu) / (1 − ξ)
+```
+
+This is the major advantage of EVT-based risk: ES (the expected loss given VaR is exceeded) can be calculated analytically from the GPD parameters, rather than relying on historical sample means in the tail.
+
+**FERROQUANT application:**
+Fit a GPD to the daily P&L losses of FERROQUANT's PIB + equity portfolio. Use the estimated ξ and β to compute:
+- 99% VaR (used for internal risk limits)
+- 99.9% VaR (used for stress testing capital adequacy)
+- 99% Expected Shortfall (ES) — required under Basel IV for banks; increasingly required by prime brokers for reporting
+
+---
+
+## 3. Copulas: Separating Marginal Distributions from Dependence
+
+### The Problem with Correlation
+
+Pearson correlation is the standard measure of dependence between two random variables. But it has critical flaws:
+1. Only measures linear dependence — misses non-linear relationships
+2. Assumes multivariate normality — in other distributions, correlation doesn't fully characterize dependence
+3. Does not capture **tail dependence** — the tendency for assets to move together in extreme events
+
+**Tail dependence:** Two assets may have moderate average correlation but extreme tail correlation — they tend to crash together even when daily returns are only moderately correlated.
+
+**The copula solution:** Separate the marginal distributions (how each asset moves individually) from the dependence structure (how assets move relative to each other). This allows you to pair any marginal distributions with any dependence structure.
+
+### Sklar's Theorem
+
+**The fundamental theorem of copulas:**
+
+For any multivariate joint distribution H(x₁, x₂, ..., xₙ) with marginals F₁(x₁), F₂(x₂), ..., Fₙ(xₙ), there exists a copula function C such that:
+
+```
+H(x₁, x₂, ..., xₙ) = C(F₁(x₁), F₂(x₂), ..., Fₙ(xₙ))
+```
+
+**In plain language:** The joint distribution can be decomposed into the individual marginal distributions (which can be anything — normal, Student-t, EVT-based GPD) combined through a copula function C that captures the dependence structure.
+
+**Uniform margins:** The copula C itself is a distribution on [0,1]ⁿ with uniform marginals — it is the "pure" dependence structure after removing the individual distributional effects.
+
+### Major Copula Families
+
+#### Gaussian Copula
+
+The Gaussian copula uses the normal distribution to model dependence:
+```
+C_Gauss(u₁, u₂; ρ) = Φ₂(Φ⁻¹(u₁), Φ⁻¹(u₂); ρ)
+```
+
+**Property:** No tail dependence. Even with high correlation ρ, the probability of joint extreme events goes to zero as event severity increases.
+
+**The 2008 failure:** The Gaussian copula was used to price CDO tranches (as described in Module 81). Because it has no tail dependence, it massively underestimated the probability of many mortgages defaulting simultaneously in a housing crisis.
+
+**When appropriate:** When assets truly have low tail dependence in normal market conditions (e.g., diversified equity-bond portfolio in stable macro environments).
+
+#### Student-t Copula
+
+The Student-t copula adds tail dependence controlled by the degrees of freedom parameter ν:
+
+```
+C_t(u₁, u₂; ρ, ν) = t_{ν,2}(t_ν⁻¹(u₁), t_ν⁻¹(u₂); ρ)
+```
+
+**Tail dependence coefficient (λ):**
+```
+λ = 2 × t_{ν+1}(−√((ν+1)(1−ρ)/(1+ρ)))
+```
+
+- Lower ν → higher tail dependence
+- As ν → ∞, the Student-t copula converges to the Gaussian copula (zero tail dependence)
+- Typical estimate for equity portfolios: ν = 4–8
+
+**Why it matters:** The Student-t copula produces symmetric tail dependence — equal probability of joint large positive and negative events. For equity portfolios (where crashes are asymmetric), this is an improvement but not perfect.
+
+#### Archimedean Copulas
+
+A flexible family defined by a generator function φ:
+```
+C(u₁, u₂) = φ⁻¹(φ(u₁) + φ(u₂))
+```
+
+**Clayton Copula:**
+- Strong lower tail dependence, no upper tail dependence
+- Models situations where assets crash together but recoveries are independent
+- Appropriate for credit risk portfolios (multiple defaults cluster in downturns, but recoveries are idiosyncratic)
+- Generator: φ(t) = (t^(−θ) − 1) / θ
+
+**Gumbel Copula:**
+- Strong upper tail dependence, no lower tail dependence
+- Models situations where assets boom together but crashes are independent
+- Opposite of Clayton — rarely used for financial risk
+
+**Frank Copula:**
+- Symmetric tail dependence (like Student-t but weaker tails)
+- Appropriate for moderate dependence without strong tail effects
+
+**Tail dependence comparison:**
+| Copula | Lower Tail Dependence | Upper Tail Dependence |
+|---|---|---|
+| Gaussian | 0 | 0 |
+| Student-t | λ > 0 | λ > 0 (symmetric) |
+| Clayton | λ_L > 0 | 0 |
+| Gumbel | 0 | λ_U > 0 |
+| Frank | 0 | 0 |
+
+### Vine Copulas (High-Dimensional Dependence)
+
+For n > 2 assets, bivariate copulas are combined into a "vine" — a tree-based graphical structure:
+- **C-vine:** One variable is at the center of each tree
+- **D-vine:** Sequential conditioning structure
+- **R-vine:** General structure
+
+Vine copulas allow different copula families for different pairs of assets, capturing the reality that some asset pairs have strong tail dependence (equities during crises) while others do not (equity-government bond during normal environments).
+
+---
+
+## 4. Fitting and Backtesting EVT/Copula Models
+
+### Model Fitting Workflow
+
+**Step 1: Fit marginal distributions**
+For each asset, fit the best marginal distribution to the return series:
+- Use normal or Student-t for the body of the distribution
+- Use GPD (EVT) for the tails (above 95th percentile loss)
+- This "semi-parametric" approach (normal body + GPD tails) is known as the **Filtered Historical Simulation (FHS)** or **extreme value mixture model**
+
+**Step 2: Probability-integral transform (PIT)**
+Convert each asset's returns to uniform [0,1] variables using its fitted CDF:
+```
+u_it = F_i(r_it)
+```
+
+If the marginal model is correct, u_it should be uniformly distributed.
+
+**Step 3: Fit the copula**
+Apply MLE or rank correlation methods to the transformed data {u_it} to fit the copula:
+- Estimate ρ for the Gaussian/Student-t copula
+- Estimate θ for Archimedean copulas
+- Select copula family using AIC/BIC information criteria
+
+**Step 4: Simulate joint scenarios**
+Draw samples from the fitted copula and apply the inverse marginal CDFs to generate joint return scenarios. Use these for:
+- Portfolio VaR/ES calculation
+- Stress testing
+- Scenario analysis
+
+### Backtesting
+
+**Coverage test (Kupiec test):**
+At 99% VaR, expect 1% of days to exceed the VaR. Test whether the actual exception rate matches the expected rate.
+
+**Independence test (Christoffersen test):**
+Not only should exceptions be rare — they should be independent over time. If exceptions cluster (as they do in crises), the model is failing to capture volatility clustering.
+
+**Combined test:**
+Use the joint Christoffersen test to evaluate both coverage and independence simultaneously.
+
+---
+
+## 5. FERROQUANT Risk Model Architecture
+
+### Multi-Asset Copula-EVT Model
+
+FERROQUANT's risk model combines EVT and copulas across its full portfolio:
+
+**Asset classes:**
+1. Pakistan equities (KSE-100 component stocks)
+2. PIBs (fixed income duration)
+3. KIBOR IRS positions (swap rate risk)
+4. FX positions (PKR/USD)
+5. International commodity futures
+6. International equity index futures
+
+**Model architecture:**
+```
+Step 1: Estimate marginal distributions for each asset
+  - Normal GARCH(1,1) for the body of the distribution
+  - GPD for upper and lower tails (above/below 95th percentile)
+
+Step 2: Standardize residuals (remove GARCH volatility)
+  → Standardized residuals are closer to i.i.d.
+
+Step 3: Apply PIT to get uniform margins
+
+Step 4: Fit vine copula to capture cross-asset dependence
+  - Student-t copula for equity-equity pairs (symmetric tail dependence)
+  - Clayton copula for equity-credit pairs (lower tail dependence)
+  - Gaussian copula for equity-bond pairs during normal regimes
+
+Step 5: Simulate 10,000 joint scenarios
+
+Step 6: Map scenarios to portfolio P&L
+
+Step 7: Compute portfolio VaR (99%), ES (99%), and tail risk metrics
+```
+
+### Stress Scenarios vs. Model Output
+
+EVT/copula models estimate "normal" extreme events. Genuine stress scenarios go beyond even extreme value theory:
+- **2008 financial crisis:** Multiple simultaneous 10-sigma events
+- **COVID-19 March 2020 crash:** 12% single-day losses in indices
+- **Pakistan 2023 crisis:** IMF program disruption + PKR devaluation + rate shock simultaneously
+
+**Stress test additions to the EVT/copula model:**
+1. **Historical stress scenarios:** Replay 2008, 2013 taper tantrum, 2018 EM selloff, 2022 rate shock — applied to current portfolio
+2. **Hypothetical scenarios:** Pakistan IMF program collapse, regional geopolitical escalation, oil price spike to $150
+3. **Reverse stress tests:** Work backward — what scenario would cause FERROQUANT to lose 30% of NAV? Is that scenario plausible?
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT's daily P&L data shows the following statistics (based on 1000 trading days):
+   - Mean daily loss: 0.05%
+   - Standard deviation: 1.2%
+   - Skewness: −0.8
+   - Kurtosis (excess): 4.5
+   - Number of days with losses > 3% (threshold u = 3%): 28 days
+   - For the 28 GPD-fitted exceedances: ξ = 0.35, β = 0.8%
+   
+   (a) Calculate the 99% VaR using the normal distribution assumption. Then calculate it using the GPD EVT approach. Which is higher and by how much?
+   (b) Using the EVT-based 99% VaR, calculate the 99% Expected Shortfall. Explain why ES is considered a more coherent risk measure than VaR.
+   (c) The shape parameter ξ = 0.35 > 0. What does this tell you about the tail behavior of FERROQUANT's P&L distribution? What type of GEV distribution does this correspond to?
+   (d) A regulator requires FERROQUANT to report 99.9% VaR (one-in-thousand-day event). Can this be estimated reliably from historical data alone? Explain why EVT is particularly valuable for estimating this level of VaR.
+
+2. FERROQUANT holds two assets: Pakistan equities (E) and international crude oil futures (C). The following data is available:
+   
+   - Pearson correlation: ρ = 0.15 (low average correlation)
+   - During the 5 largest equity drawdown events: oil also fell sharply in 4 of the 5 events
+   - The Gaussian copula with ρ = 0.15 implies zero tail dependence
+   - A Student-t copula with ρ = 0.15 and ν = 5 implies tail dependence λ = 0.12
+   - A Clayton copula with θ = 0.5 implies lower tail dependence λ_L = 0.25
+   
+   (a) Explain why the Gaussian copula fails to capture the observed joint behavior during the 5 largest drawdown events, even though the average correlation of 0.15 is correctly estimated.
+   (b) Between the Student-t and Clayton copulas, which is more appropriate for this equity-oil pair? Justify your answer.
+   (c) Using the Clayton copula (λ_L = 0.25), estimate the probability that both assets simultaneously lose more than 5% in one day, if the individual probability of each asset losing more than 5% is 1% (using EVT marginals). Compare this to the Gaussian copula estimate (approximately ρ × 1% × 1% in the tail — near zero).
+   (d) FERROQUANT's risk manager argues: "The low average correlation of 0.15 means we get good diversification from combining equities and oil." Write a 3-sentence rebuttal using copula/tail dependence concepts.
+
+3. FERROQUANT is considering whether to use a Gaussian, Student-t, or Archimedean copula for its 6-asset portfolio. Design the copula selection process:
+   
+   (a) Explain the **probability-integral transform (PIT)** step: why must marginal distributions be fitted first, and what property should the transformed data u_it have if the marginal model is correct?
+   (b) After fitting both Gaussian and Student-t copulas, the AIC favors the Student-t copula with ν = 5 degrees of freedom. What practical difference does this make when generating stress test scenarios for a credit crisis event?
+   (c) FERROQUANT's equity-PIB copula shows near-zero tail dependence (consistent with Gaussian copula), while the equity-equity copula shows strong lower tail dependence (consistent with Clayton copula). In a vine copula framework, how would you encode this heterogeneous dependence structure?
+   (d) A new quant joins FERROQUANT and argues: "These copula models are too complex. We should just use historical simulation — no model assumptions needed." Identify two scenarios where historical simulation would be inadequate and EVT/copula models would add significant value.
+
+<ArticleNav
+  prev={{ title: "Module 83 — Global Macro Trading", href: "/financial-strategy/module-83-global-macro-trading" }}
+  next={{ title: "Module 85 — Portfolio Risk Reporting", href: "/financial-strategy/module-85-portfolio-risk-reporting" }}
+/>

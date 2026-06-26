@@ -381,6 +381,10 @@ const modules = [
     part: "Module 83 — Global Macro Trading",
     chapters: [{ chapter: "Global Macro Trading", items: [{ title: "Module 83 — Global Macro Trading", href: "/financial-strategy/module-83-global-macro-trading" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 84 — Quantitative Risk Models: EVT & Copulas",
+    chapters: [{ chapter: "Quantitative Risk Models: EVT & Copulas", items: [{ title: "Module 84 — Quantitative Risk Models: EVT & Copulas", href: "/financial-strategy/module-84-quantitative-risk-models-evt-copulas" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
