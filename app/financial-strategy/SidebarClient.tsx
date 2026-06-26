@@ -421,6 +421,10 @@ const modules = [
     part: "Module 93 — The Future of Quantitative Finance ✓ Track B Complete",
     chapters: [{ chapter: "The Future of Quantitative Finance", items: [{ title: "Module 93 — The Future of Quantitative Finance", href: "/financial-strategy/module-93-future-quantitative-finance" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 94 — The Investment Banking Industry",
+    chapters: [{ chapter: "The Investment Banking Industry", items: [{ title: "Module 94 — The Investment Banking Industry", href: "/financial-strategy/module-94-investment-banking-industry" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
