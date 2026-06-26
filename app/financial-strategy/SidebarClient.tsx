@@ -389,6 +389,10 @@ const modules = [
     part: "Module 85 — Portfolio Risk Reporting",
     chapters: [{ chapter: "Portfolio Risk Reporting", items: [{ title: "Module 85 — Portfolio Risk Reporting", href: "/financial-strategy/module-85-portfolio-risk-reporting" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 86 — Alternative Data Sourcing & Signals",
+    chapters: [{ chapter: "Alternative Data Sourcing & Signals", items: [{ title: "Module 86 — Alternative Data Sourcing & Signals", href: "/financial-strategy/module-86-alternative-data-sourcing-signals" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
