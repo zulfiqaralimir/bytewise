@@ -333,6 +333,10 @@ const modules = [
     part: "Module 71 — Market Microstructure & Trading Systems",
     chapters: [{ chapter: "Market Microstructure & Trading Systems", items: [{ title: "Module 71 — Market Microstructure & Trading Systems", href: "/financial-strategy/module-71-market-microstructure-trading-systems" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 72 — Algorithmic & Quantitative Trading Strategies",
+    chapters: [{ chapter: "Algorithmic & Quantitative Trading Strategies", items: [{ title: "Module 72 — Algorithmic & Quantitative Trading Strategies", href: "/financial-strategy/module-72-algorithmic-quantitative-trading-strategies" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

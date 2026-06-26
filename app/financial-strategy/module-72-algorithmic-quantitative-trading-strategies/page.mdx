@@ -1,0 +1,382 @@
+export const metadata = {
+  title: "Module 72 — Algorithmic & Quantitative Trading Strategies | Financial Strategy — ByteWise",
+  description: "Systematic trading strategies — momentum, mean reversion, pairs trading, factor investing, backtesting framework, and strategy evaluation. Build strategies that work in live trading.",
+  openGraph: { title: "Module 72 — Algorithmic & Quantitative Trading Strategies | Financial Strategy", description: "Momentum, mean reversion, pairs trading, factor investing, backtesting — algorithmic trading from signal to live strategy.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 72 — Algorithmic & Quantitative Trading Strategies
+
+How to build systematic trading strategies that survive contact with real markets — from signal generation through rigorous backtesting to live deployment. Covers momentum, mean reversion, pairs trading, and factor investing, with an honest treatment of why most backtests lie and how to build ones that don't.
+
+## Learning Objectives
+
+- Classify trading strategies by their return-generating mechanism
+- Build and evaluate time-series and cross-sectional momentum strategies
+- Implement mean reversion and pairs trading using cointegration
+- Construct a multi-factor cross-sectional model
+- Design a backtesting framework that avoids the most common biases
+- Evaluate strategies using the Information Ratio and Fundamental Law of Active Management
+
+---
+
+## 1. Strategy Taxonomy
+
+Before building any strategy, understand what edge it is trying to capture. Every profitable strategy exploits one or more market inefficiencies:
+
+| Strategy Type | Return Source | Holding Period | Key Risk |
+|---|---|---|---|
+| Momentum / trend following | Persistence in price moves | Days to months | Momentum crashes |
+| Mean reversion | Prices revert to fair value | Minutes to days | Regime change (mean breaks) |
+| Statistical arbitrage | Convergence of mispricings | Hours to weeks | Spread diverges permanently |
+| Factor investing | Risk premia (value, size, quality) | Months to years | Factor crowding |
+| Event-driven | Mispricing around corporate events | Days to weeks | Event risk, information edge |
+| Market making | Bid-ask spread capture | Seconds to minutes | Adverse selection, inventory |
+| Global macro (systematic) | Macro regime signals | Weeks to months | Low Sharpe, long drawdowns |
+
+**The fundamental question for any strategy:** Is this edge:
+1. A **risk premium** (you earn returns for bearing a risk others don't want)?
+2. A **behavioral bias** (other investors make systematic mistakes you can exploit)?
+3. A **structural friction** (regulatory or institutional constraints create opportunity)?
+
+Risk premium edges persist. Behavioral biases may erode as they become known. Structural edges last as long as the friction exists.
+
+---
+
+## 2. Momentum & Trend Following
+
+### Time-Series Momentum (TSMOM)
+
+Time-series momentum (Moskowitz, Ooi, Pedersen 2012): a security that has gone up over the past 1–12 months tends to keep going up; one that has gone down tends to keep going down.
+
+**Signal construction:**
+```
+Signal(i,t) = Sign of (return of asset i over past 12 months, skipping last month)
+Position(i,t) = Signal × (Target Risk / Realized Volatility)
+```
+
+The volatility scaling ensures you take the same amount of risk in each asset regardless of how volatile it is.
+
+**Key findings from research:**
+- Works across asset classes: equities, bonds, commodities, currencies
+- Momentum crashes: momentum reverses sharply after bear markets (2009, March 2020) — the "crash" risk is the main risk of momentum
+- Skipping the most recent month (the "skip-month") avoids short-term reversal
+
+**Pakistan application (KSE-100 momentum):**
+PSX shows significant momentum across 3–6 month horizons, partly due to:
+- Retail-dominated market: herding behavior amplifies trends
+- Information diffusion is slower
+- Limited short selling: prevents immediate mean reversion
+
+### Cross-Sectional Momentum
+
+Instead of asking "is this asset going up or down?", ask "which assets are going up the most relative to others?"
+
+**Jegadeesh and Titman (1993):** Buy the top decile of 6-month returners, short the bottom decile → hold 6 months. This was the original momentum anomaly in US equities.
+
+**Signal:** Rank all assets by trailing 12-month return (skip last month). Go long top quintile, short bottom quintile.
+
+**Momentum crash mechanics:**
+After a market crash, momentum portfolios are typically short recent losers (which just became the cheapest assets). When markets rebound, these cheap stocks surge first — the momentum portfolio gets crushed on both legs simultaneously. This is why momentum has the worst left tail of any classic factor.
+
+**Defense against momentum crashes:**
+- Reduce exposure when the VIX (or Pakistan's implied volatility) spikes
+- Reduce exposure when the market has fallen sharply (high crash probability)
+- Diversify across many assets and geographies
+
+### CTA (Commodity Trading Advisor) Approach
+
+CTAs are systematic trend-following funds that trade futures across asset classes. Their key insight: trend following provides **crisis alpha** — they tend to perform well during extended bear markets because they go short declining assets.
+
+**CTA rules (simplified AHL/Winton style):**
+1. Calculate moving average crossovers at multiple timeframes (fast vs slow MAs)
+2. Size positions proportional to trend strength ÷ volatility
+3. Diversify across 50–100 markets (equities, bonds, currencies, commodities)
+4. No fundamental view — pure price signal
+
+---
+
+## 3. Mean Reversion & Pairs Trading
+
+### Mean Reversion
+
+Mean reversion exploits the tendency of extreme prices to revert toward fair value. Works best in:
+- Low-information environments (less new information → prices oscillate around value)
+- Highly liquid instruments with known fair value (FX, rates)
+- Spread instruments (basis between related securities)
+
+**Ornstein-Uhlenbeck (OU) process:**
+The mathematical model for mean-reverting price series:
+
+```
+dX = κ(μ − X)dt + σdW
+```
+
+- X: the spread or price
+- μ: long-run mean
+- κ: mean reversion speed (higher κ = faster reversion)
+- σ: volatility
+
+**Half-life of mean reversion:**
+```
+Half-life = ln(2) / κ
+```
+
+A half-life of 5 days means the spread reverts halfway to the mean every 5 days. This determines position holding period and turnover.
+
+### Pairs Trading
+
+Pairs trading exploits the temporary divergence between two historically correlated securities. Classic example: Coca-Cola and PepsiCo — when their price ratio diverges beyond normal, bet on convergence.
+
+**Step 1 — Find cointegrated pairs:**
+
+Correlation is not enough. Two stocks can be correlated but diverge permanently. **Cointegration** requires that a linear combination of the two prices is stationary — i.e., the spread reverts to a mean.
+
+**Engle-Granger cointegration test:**
+1. Regress P₁ on P₂: P₁ = α + β × P₂ + ε
+2. Test if residual ε is stationary using the ADF (Augmented Dickey-Fuller) test
+3. If ADF rejects the unit root (ε is stationary), the pair is cointegrated
+
+**Step 2 — Model the spread:**
+
+```
+Spread(t) = P₁(t) − β × P₂(t)
+```
+
+Calculate the z-score of the spread:
+```
+z-score = (Spread − mean(Spread)) / std(Spread)
+```
+
+**Step 3 — Trading rules:**
+- **Enter long spread:** z-score < −2 (spread is abnormally negative → P₁ cheap vs P₂)
+- **Enter short spread:** z-score > +2 (spread is abnormally positive → P₁ expensive vs P₂)
+- **Exit:** z-score reverts to 0 (mean)
+- **Stop loss:** z-score exceeds ±3 (cointegration may have broken down)
+
+**PSX pairs examples:**
+- MCB Bank vs HBL (both large banks, similar macro exposure)
+- OGDC vs PPL (both upstream E&P, oil price driven)
+- Lucky Cement vs DG Cement (same sector, geography overlap)
+- Engro Fertilizers vs Fauji Fertilizer (both fertilizer, urea price linked)
+
+**Risks in pairs trading:**
+- **Cointegration breakdown:** The fundamental relationship changes (merger, regulatory change, sector shift) — the spread never reverts
+- **Crowding:** Many funds doing the same pairs — when they unwind simultaneously, the spread gaps against you
+- **Short selling constraints on PSX:** Limits the "short the expensive leg" side
+
+---
+
+## 4. Factor Investing
+
+### The Factor Model Framework
+
+In a factor model, returns are explained by exposures to systematic factors:
+
+```
+Rᵢ = αᵢ + β₁F₁ + β₂F₂ + ... + βₖFₖ + εᵢ
+```
+
+- **Alpha (αᵢ):** Stock-specific return unexplained by factors — the "true" alpha
+- **Beta (βₖ):** Factor exposure (loading)
+- **Factor (Fₖ):** Systematic return driver
+
+### The Classic Factor Zoo
+
+| Factor | Definition | Economic Rationale |
+|---|---|---|
+| Market (Beta) | Excess return of market over risk-free | Systematic risk compensation |
+| Size (SMB) | Small cap minus large cap returns | Illiquidity premium, distress risk |
+| Value (HML) | High B/P minus low B/P returns | Distress risk, mean reversion, behavioral |
+| Momentum (WML) | Winners minus losers | Behavioral underreaction |
+| Quality (QMJ) | Profitable/safe/growing vs junk | Investor preference for safety |
+| Low Volatility | Low vol stocks vs high vol | Leverage aversion, lottery preference |
+| Investment (CMA) | Low investment vs high investment | Overinvestment punishment |
+
+**Factor decay:** As factors become known, arbitrageurs exploit them and returns diminish. The value factor in US equities has significantly weakened post-publication. Factors work best in less efficient markets — which is an argument for running factor strategies on PSX.
+
+### Cross-Sectional Factor Model Implementation
+
+**Step 1 — Factor signal construction:**
+For each stock i in the universe, at each rebalance date t:
+- Value: Book-to-price, E/P, CF/P
+- Momentum: 12-1 month return
+- Quality: ROE, gross margins, accruals
+- Size: log(market cap)
+
+**Step 2 — Standardize signals:**
+```
+Z-score(i) = (Signal(i) − Mean(all stocks)) / Std(all stocks)
+```
+
+**Step 3 — Combine signals:**
+```
+Combined Score(i) = w₁ × Z_Value(i) + w₂ × Z_Momentum(i) + w₃ × Z_Quality(i)
+```
+
+**Step 4 — Construct portfolio:**
+- Simple: rank stocks, long top quintile, short bottom quintile
+- Optimized: maximize factor exposure subject to risk and transaction cost constraints
+
+**PSX factor evidence:**
+Limited academic research, but practitioner evidence suggests:
+- Value works on PSX (low P/B stocks have outperformed)
+- Momentum works (retail herding amplifies trends)
+- Quality is harder to measure due to accounting quality concerns
+- Small cap premium exists but liquidity-adjusted returns are lower
+
+---
+
+## 5. Backtesting Framework
+
+A backtest simulates how your strategy would have performed historically. The problem: almost every backtest is optimistic. The art is building one that tells you the truth.
+
+### The Four Deadly Sins of Backtesting
+
+**1. Survivorship bias**
+Your data universe contains only companies that survived to today. Companies that went bankrupt or were delisted are excluded. This makes every strategy look better than it was — you never buy the stocks that later blow up.
+
+**Fix:** Use a point-in-time database that includes delisted securities.
+
+**2. Look-ahead bias**
+Using data in your backtest that was not available at the time of the signal. Common examples:
+- Annual report data: using the full-year number before it was reported
+- Price adjustment: using adjusted prices that reflect splits/dividends that hadn't happened yet
+- Index membership: testing on "current" KSE-100 members, not who was in the index historically
+
+**Fix:** Use only data that was published/available on or before the signal date. Always test "as-of" data.
+
+**3. Data mining / Overfitting**
+Testing hundreds of parameter combinations and reporting only the best performer. A strategy optimized on historical data captures noise, not signal.
+
+**The multiple testing problem:**
+If you test 100 strategies at the 5% significance level, you expect 5 to appear significant by pure chance. Reporting the best of 100 strategies is deeply misleading.
+
+**Fix:** Bonferroni correction, out-of-sample testing, walk-forward validation, limiting parameters.
+
+**4. Transaction costs underestimation**
+Assuming you can execute at last price or at the mid. In reality, you cross the spread and have market impact.
+
+**Fix:** Use realistic transaction costs — for PSX, 40–80bps round-trip is a reasonable floor for liquid large-caps.
+
+### Walk-Forward Validation
+
+Split data into in-sample (IS) and out-of-sample (OOS) periods:
+- **In-sample:** Develop and optimize the strategy
+- **Out-of-sample:** Test on unseen data — the honest test
+
+**Walk-forward procedure:**
+1. Train on years 1–5, test on year 6
+2. Train on years 1–6, test on year 7
+3. Train on years 1–7, test on year 8
+4. Continue rolling forward
+
+**The deflated Sharpe ratio (López de Prado & Bailey):**
+Corrects the Sharpe ratio for multiple testing. If you tested N strategies, the probability of finding a spurious strategy increases. The deflated SR penalizes the Sharpe ratio based on N and the distribution of strategies tested.
+
+### Purged K-Fold Cross-Validation
+
+Standard k-fold cross-validation leaks information between training and test folds due to serial correlation in financial data.
+
+**Problem:** If fold 3 is your test set and it overlaps temporally with fold 2 (your training set), labels from the test period contaminate the training signal.
+
+**Solution (Purging + Embargo):**
+- **Purge:** Remove training samples whose labels overlap with the test period
+- **Embargo:** Add a gap between training and test folds to prevent information leakage from market impact of the test period
+
+This is the standard approach for ML models in finance (López de Prado, "Advances in Financial Machine Learning").
+
+---
+
+## 6. Strategy Evaluation
+
+### The Information Ratio
+
+The Information Ratio (IR) is the Sharpe ratio of active returns:
+
+```
+IR = Active Return / Active Risk = Alpha / Tracking Error
+```
+
+An IR of 0.5 is good. An IR > 1.0 is excellent and very rare in practice.
+
+**Distribution of live IR:**
+- Diversified quant fund: 0.3–0.8
+- Long/short equity: 0.2–0.6
+- CTA: 0.3–0.7
+- Pairs trading: 0.4–1.0
+
+### The Fundamental Law of Active Management
+
+Grinold (1989) showed that IR can be decomposed into:
+
+```
+IR = IC × √BR
+```
+
+- **IC (Information Coefficient):** Correlation between your forecasts and actual outcomes. Even 0.05 (5% correlation) is valuable at scale.
+- **BR (Breadth):** Number of independent bets per year. More bets = higher IR.
+
+**Key insights:**
+1. To improve IR, either improve IC (forecast quality) or increase BR (trade more/more assets)
+2. Increasing BR is often easier than improving IC — diversify across more securities, more signals, more geographies
+3. IC of 0.10 with BR of 400 bets/year → IR ≈ 0.10 × √400 = 2.0 (extraordinary)
+4. IC of 0.05 with BR of 100 bets/year → IR ≈ 0.05 × √100 = 0.5 (solid)
+
+**FERROQUANT application:**
+Running 50 stocks on PSX with monthly rebalancing = 600 bets/year. Even an IC of 0.04 gives IR = 0.04 × √600 = ~1.0. This is why quant equity strategies scale better than concentrated fundamental ones.
+
+### Capacity Analysis
+
+A strategy that makes 20% with PKR 1B AUM may be worthless at PKR 50B — the market impact of trading swamps the returns.
+
+**Capacity estimate:**
+```
+Capacity = Daily Volume × ADV% limit × Holding period
+```
+
+**Example:** FERROQUANT strategy trades PKR 30M per day per stock, 30 stocks = PKR 900M daily. Average holding period 20 days → strategy capacity ≈ PKR 18B before market impact becomes prohibitive.
+
+**Live vs backtest gap:**
+Strategies almost always underperform their backtest in live trading. Common causes:
+- Transaction costs higher than assumed
+- Signals decay faster than expected
+- Market impact from being a larger player than during backtest period
+- Model overfitting (noise mistaken for signal)
+
+**Expectation:** Budget for a 30–50% degradation from backtest to live IR when allocating capital to a new strategy.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT's quant team has identified a momentum signal for PSX equities: stocks in the top quintile of 6-month returns (skipping the most recent month) outperform by 8% per year in backtest (2010–2023), with Sharpe ratio 1.4 and maximum drawdown of 28%.
+
+   (a) The team tested 85 different parameter combinations before finding this one. Using the concept of multiple testing, why is the reported Sharpe ratio likely to be overstated? How would you adjust for this?
+   (b) The backtest uses adjusted prices from today's database. Identify two specific look-ahead bias risks in the PSX data context.
+   (c) Transaction costs were assumed to be 10bps round-trip. Given PSX liquidity, what is a more realistic assumption, and how would this change the strategy's attractiveness?
+   (d) The team wants to split the data: train on 2010–2018, test on 2019–2023. The out-of-sample Sharpe is 0.72. Is this a good or bad outcome? What does it tell you?
+
+2. FERROQUANT wants to implement a pairs trade between MCB Bank and HBL:
+   - MCB 1-year return: +35%
+   - HBL 1-year return: +12%
+   - Historical beta of MCB on HBL (from 5-year regression): β = 0.85
+   - Current spread z-score: +2.4 standard deviations
+   
+   (a) What trade would you enter based on the z-score signal? Describe both legs exactly.
+   (b) Calculate the hedge ratio (how many HBL shares to buy for every MCB share sold, or vice versa).
+   (c) After entering the trade, MCB continues to rise and the spread reaches +3.2 standard deviations. What do your trading rules say, and what is the difficult judgment call here?
+   (d) List three PSX-specific risks that make this pairs trade harder to implement than the same trade on LSE or NYSE.
+
+3. Design a 3-factor model for PSX equities using Value, Momentum, and Quality factors:
+   
+   (a) Define precisely how you would measure each factor using data available in Pakistan (note which data may be unavailable or unreliable).
+   (b) Using the Fundamental Law, if your model has IC = 0.06 and you trade the KSE-100 monthly, what IR would you expect?
+   (c) A colleague argues you should add a 4th factor — "promoter holding %" — because high promoter ownership reduces free-float and makes stocks less efficient. Is this a valid factor? Evaluate it against the three criteria: risk premium, behavioral bias, or structural friction.
+   (d) How would you test whether the three factors are independent (non-redundant), and why does independence matter for the Fundamental Law calculation?
+
+<ArticleNav
+  prev={{ title: "Module 71 — Market Microstructure & Trading Systems", href: "/financial-strategy/module-71-market-microstructure-trading-systems" }}
+  next={{ title: "Module 73 — Portfolio Construction & Optimization", href: "/financial-strategy/module-73-portfolio-construction-optimization" }}
+/>
