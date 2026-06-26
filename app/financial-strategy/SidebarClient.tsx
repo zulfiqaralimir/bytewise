@@ -397,6 +397,10 @@ const modules = [
     part: "Module 87 — Systematic Strategy Implementation",
     chapters: [{ chapter: "Systematic Strategy Implementation", items: [{ title: "Module 87 — Systematic Strategy Implementation", href: "/financial-strategy/module-87-systematic-strategy-implementation" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 88 — Fund Legal Structures",
+    chapters: [{ chapter: "Fund Legal Structures", items: [{ title: "Module 88 — Fund Legal Structures", href: "/financial-strategy/module-88-fund-legal-structures" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
