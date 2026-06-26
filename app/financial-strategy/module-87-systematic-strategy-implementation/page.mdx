@@ -1,0 +1,375 @@
+export const metadata = {
+  title: "Module 87 — Systematic Strategy Implementation | Financial Strategy — ByteWise",
+  description: "From signal to trade — execution infrastructure, position sizing, portfolio construction, live monitoring, transaction cost analysis, and strategy decay management.",
+  openGraph: { title: "Module 87 — Systematic Strategy Implementation | Financial Strategy", description: "Research-to-production pipeline, order management systems, transaction cost analysis, live strategy monitoring, and decay detection for FERROQUANT.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 87 — Systematic Strategy Implementation
+
+A brilliant signal that never makes it into a live trade earns nothing. The gap between a research idea and a production strategy is where most quant fund failures actually happen — not in signal quality, but in execution, infrastructure, and operational discipline. This module covers the full research-to-production pipeline: from backtested signal to live order flow, position sizing, portfolio construction, execution, monitoring, and the ongoing challenge of keeping strategies alive as market conditions change.
+
+## Learning Objectives
+
+- Design a research-to-production pipeline for systematic strategies
+- Apply position sizing methods (Kelly, volatility-targeting, risk parity)
+- Build a portfolio construction layer that balances signal strength, diversification, and transaction costs
+- Evaluate execution quality using transaction cost analysis (TCA)
+- Monitor live strategies for degradation and decay
+- Apply systematic implementation to FERROQUANT's multi-strategy fund
+
+---
+
+## 1. Research-to-Production Pipeline
+
+### The Full Stack
+
+```
+Research Environment              Production Environment
+─────────────────                 ──────────────────────
+Signal Development                Signal Generation (live)
+      ↓                                   ↓
+Backtest + Validation             Portfolio Optimizer
+      ↓                                   ↓
+Paper Trading (simulation)        Order Generation
+      ↓                                   ↓
+Code Review + Risk Check          Order Management System (OMS)
+      ↓                                   ↓
+Production Deployment            Execution Management System (EMS)
+      ↓                                   ↓
+Live Monitoring + Alerting        Prime Broker / Exchange
+```
+
+### Code Separation Principle
+
+**Research code:** Exploratory, iterative, uses pandas/numpy/Jupyter, may have slight lookahead (for exploration only — never deployed).
+
+**Production code:** Must be:
+- Deterministic: same inputs → same outputs, always
+- Point-in-time safe: never uses future data
+- Idempotent: re-running doesn't produce double-trades
+- Auditable: every signal value logged with timestamp
+- Tested: unit tests for every calculation, integration tests for the full pipeline
+
+**The worst sin:** Using the same code for research and production. Research code has too many implicit lookahead assumptions that are never visible unless you enforce strict separation.
+
+### Signal Generation in Production
+
+**Daily cycle for FERROQUANT (EOD strategy):**
+```
+16:00 PST: PSX market close — final prices published
+16:30: Raw data collection (PSX prices, PIB rates, FX rates, alternative data)
+17:00: Signal calculation pipeline runs
+17:30: Portfolio optimizer runs (target positions)
+17:45: Order generation: target vs. current positions → orders
+18:00: Orders reviewed by portfolio manager (systematic approval)
+09:15+1: Orders submitted to PSX at open (+1 trading day)
+```
+
+---
+
+## 2. Position Sizing
+
+### The Three Core Methods
+
+**Method 1: Fixed Fraction / Equal Weight**
+```
+Position size = Fixed % of portfolio per signal (e.g., 5% per stock)
+```
+
+- Simple, transparent, no optimization needed
+- Ignores signal strength and volatility differences between assets
+- Appropriate for initial implementation or when signal strength is uniform
+
+**Method 2: Volatility Targeting (Risk Parity per Position)**
+```
+Position Size_i = (Target Volatility / σ_i) × Capital
+
+Where:
+Target Volatility = desired individual position contribution (e.g., 2% annualized)
+σ_i = annualized volatility of asset i (estimated from EWMA or GARCH)
+```
+
+**Example:**
+FERROQUANT targets 2% annualized volatility per stock position.
+- Stock A: σ = 30% annualized
+  - Position = (2% / 30%) × PKR 2B = 0.067 × PKR 2B = PKR 133M
+- Stock B: σ = 15% annualized
+  - Position = (2% / 15%) × PKR 2B = 0.133 × PKR 2B = PKR 267M
+
+Stock B gets a larger position because it's less volatile — each PKR of exposure contributes the same amount of risk.
+
+**Method 3: Kelly Criterion (Optimal Growth)**
+```
+f* = (p × b − q) / b
+
+Where:
+p = probability of winning
+q = 1 − p
+b = ratio of expected win to expected loss
+```
+
+For a continuous return signal:
+```
+f* = E[R] / Var[R]
+```
+
+**Why fractional Kelly:** Full Kelly maximizes long-run geometric growth but produces severe drawdowns. Most practitioners use 25–50% of full Kelly ("half Kelly") for a better risk-return tradeoff.
+
+**FERROQUANT's sizing rule:** Volatility-targeted sizing (Method 2) for individual positions, combined with a portfolio-level Kelly fraction for overall leverage.
+
+---
+
+## 3. Portfolio Construction
+
+### The Portfolio Construction Problem
+
+Position sizing gives you the size of each individual position. Portfolio construction decides the full portfolio: how positions combine, how correlated positions are sized together, and how overall risk is allocated across strategies.
+
+**Portfolio construction objective:**
+```
+Maximize: Expected Return − λ × Portfolio Variance − Transaction Costs
+
+Subject to:
+  - Position limits (max 10% per stock)
+  - Sector limits (max 30% per sector)
+  - Net leverage limit
+  - VaR limit
+  - Turnover limit (controls transaction costs)
+```
+
+### Mean-Variance Optimization (Revisited in Production Context)
+
+The classic Markowitz mean-variance optimizer:
+```
+Maximize: μᵀw − (λ/2) wᵀΣw
+```
+
+**Production problems with MVO:**
+1. **Estimation error:** The expected return vector μ is estimated with high error — small changes in estimates cause wild swings in the optimal portfolio
+2. **Covariance instability:** The covariance matrix Σ changes over time (volatility clustering, correlation changes in crises)
+3. **Sparse signals:** For a signal covering 50 stocks, the optimizer needs a 50×50 covariance matrix — many elements estimated from limited history
+4. **Corner solutions:** Unconstrained MVO often produces extreme concentrated portfolios (100% in one stock)
+
+**Solutions:**
+- **Regularization:** Shrink the covariance matrix toward a structured target (Ledoit-Wolf shrinkage)
+- **Robust optimization:** Use worst-case expected returns rather than point estimates
+- **Black-Litterman:** Blend model expected returns with equilibrium (CAPM) expected returns
+- **1/N (equal weight) as a benchmark:** Surprisingly competitive with complex optimizers in real-world conditions because it's immune to estimation error
+
+### Transaction Cost Integration
+
+**The turnover-alpha tradeoff:**
+A signal with high IC but requiring 200% annual turnover may be unprofitable after costs.
+
+**Transaction cost model:**
+```
+TC_i = Spread_i/2 + Market_Impact_i + Brokerage
+
+Spread: PSX large-cap: 0.1–0.2%; mid-cap: 0.3–0.8%
+Brokerage: 0.15–0.25% per side (CDC + broker commission)
+Market impact: function of order size relative to ADV
+```
+
+**Market impact model (square-root law):**
+```
+Impact = k × σ × √(Order Size / ADV)
+
+Where:
+σ = daily volatility
+ADV = average daily volume
+k ≈ 0.1 (market-specific calibration constant)
+```
+
+**Incorporating TC into portfolio construction:**
+Add transaction cost term to the optimization objective. This naturally limits turnover — the optimizer won't rebalance a position unless the signal improvement exceeds the transaction cost.
+
+### Portfolio Construction in Practice: FERROQUANT
+
+**FERROQUANT equity book construction:**
+1. Run signal on KSE-100 universe (100 stocks)
+2. Rank stocks by composite signal (momentum 40% + value 30% + quality 20% + alternative data 10%)
+3. Long top 20 stocks, short (or underweight) bottom 20
+4. Volatility-target each position to 1.5% individual risk contribution
+5. Apply sector limits (max 25% per sector)
+6. Run transaction cost optimizer — only trade if post-TC improvement > 3bps
+7. Generate daily rebalancing orders (typically 2–5 stocks per day for marginal rebalancing)
+
+---
+
+## 4. Execution Infrastructure
+
+### Order Management System (OMS)
+
+The OMS is the software layer between portfolio construction and the exchange. It manages:
+- Order creation, modification, and cancellation
+- Pre-trade risk checks (position limits, VaR limits, cash availability)
+- Order routing to the appropriate venue
+- Post-trade confirmation and booking
+
+**PSX execution infrastructure:**
+- PSX uses NCEL (National Clearing Company of Pakistan) as the clearing house
+- FIX protocol (Financial Information eXchange) is the standard messaging format
+- Market makers provide liquidity during the trading day (09:15–15:30 PST)
+- Ready Market (T+2 settlement) is the main market for equities
+
+### Execution Algorithms
+
+**TWAP (Time-Weighted Average Price):**
+Split an order evenly over a time window (e.g., 09:30–12:30). Simple and predictable.
+
+**VWAP (Volume-Weighted Average Price):**
+Distribute order participation proportionally to expected volume throughout the day. Buys more when volume is higher — typically at open and close.
+
+**Implementation Shortfall (IS) / Arrival Price:**
+Minimize the difference between the decision price (when the portfolio manager decided to trade) and the execution price. Balances urgency against market impact.
+
+**Participation Rate Algorithm:**
+Execute as a fixed % of market volume (e.g., 10% of all volume in the stock). Slower but minimizes market impact for large orders.
+
+**PSX context:** For most PSX mid-cap stocks, orders should not exceed 5–10% of ADV per day to avoid significant market impact. Large positions must be built over multiple days.
+
+### Transaction Cost Analysis (TCA)
+
+TCA measures the actual execution quality vs. benchmarks:
+
+**Implementation shortfall (IS):**
+```
+IS = (Execution Price − Decision Price) / Decision Price × 100bps
+```
+
+If IS is positive (for a buy order), you bought at a higher price than when the decision was made — you paid for market impact and delay.
+
+**VWAP slippage:**
+```
+VWAP Slippage = (Execution Price − Market VWAP) / VWAP × 100bps
+```
+
+**TCA reporting (monthly):**
+| Strategy | Orders | Avg Order Size (ADV%) | Avg IS (bps) | Avg VWAP Slippage (bps) |
+|---|---|---|---|---|
+| PSX Momentum | 250 | 3.5% | +4.2 | +1.8 |
+| PIB Duration | 45 | N/A | +2.5 | N/A |
+| KIBOR Swaps | 12 | N/A | +8.5 (bid-ask) | N/A |
+
+---
+
+## 5. Live Strategy Monitoring
+
+### Real-Time Monitoring Dashboard
+
+**Daily monitoring checklist:**
+- [ ] Signal values updated correctly (no NaN, no stale data)
+- [ ] Positions match target (no fill failures, no ghost orders)
+- [ ] P&L attribution reconciles (actual P&L ≈ predicted P&L from signals × returns)
+- [ ] VaR within limits
+- [ ] No limit breaches
+- [ ] Prime broker margin adequate (buffer ≥ 20% of required margin)
+
+**Automated alerts:**
+- Signal z-score exceeds 5 standard deviations → possible data error, pause trading
+- Daily P&L deviates > 3x from predicted → execution or data issue investigation
+- Position drift > 2% from target → rebalancing required
+- VaR breach → risk manager notification
+
+### Strategy Performance Monitoring
+
+**Cumulative IC over time:** Is the signal's predictive power stable, declining, or improving?
+
+**Rolling Sharpe ratio (252-day):** Declining rolling Sharpe signals strategy degradation.
+
+**P&L explained vs. unexplained:**
+```
+Explained P&L = Signal Value × Actual Return × Position Size
+
+If: Actual P&L >> Explained P&L → unintended factor exposure (good or bad)
+If: Actual P&L << Explained P&L → execution cost or signal quality issue
+```
+
+---
+
+## 6. Strategy Decay and Adaptation
+
+### Why Strategies Decay
+
+**1. Alpha crowding:** As more funds use similar signals, the edge is arbitraged away. The signal's IC declines.
+
+**2. Market regime change:** A signal calibrated on 2015–2020 data may not work post-COVID (structural breaks in correlations, volatility, market microstructure).
+
+**3. Regulatory change:** PSX circuit breakers, margin requirements, or short-selling rules change — strategies built assuming certain mechanics may fail.
+
+**4. Own impact:** If FERROQUANT grows large enough, its own trading moves the market, making signals self-defeating.
+
+### Decay Detection
+
+**IC monitoring:** Plot rolling 3-month IC. Is it declining toward zero?
+
+**Regime-conditional IC:** Does the signal work differently in bull vs. bear markets, high vs. low volatility periods?
+
+**Decay alert threshold:** If rolling 6-month IC < 0.5 × full-history IC → trigger strategy review.
+
+### Strategy Lifecycle Management
+
+```
+Development → Paper Trading → Live (Small) → Live (Full) → Monitoring → Review/Retire
+```
+
+**Maintaining a strategy pipeline:**
+- At any time, FERROQUANT should have 3–5 strategies in development/paper trading
+- When a live strategy decays, a replacement is ready
+- Strategy retirement: reduce allocation gradually (6-month phase-out) — don't kill a strategy on one bad month
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT has a PSX momentum signal with the following characteristics:
+   
+   - Universe: KSE-100 (100 stocks)
+   - Signal: 12-1 month total return (12-month return minus last 1 month)
+   - Average annual IC: 0.065
+   - IC volatility: 0.14
+   - Required rebalancing: monthly (approx. 20% portfolio turnover per month)
+   - Average PSX round-trip transaction cost: 0.5%
+   
+   (a) Calculate the ICIR. Is this an attractive signal on a risk-adjusted basis?
+   (b) Calculate the annual gross alpha from this signal (use the formula: Alpha ≈ IC × IC Volatility × √N, where N = 100 stocks). Show your work.
+   (c) Calculate annual transaction costs as a % of portfolio (20% monthly turnover × 12 months × 0.5% per trade). Is the signal still profitable net of costs?
+   (d) FERROQUANT's CIO wants to improve net alpha by cutting rebalancing frequency to quarterly. What is the trade-off? Use the IC decay concept to explain why cutting frequency might reduce both gross alpha and transaction costs — and which effect dominates.
+
+2. FERROQUANT is building its portfolio construction layer. The signal generates the following outputs for 5 PSX stocks:
+   
+   | Stock | Signal Z-Score | Annualized Volatility | ADV (PKR M) |
+   |---|---|---|---|
+   | HBL | +1.8 | 22% | 450 |
+   | OGDCL | +1.2 | 28% | 320 |
+   | ENGRO | +2.1 | 25% | 180 |
+   | LUCK | −1.5 | 30% | 95 |
+   | PSO | −1.9 | 35% | 260 |
+   
+   Total fund AUM: PKR 2B. Target individual position risk contribution: 1.5% annualized.
+   
+   (a) Calculate the volatility-targeted position size (in PKR) for each stock.
+   (b) For ENGRO (the highest signal), calculate the estimated 1-day market impact (in bps) if FERROQUANT buys the full position in one day (use the square-root law with k = 0.1 and assume 250 trading days/year).
+   (c) ENGRO's ADV is only PKR 180M. If FERROQUANT's target ENGRO position is PKR 240M, how many trading days should it take to build this position while staying under 10% ADV participation per day?
+   (d) Combining positions 1–5, sketch the proposed portfolio positions and estimate total 1-day transaction cost if all five positions are entered simultaneously.
+
+3. FERROQUANT's momentum strategy has the following rolling performance data:
+   
+   | Period | Rolling 6M Sharpe | Rolling 6M IC | Commentary |
+   |---|---|---|---|
+   | Jan–Jun 2023 | 1.45 | 0.072 | Strong |
+   | Jul–Dec 2023 | 1.12 | 0.058 | Normal |
+   | Jan–Jun 2024 | 0.65 | 0.041 | Declining |
+   | Jul–Dec 2024 | 0.31 | 0.018 | Near zero |
+   
+   (a) Apply the decay alert threshold (IC < 50% of historical average = 0.032): when did FERROQUANT cross this threshold?
+   (b) Identify three possible root causes for this decay pattern and explain what additional analysis FERROQUANT should conduct to distinguish between them.
+   (c) FERROQUANT's CIO says: "Let's double down — the decay might be temporary crowding that will reverse." Design a framework to test this hypothesis before increasing allocation.
+   (d) Assuming decay is confirmed, design the 6-month strategy phase-out plan. What should FERROQUANT do with capital as the momentum book is reduced?
+
+<ArticleNav
+  prev={{ title: "Module 86 — Alternative Data Sourcing & Signals", href: "/financial-strategy/module-86-alternative-data-sourcing-signals" }}
+  next={{ title: "Module 88 — Fund Legal Structures", href: "/financial-strategy/module-88-fund-legal-structures" }}
+/>

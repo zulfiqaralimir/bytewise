@@ -393,6 +393,10 @@ const modules = [
     part: "Module 86 — Alternative Data Sourcing & Signals",
     chapters: [{ chapter: "Alternative Data Sourcing & Signals", items: [{ title: "Module 86 — Alternative Data Sourcing & Signals", href: "/financial-strategy/module-86-alternative-data-sourcing-signals" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 87 — Systematic Strategy Implementation",
+    chapters: [{ chapter: "Systematic Strategy Implementation", items: [{ title: "Module 87 — Systematic Strategy Implementation", href: "/financial-strategy/module-87-systematic-strategy-implementation" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
