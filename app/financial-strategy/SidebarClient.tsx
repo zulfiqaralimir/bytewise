@@ -188,6 +188,66 @@ const modules = [
     part: "Module 35 — Cross-Border Finance & Transfer Pricing",
     chapters: [{ chapter: "Cross-Border Finance & Transfer Pricing", items: [{ title: "Module 35 — Cross-Border Finance & Transfer Pricing", href: "/financial-strategy/module-35-cross-border-finance" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 36 — The CFO Career Roadmap",
+    chapters: [{ chapter: "The CFO Career Roadmap", items: [{ title: "Module 36 — The CFO Career Roadmap", href: "/financial-strategy/module-36-cfo-career-roadmap" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 37 — Personal Finance for CFOs",
+    chapters: [{ chapter: "Personal Finance for CFOs", items: [{ title: "Module 37 — Personal Finance for CFOs", href: "/financial-strategy/module-37-personal-finance-cfo" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 38 — Financial Distress & Turnaround Finance",
+    chapters: [{ chapter: "Financial Distress & Turnaround Finance", items: [{ title: "Module 38 — Financial Distress & Turnaround Finance", href: "/financial-strategy/module-38-financial-distress-turnaround" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 39 — Crisis Communication & Financial PR",
+    chapters: [{ chapter: "Crisis Communication & Financial PR", items: [{ title: "Module 39 — Crisis Communication & Financial PR", href: "/financial-strategy/module-39-crisis-communication" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 40 — Project Finance & Infrastructure",
+    chapters: [{ chapter: "Project Finance & Infrastructure", items: [{ title: "Module 40 — Project Finance & Infrastructure", href: "/financial-strategy/module-40-project-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 41 — Real Estate Finance",
+    chapters: [{ chapter: "Real Estate Finance", items: [{ title: "Module 41 — Real Estate Finance", href: "/financial-strategy/module-41-real-estate-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 42 — Insurance for CFOs",
+    chapters: [{ chapter: "Insurance for CFOs", items: [{ title: "Module 42 — Insurance for CFOs", href: "/financial-strategy/module-42-insurance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 43 — Pension & Employee Benefits Finance",
+    chapters: [{ chapter: "Pension & Employee Benefits Finance", items: [{ title: "Module 43 — Pension & Employee Benefits Finance", href: "/financial-strategy/module-43-pension-benefits" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 44 — CFO in Financial Services",
+    chapters: [{ chapter: "CFO in Financial Services", items: [{ title: "Module 44 — CFO in Financial Services", href: "/financial-strategy/module-44-financial-services-cfo" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 45 — CFO in Technology & SaaS",
+    chapters: [{ chapter: "CFO in Technology & SaaS", items: [{ title: "Module 45 — CFO in Technology & SaaS", href: "/financial-strategy/module-45-technology-saas-cfo" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 46 — CFO in Family Business & Conglomerates",
+    chapters: [{ chapter: "CFO in Family Business & Conglomerates", items: [{ title: "Module 46 — CFO in Family Business & Conglomerates", href: "/financial-strategy/module-46-family-business-conglomerates" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 47 — Macroeconomics for CFOs",
+    chapters: [{ chapter: "Macroeconomics for CFOs", items: [{ title: "Module 47 — Macroeconomics for CFOs", href: "/financial-strategy/module-47-macroeconomics" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 48 — Geopolitical Risk & Finance",
+    chapters: [{ chapter: "Geopolitical Risk & Finance", items: [{ title: "Module 48 — Geopolitical Risk & Finance", href: "/financial-strategy/module-48-geopolitical-risk" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 49 — CFO Toolkit: Templates & Checklists",
+    chapters: [{ chapter: "CFO Toolkit: Templates & Checklists", items: [{ title: "Module 49 — CFO Toolkit: Templates & Checklists", href: "/financial-strategy/module-49-cfo-toolkit" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 50 — CFO Case Studies: Pakistan & Gulf",
+    chapters: [{ chapter: "CFO Case Studies: Pakistan & Gulf", items: [{ title: "Module 50 — CFO Case Studies: Pakistan & Gulf", href: "/financial-strategy/module-50-case-studies" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

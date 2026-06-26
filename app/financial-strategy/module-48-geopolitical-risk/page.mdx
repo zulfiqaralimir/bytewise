@@ -1,0 +1,234 @@
+export const metadata = {
+  title: "Module 48 — Geopolitical Risk & Finance | Financial Strategy — ByteWise",
+  description: "Country risk assessment, political risk insurance, sanctions compliance, supply chain finance disruption, Gulf-US-China tensions, and their transmission to Pakistan's external account.",
+  openGraph: { title: "Module 48 — Geopolitical Risk & Finance | Financial Strategy", description: "Country risk, political risk insurance, sanctions compliance, CPEC, and Gulf-US-China geopolitics.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 48 — Geopolitical Risk & Finance
+
+Country risk assessment, political risk insurance, sanctions compliance, supply chain finance disruption, Gulf-US-China tensions, and their transmission to Pakistan's balance sheet.
+
+## Learning Objectives
+
+- Apply country risk assessment frameworks to investment and financing decisions
+- Understand political risk insurance and when it is worth purchasing
+- Navigate sanctions compliance obligations for a CFO in Gulf and Pakistani markets
+- Assess geopolitical scenarios and their transmission to balance sheet risk
+- Integrate geopolitical analysis into capital allocation, FX strategy, and supply chain finance
+
+---
+
+## 1. Country Risk Framework
+
+### PESLO — Five Dimensions of Country Risk
+
+| Dimension | Definition | Pakistan Example |
+|---|---|---|
+| **Political** | Government stability, policy risk, civil unrest | Frequent government changes; military influence |
+| **Economic** | GDP volatility, fiscal position, external debt | Recurring IMF programs; high debt service |
+| **Social** | Civil order, demographics, inequality | Urban-rural divide; youth unemployment |
+| **Legal** | Contract enforceability, judicial independence | Contract disputes can take 5–15 years in courts |
+| **Operational** | Infrastructure, power, logistics, crime | Loadshedding; port inefficiency; security costs |
+
+### Country Risk Ratings — Key Sources
+
+| Source | Methodology | Access |
+|---|---|---|
+| **OECD Country Risk Classification** | 0–7 scale; used to price export credit agency (ECA) premiums | Public |
+| **EIU (Economist Intelligence Unit)** | Political and economic risk scores; forward-looking | Subscription |
+| **Coface Country Risk** | A to E rating; sector-specific | Public summary |
+| **Moody's / S&P / Fitch** | Sovereign credit rating (debt repayment risk) | Public |
+| **Control Risks** | Political and security risk; operational focus | Subscription |
+
+**Pakistan current standing (2025 context):** OECD Category 6 (of 7 — very high risk), B/CCC range sovereign credit. Improving slightly as IMF program stabilizes.
+
+### Country Risk Premium (CRP) in WACC
+When discounting investments in high-risk countries, add a country risk premium to the cost of equity:
+```
+CAPM with CRP:
+Ke = Rf + β × ERP + CRP
+
+Where CRP = Sovereign Spread × σ_equity / σ_bond
+```
+
+**For Pakistan (rough estimates):**
+- US risk-free rate: 4.5%
+- Pakistan sovereign spread over UST: 5–8%
+- σ adjustment factor: 1.5× (equities more volatile than bonds)
+- Pakistan CRP: approximately 7.5–12%
+
+Pakistan cost of equity for a typical business: 4.5% + 1.2 × 6% + 10% = **22%+**
+
+---
+
+## 2. Political Risk Assessment
+
+### Types of Political Risk
+
+**Government stability risk:**
+- Frequent elections or leadership changes create policy uncertainty
+- Pakistan has had 5 Prime Ministers in 8 years (2016–2024)
+- Military-civil balance creates structural uncertainty for foreign investors
+
+**Policy risk:**
+- Sudden taxation changes (super tax on corporates, windfall taxes on specific sectors)
+- Regulatory policy reversals (power sector policy changes affected IPP economics)
+- Import restrictions (LC restrictions in 2022–2023 disrupted supply chains)
+
+**Expropriation risk:** Low in Pakistan for private sector; higher for entities in state-adjacent sectors (energy, telecoms, financial services).
+
+**Transfer and convertibility risk:**
+- Risk that profits cannot be remitted due to FX restrictions
+- Pakistan imposed LC restrictions in 2022; SBP controlled import payments
+- For foreign investors: model the risk that dividends cannot be repatriated for 6–12 months
+
+**Civil unrest:** PTI protests in 2022–2023 caused business disruption in major cities; regional security in KP and Balochistan requires security planning.
+
+---
+
+## 3. Political Risk Insurance (PRI)
+
+### PRI Providers and Coverage
+
+| Provider | Type | Coverage Offered |
+|---|---|---|
+| **MIGA (World Bank)** | Multilateral | Expropriation, transfer restriction, political violence, breach of contract |
+| **DFC (US Development Finance Corporation)** | Bilateral US | Expropriation, currency inconvertibility, political violence |
+| **UKEF** | UK bilateral | Credit insurance, political risk for UK exporters |
+| **ECGD (Pakistan EXIM equivalent)** | EXIM Pakistan | Limited — mainly for Pakistan exporters |
+| **AIG, Liberty, Chubb** | Commercial insurers | Broader and more flexible but higher cost |
+
+### When PRI Makes Sense
+PRI is valuable when:
+- Investment horizon > 5 years in a politically unstable country
+- Large capital commitment (USD 10M+) that cannot be easily reversed
+- Debt financing requires PRI as a condition (DFI lenders often require it)
+- Insurance premium is < 0.5–1.0% of covered exposure per year (typical for Pakistan)
+
+### PRI for Pakistani Exporters
+Pakistan's export credit insurance (through EXIM Pakistan or commercial insurers):
+- Insures export receivables against buyer default and political risk in buyer countries
+- Relevant for textile, surgical, sports goods exporters selling to developing markets
+- Coverage: typically 85–90% of invoice value
+
+---
+
+## 4. Sanctions Compliance
+
+### Major Sanctions Regimes
+
+| Regime | Administrator | Reach |
+|---|---|---|
+| **OFAC (US)** | US Treasury Office | Extraterritorial — applies to USD transactions globally |
+| **EU Sanctions** | EU Council | Applies to EU entities and EUR transactions |
+| **UN Sanctions** | Security Council | Multilateral; mandatory for all UN member states |
+| **UK Sanctions** | OFSI (UK Treasury) | Post-Brexit UK regime; overlaps with EU |
+
+### Pakistan-Specific Sanctions Exposure
+
+**Iran border trade:**
+- Iran is under comprehensive US and EU sanctions
+- Pakistan-Iran border trade (informal and formal) creates OFAC exposure
+- Any Pakistani company with US banking relationships must avoid facilitating Iran transactions
+
+**FATF Grey List (historical):**
+- Pakistan was on FATF grey list until 2022
+- Required enhanced due diligence by correspondent banks
+- Affected: USD correspondent banking access, international payment processing
+- Exit from grey list improved international banking relationships
+
+**Afghanistan transit:**
+- UN sanctions on Taliban regime apply
+- Dual-use goods (technology, certain equipment) require export license assessment
+
+### CFO Compliance Obligations
+1. **Sanctions screening:** All counterparties (customers, suppliers, banks) screened against OFAC SDN list and EU consolidated list
+2. **Correspondent bank compliance:** Understand your banks' restrictions on certain country transactions
+3. **Trade finance documents:** LC and documentary credits require certificate that transaction is sanctions-compliant
+4. **Payment instructions:** USD payments must not route through sanctioned entities
+
+**Personal liability:** CFOs who knowingly facilitate sanctions violations face personal OFAC penalties (up to $1M per violation) and criminal prosecution in the US.
+
+---
+
+## 5. Supply Chain Geopolitics
+
+### US-China Decoupling — Pakistan Opportunity
+US-China trade tensions (tariffs, technology restrictions) are pushing global supply chains to "friend-shore" to non-China alternatives:
+- Pakistan textile sector: US buyers increasingly sourcing from Pakistan/Bangladesh vs China
+- **CFO opportunity:** Position for supply chain shift; structure balance sheet to fund expansion
+- **Risk:** Requires investment in compliance (labor standards, ESG) that Western buyers require
+
+### Red Sea Disruption — Shipping Cost Impact
+Houthi attacks on Red Sea shipping (2024) forced rerouting via Cape of Good Hope:
+- Transit time from Asia to Europe: +10–14 days
+- Shipping costs: 3–4× normal
+- **Pakistan impact:** Textile export competitiveness affected; import costs for machinery and inputs rose
+- **CFO response:** Extended working capital facility; review insurance coverage for marine cargo; model shipping cost into pricing
+
+### CPEC (China-Pakistan Economic Corridor)
+USD 62bn in Chinese infrastructure investment in Pakistan:
+- Debt risk: Chinese loans carry 6–8% interest rates; debt service burden significant
+- Opportunity: infrastructure improvement reduces logistics costs
+- Geopolitical risk: US pressure on Pakistan to reduce CPEC dependence creates policy uncertainty
+
+### Dual Sourcing Strategy for CFOs
+In any supply chain with single-source dependency:
+- Identify alternative suppliers in different geographies
+- Accept marginally higher cost for resilience (CFO must quantify the resilience premium)
+- Model: cost of single-source disruption × probability vs annual cost of dual sourcing
+
+---
+
+## 6. Geopolitical Scenario Planning
+
+### Gulf-US-China Triangle — Key Dynamics
+
+| Relationship | Status | CFO Implication |
+|---|---|---|
+| Gulf-US | Security alliance strained; Arab states diversifying relationships | USD hegemony challenged; Gulf may accept CNY for oil |
+| Gulf-China | Growing economic ties; BRICS membership (UAE/Saudi) | Alternative capital; Chinese investment in Gulf |
+| Pakistan-US | Cyclical; strategic ambiguity | US aid flows; military cooperation variable |
+| Pakistan-China | CPEC; all-weather friendship | Chinese financing; technology access |
+| India-Pakistan | Hostile; minimal trade | Trade route restrictions; security premium |
+
+### Scenario Planning Framework for BIQAI
+Three geopolitical scenarios for 2025–2028:
+
+**Scenario A — Stability and Integration:**
+- IMF program successful; Pakistan fiscal stabilization
+- Gulf investment in Pakistan accelerates (Vision 2030 overspill)
+- US-Pakistan relations warm (strategic convergence)
+- PKR gradually appreciates; KIBOR falls to 8–10%
+- **CFO action:** Invest aggressively; access capital markets; expand Gulf presence
+
+**Scenario B — Managed Instability (Base Case):**
+- IMF program on/off; periodic PKR pressure
+- Gulf investment moderate; project-specific
+- Geopolitical tensions simmer but no major disruption
+- PKR stable-weak; KIBOR 10–14%
+- **CFO action:** Maintain flexibility; hedge FX; keep leverage moderate
+
+**Scenario C — Crisis:**
+- IMF program collapse; balance of payments crisis
+- Gulf capital flight from Pakistan risk assets
+- Regional security deterioration
+- PKR severe depreciation (30%+); KIBOR 20%+
+- **CFO action:** Maximum liquidity; USD accounts offshore; all discretionary capex deferred
+
+---
+
+## Self-Assessment
+
+1. BIQAI Group is evaluating a USD 50M investment in a joint venture in Saudi Arabia over a 7-year horizon. Apply the PESLO country risk framework to Saudi Arabia, calculate an approximate country risk premium for the WACC, and identify whether political risk insurance is warranted. Justify your recommendation.
+
+2. Your CFO team identifies that a minor supplier in your procurement chain is connected to an Iranian-linked entity that appears on the OFAC SDN list. Your company banks in USD with a US correspondent bank. Walk through the compliance response — what you do in the next 24 hours, who you involve, and how you terminate the relationship without creating additional OFAC exposure.
+
+3. Red Sea shipping disruptions have increased your textile company's shipping costs from USD 2,500 to USD 7,500 per container. Your annual export shipments are 2,400 containers. Calculate the annual cost impact and design a mitigation strategy including: route alternatives, insurance enhancement, supplier contract terms, and customer price renegotiation approach.
+
+<ArticleNav
+  prev={{ title: "Module 47 — Macroeconomics for CFOs", href: "/financial-strategy/module-47-macroeconomics" }}
+  next={{ title: "Module 49 — CFO Toolkit: Templates & Checklists", href: "/financial-strategy/module-49-cfo-toolkit" }}
+/>

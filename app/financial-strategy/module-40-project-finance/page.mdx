@@ -1,0 +1,212 @@
+export const metadata = {
+  title: "Module 40 — Project Finance & Infrastructure | Financial Strategy — ByteWise",
+  description: "Non-recourse project finance structures, SPV design, waterfall mechanics, DSCR/LLCR/PLCR ratios, concession agreements, and PPP structures for Pakistan and Gulf capital projects.",
+  openGraph: { title: "Module 40 — Project Finance & Infrastructure | Financial Strategy", description: "Non-recourse project finance, SPV, DSCR, LLCR, concession agreements, PPAs, and Pakistan PPP structures.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 40 — Project Finance & Infrastructure
+
+Non-recourse project finance structures, SPV design, waterfall mechanics, DSCR/LLCR/PLCR ratios, concession agreements, and PPP structures — essential for Pakistan infrastructure deals and Gulf capital projects.
+
+## Learning Objectives
+
+- Understand the structure and rationale of non-recourse project finance
+- Design an SPV (Special Purpose Vehicle) for a project finance transaction
+- Calculate and interpret DSCR, LLCR, and PLCR for a project finance deal
+- Evaluate concession agreements and offtake contracts from a CFO perspective
+- Apply project finance techniques to PPP transactions in Pakistan's energy sector
+
+---
+
+## 1. Project Finance Fundamentals
+
+### What is Project Finance?
+Project finance is the financing of a specific asset (a power plant, road, port, pipeline) where:
+- The lenders rely on the project's own cash flows for repayment — **not** the sponsor's balance sheet
+- The debt is **non-recourse** or **limited-recourse** to the sponsors
+- The project is ring-fenced in an SPV (Special Purpose Vehicle)
+
+### Why Project Finance vs Corporate Finance?
+
+| Feature | Corporate Finance | Project Finance |
+|---|---|---|
+| Repayment source | All corporate cash flows | Project cash flows only |
+| Recourse to sponsor | Full recourse | Non-recourse or limited |
+| Leverage achievable | 2–4x EBITDA typical | 70–80% of project cost |
+| Balance sheet impact | On sponsor balance sheet | Off-balance sheet (if non-recourse) |
+| Risk allocation | Sponsor bears all risk | Distributed among multiple parties |
+| Best for | Working capital, general capex | Large infrastructure, energy, real estate |
+
+### Pakistan Project Finance Context
+- **CPEC:** China-Pakistan Economic Corridor — power plants, roads, ports; Chinese bank financing
+- **IPPs (Independent Power Producers):** 200+ IPPs in Pakistan; project finance structure with government PPAs
+- **LNG terminals:** Port Qasim LNG terminal, Engro-Shell LNG — project financed
+- **Toll roads:** NLC, NHA — PPP structures with government guarantees
+
+### Gulf Project Finance
+- NEOM: USD 500bn+ mega-project in Saudi Arabia — multiple project finance tranches
+- ADNOC: Abu Dhabi's energy giant structures upstream assets in project finance vehicles
+- Masdar: UAE renewable energy projects across 40+ countries — non-recourse project finance
+- Qatar LNG expansion: QatarEnergy LNG expansion trains — project finance with offtake backing
+
+---
+
+## 2. Project Finance Structure
+
+### The SPV — Special Purpose Vehicle
+The SPV is a company created solely to own and operate the project:
+- Legally separate from all sponsors
+- Cannot take on liabilities unrelated to the project
+- Has its own board (often including lender nominees)
+- Holds all project contracts: concession, EPC, O&M, offtake
+
+### Project Participants and Their Roles
+
+| Participant | Role | Exposure |
+|---|---|---|
+| Sponsor(s) | Equity investors — provide 20–30% of project cost | First-loss equity; management control |
+| Senior lenders | Provide 70–80% of project cost as debt | Secured on project assets and contracts |
+| EPC contractor | Engineering, Procurement, Construction | Construction completion risk |
+| Offtaker | Buys project output (power, gas, capacity) | Revenue certainty |
+| O&M contractor | Operates and maintains project post-completion | Operating performance risk |
+| Government | Grants concession; sometimes provides guarantees | Sovereign/political risk |
+| Insurers | Project insurance (construction, operational) | Physical damage, business interruption |
+
+### Risk Allocation Matrix
+
+| Risk | Borne By |
+|---|---|
+| Construction cost overrun | EPC contractor (fixed-price EPC contract) |
+| Construction delay | EPC contractor (liquidated damages for delay) |
+| Technology / performance risk | EPC contractor + O&M contractor |
+| Fuel supply risk | Fuel supplier (indexed or fixed-price fuel supply agreement) |
+| Offtake / revenue risk | Offtaker (take-or-pay PPA) |
+| Force majeure | Shared or insured |
+| Political risk | Government (guarantee); political risk insurance |
+| Interest rate risk | Sponsor + lenders (interest rate swap) |
+
+---
+
+## 3. Financial Modeling for Project Finance
+
+### Key Financial Metrics
+
+**DSCR (Debt Service Coverage Ratio):**
+```
+DSCR = CFADS / Debt Service
+
+CFADS = Cash Flow Available for Debt Service
+      = Revenue − Operating Costs − Tax − Change in Working Capital − Major Maintenance
+      
+Debt Service = Principal Repayment + Interest Payment (in the period)
+```
+
+Typical minimum DSCR covenant: 1.15–1.30x (project must generate at least 1.15x what is needed to service the debt in every period).
+
+**LLCR (Loan Life Coverage Ratio):**
+```
+LLCR = NPV of CFADS over remaining loan life / Outstanding debt balance
+
+(Discounted at the project's cost of debt)
+```
+Shows whether total future project cash flows cover outstanding debt. Typical minimum: 1.25–1.40x.
+
+**PLCR (Project Life Coverage Ratio):**
+```
+PLCR = NPV of CFADS over entire project life / Outstanding debt balance
+```
+Shows the total economic cushion including post-debt-payoff cash flows. Used for maximum debt sizing.
+
+### Debt Sculpting vs Annuity Repayment
+
+**Annuity:** Equal principal + interest payments throughout — simple but ignores project cash flow profile.
+
+**Sculpted repayment:** Repayments sized to maintain a target DSCR throughout the loan life. Larger payments in high-cash-flow years; smaller in low-cash-flow years. More complex but optimizes debt capacity.
+
+```
+Sculpted payment in year t = CFADS(t) / Target DSCR
+```
+
+### P50 vs P90 Revenue Scenarios
+For projects with variable output (solar, wind, hydro):
+- **P50:** Expected production — exceeded 50% of the time
+- **P90:** Conservative production — exceeded 90% of the time
+
+Lenders typically size debt so the project meets DSCR covenants even at P90. Equity returns are calculated at P50.
+
+---
+
+## 4. Concession Agreements & Offtake Contracts
+
+### Power Purchase Agreement (PPA) — The Core Contract
+A PPA between the IPP (seller) and offtaker (buyer, e.g., CPPA-G in Pakistan) specifies:
+- **Capacity payments:** Fixed payment for making capacity available — covers debt service and fixed O&M
+- **Energy payments:** Variable payment per kWh generated — covers fuel and variable O&M
+- **Tariff:** Often USD-denominated (indexed to USD/PKR exchange rate and US CPI)
+- **Dispatch:** Offtaker's right to dispatch the plant; IPP's right to refuse if not economical
+- **Term:** Typically 25–30 years
+
+**Key CFO risk in PPA:** Payment risk from the offtaker. Pakistan's circular debt crisis (PKR 2.4tn+ in overdue IPP payments) demonstrates that a PPA is only as strong as the offtaker's ability and willingness to pay.
+
+### Take-or-Pay vs Take-and-Pay
+
+| Feature | Take-or-Pay | Take-and-Pay |
+|---|---|---|
+| Offtaker obligation | Pay whether dispatched or not | Pay only if dispatched |
+| Revenue certainty | High — payment regardless of dispatch | Lower — payment depends on dispatch |
+| Typical use | Gas pipelines, LNG terminals, capacity | Merchant power, commodity sale |
+
+Take-or-pay is the gold standard for project finance — lenders prefer guaranteed payment regardless of usage.
+
+### Pakistan CPPA-G PPA Risk
+- CPPA-G (Central Power Purchasing Agency) is the sole offtaker for Pakistani IPPs
+- Credit risk: CPPA-G's ability to pay depends on DISCOs collecting from consumers
+- Sovereign guarantee: GoP typically provides a partial guarantee (Energy Purchase Agreement) to backstop CPPA-G payments
+- **CFO assessment for investing in IPP sector:** Model scenarios including 6–12 month payment delays; ensure debt can be serviced from reserves and revolving facilities during delay periods
+
+---
+
+## 5. PPP (Public-Private Partnership) Structures
+
+### PPP Models
+
+| Model | Government Provides | Private Sector Provides | Asset Ownership |
+|---|---|---|---|
+| BOT (Build-Operate-Transfer) | Concession, land | Finance, construction, operation | Transferred at end of concession |
+| BOOT (Build-Own-Operate-Transfer) | Concession | Finance, construction, operation, ownership | Transferred at end |
+| BTO (Build-Transfer-Operate) | Concession, ownership | Construction, operation | Government owns throughout |
+| BOO (Build-Own-Operate) | Concession | Finance, construction, operation, ownership | Private ownership indefinitely |
+
+### Pakistan PPP Framework
+- **PPP Authority:** Federal body established under PPP Authority Act 2010; coordinates PPP projects
+- **Privatization Commission:** Coordinates privatization of state-owned enterprises
+- **PPIB (Private Power Infrastructure Board):** Facilitates private investment in power sector
+- **OGRA:** Regulates natural gas and LNG; relevant for gas infrastructure PPPs
+- **Viability Gap Funding:** Government subsidy to make economically necessary but not financially viable projects bankable
+
+### Project Finance Security Package
+Lenders require comprehensive security over the project:
+- Fixed charge over project land and assets
+- Assignment of all project contracts (PPA, concession, EPC, O&M, fuel supply)
+- Pledge of shares in the SPV
+- Charge over project accounts (including DSRA)
+- Direct agreement between lenders and government (offtaker direct agreement)
+
+**Debt Service Reserve Account (DSRA):** Required to hold 6 months of debt service at all times. Funded at financial close. Provides buffer if project cash flow is temporarily insufficient.
+
+---
+
+## Self-Assessment
+
+1. Build the financial logic (not full model, but the structure) for a 200MW wind project in Sindh. Assume: construction cost USD 300M (70% debt, 30% equity), 25-year PPA at USD 0.07/kWh, capacity factor 35%, annual O&M USD 8M, debt at SOFR + 200bps for 18 years. Calculate Year 1 DSCR and comment on whether this meets a typical lender threshold of 1.25x.
+
+2. Pakistan's circular debt has caused CPPA-G to delay capacity payments by an average of 9 months. You are advising on the debt financing for a new 100MW solar IPP. How do you structure the DSRA, working capital facility, and PPA payment security to make the project bankable despite payment risk?
+
+3. A Gulf sovereign fund asks you to compare: (a) project financing a solar plant in Saudi Arabia with PIF as offtaker, vs (b) the same project in Pakistan with CPPA-G as offtaker. What are the key structural differences in the financing and why?
+
+<ArticleNav
+  prev={{ title: "Module 39 — Crisis Communication & Financial PR", href: "/financial-strategy/module-39-crisis-communication" }}
+  next={{ title: "Module 41 — Real Estate Finance", href: "/financial-strategy/module-41-real-estate-finance" }}
+/>

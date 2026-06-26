@@ -86,6 +86,46 @@ const curriculum = [
       { number: "Module 35", title: "Cross-Border Finance & Transfer Pricing",  description: "Financing international operations, transfer pricing compliance, APV for cross-border investments, thin capitalisation rules, and multi-currency group treasury.", href: "/financial-strategy/module-35-cross-border-finance" },
     ],
   },
+  {
+    part: "Part VIII — Crisis, Distress & Special Situations",
+    modules: [
+      { number: "Module 36", title: "The CFO Career Roadmap",               description: "How CFOs get hired, what executive search firms look for, building your CFO personal brand, the transition from Finance Director to CFO, and mastering your first 90 days.", href: "/financial-strategy/module-36-cfo-career-roadmap" },
+      { number: "Module 37", title: "Personal Finance for CFOs",             description: "Negotiating CFO compensation, managing personal wealth, conflict of interest management, D&O insurance, and the personal financial disciplines senior finance leaders consistently overlook.", href: "/financial-strategy/module-37-personal-finance-cfo" },
+      { number: "Module 38", title: "Financial Distress & Turnaround Finance", description: "Recognizing early warning signs of financial distress, the 13-week cash flow model, creditor negotiation, turnaround financing structures, and Pakistan restructuring law.", href: "/financial-strategy/module-38-financial-distress-turnaround" },
+      { number: "Module 39", title: "Crisis Communication & Financial PR",   description: "Managing financial press during a crisis, profit warnings, regulatory investigations, accounting restatements, and the communication protocols that protect CFO credibility under pressure.", href: "/financial-strategy/module-39-crisis-communication" },
+    ],
+  },
+  {
+    part: "Part IX — Real Assets, Insurance & Pensions",
+    modules: [
+      { number: "Module 40", title: "Project Finance & Infrastructure",      description: "Non-recourse project finance structures, SPV design, waterfall mechanics, DSCR/LLCR/PLCR ratios, concession agreements, and PPP structures for Pakistan and Gulf capital projects.", href: "/financial-strategy/module-40-project-finance" },
+      { number: "Module 41", title: "Real Estate Finance",                   description: "Property valuation methods, REIT structures, IAS 40 investment property accounting, commercial mortgage structures, and sale-and-leaseback transactions for balance sheet optimization.", href: "/financial-strategy/module-41-real-estate-finance" },
+      { number: "Module 42", title: "Insurance for CFOs",                    description: "Corporate insurance programs, Directors and Officers liability, professional indemnity, cyber insurance, business interruption — understanding risk transfer for the finance function.", href: "/financial-strategy/module-42-insurance" },
+      { number: "Module 43", title: "Pension & Employee Benefits Finance",   description: "Defined benefit vs defined contribution pension structures, IAS 19 actuarial assumptions, pension deficit management, EOBI obligations, and gratuity fund design in Pakistan.", href: "/financial-strategy/module-43-pension-benefits" },
+    ],
+  },
+  {
+    part: "Part X — Sector-Specific CFO Finance",
+    modules: [
+      { number: "Module 44", title: "CFO in Financial Services",             description: "The CFO role in banks, asset managers, and insurers — Basel III regulatory capital, IFRS 9 for banks, net interest margin management, and IFRS 17 for insurance CFOs.", href: "/financial-strategy/module-44-financial-services-cfo" },
+      { number: "Module 45", title: "CFO in Technology & SaaS",              description: "SaaS financial metrics (ARR, NRR, LTV/CAC), IFRS 15 subscription revenue recognition, IAS 38 R&D capitalization, VC-backed CFO dynamics, and IPO readiness for tech companies.", href: "/financial-strategy/module-45-technology-saas-cfo" },
+      { number: "Module 46", title: "CFO in Family Business & Conglomerates", description: "Governance in family-owned groups, professionalizing finance in founder-led businesses, related party discipline, succession planning, and Pakistan's family-dominated private sector.", href: "/financial-strategy/module-46-family-business-conglomerates" },
+    ],
+  },
+  {
+    part: "Part XI — Macroeconomics & Geopolitics",
+    modules: [
+      { number: "Module 47", title: "Macroeconomics for CFOs",               description: "Reading GDP, inflation, interest rate, and currency cycles for financial planning — Pakistan IMF dynamics, Gulf oil price transmission, and connecting macro signals to CFO decisions.", href: "/financial-strategy/module-47-macroeconomics" },
+      { number: "Module 48", title: "Geopolitical Risk & Finance",           description: "Country risk assessment, political risk insurance, sanctions compliance, supply chain finance disruption, Gulf-US-China tensions, and their transmission to Pakistan's external account.", href: "/financial-strategy/module-48-geopolitical-risk" },
+    ],
+  },
+  {
+    part: "Part XII — CFO Toolkit & Case Studies",
+    modules: [
+      { number: "Module 49", title: "CFO Toolkit: Templates & Checklists",   description: "A practical library of templates and checklists CFOs use every month — board pack, 13-week cash flow, covenant monitoring, audit preparation, due diligence, and IFRS disclosure checklists.", href: "/financial-strategy/module-49-cfo-toolkit" },
+      { number: "Module 50", title: "CFO Case Studies: Pakistan & Gulf",     description: "Five real anonymized CFO case studies from Pakistan and Gulf markets — FX crisis, FinTech Series B, family conglomerate, IFRS 9 implementation, and regulatory crisis management.", href: "/financial-strategy/module-50-case-studies" },
+    ],
+  },
 ];
 
 export default function FinancialStrategyPage() {
@@ -126,7 +166,7 @@ export default function FinancialStrategyPage() {
             decision-makers.
           </p>
           <div className="flex flex-wrap gap-3">
-            {["35 Modules", "7 Parts", "Investment Appraisal", "Valuation", "M&A", "IFRS", "Risk Management", "Gulf & Pakistan"].map((tag) => (
+            {["50 Modules", "12 Parts", "Investment Appraisal", "Valuation", "M&A", "IFRS", "Risk Management", "Gulf & Pakistan"].map((tag) => (
               <span
                 key={tag}
                 className="text-xs font-semibold px-3 py-1 rounded-full"

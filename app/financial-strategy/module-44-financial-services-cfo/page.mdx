@@ -1,0 +1,232 @@
+export const metadata = {
+  title: "Module 44 — CFO in Financial Services | Financial Strategy — ByteWise",
+  description: "The CFO role in banks, asset managers, and insurers — Basel III regulatory capital, IFRS 9 for banks, net interest margin management, IFRS 17, and SBP prudential regulations.",
+  openGraph: { title: "Module 44 — CFO in Financial Services | Financial Strategy", description: "Basel III, CAR, IFRS 9 ECL staging, NIM management, IFRS 17, and the banking-sector CFO.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 44 — CFO in Financial Services
+
+The CFO role in banks, asset managers, and insurance companies — regulatory capital under Basel III, IFRS 9 ECL models in banking, net interest margin management, and IFRS 17 for insurance CFOs.
+
+## Learning Objectives
+
+- Understand regulatory capital requirements under Basel III and their CFO implications
+- Apply IFRS 9 ECL models in a banking context with full staging analysis
+- Interpret net interest margin, cost of funds, and spread management for a bank CFO
+- Understand IFRS 17 building blocks approach for insurance CFOs
+- Navigate SBP prudential regulations as a banking-sector CFO in Pakistan
+
+---
+
+## 1. What Makes Financial Services CFOs Different
+
+### The Balance Sheet IS the Business
+In manufacturing, the balance sheet holds factories, inventory, and receivables — secondary to the P&L. In a bank:
+- **Assets** are loans and investments — these ARE the product
+- **Liabilities** are deposits and borrowings — these are the raw material (cost of funding)
+- The CFO's primary job is managing the spread between asset yields and liability costs
+
+### Regulatory Capital as a Binding Constraint
+Banks cannot simply grow by taking on more deposits and lending them out. Regulatory capital (equity) must grow in proportion:
+```
+Capital Adequacy Ratio (CAR) = Total Capital / Risk-Weighted Assets ≥ Minimum Threshold
+```
+
+If CAR falls below the minimum, the bank must either raise capital or shrink its balance sheet. This constraint shapes every major financial decision.
+
+### Dual Reporting: Management + Regulator
+Bank CFOs report to two audiences simultaneously:
+- **Management:** P&L performance, growth, efficiency
+- **Regulator (SBP):** Capital adequacy, liquidity, prudential compliance
+
+Both must be managed; regulatory failure can override commercial success.
+
+---
+
+## 2. Basel III and Regulatory Capital
+
+### Capital Structure Under Basel III
+
+**Tier 1 Capital (higher quality):**
+- **CET1 (Common Equity Tier 1):** Ordinary shares + retained earnings + OCI (minus deductions)
+- **AT1 (Additional Tier 1):** Perpetual instruments (contingent capital notes/CoCos)
+
+**Tier 2 Capital (lower quality):**
+- Subordinated debt with minimum 5-year original maturity
+- General provisions (limited)
+
+**Capital Adequacy Ratio (CAR):**
+```
+Total Capital Ratio = (Tier 1 + Tier 2) / Risk-Weighted Assets
+Minimum: CET1 8%, Tier 1 9.5%, Total Capital 11.5% (SBP for Pakistani banks)
+```
+
+**Plus buffers:**
+- Capital Conservation Buffer: 2.5% (CET1)
+- D-SIB surcharge: 1–2% for Domestic Systemically Important Banks (HBL, UBL, MCB, ABL, NBP in Pakistan)
+
+### Risk-Weighted Assets (RWA)
+RWAs are not just total assets — they are weighted by the risk of each asset:
+
+| Asset Category | Risk Weight |
+|---|---|
+| Cash and GoP securities | 0% |
+| Claims on SBP | 0% |
+| Mortgage loans (well-secured) | 35–50% |
+| Corporate loans (unrated) | 100% |
+| Past-due loans | 150% |
+| Equity investments (not in trading book) | 100–150% |
+
+### ICAAP (Internal Capital Adequacy Assessment Process)
+CFOs of Pakistani banks must prepare and submit an annual ICAAP to SBP:
+- Assessment of all material risks: credit, market, operational, liquidity, concentration, interest rate in banking book
+- Internal capital target: must exceed regulatory minimum + buffer
+- Capital planning: forward projection of capital under stress scenarios
+- SBP review: SBP can set a bank-specific capital buffer (SREP process)
+
+---
+
+## 3. IFRS 9 in Banking Context
+
+### Loan Book Classification — Business Model Test
+
+| Business Model | SPPI Test | Measurement |
+|---|---|---|
+| Hold to collect (loans held to maturity) | Pass | Amortized cost |
+| Hold to collect and sell | Pass | FVOCI (with recycling) |
+| Trading / other | Any | FVTPL |
+
+Most bank loans: Hold to collect → SPPI passes (contractual cash flows are solely payments of principal and interest) → **Amortized cost**
+
+### Three-Stage ECL Model for Banks
+
+**Stage 1 — Performing (No significant credit deterioration):**
+- 12-month ECL provision
+- Recognize interest income on gross carrying amount
+- Normal credit quality
+
+**Stage 2 — Underperforming (Significant increase in credit risk):**
+- Lifetime ECL provision
+- Interest income still on gross carrying amount
+- Triggers: >30 days past due, significant rating downgrade, restructuring discussion initiated, forward-looking indicators
+
+**Stage 3 — Impaired (Credit-impaired):**
+- Lifetime ECL provision
+- Interest income on **net** carrying amount (not gross) — stop accruing on full outstanding
+- Triggers: >90 days past due, bankruptcy, debt restructuring with loss, foreclosure initiated
+
+**ECL Formula:**
+```
+ECL = PD × LGD × EAD × Discount Factor
+
+PD = Probability of Default (over 12 months for Stage 1; lifetime for Stage 2/3)
+LGD = Loss Given Default (1 − Recovery Rate on collateral/security)
+EAD = Exposure at Default (outstanding balance + undrawn commitments × CCF)
+```
+
+### Significant Increase in Credit Risk (SICR) — Stage 2 Triggers
+SBP / IFRS 9 guidance for Pakistan banks:
+- Primary: days past due > 30 (rebuttable presumption)
+- Secondary quantitative: significant change in lifetime PD since origination
+- Qualitative: borrower under financial distress, material changes in operating environment
+
+### Macroeconomic Overlays
+IFRS 9 requires **forward-looking information** in ECL calculations. Banks must incorporate:
+- Multiple economic scenarios (base, upside, downside) with probability weightings
+- Pakistan-specific macro factors: SBP policy rate, PKR/USD, GDP growth, CPI
+- Overlay for specific risks not captured in historical data (e.g., flood impact on agricultural portfolio)
+
+---
+
+## 4. Net Interest Margin Management
+
+### NIM Formula
+```
+NIM = (Interest Income − Interest Expense) / Average Earning Assets
+```
+
+**Example:**
+- Interest income: PKR 50bn (yield on loans + investments)
+- Interest expense: PKR 28bn (cost of deposits + borrowings)
+- Average earning assets: PKR 400bn
+- NIM = (50 − 28) / 400 = **5.5%**
+
+### Interest Rate Repricing Risk
+A bank's balance sheet has assets and liabilities that reprice at different times when interest rates change:
+
+**Pakistan bank example (high-rate environment):**
+- 70% of deposits reprice within 3 months (short-term savings, current accounts)
+- 60% of loans reprice within 12 months (floating rate)
+- If SBP raises rates: loan yields rise quickly, deposit costs also rise — net impact depends on relative speed and quantum
+
+**Interest Rate Sensitivity Analysis (IRSA):**
+- Model impact of a 100bps parallel shift in yield curve on NII (net interest income)
+- Disclosed in annual report; part of ICAAP
+- SBP requires limits on banking book interest rate risk (IRRBB)
+
+### Deposit Pricing Strategy
+- Core deposits (current accounts, savings): lower cost; more stable; driven by transaction relationships
+- Time deposits (FD/TDR): higher cost; more rate-sensitive; competition for deposits is intense
+- CASA ratio (Current Account + Savings Account / Total Deposits): higher CASA = lower cost of funds = better NIM
+
+Pakistan bank competition for deposits is intense in high-rate environments — deposit costs can erode NIM even as lending rates rise.
+
+---
+
+## 5. Liquidity Management for Banks
+
+### SBP Statutory Requirements
+- **CRR (Cash Reserve Requirement):** Banks must hold a percentage of deposits as cash at SBP (currently 5% for time liabilities, 15% for demand liabilities)
+- **SLR (Statutory Liquidity Requirement):** Banks must hold specified liquid assets (GoP T-bills, PIBs, cash) as a percentage of time and demand liabilities (currently 19%)
+
+### LCR and NSFR (Basel III Liquidity Standards)
+- **LCR (Liquidity Coverage Ratio):** Minimum 100%; ensures enough HQLA to cover 30 days net cash outflows in a stress scenario
+- **NSFR (Net Stable Funding Ratio):** Minimum 100%; ensures stable funding for medium-term assets
+
+---
+
+## 6. Asset Management and Insurance CFO Roles
+
+### Asset Management CFO
+Key metrics and responsibilities:
+- **AUM (Assets Under Management):** Primary scale metric; drives management fee revenue
+- **Management fee:** 0.5–1.5% of AUM p.a. → recognized over time (IFRS 15 over-time recognition)
+- **Performance fee:** Typically 20% of returns above hurdle rate → variable consideration; recognize only when highly probable of not reversing
+- **NAV calculation:** Accurate daily/weekly NAV calculation is the fund's most critical operational control
+- SECP minimum capital requirements for Asset Management Companies (AMCs) in Pakistan
+
+### IFRS 17 — Insurance CFO (Overview)
+IFRS 17 (effective January 2023) replaces IFRS 4 for insurance contracts:
+
+**Building Blocks Approach (BBA) — for long-duration contracts:**
+```
+Insurance Contract Liability = 
+  Fulfilment Cash Flows (Present Value of Future Cash Flows + Risk Adjustment)
+  + Contractual Service Margin (CSM)
+```
+
+**CSM:** Represents unearned profit from insurance contracts — recognized in P&L as insurance services are provided over the coverage period. No day-1 profit recognition.
+
+**Premium Allocation Approach (PAA):** Simplified model for short-duration contracts (< 1 year coverage period). Similar to current practice under IFRS 4.
+
+**P&L Presentation:** IFRS 17 introduces new line items:
+- Insurance revenue (not premium earned)
+- Insurance service expense (not claims incurred)
+- Net finance income/expenses from insurance
+
+---
+
+## Self-Assessment
+
+1. A Pakistani bank has the following data: CET1 capital PKR 120bn, AT1 PKR 15bn, Tier 2 PKR 20bn, risk-weighted assets PKR 900bn. Calculate the CET1 ratio, Tier 1 ratio, and Total CAR. Does the bank meet SBP minimum requirements? If the bank grows its corporate loan book by PKR 100bn (100% risk weight) without raising capital, recalculate the Total CAR.
+
+2. Stage a sample loan portfolio using the IFRS 9 three-stage model. A corporate borrower has: outstanding balance PKR 500M, no days past due, but has recently posted a quarterly loss and asked for an interest waiver. Which stage is this borrower in, and why? Calculate the ECL assuming: PD 3%, LGD 40%, EAD PKR 500M, remaining term 3 years.
+
+3. A Pakistani commercial bank's NIM was 5.5% when SBP policy rate was 15%. The policy rate drops to 12%. If 60% of loans reprice within 6 months (at KIBOR + 200bps) and 70% of deposits reprice within 3 months, explain what happens to NIM over the following 6 months and how the CFO should respond with deposit and lending strategy.
+
+<ArticleNav
+  prev={{ title: "Module 43 — Pension & Employee Benefits Finance", href: "/financial-strategy/module-43-pension-benefits" }}
+  next={{ title: "Module 45 — CFO in Technology & SaaS", href: "/financial-strategy/module-45-technology-saas-cfo" }}
+/>

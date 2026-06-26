@@ -1,0 +1,199 @@
+export const metadata = {
+  title: "Module 43 — Pension & Employee Benefits Finance | Financial Strategy — ByteWise",
+  description: "Defined benefit vs defined contribution pension structures, IAS 19 actuarial assumptions, pension deficit management, EOBI obligations in Pakistan, and gratuity fund design.",
+  openGraph: { title: "Module 43 — Pension & Employee Benefits Finance | Financial Strategy", description: "IAS 19, defined benefit pensions, gratuity fund, EOBI, actuarial assumptions, and deficit management.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 43 — Pension & Employee Benefits Finance
+
+Defined benefit vs defined contribution pension structures, IAS 19 actuarial assumptions and their P&L sensitivity, pension deficit management, EOBI obligations in Pakistan, and gratuity fund design.
+
+## Learning Objectives
+
+- Distinguish defined benefit from defined contribution obligations and their balance sheet impact
+- Apply IAS 19 to calculate pension expense, net liability, and OCI movements
+- Manage actuarial assumptions: discount rate, salary growth, mortality — and their P&L sensitivity
+- Structure a compliant gratuity fund for a Pakistani employer
+- Navigate EOBI (Employees' Old Age Benefits Institution) obligations
+
+---
+
+## 1. Employee Benefits Classification (IAS 19)
+
+### The Four Categories
+
+| Category | Examples | Accounting |
+|---|---|---|
+| **Short-term benefits** | Salaries, bonuses, paid leave | Accrue as service is rendered |
+| **Post-employment benefits** | Pension, gratuity, post-retirement medical | DB or DC accounting (see below) |
+| **Other long-term benefits** | Long-service leave, deferred compensation | Actuarial methods but OCI recycled to P&L |
+| **Termination benefits** | Redundancy, early retirement packages | Recognize at earlier of: offer made or redundancy plan announced |
+
+### Defined Contribution vs Defined Benefit — The Core Distinction
+
+**Defined Contribution (DC):**
+- Employer commits to contribute a fixed amount to a fund
+- Investment risk falls on **the employee** — what the fund grows to determines retirement benefit
+- Accounting: simple — contribution = expense when due
+- No balance sheet liability beyond accrued unpaid contributions
+
+**Defined Benefit (DB):**
+- Employer commits to pay a specified retirement benefit (e.g., 2% × years of service × final salary)
+- Investment risk falls on **the employer** — employer funds the shortfall if assets fall short of obligation
+- Accounting: complex — actuarial calculation; DB liability on balance sheet
+- Creates potentially large, volatile balance sheet obligation
+
+---
+
+## 2. Defined Contribution Plans in Pakistan
+
+### Pakistan Provident Fund
+- **Employer contribution:** Typically 8.33% of basic salary per month (matches employee's 8.33%)
+- **Recognized Provident Fund (RPF):** FBR-approved; employer contributions exempt from tax for employee
+- **Unrecognized PF:** No FBR approval; contributions taxable; avoid for employee relations
+- **Investment:** Trustee-managed; must follow FBR investment policy (specified allocation to government securities)
+
+### EOBI (Employees' Old Age Benefits Institution)
+Mandatory social security program for workers in industrial establishments with 5+ employees:
+- **Employer contribution:** 5% of minimum wage (currently approximately PKR 570/month per employee)
+- **Employee contribution:** 1% of minimum wage
+- **Benefit:** Retirement pension on reaching 60 (male) or 55 (female) with minimum 15 years contributions
+- **Non-compliance penalty:** FIR (criminal case) under EOBI Act 1976
+
+**CFO action:** Ensure EOBI registration for all employees above threshold. EOBI registration is audited by external auditors under Companies Act 2017.
+
+### PESSI / ESSI (Provincial Social Security Institutions)
+Punjab ESSI, Sindh ESSI, KP ESSI — provincial health insurance programs:
+- Contribution: approximately 6% of wages (employer: 5%, employee: 1%)
+- Benefit: medical care for registered workers
+- Registration mandatory for industrial/commercial establishments with 10+ employees
+
+---
+
+## 3. Defined Benefit Plans — IAS 19 Mechanics
+
+### The Net Defined Benefit Liability
+```
+Net DB Liability = Present Value of DB Obligation − Fair Value of Plan Assets
+```
+
+If plan assets exceed obligation → net DB asset (but recognition limited; surplus cap applies).
+
+### Components of DB Cost — Where They Go
+
+| Component | P&L or OCI | Description |
+|---|---|---|
+| Current service cost | **P&L** | Cost of benefit earned by employees in current year |
+| Past service cost | **P&L** (immediately) | Cost of benefit improvements — no more deferral under IAS 19 (2011) |
+| Net interest on net liability | **P&L** | Net DB liability × discount rate |
+| Actuarial gains and losses | **OCI** (not recycled) | Changes due to assumption changes or experience differences |
+
+### The Projected Unit Credit (PUC) Method
+The actuarial method used to calculate the DB obligation:
+- Each year of service earns a unit of benefit (e.g., 2% of final salary)
+- Each unit is projected to the expected retirement date (using salary growth and promotion assumptions)
+- The projected benefit is discounted back to the balance sheet date
+
+```
+PBO = Σ [Projected benefit per unit of service × Number of service years × Discount factor]
+```
+
+### Key Actuarial Assumptions
+
+| Assumption | Basis | Pakistan Guidance |
+|---|---|---|
+| **Discount rate** | High-quality corporate bond yields; or government bond yields where no deep corporate bond market | Pakistan: use GoP PIB yields; currently 13–15% (reflecting high interest rate environment) |
+| **Salary growth rate** | Expected future salary increases | Pakistan: align with CPI + real wage growth; typically 10–14% in current environment |
+| **Mortality** | Mortality tables reflecting workforce demographics | Pakistan: EFU 61-66 tables most commonly used |
+| **Employee turnover** | Expected future attrition rates | Company-specific; typically 5–15% per year |
+| **Retirement age** | Expected retirement age | 60 for male, 55 for female under Shops & Establishments regulations |
+
+### Sensitivity of DB Liability to Assumptions
+
+| Assumption Change | Impact on Obligation |
+|---|---|
+| Discount rate +1% | Obligation decreases ~8–12% (for typical scheme) |
+| Discount rate −1% | Obligation increases ~8–12% |
+| Salary growth +1% | Obligation increases ~5–8% |
+| Mortality improves 1 year | Obligation increases ~2–4% |
+
+These sensitivities must be disclosed in the notes to financial statements under IAS 19.139.
+
+---
+
+## 4. Gratuity Fund (Pakistan)
+
+### Legal Basis
+The payment of gratuity is governed by:
+- West Pakistan Industrial and Commercial Employment (Standing Orders) Ordinance 1968
+- Minimum one month's wages for each completed year of service, payable on retirement/resignation after 5+ years
+
+### Funding vs Unfunded Gratuity
+- **Unfunded:** Company recognizes liability on balance sheet; pays from operating cash when due
+- **Funded (FBR-approved gratuity fund):** Company sets up a separate trust; contributes annually to fund the obligation
+
+**CFO preference:** Funded gratuity scheme, because:
+- Tax deductible: contributions to FBR-approved fund are tax-deductible
+- Funds assets grow (tax-exempt within the trust)
+- Protects employees if company faces financial difficulty
+
+### Gratuity Fund Setup Requirements
+1. **FBR approval:** Apply to FBR for approval as a "recognized gratuity fund"
+2. **Trust deed:** Formal legal document establishing the trust and naming trustees
+3. **Trustees:** Minimum 3 trustees; must include employer and employee representatives
+4. **Actuary:** Annual actuarial valuation required for funded scheme
+5. **Investment restrictions:** FBR specifies maximum allocation to different asset classes
+
+### IAS 19 Treatment of Funded Gratuity
+A funded gratuity scheme in Pakistan is typically a **defined benefit plan** (because the benefit formula is based on final salary and service):
+- Actuarial valuation required annually
+- DB liability = PV of obligation − fair value of fund assets
+- Current service cost and net interest → P&L
+- Actuarial gains/losses → OCI
+
+---
+
+## 5. Pension Deficit Management
+
+### Understanding the Actuarial Deficit
+```
+Actuarial deficit = PV of DB obligation − Fair Value of plan assets
+```
+
+Deficit increases when:
+- Discount rate falls (obligation present value rises)
+- Asset returns disappoint (plan assets fall in value)
+- Actual salary growth exceeds assumption
+- Employees live longer than assumed (mortality experience worse than table)
+
+### Deficit Recovery Plan
+Options for addressing an actuarial deficit:
+1. **Additional contributions:** Make cash contributions to the fund above the regular current service cost
+2. **Liability management:** Buy out small pensions with lump sum payments (deferred liability elimination)
+3. **Benefit restructuring:** Change future benefit accrual for current employees (requires consultation)
+4. **Asset strategy:** Increase allocation to return-seeking assets vs bonds (increases risk)
+5. **Liability-Driven Investment (LDI):** Match asset duration to liability duration to reduce interest rate risk
+
+### Pakistan-Specific Deficit Challenge
+In the high-interest-rate environment of 2022–2023:
+- Discount rates rose sharply → DB obligations fell sharply
+- This improved funding positions for companies with DB plans
+- As rates normalize, discount rates will fall again → obligations will rise
+- CFO action: model the obligation under various rate scenarios; plan contribution strategy accordingly
+
+---
+
+## Self-Assessment
+
+1. A company has a defined benefit gratuity scheme. The following data applies: present value of obligation PKR 280M, fair value of plan assets PKR 220M, current service cost PKR 25M, discount rate 13%, expected return on plan assets 11%. Calculate: (a) net DB liability, (b) current service cost charge, (c) net interest cost, (d) total DB expense in P&L.
+
+2. The discount rate falls from 13% to 11% at year-end. If the sensitivity of the obligation to a 1% rate change is PKR 22M, calculate the approximate increase in the DB obligation and show how this is recognized (P&L or OCI? Explain why).
+
+3. You are setting up a gratuity fund for a company with 200 employees, average salary PKR 150,000/month, average service 5 years. Outline the steps to establish an FBR-approved fund, the investment policy for the fund assets, and the annual reporting obligations.
+
+<ArticleNav
+  prev={{ title: "Module 42 — Insurance for CFOs", href: "/financial-strategy/module-42-insurance" }}
+  next={{ title: "Module 44 — CFO in Financial Services", href: "/financial-strategy/module-44-financial-services-cfo" }}
+/>
