@@ -369,6 +369,10 @@ const modules = [
     part: "Module 80 — Regulation for Investment Managers",
     chapters: [{ chapter: "Regulation for Investment Managers", items: [{ title: "Module 80 — Regulation for Investment Managers", href: "/financial-strategy/module-80-regulation-investment-managers" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 81 — Interest Rate & Credit Derivatives",
+    chapters: [{ chapter: "Interest Rate & Credit Derivatives", items: [{ title: "Module 81 — Interest Rate & Credit Derivatives", href: "/financial-strategy/module-81-interest-rate-credit-derivatives" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

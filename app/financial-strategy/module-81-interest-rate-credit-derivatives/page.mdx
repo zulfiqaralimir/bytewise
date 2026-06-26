@@ -1,0 +1,425 @@
+export const metadata = {
+  title: "Module 81 — Interest Rate & Credit Derivatives | Financial Strategy — ByteWise",
+  description: "Caps, floors, swaptions, interest rate swaps, CDS pricing and hedging, CDOs, CLOs — the complete interest rate and credit derivatives toolkit for quantitative finance.",
+  openGraph: { title: "Module 81 — Interest Rate & Credit Derivatives | Financial Strategy", description: "IR swaps, caps/floors/swaptions, CDS, CDO/CLO structures — pricing and risk management of rate and credit derivatives.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 81 — Interest Rate & Credit Derivatives
+
+Interest rate and credit derivatives are the largest segment of the global derivatives market by notional outstanding — dwarfing equities. They are the instruments through which banks, corporations, and investors manage their exposure to interest rate movements and credit risk. For a quant fund like FERROQUANT, they open up the full yield curve and credit spectrum as a trading canvas.
+
+## Learning Objectives
+
+- Price and hedge interest rate swaps using the discount factor framework
+- Apply Black's formula to price caps, floors, and swaptions
+- Understand the mechanics of CDS pricing and the CDS-bond basis trade
+- Explain the structure and risk of CDOs and CLOs
+- Navigate Pakistan's KIBOR swap market and emerging credit derivatives landscape
+- Apply interest rate and credit derivatives to FERROQUANT's risk management
+
+---
+
+## 1. Interest Rate Swaps
+
+### Swap Mechanics
+
+An interest rate swap is an agreement to exchange cash flows: one party pays fixed, the other pays floating (typically KIBOR, SOFR, or Euribor).
+
+**Standard "plain vanilla" swap:**
+- **Fixed leg:** Pays a fixed rate (the swap rate) on a notional amount, typically semi-annually
+- **Floating leg:** Pays a floating rate (KIBOR/SOFR + spread) reset periodically (quarterly or semi-annually)
+- No exchange of notional — only the net interest difference is settled
+
+**From FERROQUANT's perspective:**
+- **Pay fixed, receive floating (payer swap):** Profits if rates rise (floating receipts increase while fixed payments stay constant). This is a bearish rates position.
+- **Receive fixed, pay floating (receiver swap):** Profits if rates fall (floating payments decrease while fixed receipts stay constant). This is a bullish rates position.
+
+### Swap Pricing: The Discount Factor Approach
+
+The fair (par) swap rate is the fixed rate that makes the present value of the fixed leg equal to the present value of the floating leg at inception.
+
+**Step 1 — Build the discount factor curve from the spot rate curve:**
+```
+D(t) = 1 / (1 + s_t)^t
+```
+
+Where s_t is the spot rate for maturity t.
+
+**Step 2 — Value the floating leg:**
+The floating leg is always worth par at each reset date (by definition). At inception:
+```
+PV(Floating leg) = Notional × [D(0) − D(T)]
+                 = Notional × [1 − D(T)]
+```
+
+(Since D(0) = 1.)
+
+**Step 3 — Find the par swap rate C:**
+```
+Notional × [1 − D(T)] = C × Notional × Σ D(tᵢ) × Δtᵢ
+```
+
+Solving for C:
+```
+C = [1 − D(T)] / Σ D(tᵢ) × Δtᵢ
+```
+
+The denominator is the **annuity factor** (present value of PKR 1 per period).
+
+**Example (simplified 2-year annual swap, KIBOR market):**
+- 1-year spot rate: 12%
+- 2-year spot rate: 13%
+- D(1) = 1/1.12 = 0.8929
+- D(2) = 1/1.13² = 0.7831
+
+```
+Par swap rate = (1 − 0.7831) / (0.8929 + 0.7831)
+             = 0.2169 / 1.6760
+             = 12.94%
+```
+
+So the 2-year par swap rate is approximately 12.94% — between the 1-year and 2-year spot rates, as expected.
+
+### Swap Risk: DV01 and Duration
+
+A swap's risk is measured by its DV01 (dollar value of a 1bp move in rates):
+
+```
+DV01_swap = DV01_fixed_leg − DV01_floating_leg
+```
+
+For a receiver swap (receive fixed, pay floating):
+- Rising rates → fixed leg value falls, floating leg value rises less (short reset period)
+- Net effect: receiver swap loses value when rates rise (positive duration)
+
+**Duration of a swap:**
+A 5-year receiver swap behaves similarly to a 5-year bond in terms of rate sensitivity — it has approximately 4.5 years of modified duration.
+
+### Pakistan KIBOR Swap Market
+
+**KIBOR (Karachi Interbank Offered Rate):** The benchmark floating rate in Pakistan, published daily by NIBA (National Institute of Banking and Finance) for tenors from 1 week to 1 year.
+
+**Pakistan IRS market:**
+- OTC market between commercial banks and corporate clients
+- Tenors: 1 to 5 years most liquid
+- Typical users: corporations with floating-rate debt hedging to fixed; banks managing ALM
+- Market makers: HBL, MCB, UBL, Standard Chartered Pakistan
+
+**FERROQUANT application:**
+- Receive fixed on 3-year KIBOR swap → bullish view on rates (SBP cutting cycle)
+- Pay fixed on 2-year KIBOR swap → bearish rates view, or hedging floating-rate portfolio exposure
+- Basis trade: receive fixed on 3-year swap + short 3-year PIBs → express view on swap-bond spread
+
+---
+
+## 2. Caps, Floors, and Swaptions (Revisited in Depth)
+
+### Cap Mechanics
+
+A cap is a portfolio of caplets, each protecting against KIBOR exceeding the cap strike on one reset date.
+
+**Caplet payoff at reset date t:**
+```
+Payoff = Notional × max(KIBOR_t − K, 0) × Δt
+```
+
+**Application — Corporate borrower hedging:**
+FERROQUANT's portfolio company has a PKR 2B floating-rate TFC at KIBOR + 150bps. To cap borrowing costs at 17%:
+- Buy a KIBOR cap at strike 15.5% (15.5% + 1.5% spread = 17% effective)
+- If KIBOR exceeds 15.5%, the caplet pays the excess, effectively capping the borrowing cost at 17%
+- Cost: the cap premium (paid upfront)
+
+**Cap pricing — Black's model:**
+Each caplet is priced as a call option on the forward KIBOR rate:
+```
+Caplet_t = Notional × Δt × D(t) × [F_t × N(d₁) − K × N(d₂)]
+
+d₁ = [ln(F_t/K) + (σ²/2)T] / (σ√T)
+d₂ = d₁ − σ√T
+```
+
+Where F_t is the forward KIBOR for period t, σ is the cap volatility, and D(t) is the discount factor.
+
+### Floor Mechanics
+
+A floor is the opposite of a cap — it pays when rates fall below the strike:
+```
+Floorlet payoff = Notional × max(K − KIBOR_t, 0) × Δt
+```
+
+**Application:** A PIB portfolio manager buys a KIBOR floor at 10% to protect minimum income if SBP cuts rates aggressively.
+
+**Put-call parity for caps and floors:**
+```
+Cap − Floor = Payer Swap (at same strike and maturity)
+```
+
+This parity relationship allows caps and floors to be priced relative to swap rates.
+
+### Collar — Zero-Cost Hedging
+
+**Buy a cap + sell a floor at a lower strike = collar**
+
+The premium received from selling the floor offsets (partially or fully) the premium paid for the cap.
+
+**Zero-cost collar:** Set cap and floor strikes such that premiums exactly offset. The borrower gets rate protection without paying upfront — but gives up the benefit if rates fall below the floor.
+
+**FERROQUANT collar example:**
+- Floating-rate borrower at KIBOR + 150bps
+- Buy cap at 15%, sell floor at 10%
+- If KIBOR stays between 10% and 15%: no payoff from collar, borrower pays market KIBOR
+- If KIBOR > 15%: cap pays, effective rate capped at 16.5%
+- If KIBOR < 10%: borrower must pay (floor means they "give back" the benefit of low rates)
+
+### Swaptions in Depth
+
+A swaption gives the right to enter a swap at a future date at a pre-agreed fixed rate.
+
+**Payer swaption:** Right to pay fixed / receive floating — valuable if rates rise above the strike
+**Receiver swaption:** Right to receive fixed / pay floating — valuable if rates fall below the strike
+
+**Uses:**
+- **Cancellable swap:** A corporation enters a 5-year swap with a 2-year cancellation option. The option to cancel is equivalent to owning a 3-year receiver swaption expiring in 2 years.
+- **Mortgage prepayment hedging:** A bank with fixed-rate mortgage assets and the embedded prepayment option (borrowers prepay when rates fall) hedges with receiver swaptions.
+- **Locking in future issuance rate:** A company planning to issue a 5-year bond in 6 months buys a 6-month into 5-year payer swaption. If rates rise, the swaption pays off, partially offsetting the higher bond coupon.
+
+---
+
+## 3. Credit Default Swaps (CDS)
+
+### CDS Mechanics
+
+A CDS is an insurance contract against the default of a reference entity:
+
+- **Protection buyer:** Pays a fixed periodic premium (the CDS spread, in bps per annum) and receives par minus recovery value if the reference entity defaults
+- **Protection seller:** Receives the spread, pays par minus recovery on default
+
+```
+Annual CDS premium = CDS Spread × Notional
+
+On default:
+  Physical settlement: buyer delivers defaulted bond, receives par
+  Cash settlement: buyer receives (1 − Recovery Rate) × Notional
+```
+
+**CDS spread as credit risk measure:** The CDS spread is the market's instantaneous pricing of default risk. A 200bps CDS spread means the market charges 2% per year for protection.
+
+**Rough approximation:**
+```
+CDS Spread ≈ Default Probability × (1 − Recovery Rate)
+```
+
+If the market expects 5% annual default probability with 40% recovery:
+CDS Spread ≈ 5% × (1 − 0.40) = 3.0% = 300bps
+
+### CDS Pricing: The Survival Probability Framework
+
+Formally, CDS pricing equates the PV of premium payments to the PV of the default protection:
+
+**Premium leg PV:**
+```
+PV_premium = Σ Spread × Δt × D(t) × Q(t)
+```
+
+Where Q(t) is the survival probability to time t.
+
+**Protection leg PV:**
+```
+PV_protection = (1 − R) × Σ D(t) × [Q(t−1) − Q(t)]
+```
+
+At fair value: PV_premium = PV_protection. Solving gives the par CDS spread.
+
+**Hazard rate (λ):** The instantaneous default probability rate. If constant:
+```
+Q(t) = e^(−λt)
+λ ≈ CDS Spread / (1 − Recovery Rate)
+```
+
+**Bootstrap the hazard rate curve** from observed CDS spreads across maturities (1yr, 3yr, 5yr, 7yr, 10yr) — analogous to bootstrapping the yield curve from bond prices.
+
+### CDS-Bond Basis Trade
+
+The **basis** is the CDS spread minus the bond spread (Z-spread or asset swap spread):
+```
+Basis = CDS Spread − Bond Spread
+```
+
+**In theory:** The basis should be near zero — buying protection via CDS should cost approximately the same as the credit spread earned by holding the bond.
+
+**Positive basis (CDS > Bond spread):**
+- Trade: Short the CDS (sell protection) + Long the bond
+- Both positions gain from spread tightening
+- P&L: CDS spread income − bond coupon financing cost
+- Risk: Default — you pay out on the CDS and the bond falls in value simultaneously
+
+**Negative basis (CDS < Bond spread):**
+- Trade: Long CDS (buy protection) + Long the bond
+- The bond earns more than the CDS costs — a "riskless" carry if CDS and bond are perfect substitutes
+- Risk: Cheapest-to-deliver option (in physical settlement, buyer delivers the cheapest defaulted bond), repo market access
+- This was a popular trade pre-2008; funding crisis killed it (bond repo dried up)
+
+**Pakistan CDS:** Pakistan sovereign CDS (USD-denominated) trades actively in international markets (Bloomberg: PAKIST CDS). Corporate CDS does not exist for Pakistani corporates — credit analysis is direct/bilateral.
+
+### CDS Index Products
+
+**iTraxx and CDX:** Standardized baskets of 125 investment-grade CDS (iTraxx Europe, CDX.NA.IG). Trading the index is cheaper and more liquid than trading single-name CDS.
+
+**Uses:**
+- Macro credit view: buy/sell CDX as a beta hedge for a credit portfolio
+- Basis trade: index vs single names (basis between the index and the basket of single names can dislocate)
+- Curve trades: 5-year vs 10-year CDX spread
+
+---
+
+## 4. Structured Credit: CDOs and CLOs
+
+### CDO Mechanics
+
+A Collateralized Debt Obligation (CDO) pools credit-risky assets and issues tranched securities with different risk/return profiles from that pool.
+
+**Cash CDO structure:**
+```
+Asset Pool (Corporate bonds, loans, ABS)
+        ↓
+   SPV (Special Purpose Vehicle)
+        ↓ Issues tranches:
+   ┌─────────────────────────────┐
+   │ AAA Senior Tranche (70%)   │ → Lowest yield, first loss protection
+   │ AA Junior Senior (10%)     │
+   │ BBB Mezzanine (10%)        │ → Higher yield
+   │ BB Subordinate (5%)        │
+   │ Equity / First Loss (5%)   │ → Highest yield, absorbs first losses
+   └─────────────────────────────┘
+```
+
+**Tranching mechanics:**
+- The equity tranche absorbs the first 5% of portfolio losses — wipes out completely before senior tranches are touched
+- The AAA senior tranche is protected by the 30% "subordination" below it — losses must exceed 30% before it is impaired
+- Higher subordination = lower probability of loss = AAA rating = lower yield
+
+**The correlation problem:**
+If assets in the pool default independently (low correlation), the equity tranche absorbs expected losses and senior tranches are safe. If assets default together (high correlation — as in 2008), even senior tranches can be impaired.
+
+**CDO squared:** CDO whose underlying assets are tranches of other CDOs. Extreme complexity, extreme sensitivity to correlation assumptions. A major contributor to the 2008 financial crisis.
+
+### CLO Mechanics
+
+A Collateralized Loan Obligation (CLO) is a CDO backed specifically by leveraged loans (senior secured bank loans to leveraged companies).
+
+**Why CLOs matter:**
+- CLOs are the dominant buyer of leveraged loans (60–70% of US leveraged loan demand)
+- Without CLO demand, the leveraged buyout market would not exist at its current scale
+- CLO equity is the highest-risk, highest-return tranche — typically targets 12–18% IRR
+
+**CLO structure:**
+- **Manager:** Active portfolio manager selecting and managing the loan portfolio
+- **Reinvestment period:** Typically 4–5 years where loan repayments are reinvested
+- **Amortization period:** Loan repayments flow through to tranches in order of seniority
+- **Overcollateralization test (OC test):** If collateral falls below a threshold, interest is diverted from junior tranches to repay senior tranches — the CLO's self-correcting mechanism
+
+**CLO equity economics:**
+- Buy loans at ~95 cents on the dollar
+- Finance 90% of the purchase with tranched debt (AAA through BB notes)
+- Equity tranche investor funds the remaining 10% of the capital structure
+- Receive the "excess spread" — the difference between loan interest received and note interest paid
+- Target: 12–18% IRR depending on vintage and credit cycle
+
+**Pakistan CLO relevance:** CLOs don't exist in Pakistan (no leveraged loan market). However:
+- FERROQUANT may encounter CLO equity or debt as investment opportunities in international credit markets
+- Understanding CLO mechanics is essential for credit-focused quant funds analyzing structured products
+- Pakistan's TFC market (corporate bonds) could theoretically support a local CLO structure for bank NPL securitization
+
+### Synthetic CDO and the Gaussian Copula
+
+A synthetic CDO takes credit risk through CDS rather than holding physical bonds. The reference portfolio is a basket of single-name CDS, and the tranches reference the credit risk of that basket.
+
+**Gaussian copula model (Li, 2000):**
+Used to model the joint default probability of assets in a CDO — how likely are multiple assets to default together?
+
+```
+C(F₁, F₂, ..., Fₙ; ρ) = Φₙ(Φ⁻¹(F₁), Φ⁻¹(F₂), ..., Φ⁻¹(Fₙ); ρ)
+```
+
+The model reduces the entire correlation structure to a single parameter ρ — the correlation coefficient in the Gaussian copula.
+
+**The flaw that helped cause 2008:**
+The Gaussian copula assumes that tail correlations equal average correlations. In reality, assets that are modestly correlated in normal times become highly correlated in crises (they all default together). The model massively underestimated the probability of widespread simultaneous defaults, causing AAA tranches to be priced as far safer than they were.
+
+**Post-2008:** The Gaussian copula has been largely replaced by more sophisticated models that allow for tail dependence — Clayton copula (strong lower tail dependence), Student-t copula (symmetric tail dependence), and others covered in Module 84.
+
+---
+
+## 5. Interest Rate Risk Management for FERROQUANT
+
+### Duration Management
+
+FERROQUANT's PIB portfolio has interest rate risk. Key tools:
+
+**Swap overlay:** Instead of selling PIBs to reduce duration, enter a payer swap (pay fixed, receive floating). Cheaper to execute, no disruption to the physical bond portfolio, fully reversible.
+
+**Futures overlay:** Short PIB futures (if available) or short KTB (Karachi Treasury Bill) futures. PSX has limited fixed income futures — SBP repo/reverse repo is the main rate instrument.
+
+**Example:**
+- FERROQUANT holds PKR 500M of 10-year PIBs (duration ≈ 7 years)
+- DV01 = PKR 500M × 7 × 0.0001 = PKR 350,000 per basis point
+- FERROQUANT wants to reduce duration to 4 years
+- Solution: Enter payer swap with duration 7 years × notional to offset 3 years of duration
+- Payer swap notional needed ≈ PKR 500M × (3/7) ≈ PKR 215M notional
+
+### Credit Risk Management
+
+**CDS hedge for corporate bond holdings:**
+FERROQUANT holds PKR 200M of a corporate TFC (credit rating A-/BBB+). To hedge credit risk:
+- Buy CDS protection on the issuer (if available in Pakistan — limited)
+- Alternative: sell the TFC in the secondary market (illiquid in Pakistan)
+- Alternative: short the issuer's equity as a partial hedge (equity falls when credit deteriorates)
+
+**Credit spread monitoring:**
+Track the issuer's bond spreads (Z-spread over PIBs) as a credit health indicator. Widening spreads signal deteriorating credit before an actual rating action.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT is entering a 3-year pay-fixed, receive-floating KIBOR swap with the following market data:
+   
+   | Maturity | Spot Rate |
+   |---|---|
+   | 1 year | 12.00% |
+   | 2 years | 12.80% |
+   | 3 years | 13.20% |
+   
+   (a) Calculate the discount factors D(1), D(2), and D(3).
+   (b) Calculate the 3-year par swap rate (annual settlement assumption).
+   (c) One year later, rates have shifted: 1-year rate = 10%, 2-year rate = 10.8%. The swap's remaining life is 2 years with a fixed rate locked in from (b). Is FERROQUANT in-the-money or out-of-the-money on this swap? Calculate the mark-to-market value.
+   (d) FERROQUANT's portfolio has PKR 2B notional of 3-year receiver swaps. The DV01 per PKR 1B notional is PKR 250,000/bp. The SBP unexpectedly cuts rates by 75bps in one meeting. Estimate the P&L impact.
+
+2. FERROQUANT's credit analyst identifies the following for a PSX-listed company:
+   - 5-year TFC spread over PIBs: 350bps (Z-spread)
+   - Estimated annual default probability: 4%
+   - Expected recovery rate if default: 35%
+   
+   (a) Calculate the theoretical CDS spread using the approximate formula. Is the TFC spread (350bps) consistent with the theoretical CDS spread given these default assumptions?
+   (b) If FERROQUANT buys PKR 200M of this TFC and simultaneously buys CDS protection at 200bps (hypothetically available), calculate the annual net carry. Is this a positive carry trade? What risk remains?
+   (c) An investor argues: "The TFC spread of 350bps means FERROQUANT earns 3.5% extra return with only 4% default risk — that's great value." Identify three flaws in this reasoning.
+   (d) FERROQUANT cannot access CDS on this name. Describe two alternative hedging approaches to reduce the credit risk in this TFC position, and evaluate each.
+
+3. A Gulf investment bank presents FERROQUANT with an opportunity to invest in the equity tranche of a new CLO backed by Gulf leveraged loans:
+   
+   - CLO collateral: 150 Gulf corporate loans, average yield SOFR + 350bps
+   - Capital structure: 70% AAA notes (SOFR + 120bps), 15% AA-A notes, 10% BBB-BB notes, 5% Equity
+   - Expected equity tranche return: 14% IRR base case
+   - Investment size: USD 5M (5% of the equity tranche)
+   
+   (a) Explain the "excess spread" mechanic: why does the equity tranche expect 14% IRR when the underlying loans yield only SOFR + 350bps?
+   (b) The base case assumes 2% annual defaults with 50% recovery. Stress test: if defaults rise to 6% annually and recovery falls to 30%, what qualitatively happens to the equity tranche? To the AAA tranche?
+   (c) The bank used a Gaussian copula with correlation ρ = 0.25 to size the tranches. Why might this underestimate the risk to the AAA tranche in a Gulf-wide economic downturn?
+   (d) Should FERROQUANT invest? Identify the three most important due diligence questions to ask the CLO manager before deciding.
+
+<ArticleNav
+  prev={{ title: "Module 80 — Regulation for Investment Managers", href: "/financial-strategy/module-80-regulation-investment-managers" }}
+  next={{ title: "Module 82 — Commodity Markets & Trading", href: "/financial-strategy/module-82-commodity-markets-trading" }}
+/>
