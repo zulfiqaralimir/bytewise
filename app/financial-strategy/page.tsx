@@ -208,7 +208,7 @@ const trackB: PartEntry[] = [
     part: "Part XXIII — Portfolio Management",
     modules: [
       { number: "Module 73", title: "Portfolio Construction & Optimization", description: "Markowitz to Black-Litterman — efficient frontier, risk parity, risk budgeting, factor exposure management, and rebalancing.", href: "/financial-strategy/module-73-portfolio-construction-optimization" },
-      { number: "Module 74", title: "Hedge Fund Strategies In Depth",        description: "Long/short equity, global macro, event-driven, relative value, CTA — mechanics, risk characteristics, and hedge fund evaluation.", href: "/financial-strategy/module-74-hedge-fund-strategies" },
+      { number: "Module 74", title: "Hedge Fund Strategies In Depth",        description: "Long/short equity, global macro, event-driven, relative value, CTA — mechanics, risk characteristics, and hedge fund evaluation.", href: "/financial-strategy/module-74-hedge-fund-strategies-in-depth" },
       { number: "Module 75", title: "Performance Measurement & Attribution", description: "GIPS compliance, TWR vs MWR, Brinson attribution, factor-based attribution, and benchmark construction.", href: "/financial-strategy/module-75-performance-measurement" },
     ],
   },

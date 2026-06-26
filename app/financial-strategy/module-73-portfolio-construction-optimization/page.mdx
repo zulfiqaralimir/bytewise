@@ -1,0 +1,456 @@
+export const metadata = {
+  title: "Module 73 — Portfolio Construction & Optimization | Financial Strategy — ByteWise",
+  description: "Markowitz mean-variance optimization, estimation error and shrinkage, Black-Litterman model, risk parity, risk budgeting, factor exposure management, and portfolio rebalancing.",
+  openGraph: { title: "Module 73 — Portfolio Construction & Optimization | Financial Strategy", description: "Efficient frontier, Black-Litterman, risk parity, factor neutralization, rebalancing — portfolio construction for quants.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 73 — Portfolio Construction & Optimization
+
+How to build portfolios that are genuinely optimal — not just optimal on paper. From Markowitz's efficient frontier to Black-Litterman's view incorporation, risk parity's equal-risk philosophy, and the practical challenges of factor exposure management and rebalancing in live markets. The gap between textbook portfolio theory and what actually works is large — this module covers both.
+
+## Learning Objectives
+
+- Construct the efficient frontier and identify the tangency portfolio
+- Diagnose and correct the estimation error problem in mean-variance optimization
+- Apply the Black-Litterman model to incorporate active views into portfolio construction
+- Build a risk parity portfolio and understand when it outperforms MVO
+- Manage intended and unintended factor exposures in a multi-asset portfolio
+- Design a rebalancing policy that balances tracking error and transaction costs
+
+---
+
+## 1. Mean-Variance Optimization
+
+### The Markowitz Framework
+
+Harry Markowitz (1952) formalized the intuition that diversification reduces risk. His insight: what matters is not the risk of each asset in isolation, but how assets' returns move together.
+
+**The optimization problem:**
+
+Minimize portfolio variance:
+```
+min   wᵀΣw
+ w
+
+subject to:
+  wᵀμ = μ_target     (target return constraint)
+  wᵀ1 = 1             (weights sum to 1)
+  wᵢ ≥ 0 (optional)  (long-only constraint)
+```
+
+Where:
+- **w** = vector of portfolio weights
+- **Σ** = covariance matrix of returns
+- **μ** = vector of expected returns
+
+### The Efficient Frontier
+
+Solving the optimization across all possible target returns traces the **efficient frontier** — the set of portfolios offering the highest return for each level of risk.
+
+```
+Expected Return
+     |              * Efficient Frontier
+     |           *
+     |        *
+     |      *
+     |    *
+     |  * ← Minimum Variance Portfolio
+     | *
+     |*
+     +--------------------------- Risk (Std Dev)
+```
+
+**Key portfolios on the frontier:**
+- **Minimum variance portfolio (MVP):** Lowest risk achievable. No return target imposed.
+- **Tangency portfolio:** Where a line from the risk-free rate is tangent to the frontier — the highest Sharpe ratio portfolio.
+- **Capital Market Line (CML):** The line from the risk-free rate through the tangency portfolio. Every point on the CML is a combination of the risk-free asset and the tangency portfolio.
+
+**CAPM implication:** If all investors use MVO with the same inputs, they all hold the same tangency portfolio — the market portfolio. The CML becomes the Security Market Line.
+
+### Practical MVO: Python Implementation Sketch
+
+```python
+import numpy as np
+from scipy.optimize import minimize
+
+def portfolio_variance(weights, cov_matrix):
+    return weights @ cov_matrix @ weights
+
+def efficient_frontier(mu, cov, n_points=100):
+    n = len(mu)
+    results = []
+    
+    for target_return in np.linspace(mu.min(), mu.max(), n_points):
+        constraints = [
+            {'type': 'eq', 'fun': lambda w: w @ mu - target_return},
+            {'type': 'eq', 'fun': lambda w: w.sum() - 1}
+        ]
+        bounds = [(0, 1)] * n  # long-only
+        w0 = np.ones(n) / n
+        
+        res = minimize(portfolio_variance, w0, args=(cov,),
+                      method='SLSQP', bounds=bounds,
+                      constraints=constraints)
+        
+        results.append({
+            'weights': res.x,
+            'return': target_return,
+            'vol': np.sqrt(res.fun)
+        })
+    return results
+```
+
+**KSE-100 efficient frontier:** Using 5 years of monthly KSE-100 constituent returns, the tangency portfolio would typically be concentrated in 8–15 stocks (OGDC, HBL, MCB, Engro, Lucky) — not the "diversified" portfolio the theory suggests, because Pakistani stocks are highly correlated during stress periods.
+
+---
+
+## 2. The Estimation Error Problem
+
+### Why MVO Breaks in Practice
+
+Markowitz optimization requires two inputs:
+1. Expected returns **μ** — extremely hard to estimate precisely
+2. Covariance matrix **Σ** — more stable, but still noisy for large universes
+
+The fundamental problem: **optimization amplifies estimation errors**. The optimizer treats noise in your return estimates as signal and constructs extreme positions to exploit it.
+
+**Result:** MVO portfolios in practice are:
+- Highly concentrated (optimizer puts everything in the stocks with the highest estimated μ)
+- Unstable (small changes in estimates produce dramatically different weights)
+- Terrible out-of-sample (the estimated μ were wrong, the extreme bets lose)
+
+**Famous result (Michaud 1989):** MVO portfolios frequently perform worse out-of-sample than an equally-weighted portfolio. The 1/N portfolio is a tough benchmark.
+
+### Solution 1: Ignore Returns, Optimize on Risk Only
+
+The **minimum variance portfolio** requires only Σ (no return estimates). Because estimating Σ is more reliable than estimating μ, the MVP is more stable and better out-of-sample than tangency portfolio estimation.
+
+**Finding:** In many studies, the minimum variance portfolio beats the market-cap weighted index out of sample, particularly in bear markets.
+
+### Solution 2: Michaud Resampling
+
+**Resampled efficiency (Michaud, 1998):**
+1. Generate N simulated return/covariance scenarios by bootstrapping from your data
+2. Optimize on each simulation
+3. Average the resulting weights across all N optimizations
+
+The averaging smooths out the optimizer's tendency to exploit noise. Resampled portfolios are more stable and better diversified than single-optimization MVO.
+
+### Solution 3: Ledoit-Wolf Covariance Shrinkage
+
+For a universe of n assets, the sample covariance matrix requires estimating n(n+1)/2 parameters. With 100 assets and 3 years of monthly data (36 observations), you have 5,050 parameters and only 36 data points — massive estimation error.
+
+**Ledoit-Wolf shrinkage (2004):**
+```
+Σ_shrunk = (1 − α) × Σ_sample + α × Σ_target
+```
+
+Shrink the sample covariance toward a structured target (e.g., constant correlation model or single-factor model). The shrinkage coefficient α is chosen optimally to minimize expected estimation error.
+
+**Effect:** Off-diagonal correlations are pulled toward the mean (reducing extreme correlation estimates), diagonal variances are more stable. Out-of-sample portfolio performance improves significantly.
+
+**Python:** `sklearn.covariance.LedoitWolf` implements this directly.
+
+---
+
+## 3. Black-Litterman Model
+
+### The Problem with Standard MVO
+
+When you run MVO with your estimated μ, the optimizer ignores the market's information. It also requires you to have a view on every asset — most investors have strong views on a few securities but no particular view on most.
+
+Black and Litterman (1990/1992) fixed this by combining:
+1. **Prior:** The market's implied returns (reverse-engineered from market cap weights)
+2. **Views:** Your own active views expressed with confidence levels
+
+### Step 1: Reverse Optimization (Implied Equilibrium Returns)
+
+Start from the assumption that the market portfolio (market-cap weights) is the "optimal" portfolio. Back out the expected returns that would make it optimal:
+
+```
+Π = λ × Σ × w_mkt
+```
+
+Where:
+- **Π** = implied equilibrium excess returns
+- **λ** = risk aversion coefficient (typically 2.5–3.5)
+- **Σ** = covariance matrix
+- **w_mkt** = market-cap weights
+
+These implied returns are the prior — what the market collectively believes.
+
+### Step 2: Express Your Views
+
+Views are expressed as:
+- **P** = pick matrix (which assets your view is about)
+- **Q** = view returns (what you expect)
+- **Ω** = uncertainty of views (diagonal matrix — variance of each view)
+
+**Example views:**
+- View 1: "OGDC will outperform PPL by 3% over the next month" → P = [+1, −1, 0, 0, ...], Q = 3%
+- View 2: "MCB will return 8% next month" → P = [0, 0, +1, 0, ...], Q = 8%
+
+**View confidence (Ω):** Low Ω = high confidence (tight distribution). High Ω = low confidence.
+
+### Step 3: Combine to Get Posterior Returns
+
+Black-Litterman posterior expected returns:
+
+```
+μ_BL = [(τΣ)⁻¹ + PᵀΩ⁻¹P]⁻¹ × [(τΣ)⁻¹Π + PᵀΩ⁻¹Q]
+```
+
+Where τ (tau, typically 0.025–0.05) scales the uncertainty of the prior.
+
+**Result:** The BL posterior blends the market's view with yours, weighted by their relative confidence. If you express no views, BL returns the implied equilibrium and the optimal portfolio is market-cap weights. If you have a strong view, the portfolio tilts toward it proportionally.
+
+**FERROQUANT BL application:**
+- Prior: KSE-100 market-cap weights
+- View 1: FERROQUANT's quant model says OGDC will outperform by 4% next month (IC = 0.3 → moderate confidence)
+- View 2: Macro view that Pakistani banks will outperform by 5% given IMF deal progress (high confidence)
+- BL combines these views with market equilibrium → tilted portfolio without extreme weights
+
+### Why BL Outperforms Pure MVO
+
+- Starts from a sensible prior (market) rather than noisy return estimates
+- Views are expressed with explicit confidence — you can't accidentally put infinite faith in a signal
+- When you have no views, you hold the market — not some extreme optimizer artifact
+- Portfolios are more stable and intuitive than MVO outputs
+
+---
+
+## 4. Risk Parity & Risk Budgeting
+
+### The Problem with Market-Cap Weighting
+
+In a traditional 60/40 portfolio (60% equities, 40% bonds):
+- Equity volatility: ~15% annualized
+- Bond volatility: ~5% annualized
+- Correlation: ~−0.3
+
+Despite being 40% of the portfolio by weight, bonds contribute only ~10% of total portfolio risk. Equities dominate. The 60/40 portfolio is, in risk terms, ~90% equities.
+
+### Risk Parity: Equal Risk Contribution
+
+Risk parity allocates so each asset contributes equally to total portfolio risk.
+
+**Marginal Risk Contribution (MRC):**
+```
+MRC_i = ∂σ_p/∂w_i = (Σw)_i / σ_p
+```
+
+**Risk Contribution (RC):**
+```
+RC_i = w_i × MRC_i
+```
+
+Total risk = Σ RC_i = σ_p
+
+**Equal risk contribution condition:**
+```
+RC_i = RC_j   for all i, j
+```
+
+This requires solving for weights numerically. In a 2-asset portfolio, equal risk means:
+```
+w₁σ₁ = w₂σ₂   →   w₁/w₂ = σ₂/σ₁
+```
+
+Higher volatility asset gets lower weight — the opposite of momentum (which buys what has gone up).
+
+### Risk Parity in Practice
+
+**The leverage problem:** Risk parity portfolios are heavily overweight bonds (low volatility) and underweight equities. To achieve equity-like returns, they must use leverage (typically 2–4× on the bond allocation).
+
+**Historically:** Risk parity has performed well because:
+- Bonds added return (falling rate environment 1980–2020)
+- True diversification across risk sources
+- Low volatility in portfolio returns
+
+**Post-2022 challenge:** When bonds and equities both fall together (rising rates), risk parity's diversification benefit breaks down. The 2022 environment was extremely bad for risk parity strategies.
+
+**Bridgewater's All Weather Portfolio:** The most famous risk parity fund. Ray Dalio's concept of balancing portfolio across four economic environments: growth up/down × inflation up/down.
+
+### Risk Budgeting
+
+A generalization of risk parity: instead of requiring equal risk from each asset, set a **target risk budget**:
+
+```
+RC_i = b_i × σ_p    where Σb_i = 1
+```
+
+This allows you to express views through risk allocation rather than return forecasts. If you're bullish on Pakistani equities, increase their risk budget from 25% to 35%.
+
+**FERROQUANT risk budget example:**
+| Asset Class | Risk Budget |
+|---|---|
+| Pakistan equities (KSE-100) | 35% |
+| Pakistan fixed income (PIBs) | 20% |
+| Gulf equities | 25% |
+| Commodities (oil, gold) | 15% |
+| Cash/T-bills | 5% |
+
+---
+
+## 5. Factor Exposure Management
+
+### Intended vs Unintended Factor Tilts
+
+When a portfolio manager makes active bets, they often take on factor exposures they didn't intend.
+
+**Example:** FERROQUANT's stock picker selects 20 Pakistani equities based on fundamental analysis. The portfolio ends up with:
+- Intended alpha: stock-specific insights
+- Unintended tilts: high beta (all picks are cyclical), value tilt (screens favor low P/B), sector concentration (overweight energy and banks)
+
+If the portfolio underperforms, was it because the stock picks were wrong, or because the factor tilts worked against it? Without decomposing, you can't know.
+
+### Factor Neutralization
+
+**Beta hedging:**
+Remove the market (β) exposure by shorting index futures:
+```
+Hedge ratio = Portfolio Beta × Portfolio Value / Futures Contract Value
+```
+
+A long/short equity portfolio with β = 0 is "market neutral" — its returns are driven purely by stock selection, not market direction.
+
+**Sector neutralization:** For each sector, go long and short within the sector so net sector weight = 0. Eliminates sector rotation risk.
+
+**Factor neutralization:** Construct a portfolio where exposure to each factor (value, momentum, size, quality) is zero. Returns reflect only your stock selection skill.
+
+**The trade-off:** Each constraint reduces freedom and may reduce expected return. Market neutralization eliminates market return. Factor neutralization eliminates factor premia. Only do it for factors you don't want to own.
+
+### Factor Attribution
+
+Decompose portfolio return into factor contributions:
+
+```
+R_portfolio = α + β_mkt × R_mkt + β_value × R_value + β_momentum × R_mom + ε
+```
+
+Estimate betas using regression. Then:
+- **Factor return** = β_factor × realized factor return
+- **Alpha** = residual return not explained by factors
+
+This tells you whether outperformance came from:
+- Market timing (β_mkt timing)
+- Factor tilts (value, momentum exposure)
+- True alpha (stock selection)
+
+---
+
+## 6. Portfolio Rebalancing
+
+### Why Rebalancing Is Necessary
+
+Over time, winners grow in weight and losers shrink. Without rebalancing:
+- Factor exposures drift from targets
+- Concentration risk increases
+- The portfolio no longer reflects your investment thesis
+
+**Example:** A PKR 10B portfolio starts 50/50 equities/bonds. After a 30% equity rally, equities become 57% of the portfolio. Without rebalancing, you are unintentionally overweight equities — more risk than intended.
+
+### Rebalancing Triggers
+
+**Calendar rebalancing:**
+Rebalance at fixed intervals (monthly, quarterly). Simple but ignores how much the portfolio has drifted.
+
+**Threshold (tolerance band) rebalancing:**
+Rebalance only when an asset class drifts beyond a threshold (e.g., ±5% of target).
+- More efficient: only trade when necessary
+- Requires monitoring
+- Typical bands: ±3–5% for asset classes, ±1–2% for individual stocks
+
+**Optimal rebalancing (cost-benefit):**
+Trade only when the cost of not rebalancing (tracking error relative to target) exceeds the transaction cost of rebalancing. Requires estimating both.
+
+**Best practice for FERROQUANT:** Threshold rebalancing at ±3% for asset class level, ±1.5% for individual positions, reviewed daily by risk system.
+
+### Transaction Cost-Aware Rebalancing
+
+Blind rebalancing ignores transaction costs. In practice, you should:
+1. Calculate the current allocation and the target
+2. Identify trades needed to reach target
+3. Estimate transaction costs for each trade
+4. Trade only where benefit (variance reduction, factor alignment) exceeds cost
+
+**Netting:** Before executing, look for natural offsets. If buying Pakistan equities for rebalancing and simultaneously receiving redemption proceeds, net the two flows instead of executing separately.
+
+### Tax-Aware Rebalancing
+
+For taxable investors (less relevant for institutional funds, very relevant for HNWI portfolios):
+- **Loss harvesting:** When a position is below cost, sell to crystallize the loss (reduces capital gains tax), then buy a similar (but not identical) instrument to maintain exposure
+- **Gain deferral:** Avoid selling positions with large embedded gains unless absolutely necessary
+- **Lot optimization:** When selling a partial position, choose the lot with the highest cost basis to minimize capital gains
+
+**Pakistan CGT:**
+Capital gains tax in Pakistan depends on holding period:
+- < 1 year: 15%
+- 1–2 years: 12.5%
+- 2–3 years: 10%
+- > 3 years: 0% (exempt)
+
+For FERROQUANT managing taxable accounts, hold periods beyond 3 years eliminate CGT entirely on equity gains.
+
+### Transition Management
+
+When a portfolio changes manager or strategy, large-scale portfolio restructuring is needed. This is "transition management":
+- The existing portfolio (legacy) must be unwound
+- The new portfolio must be built
+- Both simultaneously, to minimize exposure to the "transition" portfolio (neither old nor new)
+
+**Transition risk:** During transition, you may have no intended exposures — just a mix of what's being sold and bought. This unintended exposure needs to be minimized.
+
+**Transition manager role:** Specialist firms manage transitions using crossing (netting buys/sells in-house), derivatives overlays, and careful sequencing to minimize cost and risk.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT runs a PKR 5B long-only Pakistan equity fund. The team estimates the following for 5 liquid KSE stocks:
+
+   | Stock | Expected Return (ann.) | Volatility (ann.) |
+   |---|---|---|
+   | OGDC | 14% | 22% |
+   | HBL | 18% | 28% |
+   | Lucky Cement | 22% | 35% |
+   | Engro | 16% | 25% |
+   | PSO | 12% | 30% |
+   
+   Average pairwise correlation: 0.55. Risk-free rate: 13%.
+   
+   (a) Without running the full MVO, explain why MVO might put excessive weight on Lucky Cement. What is the fundamental problem with trusting this result?
+   (b) Why would a minimum variance portfolio likely have lower HBL and Lucky Cement weights despite their high expected returns?
+   (c) If Ledoit-Wolf shrinkage is applied to the correlation matrix, what would happen to the 0.55 average pairwise correlation and why?
+   (d) An equally-weighted portfolio has Sharpe ratio 0.28 in out-of-sample testing. The MVO tangency portfolio has Sharpe ratio 0.18 out-of-sample. What does this tell you about estimation error in the expected return inputs?
+
+2. FERROQUANT wants to apply Black-Litterman to the same 5-stock universe. Market-cap implied returns are approximately equal to current expected returns above. FERROQUANT has two views:
+   
+   - View A: "HBL will outperform OGDC by 6% over the next year" (medium confidence — IC ≈ 0.25)
+   - View B: "Lucky Cement will return 28% next year driven by CPEC infrastructure" (high confidence — IC ≈ 0.50)
+   
+   (a) Express View A as a P matrix row (5-element vector) and a Q value.
+   (b) How should you set Ω (uncertainty) differently for View A vs View B?
+   (c) Without exact calculation, describe qualitatively what the BL posterior return for Lucky Cement would look like relative to the implied equilibrium return of 22%.
+   (d) If FERROQUANT has no views at all, what does BL produce as the optimal portfolio, and what is the intuition?
+
+3. FERROQUANT manages a PKR 3B risk parity portfolio across 4 asset classes. Current volatilities and correlations:
+   
+   | Asset | Volatility | Target Weight (market cap) |
+   |---|---|---|
+   | Pakistan Equities | 20% | 40% |
+   | Pakistan Bonds (PIBs) | 6% | 30% |
+   | Gulf Equities | 18% | 20% |
+   | Commodities (oil/gold) | 22% | 10% |
+   
+   (a) Calculate the approximate risk contribution of each asset class under market-cap weights (simplify: assume zero correlation between asset classes).
+   (b) Which asset class dominates risk in the market-cap weighted portfolio?
+   (c) Solve for the equal risk contribution weights (zero correlation assumption). Show your work.
+   (d) The risk parity portfolio requires 2.5× leverage on Pakistan bonds to achieve a 12% annualized return target. Explain the rationale and identify the key risk this leverage introduces.
+
+<ArticleNav
+  prev={{ title: "Module 72 — Algorithmic & Quantitative Trading Strategies", href: "/financial-strategy/module-72-algorithmic-quantitative-trading-strategies" }}
+  next={{ title: "Module 74 — Hedge Fund Strategies In Depth", href: "/financial-strategy/module-74-hedge-fund-strategies-in-depth" }}
+/>

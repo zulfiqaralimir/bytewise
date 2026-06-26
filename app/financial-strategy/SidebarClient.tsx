@@ -337,6 +337,10 @@ const modules = [
     part: "Module 72 — Algorithmic & Quantitative Trading Strategies",
     chapters: [{ chapter: "Algorithmic & Quantitative Trading Strategies", items: [{ title: "Module 72 — Algorithmic & Quantitative Trading Strategies", href: "/financial-strategy/module-72-algorithmic-quantitative-trading-strategies" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 73 — Portfolio Construction & Optimization",
+    chapters: [{ chapter: "Portfolio Construction & Optimization", items: [{ title: "Module 73 — Portfolio Construction & Optimization", href: "/financial-strategy/module-73-portfolio-construction-optimization" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
