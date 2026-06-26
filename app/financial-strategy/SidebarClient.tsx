@@ -489,6 +489,106 @@ const modules = [
     part: "Module 110 — IPO Execution",
     chapters: [{ chapter: "IPO Execution", items: [{ title: "Module 110 — IPO Execution", href: "/financial-strategy/module-110-ipo-execution" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 111 — Rights Issues, Follow-On & Block Trades",
+    chapters: [{ chapter: "Rights Issues, Follow-On & Block Trades", items: [{ title: "Module 111 — Rights Issues, Follow-On & Block Trades", href: "/financial-strategy/module-111-rights-issues-follow-on" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 112 — Convertible Bonds & Hybrid Securities",
+    chapters: [{ chapter: "Convertible Bonds & Hybrid Securities", items: [{ title: "Module 112 — Convertible Bonds & Hybrid Securities", href: "/financial-strategy/module-112-convertible-bonds-hybrids" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 113 — ECM in the Gulf & Pakistan",
+    chapters: [{ chapter: "ECM in the Gulf & Pakistan", items: [{ title: "Module 113 — ECM in the Gulf & Pakistan", href: "/financial-strategy/module-113-ecm-gulf-pakistan" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 114 — ECM Regulation & Liability",
+    chapters: [{ chapter: "ECM Regulation & Liability", items: [{ title: "Module 114 — ECM Regulation & Liability", href: "/financial-strategy/module-114-ecm-regulation-liability" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 115 — Investment Grade Bonds",
+    chapters: [{ chapter: "Investment Grade Bonds", items: [{ title: "Module 115 — Investment Grade Bonds", href: "/financial-strategy/module-115-investment-grade-bonds" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 116 — High Yield Bonds & Leveraged Loans",
+    chapters: [{ chapter: "High Yield Bonds & Leveraged Loans", items: [{ title: "Module 116 — High Yield Bonds & Leveraged Loans", href: "/financial-strategy/module-116-high-yield-leveraged-loans" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 117 — Sukuk & Islamic Bonds",
+    chapters: [{ chapter: "Sukuk & Islamic Bonds", items: [{ title: "Module 117 — Sukuk & Islamic Bonds", href: "/financial-strategy/module-117-sukuk-islamic-bonds" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 118 — Syndicated Lending",
+    chapters: [{ chapter: "Syndicated Lending", items: [{ title: "Module 118 — Syndicated Lending", href: "/financial-strategy/module-118-syndicated-lending" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 119 — LBO Financing & Credit Agreement Negotiation",
+    chapters: [{ chapter: "LBO Financing & Credit Agreement Negotiation", items: [{ title: "Module 119 — LBO Financing & Credit Agreement Negotiation", href: "/financial-strategy/module-119-lbo-financing" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 120 — Liability Management & Debt Restructuring",
+    chapters: [{ chapter: "Liability Management & Debt Restructuring", items: [{ title: "Module 120 — Liability Management & Debt Restructuring", href: "/financial-strategy/module-120-liability-management" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 121 — Restructuring Advisory",
+    chapters: [{ chapter: "Restructuring Advisory", items: [{ title: "Module 121 — Restructuring Advisory", href: "/financial-strategy/module-121-restructuring-advisory" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 122 — Distressed M&A",
+    chapters: [{ chapter: "Distressed M&A", items: [{ title: "Module 122 — Distressed M&A", href: "/financial-strategy/module-122-distressed-ma" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 123 — Special Situations: Activism & Hostile Takeovers",
+    chapters: [{ chapter: "Special Situations: Activism & Hostile Takeovers", items: [{ title: "Module 123 — Special Situations: Activism & Hostile Takeovers", href: "/financial-strategy/module-123-special-situations" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 124 — Sovereign Advisory: Privatisation, Bonds & PPP",
+    chapters: [{ chapter: "Sovereign Advisory: Privatisation, Bonds & PPP", items: [{ title: "Module 124 — Sovereign Advisory: Privatisation, Bonds & PPP", href: "/financial-strategy/module-124-sovereign-advisory" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 125 — FIG Advisory: Banks & Insurance",
+    chapters: [{ chapter: "FIG Advisory: Banks & Insurance", items: [{ title: "Module 125 — FIG Advisory: Banks & Insurance", href: "/financial-strategy/module-125-fig-advisory" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 126 — Energy & Infrastructure Advisory",
+    chapters: [{ chapter: "Energy & Infrastructure Advisory", items: [{ title: "Module 126 — Energy & Infrastructure Advisory", href: "/financial-strategy/module-126-energy-infrastructure-advisory" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 127 — TMT & FinTech Advisory",
+    chapters: [{ chapter: "TMT & FinTech Advisory", items: [{ title: "Module 127 — TMT & FinTech Advisory", href: "/financial-strategy/module-127-tmt-fintech-advisory" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 128 — Pakistan IB: Deals, Regulations & Opportunities",
+    chapters: [{ chapter: "Pakistan IB: Deals, Regulations & Opportunities", items: [{ title: "Module 128 — Pakistan IB: Deals, Regulations & Opportunities", href: "/financial-strategy/module-128-pakistan-ib" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 129 — Gulf IB: Saudi Arabia, UAE & Qatar",
+    chapters: [{ chapter: "Gulf IB: Saudi Arabia, UAE & Qatar", items: [{ title: "Module 129 — Gulf IB: Saudi Arabia, UAE & Qatar", href: "/financial-strategy/module-129-gulf-ib" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 130 — Emerging Market IB: Broader Context",
+    chapters: [{ chapter: "Emerging Market IB: Broader Context", items: [{ title: "Module 130 — Emerging Market IB: Broader Context", href: "/financial-strategy/module-130-emerging-market-ib" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 131 — Breaking Into Investment Banking",
+    chapters: [{ chapter: "Breaking Into Investment Banking", items: [{ title: "Module 131 — Breaking Into Investment Banking", href: "/financial-strategy/module-131-breaking-into-ib" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 132 — IB Career Progression: Analyst to MD",
+    chapters: [{ chapter: "IB Career Progression: Analyst to MD", items: [{ title: "Module 132 — IB Career Progression: Analyst to MD", href: "/financial-strategy/module-132-ib-career-progression" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 133 — Ethics & Conflicts of Interest in IB",
+    chapters: [{ chapter: "Ethics & Conflicts of Interest in IB", items: [{ title: "Module 133 — Ethics & Conflicts of Interest in IB", href: "/financial-strategy/module-133-ib-ethics" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 134 — Building an IB Practice in Pakistan & Gulf",
+    chapters: [{ chapter: "Building an IB Practice in Pakistan & Gulf", items: [{ title: "Module 134 — Building an IB Practice in Pakistan & Gulf", href: "/financial-strategy/module-134-building-ib-practice" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 135 — The Future of Investment Banking ✓ Track C Complete",
+    chapters: [{ chapter: "The Future of Investment Banking", items: [{ title: "Module 135 — The Future of Investment Banking", href: "/financial-strategy/module-135-future-of-ib" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

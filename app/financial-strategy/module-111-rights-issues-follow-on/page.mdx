@@ -1,0 +1,143 @@
+export const metadata = {
+  title: "Module 111 — Rights Issues & Follow-On Offerings | Financial Strategy — ByteWise",
+  description: "Rights issue rationale, TERP calculation, underwriting mechanics, accelerated bookbuild, block trade execution, and Pakistan rights issue process under SECP.",
+  openGraph: { title: "Module 111 — Rights Issues & Follow-On Offerings | Financial Strategy", description: "How listed companies raise equity post-IPO — rights issues, accelerated bookbuilds, and block trades in Pakistan and Gulf markets.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 111 — Rights Issues & Follow-On Offerings
+
+Once a company is publicly listed, it can return to capital markets to raise additional equity. Follow-on equity offerings come in several forms: rights issues (giving existing shareholders priority to buy new shares), accelerated bookbuilds (overnight institutional placements), and block trades (large secondary share sales). Each structure has different speed, certainty, and shareholder dilution implications. This module covers the mechanics, economics, and execution of each.
+
+## Learning Objectives
+
+- Calculate the Theoretical Ex-Rights Price (TERP) and discount in a rights issue
+- Design the underwriting structure for a rights issue
+- Execute an accelerated bookbuild (ABB) and block trade
+- Understand the rights issue approval process under SECP (PSX-listed companies)
+- Apply Gulf exchange follow-on mechanics for Tadawul, DFM, and ADX
+
+---
+
+## 1. Rights Issues
+
+### Structure and Rationale
+
+A rights issue offers existing shareholders the right (but not the obligation) to purchase new shares at a discounted price, in proportion to their existing holdings. The key features:
+
+- **Pre-emption rights:** Existing shareholders maintain their proportional ownership if they exercise their rights
+- **Subscription ratio:** e.g., "1 for 4" means 1 new share for every 4 existing shares held
+- **Subscription price:** Set at a discount to the current market price to incentivize take-up
+- **Nil-paid rights:** The rights themselves are tradeable — shareholders who don't want to participate can sell their rights to other investors
+
+**Why companies use rights issues:**
+- Large capital raises (too large for an overnight ABB)
+- Preserves shareholder base (existing shareholders get priority)
+- Regulatory requirement: in some jurisdictions (including Pakistan), listed companies must offer new shares to existing shareholders first
+- Recapitalization: distressed companies raise equity to repair balance sheets
+
+### TERP Calculation
+
+The Theoretical Ex-Rights Price (TERP) is the expected share price after the rights issue, assuming the capital raise succeeds:
+
+```
+TERP = (Existing shares × Current price + New shares × Subscription price)
+       / (Existing shares + New shares)
+```
+
+**Example:**
+- Current shares: 100M
+- Current share price: PKR 50
+- Rights issue: 1 for 4 (25M new shares)
+- Subscription price: PKR 40 (20% discount to market)
+
+```
+TERP = (100M × PKR 50 + 25M × PKR 40) / (100M + 25M)
+     = (PKR 5,000M + PKR 1,000M) / 125M
+     = PKR 6,000M / 125M
+     = PKR 48.00
+```
+
+**Rights value (nil-paid):**
+```
+Rights value = TERP − Subscription price = PKR 48 − PKR 40 = PKR 8 per right
+```
+
+A shareholder who can't afford to subscribe should sell their rights for ~PKR 8 per right to avoid dilution loss.
+
+### Discount to Market
+
+Rights issues are typically priced at a 20–35% discount to the undisturbed share price:
+- Deeper discount → higher probability of full subscription (rights holders more likely to exercise)
+- Shallower discount → higher subscription price → raises more capital per share issued → less dilution
+
+**Pakistan practice:** SECP allows rights issues at a discount; Pakistani rights issues have historically been priced at 20–40% discount to market.
+
+### Underwriting
+
+The company typically appoints an underwriter (usually the IB advisor) who agrees to subscribe for any shares not taken up by existing shareholders. This provides the company with certainty of proceeds.
+
+**Underwriting fee:** 1.5–3% of the underwritten amount (Pakistan); 1.0–2.5% (Gulf).
+
+**Sub-underwriting:** The lead underwriter distributes the underwriting risk to other financial institutions (sub-underwriters) at a lower fee, reducing their own exposure.
+
+**Pakistan rights issue process:**
+1. Board approval
+2. Shareholder approval (EGM) if articles require
+3. SECP filing and approval (minimum 15 working days)
+4. PSX notification
+5. Rights entitlement period (typically 15–30 days)
+6. Subscription and allotment
+7. Listing of new shares on PSX
+
+---
+
+## 2. Accelerated Bookbuild (ABB)
+
+An ABB is an overnight institutional placement — shares are offered to institutional investors, priced, allocated, and announced before the next morning's market open.
+
+**Speed advantage:** Entire process takes 2–12 hours (vs. 4–6 weeks for a rights issue).
+**Dilution:** Existing shareholders are diluted without a pre-emption offer.
+**Size limitation:** Typically used for up to 10–15% of share capital (to limit dilution impact).
+
+**ABB process:**
+1. Decision to launch (company board approves; typically after market close)
+2. Banks launch the "wall crossing" process — approaching large institutional investors with intention to sell
+3. Book opens at 8–10 PM; investors submit orders with price and quantity
+4. Book closes at 6–8 AM the next morning
+5. Price set and allocation announced before market opens
+
+**Pricing:** ABBs are typically priced at a 3–8% discount to the pre-deal close price.
+
+---
+
+## 3. Block Trades
+
+A block trade is a large sale of existing shares (typically by a major shareholder) rather than new share issuance. No new capital raised — proceeds go to the selling shareholder.
+
+**Common use cases:**
+- PE fund selling down its stake post-IPO lock-up
+- Founding family reducing stake to increase free float
+- Government selling shares in a privatizing company
+
+**Execution:** Similar to ABB — overnight institutional placement process. The bank "underwrites" the block (agrees to buy the shares if the book doesn't fill) or runs it on a "best efforts" basis.
+
+**Lock-up provisions:** IPO lock-up agreements typically restrict major shareholders from selling for 6–12 months post-IPO. Block trades can only happen after lock-up expiry (or with a lock-up waiver from underwriting banks).
+
+---
+
+## Self-Assessment
+
+1. Lucky Cement announces a 1-for-5 rights issue at PKR 350/share. Current share price: PKR 440.
+   (a) Calculate TERP and nil-paid rights value.
+   (b) A shareholder holds 10,000 shares and cannot afford to subscribe. What should they do and what will they receive?
+   (c) The rights issue is 75% subscribed. The underwriter takes up the remaining 25%. Calculate the total proceeds raised and the underwriter's cost of the unsubscribed shares.
+   (d) If the company subsequently trades at PKR 420 post-issue, calculate the underwriter's profit or loss on the unsubscribed shares.
+
+2. A Gulf bank (DFM-listed) wants to raise $300M in equity. Advise on ABB vs. rights issue: which structure is more appropriate, and what factors drive the recommendation?
+
+<ArticleNav
+  prev={{ title: "Module 110 — IPO Execution", href: "/financial-strategy/module-110-ipo-execution" }}
+  next={{ title: "Module 112 — Convertible Bonds & Hybrid Securities", href: "/financial-strategy/module-112-convertible-bonds-hybrids" }}
+/>

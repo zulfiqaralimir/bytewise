@@ -1,0 +1,103 @@
+export const metadata = {
+  title: "Module 116 — High Yield Bonds & Leveraged Loans | Financial Strategy — ByteWise",
+  description: "High yield bond covenants, covenant-lite erosion, leveraged loan market, CLO mechanics, Pakistan leveraged finance constraints, and Gulf leveraged finance growth.",
+  openGraph: { title: "Module 116 — High Yield Bonds & Leveraged Loans | Financial Strategy", description: "HY bonds and leveraged loans — covenant packages, covenant-lite trend, CLO mechanics, and leveraged finance in Pakistan and Gulf markets.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 116 — High Yield Bonds & Leveraged Loans
+
+High yield (HY) bonds and leveraged loans finance the debt portion of leveraged buyouts, fund growth for below-investment-grade companies, and provide refinancing for companies with weaker credit. Together they form the "leveraged finance" market — one of the most technically demanding and highest-margin areas of investment banking. This module covers the structure, covenants, and execution of HY bonds and leveraged loans, and their application in Pakistan and Gulf markets.
+
+## Learning Objectives
+
+- Explain the characteristics and investor base for HY bonds vs. investment grade
+- Understand HY covenant packages (incurrence, maintenance, and restricted payments)
+- Explain the leveraged loan market (TLB, revolvers) and covenant-lite evolution
+- Understand CLO (Collateralized Loan Obligation) mechanics
+- Apply leveraged finance concepts to Pakistan and Gulf deal contexts
+
+---
+
+## 1. High Yield Bonds
+
+### Characteristics
+
+| Feature | Investment Grade | High Yield |
+|---|---|---|
+| Credit rating | BBB-/Baa3 or above | BB+/Ba1 or below |
+| Default risk | Low | Elevated |
+| Coupon | Lower (issuer pays less) | Higher (investor demands more) |
+| Covenant package | Light (negative pledge, cross-default) | Heavy (incurrence + maintenance) |
+| Investors | Insurance, pension, central banks | HY mutual funds, hedge funds, CLOs |
+| Typical maturity | 5–30 years | 5–8 years |
+| Callability | Non-call for life | Callable after NC period (e.g., NC3) |
+
+### HY Covenant Package
+
+**Incurrence covenants:** Restrict the issuer from doing something only if certain thresholds are exceeded (not tested continuously):
+- Debt incurrence: cannot incur additional debt unless pro-forma leverage is below X.Xx
+- Restricted payments (RP basket): limits dividends, share buybacks, and other payments to equity
+- Asset sales: proceeds must be reinvested or used to repay debt
+- Transactions with affiliates: must be at arm's length
+
+**Maintenance covenants (revolving credit only):** Tested every quarter:
+- Leverage ratio: net debt / EBITDA must remain below a threshold
+- Interest coverage: EBITDA / interest expense must remain above a threshold
+
+**Covenant-lite (cov-lite):** Since 2013, most leveraged loans have dropped maintenance covenants in favor of incurrence-only testing — closer to HY bond covenant packages. This shift benefits borrowers (PE sponsors) but reduces lender protection.
+
+---
+
+## 2. Leveraged Loans
+
+### Term Loan B (TLB)
+
+The primary LBO financing instrument:
+- Institutional investors (CLOs, loan mutual funds, hedge funds) — not banks primarily
+- Bullet maturity (typically 7 years)
+- Floating rate: SOFR + spread (e.g., SOFR + 375bps)
+- 101 soft call: prepaying within 6 months of issuance → 101% price (1% prepayment premium)
+- Covenant-lite: no maintenance covenants in most recent TLBs
+
+### CLO Mechanics
+
+A CLO (Collateralized Loan Obligation) is a structured vehicle that:
+1. Buys a pool of leveraged loans (typically 150–250 loans, well diversified)
+2. Issues different tranches of notes (AAA → AA → A → BBB → BB → equity) against the loan pool
+3. Senior tranches get rated AAA; they bear losses last
+4. Equity tranche (unrated) gets residual cash flows; bears first loss
+
+**Why CLOs matter:** CLOs are the largest buyers of leveraged loans globally — they fund ~60–70% of the US TLB market. CLO issuance capacity = leveraged loan market capacity.
+
+### Pakistan Leveraged Finance
+
+Pakistan does not have a liquid institutional leveraged loan or HY bond market. Leveraged finance in Pakistan is:
+- Bank-based: senior secured loans from MCB, HBL, UBL, Allied Bank
+- Limited leverage: typically 2–3x EBITDA maximum from local banks
+- High all-in cost: KIBOR-based (high base rate)
+- No CLO market: no structured credit buyers
+
+**Implication for IB:** PE deals in Pakistan are equity-heavy (55–65% equity contribution vs. 35–45% in mature markets). This reduces leveraged returns compared to Western PE.
+
+### Gulf Leveraged Finance
+
+Gulf leveraged finance is more developed than Pakistan but still nascent vs. US/Europe:
+- DIFC-based international banks (HSBC, JP Morgan, Citi) arrange leveraged loans for larger Gulf PE deals
+- GCC banks (FAB, Emirates NBD, Riyad Bank) provide senior debt
+- TLB market: very limited — most Gulf leveraged loans are relationship bank deals, not institutional syndications
+- HY bonds: a few Gulf issuers have tapped the international HY market (GEMS Education, NMC Health — the latter defaulted spectacularly in 2020)
+
+---
+
+## Self-Assessment
+
+1. A PE firm is financing the acquisition of a Pakistani logistics company using local bank debt (KIBOR + 3.5%) at 3.0x EBITDA. Compare this to a typical US LBO financing (SOFR + 4.0%) at 5.5x EBITDA: (a) What is the Pakistan all-in cost of debt vs. US (assume KIBOR 15%, SOFR 5%)? (b) Why does the lower leverage in Pakistan reduce PE returns even if the business performs identically? (c) What structural improvements in Pakistan's capital markets would need to occur to enable higher-leverage PE?
+
+2. Explain CLO mechanics to a corporate treasurer who has never heard of them. Use an analogy. Then explain: (a) why CLOs caused contagion in 2008 (the link between CLO issuance and subprime loans), (b) why CLOs did NOT cause a similar crisis in 2020 despite COVID volatility, and (c) why a Pakistani IB professional should care about the US CLO market even though Pakistan has no CLOs.
+
+<ArticleNav
+  prev={{ title: "Module 115 — Investment Grade Bond Markets", href: "/financial-strategy/module-115-investment-grade-bonds" }}
+  next={{ title: "Module 117 — Sukuk: Islamic Bond Market", href: "/financial-strategy/module-117-sukuk-islamic-bonds" }}
+/>

@@ -1,0 +1,136 @@
+export const metadata = {
+  title: "Module 115 — Investment Grade Bond Markets | Financial Strategy — ByteWise",
+  description: "IG vs HY distinction, bond issuance process, spread pricing (G-spread, I-spread, Z-spread), covenant packages, MTN programs, and Pakistan and Gulf IG bond markets.",
+  openGraph: { title: "Module 115 — Investment Grade Bond Markets | Financial Strategy", description: "Investment grade bond issuance — credit ratings, spread pricing, covenant structure, MTN programs, and Pakistan/Gulf DCM context.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 115 — Investment Grade Bond Markets
+
+Debt Capital Markets (DCM) is where corporations, financial institutions, and sovereigns raise long-term debt from capital market investors. Investment Grade (IG) bonds — issued by borrowers rated BBB-/Baa3 or above — form the backbone of global fixed income markets. Understanding IG bond issuance, pricing, and covenants is essential for any IB professional working in DCM, corporate treasury, or credit.
+
+## Learning Objectives
+
+- Distinguish investment grade from high yield and explain rating agency methodology
+- Explain the IG bond issuance process (roadshow, bookbuild, pricing)
+- Calculate G-spread, I-spread, and Z-spread
+- Understand covenant packages (negative pledge, cross-default, change-of-control)
+- Explain Medium Term Note (MTN) programs
+- Apply DCM knowledge to Pakistan Eurobond issuances and Gulf IG markets
+
+---
+
+## 1. Credit Ratings and IG vs. HY
+
+### Rating Scale
+
+| Rating Agency | Investment Grade | Speculative Grade (High Yield) |
+|---|---|---|
+| S&P / Fitch | AAA to BBB- | BB+ to D |
+| Moody's | Aaa to Baa3 | Ba1 to C |
+
+**Investment grade characteristics:**
+- Low probability of default; strong debt service capacity
+- Institutional investors (insurance, pension, central banks) can typically only hold IG
+- Lower coupon/yield than HY
+
+**Pakistan sovereign rating:**
+Pakistan has been rated B3/B- (speculative grade) by major agencies — reflecting high external debt, low reserves, and fiscal vulnerability. This means Pakistan sovereign bonds (Eurobonds) are technically high yield. However, specific Pakistan issuers with government backing or strong credit metrics may achieve BB/BB+ ratings.
+
+**Gulf IG issuers:**
+ADNOC, Saudi Aramco, First Abu Dhabi Bank, Emirates NBD — all investment grade, many at AA- or above due to sovereign backing.
+
+---
+
+## 2. Bond Issuance Process
+
+### Mandate and Selection
+
+Issuer selects bookrunner banks (typically 2–5 banks for a large IG deal). Selection based on:
+- Prior relationship
+- Distribution strength (which bank can place bonds with the best investors)
+- Research coverage (analyst coverage of the issuer)
+- Balance sheet (can the bank take bonds onto its own balance sheet if needed)
+
+### Investor Roadshow
+
+For a new issuer or a larger deal (new format/currency), a 3–5 day roadshow covers major fixed income investor cities:
+- London (largest IG bond market)
+- New York
+- Asian centres (Singapore, Hong Kong) for dollar bonds with Asian distribution
+
+### Bookbuild and Pricing
+
+**Initial Price Thoughts (IPT):** Bookrunners release a spread indication (e.g., "T+150 area" meaning 150bps over US Treasury).
+
+**Book opens:** Institutional investors submit orders (amount + maximum yield they'll accept).
+
+**Guidance:** As book builds, the bookrunner tightens the spread ("move to T+140 area") — lower spread = lower yield = lower cost for issuer.
+
+**Final pricing:** Typically tightens 10–25bps from IPT on a well-subscribed deal.
+
+---
+
+## 3. Bond Spread Pricing
+
+### Spread Conventions
+
+**G-spread (Government spread):**
+Yield of the bond minus the yield of the benchmark government bond of the same maturity.
+```
+G-spread = Corporate bond yield − Government bond yield (same maturity)
+```
+
+**I-spread (Interpolated spread):**
+Bond yield minus the interpolated swap rate at the same maturity. More common for EUR-denominated bonds.
+
+**Z-spread (Zero-volatility spread):**
+The constant spread added to the zero-coupon Treasury curve at every point such that the present value of the bond's cash flows equals its market price. More precise than G-spread for bonds with optionality.
+
+**OAS (Option-Adjusted Spread):**
+Z-spread adjusted for embedded options (calls, puts). Used for callable bonds and mortgage-backed securities.
+
+---
+
+## 4. Covenant Package
+
+### Standard IG Covenants
+
+IG bond covenants are lighter than HY (IG investors trust the issuer more):
+
+**Negative pledge:** Issuer cannot grant security over assets to other creditors without equally securing the bond (prevents bondholders from being subordinated).
+
+**Cross-default:** If the issuer defaults on any other material debt, the bond is also in default (prevents selective default).
+
+**Change-of-control put:** Bondholders can require the issuer to repurchase bonds at par (or 101%) if a change of control occurs.
+
+**Limitation on mergers/consolidations:** Issuer cannot merge into another entity without the surviving entity assuming all bond obligations.
+
+---
+
+## 5. MTN Programs
+
+A Medium Term Note (MTN) program is a standing authorization that allows an issuer to tap bond markets repeatedly without filing a full prospectus each time. Once the program is established (SEC registration or exchange listing), the issuer can issue tranches at any time by filing a final term sheet.
+
+**Advantages:**
+- Speed: issue in 1–2 days vs. 2–3 weeks for a standalone bond
+- Flexibility: different maturities, currencies, fixed/floating
+- Cost efficiency: one-time program setup cost
+
+**Gulf MTN programs:** Most Gulf IG issuers (ADNOC, FAB, Emirates NBD, Saudi Aramco) maintain active MTN programs, issuing regularly in USD, EUR, and JPY.
+
+**Pakistan MTN equivalent:** Term Finance Certificate (TFC) programs registered with SECP — similar concept but limited to domestic PKR investors.
+
+---
+
+## Self-Assessment
+
+1. Pakistan issues a 5-year Eurobond at 7.5% yield. The US 5-year Treasury yields 4.0%. (a) Calculate the G-spread. (b) If Pakistan's credit rating improves from B3 to B1, how would the G-spread typically change and why? (c) What is the Z-spread and when would it differ materially from the G-spread?
+
+2. A Gulf bank (rated A-) issues a 5-year USD bond via its MTN program. Initial Price Thoughts: T+120 area. Final book is 4x oversubscribed. (a) What final pricing guidance would you expect? (b) What is a negative pledge covenant and why does this bank's bondholders insist on it? (c) The bank is acquired by a sovereign wealth fund post-issuance. Does the change-of-control put trigger? Explain.
+
+<ArticleNav
+  prev={{ title: "Module 114 — ECM Regulation & Prospectus Liability", href: "/financial-strategy/module-114-ecm-regulation-liability" }}
+  next={{ title: "Module 116 — High Yield Bonds & Leveraged Loans", href: "/financial-strategy/module-116-high-yield-leveraged-loans" }}
+/>

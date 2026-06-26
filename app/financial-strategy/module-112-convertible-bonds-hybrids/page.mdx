@@ -1,0 +1,102 @@
+export const metadata = {
+  title: "Module 112 — Convertible Bonds & Hybrid Securities | Financial Strategy — ByteWise",
+  description: "Convertible bond structure and pricing, delta hedging, mandatory convertibles, preference shares, AT1 capital instruments, and Pakistan convertible instruments (TFCs with conversion).",
+  openGraph: { title: "Module 112 — Convertible Bonds & Hybrid Securities | Financial Strategy", description: "Convertible bonds, hybrids, and AT1 capital — structure, pricing, investor appeal, and Pakistan/Gulf context.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 112 — Convertible Bonds & Hybrid Securities
+
+Convertible bonds and hybrid securities sit at the intersection of debt and equity. They offer issuers lower interest costs (in exchange for giving investors equity upside) and offer investors downside protection (bond floor) with equity participation potential. Understanding these instruments is essential for any IB professional working in ECM, DCM, or structured products.
+
+## Learning Objectives
+
+- Explain convertible bond structure, conversion premium, and bond floor
+- Calculate the theoretical value of a convertible bond
+- Understand delta hedging and why hedge funds buy convertibles
+- Distinguish mandatory convertibles, preference shares, and AT1 capital
+- Apply convertible bond knowledge to Pakistan (TFCs) and Gulf markets
+
+---
+
+## 1. Convertible Bond Structure
+
+### Key Terms
+
+A convertible bond is a corporate bond that can be converted into a fixed number of the issuer's equity shares at a predetermined price (the conversion price).
+
+**Conversion ratio:** Number of shares received per bond at conversion.
+```
+Conversion ratio = Face value / Conversion price
+```
+
+**Conversion premium:** How much above the current share price the conversion is struck.
+```
+Conversion premium = (Conversion price − Current share price) / Current share price
+```
+Typical conversion premium: 25–35% for investment-grade issuers; 20–25% for sub-investment grade.
+
+**Bond floor:** The straight bond value (ignoring conversion option) — the minimum value the convertible should trade at.
+
+**Equity value (parity):** Current share price × Conversion ratio.
+
+### Why Investors Buy Convertibles
+
+- **Hedge funds:** Delta hedge the equity option embedded in the convert — extract the implied volatility premium
+- **Long-only hybrid funds:** Get fixed income downside protection with equity participation
+- **Balanced funds:** Convertibles count as fixed income for allocation purposes but provide equity upside
+
+### Convertible Bond Pricing
+
+```
+Convertible Value ≈ Bond Floor + Option Value
+
+Bond floor = PV of coupons + PV of principal (at straight bond yield)
+Option value = Black-Scholes value of the embedded call option on the stock
+```
+
+**Pakistan context:** Pakistan's capital markets don't have a liquid convertible bond market. However, Term Finance Certificates (TFCs) have been issued with conversion features — effectively local-law convertible instruments. These are issued under SECP TFC guidelines.
+
+---
+
+## 2. Mandatory Convertibles
+
+A mandatory convertible automatically converts to equity at maturity — no optionality for the investor.
+
+**Why issuers use mandatory convertibles:**
+- Rating agencies typically treat mandatory converts as equity (improving credit ratios)
+- Lower coupon than straight debt (but investor gets equity at maturity)
+- Useful for companies that want equity capital but prefer to defer dilution
+
+**Pakistan mandatory convertible example:** Some Pakistan companies have issued preference shares with mandatory conversion features as a form of structured equity.
+
+---
+
+## 3. Preference Shares
+
+Preference shares are equity instruments with fixed dividend entitlements, ranking ahead of ordinary shareholders in dividends and liquidation.
+
+**Types:**
+- **Cumulative:** Missed dividends accumulate and must be paid before ordinary dividends
+- **Participating:** Participate in remaining profits after ordinary shareholders receive a minimum return
+- **Redeemable:** Can be bought back by the company at a fixed price/date
+
+**AT1 Capital (banks):**
+Additional Tier 1 (AT1) capital instruments (CoCos — Contingent Convertibles) are hybrid bank capital that convert to equity or are written down if the bank's capital ratio falls below a trigger level (typically 5.125% CET1). Widely issued by Gulf banks to meet Basel III requirements.
+
+---
+
+## Self-Assessment
+
+1. A Pakistani company issues a convertible TFC: face value PKR 1M, coupon 12%, maturity 5 years, conversion price PKR 80, current share price PKR 65.
+   (a) Calculate the conversion ratio and conversion premium.
+   (b) If the share price rises to PKR 100 before maturity, should the investor convert? Calculate the gain vs. holding to maturity.
+   (c) What is the bond floor if the straight bond yield for comparable non-convertible TFCs is 16%?
+
+2. A Gulf bank issues AT1 CoCo bonds at 6.5% coupon with a 5.125% CET1 trigger. Explain to a retail investor why these bonds are riskier than senior bonds, and what happens if the trigger is breached.
+
+<ArticleNav
+  prev={{ title: "Module 111 — Rights Issues & Follow-On Offerings", href: "/financial-strategy/module-111-rights-issues-follow-on" }}
+  next={{ title: "Module 113 — ECM in Gulf & Pakistan Markets", href: "/financial-strategy/module-113-ecm-gulf-pakistan" }}
+/>

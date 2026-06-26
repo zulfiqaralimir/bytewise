@@ -1,0 +1,139 @@
+export const metadata = {
+  title: "Module 119 — Leveraged Buyout Financing | Financial Strategy — ByteWise",
+  description: "LBO capital structure design, leverage sizing criteria, credit agreement negotiation from a PE sponsor perspective, dividend recapitalization, and refinancing strategy.",
+  openGraph: { title: "Module 119 — Leveraged Buyout Financing | Financial Strategy", description: "How PE sponsors finance LBOs — debt structuring, leverage sizing, credit agreement negotiation, dividend recaps, and refinancing in Pakistan and Gulf contexts.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 119 — Leveraged Buyout Financing
+
+Module 101 covered LBO economics and returns. This module goes deeper into the financing side — how PE sponsors structure the debt capital, negotiate with lenders, optimize the capital structure over the holding period, and manage the financing through exit. Understanding LBO financing from the sponsor's perspective is essential for anyone working in PE, leveraged finance, or M&A advisory.
+
+## Learning Objectives
+
+- Design a multi-tranche LBO capital structure
+- Apply leverage sizing criteria (EBITDA coverage, debt-to-EBITDA, total debt capacity)
+- Negotiate key credit agreement provisions from the PE sponsor perspective
+- Understand dividend recapitalization mechanics and return impact
+- Structure a refinancing strategy over the holding period
+- Apply LBO financing to Pakistan and Gulf PE deal contexts
+
+---
+
+## 1. LBO Capital Structure Design
+
+### The Debt Capacity Question
+
+The central question in LBO financing: how much debt can the business support?
+
+**Maximum debt is the lesser of:**
+
+**1. Coverage constraint:**
+```
+Max debt service = EBITDA × (1 − tax rate) − Maintenance capex
+Interest coverage ratio: EBITDA / Interest ≥ 2.0–2.5x (bank covenant)
+```
+
+**2. Leverage constraint:**
+Lenders will not exceed certain leverage multiples based on business quality:
+- Strong, stable cash flows (FMCG, software): up to 5.5–6.0x EBITDA
+- Cyclical, capital-intensive (cement, steel): 3.0–4.0x EBITDA
+- Pakistan bank lending: 2.5–3.5x EBITDA (conservative local market)
+
+**3. Repayment constraint:**
+Debt must be repayable within the expected holding period (5–7 years) for the capital structure to make sense.
+
+### Multi-Tranche Structure
+
+**Typical US/European LBO capital structure:**
+
+| Tranche | Amount | Multiple | Rate | Notes |
+|---|---|---|---|---|
+| Revolving credit facility | 0.5x EBITDA | — | SOFR + 300bps | Undrawn at close |
+| First lien term loan B | 4.0x EBITDA | 4.0x | SOFR + 400bps | Bullet, 7-year |
+| Second lien term loan | 1.0x EBITDA | 5.0x | SOFR + 750bps | Bullet, 8-year |
+| Mezzanine | 0.5x EBITDA | 5.5x | 12% PIK | Bullet, 9-year |
+| Sponsor equity | 40% of EV | — | — | 35–45% typical |
+
+**Pakistan LBO capital structure (realistic):**
+
+| Tranche | Amount | Multiple | Rate |
+|---|---|---|---|
+| Senior secured term loan | 3.0x EBITDA | 3.0x | KIBOR + 2.5% |
+| Subordinated / mezzanine | 0.5x EBITDA | 3.5x | KIBOR + 5% (if available) |
+| Sponsor equity | 60%+ of EV | — | — |
+
+---
+
+## 2. Credit Agreement Negotiation — Sponsor Perspective
+
+### Key Provisions PE Sponsors Fight For
+
+**EBITDA definition (the most contentious):**
+PE sponsors want the broadest possible EBITDA definition — maximizing "Adjusted EBITDA" to show the best leverage ratios.
+- Add backs: restructuring, management fees, transaction costs, synergies not yet realized ("run-rate synergies")
+- The more addbacks permitted, the more leverage the sponsor can take
+
+**Restricted payments basket (RP basket):**
+PE sponsors need the ability to dividend money out of the portfolio company. The RP basket defines:
+- When dividends can be paid (if no default; if leverage below X.Xx)
+- Permitted dividend amounts
+- Carve-outs for management fees paid to the sponsor
+
+**Permitted acquisitions (add-on M&A):**
+Sponsors often want to do bolt-on acquisitions during the holding period. The credit agreement must permit acquisitions if leverage remains below a threshold.
+
+**Equity cure:**
+If the company misses a financial covenant, the sponsor can inject equity to "cure" the breach (count the equity injection as EBITDA for covenant purposes).
+
+**Portability:**
+The credit agreement survives a change of control (the new owner inherits the debt). Useful if the exit is a PE-to-PE sale.
+
+---
+
+## 3. Dividend Recapitalization
+
+A dividend recap is a refinancing done mid-hold to extract equity value before exit:
+1. The company takes on additional debt (or refinances at higher leverage)
+2. Proceeds are paid as a dividend to the PE sponsor
+3. The sponsor receives a cash return during the holding period
+
+**Impact on returns:**
+```
+Without recap: MOIC is 3.0x paid entirely at exit (Year 5)
+With recap: MOIC = (Year 3 dividend + Year 5 exit proceeds) / equity invested
+           = captures more value earlier → higher IRR (time value of money)
+```
+
+**Risk:** Higher leverage post-recap increases bankruptcy risk if business deteriorates.
+
+**Gulf context:** Dividend recaps are used in Gulf PE deals, particularly when interest rates are low. Gulf family office investors are often the PE sponsors — they have longer horizons but still want periodic liquidity.
+
+---
+
+## 4. Refinancing Strategy
+
+**When to refinance:**
+1. Interest rates fall (refinance to reduce cost of debt)
+2. Business improves (better credit metrics → lower spread)
+3. Debt matures (mandatory refinancing)
+4. Pre-exit preparation (clean up capital structure before sale)
+
+**Types of refinancing:**
+- Repricing: negotiate lower spread with existing lenders (quick, no new credit approval needed)
+- Refinancing: replace existing debt with new debt at better terms (requires new credit process)
+- Add-on acquisition financing: tap existing TLB for incremental debt to fund bolt-on
+
+---
+
+## Self-Assessment
+
+1. A Gulf PE firm acquires a UAE food distribution company for $200M. EBITDA is $25M. Design the capital structure: (a) What is the maximum debt capacity using both leverage (5.0x EBITDA) and coverage constraints (minimum 2.0x interest cover at SOFR+4.5%)? (b) How much equity must the sponsor contribute? (c) Show the IRR impact if the sponsor does a $30M dividend recap in Year 2 (add $30M debt, no equity injection) vs. waiting to exit at Year 5 at 3.0x MOIC.
+
+2. A Pakistani PE fund's portfolio company is in technical covenant breach (leverage ratio of 4.2x vs. 3.5x covenant). The breach was caused by a one-time PKR depreciation impact on EBITDA. (a) Explain the equity cure mechanism and calculate how much equity needs to be injected to cure the breach. (b) What other options does the sponsor have besides equity cure? (c) What precedent does exercising the equity cure set for the lenders' assessment of the sponsor's commitment to the deal?
+
+<ArticleNav
+  prev={{ title: "Module 118 — Syndicated Lending", href: "/financial-strategy/module-118-syndicated-lending" }}
+  next={{ title: "Module 120 — Liability Management & Debt Restructuring", href: "/financial-strategy/module-120-liability-management" }}
+/>
