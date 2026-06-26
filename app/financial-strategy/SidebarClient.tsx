@@ -353,6 +353,10 @@ const modules = [
     part: "Module 76 — Fund Operations & Infrastructure",
     chapters: [{ chapter: "Fund Operations & Infrastructure", items: [{ title: "Module 76 — Fund Operations & Infrastructure", href: "/financial-strategy/module-76-fund-operations-infrastructure" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 77 — Investor Relations for Investment Managers",
+    chapters: [{ chapter: "Investor Relations for Investment Managers", items: [{ title: "Module 77 — Investor Relations for Investment Managers", href: "/financial-strategy/module-77-investor-relations-investment-managers" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

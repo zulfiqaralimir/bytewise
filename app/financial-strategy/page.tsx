@@ -222,7 +222,7 @@ const trackB: PartEntry[] = [
   {
     part: "Part XXV — Advanced Quant",
     modules: [
-      { number: "Module 78", title: "Machine Learning for Finance",            description: "Supervised, unsupervised, and reinforcement learning for financial problems — return prediction, regime detection, NLP on financial text, alternative data, and ML risk management.", href: "/financial-strategy/module-78-machine-learning-finance" },
+      { number: "Module 78", title: "Machine Learning for Finance",            description: "Supervised, unsupervised, and reinforcement learning for financial problems — return prediction, regime detection, NLP on financial text, alternative data, and ML risk management.", href: "/financial-strategy/module-78-machine-learning-for-finance" },
       { number: "Module 79", title: "Risk Management for Investment Managers", description: "VaR and CVaR in depth, stress testing, drawdown management, tail risk hedging, and liquidity risk for funds.", href: "/financial-strategy/module-79-investment-risk-management" },
       { number: "Module 80", title: "Regulation for Investment Managers",      description: "SECP NBFC regulations, AIFMD, SEC registration thresholds, FATCA/CRS, and compliance program design for hedge funds.", href: "/financial-strategy/module-80-investment-manager-regulation" },
       { number: "Module 81", title: "Interest Rate & Credit Derivatives",      description: "Caps, floors, swaptions, CDS, CDOs, CLOs — pricing, hedging, and risk management of interest rate and credit derivatives.", href: null },
