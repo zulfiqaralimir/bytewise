@@ -1,0 +1,226 @@
+export const metadata = {
+  title: "Module 102 — Sum-of-Parts & NAV Valuation | Financial Strategy — ByteWise",
+  description: "When to use SOTP, segment-level valuation methodology, NAV for real estate and E&P, holding company discount, and Engro Corporation SOTP worked example.",
+  openGraph: { title: "Module 102 — Sum-of-Parts & NAV Valuation | Financial Strategy", description: "Sum-of-parts and NAV methodology — segment valuation, holding company discount, and Engro Corporation full SOTP worked example.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 102 — Sum-of-Parts & NAV Valuation
+
+When a company operates multiple distinct businesses — a fertilizer division, a food company, a power plant, and a real estate arm — no single valuation multiple can capture the whole picture. Sum-of-Parts (SOTP) valuation values each business segment separately, then adds them up. It is the correct methodology for conglomerates, holding companies, diversified industrials, real estate companies, and E&P firms. This module covers SOTP construction, NAV methodology for asset-heavy businesses, and the holding company discount phenomenon.
+
+## Learning Objectives
+
+- Identify when SOTP is the appropriate valuation methodology
+- Value each business segment using the correct methodology for that segment
+- Calculate Net Asset Value (NAV) for real estate and E&P companies
+- Apply and explain the holding company discount
+- Build a full SOTP for Engro Corporation (Pakistan's largest listed conglomerate)
+
+---
+
+## 1. When to Use SOTP
+
+SOTP is appropriate when:
+- The company has multiple business segments with different growth profiles, margins, and risk levels
+- Individual segments would trade at materially different multiples if listed separately
+- The company has significant non-operating assets (listed equity stakes, investment property)
+- A single-multiple approach would obscure value (e.g., a pharma company with a mature generic drugs division and a high-growth biotech division)
+
+**Single-multiple approaches fail for conglomerates** because applying one EV/EBITDA multiple averages across segments that deserve completely different multiples. A 7x EBITDA multiple applied to Engro Corporation ignores that its petrochemicals business might deserve 5x while its food business deserves 12x.
+
+---
+
+## 2. SOTP Methodology
+
+### Step 1 — Identify and Separate Segments
+
+Define the distinct business segments:
+- Use management's segment reporting (IFRS 8 requires segment disclosure)
+- Further sub-divide if two businesses within one reported segment have different economics
+- Separate out: operating businesses, financial assets, listed equity stakes, real estate holdings, net debt
+
+### Step 2 — Assign a Valuation Methodology to Each Segment
+
+| Segment Type | Preferred Methodology |
+|---|---|
+| Profitable operating business (FMCG, industrial) | EV/EBITDA comps |
+| High-growth business | DCF or EV/Revenue |
+| Financial institution (bank, insurance) | P/BV or P/E comps |
+| Real estate | NAV (cap rate or DCF of rental income) |
+| E&P / natural resources | NAV (2P reserve DCF) |
+| Listed equity stake | Market value × shares held |
+| Unlisted minority stake | Cost or recent transaction price |
+| Net debt | Book value (current balance sheet) |
+
+### Step 3 — Value Each Segment
+
+Apply segment-level EBITDA (or revenue, book value, NAV) × selected multiple from relevant comparables.
+
+**Key discipline:** Use comparables specific to each segment's industry — not the parent company's overall multiple.
+
+### Step 4 — Sum the Parts and Apply Conglomerate Discount
+
+```
+SOTP Enterprise Value = Σ (Segment EV or Value)
+Less: Net Debt (at parent + subsidiary level)
+= SOTP Equity Value
+
+Holding Company Discount Applied: 10–25%
+= Adjusted Equity Value
+```
+
+---
+
+## 3. Holding Company Discount
+
+### Why Holding Companies Trade at a Discount
+
+Listed holding companies and conglomerates almost universally trade at a discount to the sum of their parts. This discount reflects:
+
+1. **Conglomerate complexity premium:** Investors prefer pure-play businesses they can analyse simply. Complexity is penalized.
+2. **Management cost:** The holding company headquarters is an overhead cost on top of subsidiary management.
+3. **Capital allocation risk:** Investors worry that management will make value-destroying acquisitions with subsidiary dividends.
+4. **Illiquidity of unlisted stakes:** Private subsidiary stakes are worth less than their theoretical value because they can't be sold instantly.
+5. **Double leverage:** If the holding company has debt and subsidiaries also have debt, the equity at the top is riskier.
+
+**Typical holding company discount range:**
+- Transparent, well-governed conglomerate: 10–15%
+- Complex, opaque structure: 20–30%
+- Deeply complex with related-party concerns: 30–40%
+
+**Pakistan context:** Most PSX-listed conglomerates (Engro, Lucky Group, Nishat Group, Dawood Hercules) trade at holding company discounts of 15–30%. The discount is larger in Pakistan due to lower governance standards and related-party transaction concerns.
+
+---
+
+## 4. NAV Methodology
+
+### NAV for Real Estate Companies
+
+```
+NAV = Market Value of Property Portfolio
+    + Other Assets (cash, receivables)
+    − Liabilities (debt, payables)
+    = Net Asset Value
+```
+
+**Valuing the property portfolio:**
+- Direct capitalization: Property Value = Annual Net Operating Income / Cap Rate
+- DCF of rental cash flows: Discount projected rents + terminal value at a real estate WACC
+
+**Cap rate benchmarks (Pakistan):**
+| Property Type | Cap Rate Range |
+|---|---|
+| Prime Karachi/Lahore commercial | 6–8% |
+| Industrial / warehouse | 8–10% |
+| Retail mall | 7–9% |
+| Residential | 4–6% |
+
+**Gulf cap rates are lower** (Dubai Grade A office: 5–6%) reflecting lower country risk and deeper institutional investor base.
+
+### NAV for E&P Companies
+
+Oil and gas companies are valued on the present value of their proven (1P) and probable (2P) reserves:
+
+```
+NAV = PV10 of 2P Reserves (discounted at 10%)
+    + Exploration upside (risked)
+    − Net Debt
+    = NAV per share
+```
+
+**PV10:** Industry convention to discount E&P cash flows at 10% regardless of company WACC — enables comparison across companies.
+
+**Pakistan E&P NAV context:**
+OGDCL and PPL publish reserve reports; analysts build field-by-field models with production decline curves, operating costs, and realized price assumptions. Key variables: Brent price, PKR/USD rate, government take (royalties + windfall levy), and production decline rates.
+
+---
+
+## 5. Worked Example: Engro Corporation SOTP
+
+Engro Corporation is Pakistan's largest listed conglomerate with businesses spanning fertilizers, petrochemicals, food, power, and digital/services.
+
+### Segment Overview
+
+| Segment | Business | Engro Ownership | Listed? |
+|---|---|---|---|
+| Engro Fertilizers (EFERT) | Urea fertilizer manufacturer | ~56% | Yes (PSX) |
+| Engro Polymer & Chemicals (EPCL) | PVC and caustic soda | ~56% | Yes (PSX) |
+| Engro Foods | Dairy, ice cream (Olper's, Omore) | ~100%* | No |
+| Engro Elengy Terminal | LNG regasification | ~56% | No |
+| Engro Powergen Qadirpur | Gas-based power plant | ~100% | No |
+| Corporate (HoldCo) | Parent overhead, net debt | — | — |
+
+*Note: Engro Foods was majority sold to FrieslandCampina in 2016; Engro retained a minority stake. This is illustrative of the structure.
+
+### SOTP Valuation (Illustrative, PKR Billions)
+
+**Engro Fertilizers (EFERT):**
+- LTM EBITDA: PKR 35B
+- Peer multiple (fertilizer sector): 6.5x EV/EBITDA
+- Segment EV: PKR 228B
+- Engro's 56% share: PKR 128B
+
+**Engro Polymer & Chemicals (EPCL):**
+- LTM EBITDA: PKR 8B
+- Peer multiple (petrochemicals, Pakistan): 5.5x EV/EBITDA
+- Segment EV: PKR 44B
+- Engro's 56% share: PKR 25B
+
+**LNG Terminal (Elengy):**
+- Contracted cash flows (take-or-pay): DCF value ~PKR 18B
+- Engro's 56% share: PKR 10B
+
+**Power plant (Qadirpur):**
+- Take-or-pay power purchase agreement: DCF value ~PKR 8B
+- Engro's 100% share: PKR 8B
+
+**Corporate net debt:**
+- HoldCo net debt: (PKR 12B)
+
+### SOTP Summary
+
+| Segment | Engro's Share (PKR B) |
+|---|---|
+| Engro Fertilizers | 128 |
+| Engro Polymer | 25 |
+| LNG Terminal | 10 |
+| Power | 8 |
+| Corporate net debt | (12) |
+| **SOTP Equity Value (undiscounted)** | **159** |
+| Holding company discount (20%) | (32) |
+| **SOTP Equity Value (adjusted)** | **127** |
+
+**Cross-check against market cap:** If Engro Corporation's market cap is PKR 100–110B, the stock is trading at a ~15–20% discount to SOTP — consistent with the typical Pakistan conglomerate discount.
+
+---
+
+## Self-Assessment
+
+1. A Pakistani energy holding company owns:
+   - 70% of a gas E&P company (2P NAV: PKR 45B, net debt PKR 8B → E&P equity PKR 37B)
+   - 60% of a gas distribution utility (P/BV 1.5x, book equity PKR 15B)
+   - 100% of a solar IPP under construction (completion in 18 months; no current cash flows; estimated DCF value PKR 6B)
+   - HoldCo net debt: PKR 5B
+
+   (a) Build the SOTP table. Calculate undiscounted SOTP equity value.
+   (b) What holding company discount (range) would you apply? Justify your choice based on the specific characteristics of this structure.
+   (c) The E&P company's reserves are based on $75/bbl Brent. If Brent falls to $55/bbl, estimate the directional impact on the SOTP. What additional analysis would you need to quantify this?
+   (d) The solar IPP is under construction and has no current cash flows. A junior analyst suggests excluding it from the SOTP "since it's not generating anything yet." Is this correct? How should you value it?
+
+2. You are using the SOTP methodology to value a Gulf conglomerate with three segments:
+   - Retail banking subsidiary (book equity $2.5B, ROE 14%, Gulf bank P/BV peers median 1.3x)
+   - Real estate development arm (prime Dubai commercial properties, NOI $80M/year, cap rate for comparable Dubai commercial 5.5%)
+   - Industrial/trading division (LTM EBITDA $120M, Gulf industrial peer EV/EBITDA 7.0x, net debt $200M)
+   - HoldCo net debt: $150M
+
+   (a) Value each segment using the appropriate methodology.
+   (b) Build the full SOTP table. What is the undiscounted equity value?
+   (c) Would you apply a holding company discount? If so, how much and why? What factors specific to this Gulf conglomerate would affect your decision?
+   (d) The real estate arm is developing a new mixed-use project (completion in 3 years, estimated NOI $30M/year once complete). How would you capture this development pipeline value in the SOTP?
+
+<ArticleNav
+  prev={{ title: "Module 101 — LBO Valuation & Sponsor Returns", href: "/financial-strategy/module-101-lbo-valuation" }}
+  next={{ title: "Module 103 — Valuation Football Field & Fairness Opinions", href: "/financial-strategy/module-103-football-field-fairness-opinion" }}
+/>

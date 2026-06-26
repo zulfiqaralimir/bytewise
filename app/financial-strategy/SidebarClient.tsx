@@ -449,6 +449,46 @@ const modules = [
     part: "Module 100 — Discounted Cash Flow Valuation",
     chapters: [{ chapter: "Discounted Cash Flow Valuation", items: [{ title: "Module 100 — Discounted Cash Flow Valuation", href: "/financial-strategy/module-100-dcf-valuation" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 101 — LBO Valuation & Sponsor Returns",
+    chapters: [{ chapter: "LBO Valuation & Sponsor Returns", items: [{ title: "Module 101 — LBO Valuation & Sponsor Returns", href: "/financial-strategy/module-101-lbo-valuation" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 102 — Sum-of-Parts & NAV Valuation",
+    chapters: [{ chapter: "Sum-of-Parts & NAV Valuation", items: [{ title: "Module 102 — Sum-of-Parts & NAV Valuation", href: "/financial-strategy/module-102-sotp-nav-valuation" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 103 — Valuation Football Field & Fairness Opinions",
+    chapters: [{ chapter: "Valuation Football Field & Fairness Opinions", items: [{ title: "Module 103 — Valuation Football Field & Fairness Opinions", href: "/financial-strategy/module-103-football-field-fairness-opinion" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 104 — M&A Strategy & Deal Origination",
+    chapters: [{ chapter: "M&A Strategy & Deal Origination", items: [{ title: "Module 104 — M&A Strategy & Deal Origination", href: "/financial-strategy/module-104-ma-strategy-origination" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 105 — Sell-Side M&A Process",
+    chapters: [{ chapter: "Sell-Side M&A Process", items: [{ title: "Module 105 — Sell-Side M&A Process", href: "/financial-strategy/module-105-sell-side-process" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 106 — Buy-Side M&A Process",
+    chapters: [{ chapter: "Buy-Side M&A Process", items: [{ title: "Module 106 — Buy-Side M&A Process", href: "/financial-strategy/module-106-buy-side-process" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 107 — Mergers, Demergers & Deal Structures",
+    chapters: [{ chapter: "Mergers, Demergers & Deal Structures", items: [{ title: "Module 107 — Mergers, Demergers & Deal Structures", href: "/financial-strategy/module-107-deal-structures" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 108 — Synergy Analysis & Integration Planning",
+    chapters: [{ chapter: "Synergy Analysis & Integration Planning", items: [{ title: "Module 108 — Synergy Analysis & Integration Planning", href: "/financial-strategy/module-108-synergies-integration" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 109 — Cross-Border M&A & Emerging Market Deals",
+    chapters: [{ chapter: "Cross-Border M&A & Emerging Market Deals", items: [{ title: "Module 109 — Cross-Border M&A & Emerging Market Deals", href: "/financial-strategy/module-109-cross-border-ma" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 110 — IPO Execution",
+    chapters: [{ chapter: "IPO Execution", items: [{ title: "Module 110 — IPO Execution", href: "/financial-strategy/module-110-ipo-execution" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

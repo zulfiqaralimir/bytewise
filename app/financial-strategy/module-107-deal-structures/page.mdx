@@ -1,0 +1,262 @@
+export const metadata = {
+  title: "Module 107 — Mergers, Demergers & Deal Structures | Financial Strategy — ByteWise",
+  description: "Asset vs. share deals, consideration types (cash/stock/earn-out), mergers of equals, demergers and spin-offs, carve-out IPO mechanics, and tax structuring in Pakistan and Gulf contexts.",
+  openGraph: { title: "Module 107 — Mergers, Demergers & Deal Structures | Financial Strategy", description: "How M&A deals are legally structured — asset vs. share purchase, merger mechanics, demergers, spin-offs, and tax-efficient deal architecture.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 107 — Mergers, Demergers & Deal Structures
+
+The legal and financial structure of an M&A transaction is as important as the price. Two deals at the same enterprise value can have dramatically different outcomes for buyers and sellers depending on whether it's structured as an asset purchase or a share purchase, whether consideration is cash or stock, and whether liabilities are assumed or left behind. This module covers the full spectrum of deal structures — and when each is appropriate.
+
+## Learning Objectives
+
+- Distinguish asset deals from share deals and explain which party prefers each
+- Explain the mechanics and use cases for different consideration types (cash, stock, earn-out)
+- Understand merger of equals mechanics and exchange ratio calculation
+- Explain demerger, spin-off, and carve-out structures
+- Apply tax structuring principles in Pakistan and Gulf M&A contexts
+
+---
+
+## 1. Asset Purchase vs. Share Purchase
+
+### Share Purchase
+
+The buyer acquires all (or a controlling portion of) the target company's shares. The legal entity continues under new ownership.
+
+**Buyer acquires:** Everything in the entity — assets, liabilities, contracts, employees, tax history, contingent liabilities, intellectual property.
+
+**Buyer advantages:**
+- Simpler to execute (no need to transfer individual assets)
+- Preserves contracts (most contracts don't require consent for share transfer vs. asset transfer)
+- May preserve operating licenses and regulatory approvals
+
+**Buyer disadvantages:**
+- Inherits all liabilities — disclosed and undisclosed
+- No "step-up" in asset tax basis (no depreciation benefit on purchase price)
+- Inherits historic tax exposure (even for years before the acquisition)
+
+**Seller advantages:**
+- Often more tax-efficient (capital gains tax on shares; in Pakistan, CGT rates can be lower than income tax rates for long-held shares)
+- Cleaner separation — company is sold as a whole
+
+### Asset Purchase
+
+The buyer acquires specific assets of the target (plant, machinery, inventory, IP, customer lists, specific contracts) but not the corporate entity itself.
+
+**Buyer advantages:**
+- Cherry-picks only the assets they want
+- Leaves behind undesirable liabilities (pending litigation, pension deficits, environmental liabilities)
+- Tax step-up: assets are recorded at purchase price; buyer gets higher depreciation
+
+**Buyer disadvantages:**
+- Complex to execute — each asset may require individual transfer documentation
+- Contract re-assignment: many contracts (customer, supplier, lease) require third-party consent
+- Employees: in most jurisdictions, employees don't automatically transfer — must be re-hired or TUPE applies
+
+**Seller disadvantages:**
+- Corporate entity remains (with retained liabilities)
+- Tax: proceeds recognized as corporate income, then distributed to shareholders — potential double taxation
+- More complex to wind down the shell entity
+
+### Pakistan Context
+
+Pakistan's legal framework for M&A primarily operates via the Companies Act 2017:
+- **Amalgamation under Section 279:** Two companies merge into one; requires court approval (High Court) and creditor/shareholder approval. Most formal mergers in Pakistan use this route.
+- **Share purchase:** Dominant structure for straightforward acquisitions; well understood by courts and regulators
+- **Asset purchase:** Used for specific asset acquisitions (a factory, a brand, a product line); less common as a whole-company acquisition structure
+
+**Stamp duty:** Share transfers attract stamp duty (0.25% in Punjab; varies by province). Asset transfers may attract different stamp duty rates depending on asset type.
+
+---
+
+## 2. Consideration Types
+
+### Cash Consideration
+
+The buyer pays in cash. Simple, certain, and universally preferred by sellers.
+
+**Advantages for seller:** Immediate liquidity; no risk on the buyer's stock price.
+**Advantages for buyer:** Retains full upside in the combined entity; no dilution to existing shareholders.
+**Disadvantage for buyer:** Requires financing; may require taking on debt.
+
+### Stock Consideration
+
+The buyer issues new shares to the target's shareholders in exchange for the target's shares.
+
+**Advantages for seller:** Participates in upside if the combined entity performs well; potentially tax-deferred (in some jurisdictions, no immediate capital gain tax if shares are exchanged for shares).
+**Advantages for buyer:** No cash required; seller shares deal risk (if target underperforms, the shares received are worth less).
+**Disadvantage for seller:** Exposed to buyer stock price fluctuation between announcement and closing.
+
+**Exchange ratio:**
+In a stock deal, the exchange ratio specifies how many acquirer shares the target shareholders receive per target share:
+```
+Exchange ratio = Offer price per target share / Acquirer share price
+```
+
+**Fixed exchange ratio:** Ratio is set at announcement; total consideration floats with acquirer stock price. Seller risk: acquirer stock falls.
+**Fixed value deal:** Consideration is fixed in dollar value; exchange ratio adjusts as acquirer stock moves. Seller certainty, buyer risk.
+**Collar:** Hybrid — fixed exchange ratio within a price range; adjusts outside the collar.
+
+### Earn-Out
+
+A portion of the consideration is contingent on the target meeting future financial milestones.
+
+**Structure example:**
+- PKR 25B upfront payment
+- PKR 5B earn-out payable if EBITDA exceeds PKR 4B in Year 2
+
+**When earn-outs are used:**
+- Valuation gap: buyer and seller disagree on value; earn-out bridges the gap
+- Founder retention: keeps founder motivated post-acquisition
+- Financial uncertainty: target's future performance is highly uncertain
+
+**Earn-out pitfalls:**
+- Post-acquisition management disputes about hitting earn-out metrics
+- Accounting definition disputes (how is "EBITDA" calculated for earn-out purposes?)
+- Buyer may deprioritize the acquired business to avoid paying the earn-out
+- Earn-outs are common in tech/pharma; less common in industrial/FMCG
+
+---
+
+## 3. Mergers of Equals
+
+### Characteristics
+
+A merger of equals (MOE) involves two companies of similar size combining to form a larger entity. Neither party is clearly the buyer or seller; both sets of shareholders receive shares in the combined entity.
+
+**Examples:**
+- First Abu Dhabi Bank (formed from National Bank of Abu Dhabi + First Gulf Bank, 2017)
+- Pakistan's bank mergers directed by SBP (often structured as amalgamations with MOE characteristics)
+
+### Exchange Ratio in an MOE
+
+**The key negotiation:** What percentage of the combined entity do each company's shareholders own?
+
+**Determining the exchange ratio:**
+1. Relative valuation: value each company using comps and DCF; the ratio of valuations suggests the ownership split
+2. Contribution analysis: each company's contribution to combined revenue, EBITDA, assets
+3. Market cap ratio: for listed companies, use relative market capitalizations (as a starting point)
+
+**Example:**
+- Company A: market cap PKR 100B, EBITDA PKR 10B
+- Company B: market cap PKR 80B, EBITDA PKR 8B
+- Implied ownership: A shareholders = 55.6%, B shareholders = 44.4%
+- But: B argues their growth is higher → they deserve a higher weight → negotiation begins
+
+### MOE Governance
+
+Both boards negotiate governance provisions:
+- Combined board composition (typically split between A and B directors)
+- CEO and senior management appointments (most contentious)
+- Name of the combined entity (PR and brand implications)
+- HQ location
+
+---
+
+## 4. Demergers, Spin-Offs, and Carve-Outs
+
+### Why Companies Demerge
+
+Companies demerge (separate) when:
+- A conglomerate trades at a holding company discount (Module 102) — separating businesses unlocks the discount
+- Two businesses have different capital allocation needs
+- Regulatory pressure to exit certain businesses
+- A business unit has grown large enough to stand alone as a listed company
+- Activist shareholders pressure management to "unlock value"
+
+### Spin-Off
+
+A parent company distributes shares in a subsidiary to existing shareholders on a pro-rata basis. The subsidiary becomes an independently listed company.
+
+**Tax treatment:** In most jurisdictions (and Pakistan), a properly structured spin-off is tax-free for shareholders — they receive shares, not cash.
+
+**Example:** If Lucky Cement decided to spin off its international business, Lucky Cement shareholders would receive shares in "Lucky International" for every Lucky Cement share they hold. Lucky International then trades independently on PSX (or another exchange).
+
+### Carve-Out IPO
+
+A parent company sells a minority stake in a subsidiary through an IPO, while retaining majority ownership.
+
+**Why carve-out:** Raises capital for the subsidiary without losing control; establishes a market value for the subsidiary; creates currency (listed shares) for future transactions.
+
+**ADNOC's strategy:** ADNOC has executed multiple carve-out IPOs in Abu Dhabi — ADNOC Drilling, ADNOC Gas, ADNOC Logistics — listing subsidiaries while retaining majority ownership. Each IPO unlocked significant value and raised capital.
+
+### Demerger Under Pakistan Companies Act
+
+Section 284–288 of the Companies Act 2017 provides for schemes of arrangement including demergers. Procedure:
+1. Board resolution approving the scheme
+2. Court application for permission to convene scheme meetings
+3. Shareholder and creditor approval (75% by value required)
+4. Court sanction of the scheme
+5. Regulatory notifications (SECP, Competition Commission, relevant sector regulators)
+
+**Timeline:** Pakistan court-approved schemes typically take 6–12 months end-to-end.
+
+---
+
+## 5. Tax Structuring in M&A
+
+### General Principles
+
+Tax structuring aims to minimize the aggregate tax cost of the transaction for both buyer and seller:
+- Seller wants capital gains treatment (lower rate) rather than income tax treatment (higher rate)
+- Buyer wants a tax step-up (higher depreciation base) which requires asset purchase
+- These objectives often conflict — hence the negotiation
+
+### Pakistan Tax in M&A
+
+**Capital Gains Tax (CGT) on shares:**
+| Holding period | CGT rate |
+|---|---|
+| Under 1 year | 15% |
+| 1–2 years | 12.5% |
+| Over 2 years | 0% |
+
+Note: Rates as of recent Finance Acts; subject to annual budget changes.
+
+**Asset transfer tax:**
+- Stamp duty varies by province and asset type
+- Tax on gain from asset sale is typically at corporate income tax rate (29%) if the company sells assets
+- Tax inefficient compared to holding company share sale
+
+**Holding company structure:**
+Many Pakistani corporate groups insert a holding company (HoldCo) to hold operating subsidiaries. On a sale, the foreign buyer acquires the HoldCo rather than the subsidiary directly — enabling a single share transfer that conveys all subsidiaries without individual asset transfers.
+
+### Gulf Tax in M&A
+
+**UAE:**
+- No personal income tax or CGT
+- UAE introduced 9% corporate tax from June 2023 (Module 89)
+- Free zone entities: 0% corporate tax on qualifying income
+- No stamp duty on share transfers (significant advantage vs. Pakistan)
+- DIFC and ADGM entities are commonly used holding structures for Gulf and regional M&A
+
+**Saudi Arabia:**
+- No CGT for Saudi nationals (on Saudi shares)
+- CGT for non-Saudis: 20% on gains from sale of shares in Saudi companies
+- Zakat applicable for Saudi/GCC nationals (Module 129)
+
+---
+
+## Self-Assessment
+
+1. A Pakistani family business owner is selling 100% of his manufacturing company to a Gulf strategic buyer. The company is held in a single operating entity (no holding company structure). The FMV is PKR 12B and the book value is PKR 4B (implying a PKR 8B capital gain).
+
+   (a) Compare the tax implications for the seller under (i) a share sale and (ii) an asset sale. Assume the seller has held the company for 5 years. Which structure is more tax-efficient for the seller?
+   (b) The buyer prefers an asset purchase because they want a tax step-up and want to leave behind a PKR 300M pension liability. What arguments would the seller's IB advisor make to resist the asset purchase structure?
+   (c) Propose a compromise structure that partially satisfies both parties. (Hint: think about which specific assets/liabilities are the sticking points.)
+   (d) The seller asks: "Should I set up a holding company before the sale to improve the tax position?" Evaluate this suggestion — is it feasible and beneficial at this stage?
+
+2. Engro Corporation is considering spinning off its fertilizer subsidiary (Engro Fertilizers, EFERT) to unlock the holding company discount:
+
+   (a) Engro currently owns 56% of EFERT (which is already listed on PSX). Explain how a spin-off of the remaining 56% stake to Engro shareholders would work mechanically. What do Engro shareholders receive?
+   (b) A shareholder analysis shows Engro currently trades at a 20% discount to SOTP. After the spin-off, the analyst estimates the discount will reduce to 10% (only for the remaining businesses). If EFERT is PKR 128B of Engro's PKR 159B SOTP value, calculate the gain to Engro shareholders from the discount reduction.
+   (c) EFERT's board is concerned: "We rely on Engro's procurement relationships and shared IT infrastructure. Spinning off will increase our costs." Evaluate this concern and suggest how it could be managed in the spin-off structure.
+   (d) Pakistan's court-sanctioned scheme process takes 6–12 months. The Engro CEO asks: "Is there a faster alternative?" What alternatives exist, and what are their trade-offs?
+
+<ArticleNav
+  prev={{ title: "Module 106 — Buy-Side M&A Process", href: "/financial-strategy/module-106-buy-side-process" }}
+  next={{ title: "Module 108 — Synergy Analysis & Integration Planning", href: "/financial-strategy/module-108-synergies-integration" }}
+/>
