@@ -237,7 +237,7 @@ const trackB: PartEntry[] = [
       { number: "Module 90", title: "ESG for Investment Managers",             description: "ESG integration in quant strategies, factor-based ESG, greenwashing risk, SFDR classification, Gulf SWF ESG mandates.", href: "/financial-strategy/module-90-esg-investment-managers" },
       { number: "Module 91", title: "Islamic Finance for Investment Managers", description: "Shariah-compliant fund structures, Islamic portfolio management, sukuk portfolio construction, Gulf Islamic fund market.", href: "/financial-strategy/module-91-islamic-finance-investment-managers" },
       { number: "Module 92", title: "Quant Finance in Pakistan & Gulf",        description: "FERROQUANT Capital case study — building a quant fund in Pakistan/DIFC, regulatory path, capital raising, and competitive strategy.", href: "/financial-strategy/module-92-quant-finance-pakistan-gulf" },
-      { number: "Module 93", title: "The Future of Quantitative Finance",      description: "AI-driven alpha, quantum computing for finance, DeFi protocols, tokenized assets, and building a future-resilient quant career.", href: null },
+      { number: "Module 93", title: "The Future of Quantitative Finance",      description: "AI-driven alpha, quantum computing for finance, DeFi protocols, tokenized assets, and building a future-resilient quant career.", href: "/financial-strategy/module-93-future-quantitative-finance" },
     ],
   },
 ];

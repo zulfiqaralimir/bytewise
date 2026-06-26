@@ -413,6 +413,10 @@ const modules = [
     part: "Module 91 — Islamic Finance for Investment Managers",
     chapters: [{ chapter: "Islamic Finance for Investment Managers", items: [{ title: "Module 91 — Islamic Finance for Investment Managers", href: "/financial-strategy/module-91-islamic-finance-investment-managers" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 92 — Quant Finance in Pakistan & Gulf",
+    chapters: [{ chapter: "Quant Finance in Pakistan & Gulf", items: [{ title: "Module 92 — Quant Finance in Pakistan & Gulf", href: "/financial-strategy/module-92-quant-finance-pakistan-gulf" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
