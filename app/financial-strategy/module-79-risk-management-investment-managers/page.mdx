@@ -1,0 +1,443 @@
+export const metadata = {
+  title: "Module 79 — Risk Management for Investment Managers | Financial Strategy — ByteWise",
+  description: "VaR and CVaR in depth, stress testing, drawdown management, tail risk hedging strategies, and liquidity risk management for investment funds.",
+  openGraph: { title: "Module 79 — Risk Management for Investment Managers | Financial Strategy", description: "VaR, CVaR, stress testing, drawdown control, tail risk hedging, liquidity risk — risk management for quant funds.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 79 — Risk Management for Investment Managers
+
+Risk management is not just about measuring risk — it is about understanding what can kill your fund and designing systems to prevent it. The funds that survive long enough to compound do so because their risk management kept them in the game during the inevitable periods when their strategies stopped working. This module covers the tools, processes, and philosophy of risk management for a professional investment fund.
+
+## Learning Objectives
+
+- Calculate VaR and CVaR using parametric, historical, and Monte Carlo approaches
+- Conduct rigorous stress testing using both historical scenarios and hypothetical scenarios
+- Design drawdown management rules that balance protection and participation
+- Implement tail risk hedging strategies appropriate for a Pakistan-focused fund
+- Measure and manage liquidity risk including redemption stress testing
+
+---
+
+## 1. Value at Risk (VaR)
+
+### What VaR Measures
+
+Value at Risk (VaR) answers: "What is the maximum loss we would expect to suffer over the next N days, with confidence level X%?"
+
+**Formal definition:**
+VaR(α, h) = the loss threshold such that the probability of losing more than this amount over horizon h is (1 − α).
+
+**Example:** 1-day 99% VaR = PKR 50M means: "We expect to lose more than PKR 50M on only 1% of trading days (roughly 2–3 days per year)."
+
+### Parametric (Variance-Covariance) VaR
+
+Assumes returns are normally distributed:
+
+```
+VaR(α, h) = Portfolio Value × σ_p × z_α × √h
+```
+
+Where:
+- σ_p = daily portfolio standard deviation
+- z_α = normal distribution z-score (1.645 for 95%, 2.326 for 99%)
+- √h = square root of time scaling
+
+**Example:**
+- FERROQUANT portfolio PKR 3B
+- Daily portfolio volatility: 1.2%
+- 1-day 99% VaR = PKR 3B × 1.2% × 2.326 = PKR 83.7M
+
+**Problems with parametric VaR:**
+- Assumes normal distribution — financial returns have fat tails
+- Underestimates tail risk in stress periods (exactly when VaR matters most)
+- Correlation instability: correlations spike in crises
+
+**When to use:** Quick calculations, portfolio comparisons, liquid diversified portfolios where normality is a reasonable approximation.
+
+### Historical Simulation VaR
+
+Use the actual distribution of historical returns — no normality assumption.
+
+**Steps:**
+1. Collect T days of historical portfolio returns (using current weights applied to historical prices)
+2. Sort returns from worst to best
+3. 1-day 99% VaR = the (1 − 0.99) × T worst return
+
+**Example:** 500 trading days of history, 99% VaR = the 5th worst daily return.
+
+**Advantages:**
+- No distributional assumption
+- Captures fat tails and skewness observed in real data
+- Captures correlation changes implicitly (since historical period includes crises)
+
+**Problems:**
+- Entirely backward-looking — only captures scenarios that happened
+- Long lookback weights recent crises too much, older ones too little
+- Cannot capture "new" types of crises
+
+**PSX adaptation:** PSX has existed in its current form since the 1990s, but high-quality daily data goes back to roughly 2000. 24 years of PSX data includes: 2008 crash, 2018 political crisis, 2019 IMF program, COVID-2020, and 2022 economic crisis. This is reasonable historical coverage but thin by global standards.
+
+### Monte Carlo VaR
+
+Simulate thousands of scenarios from a model of return dynamics, then take the percentile of simulated losses.
+
+**Steps:**
+1. Specify return model: GBM, GARCH, Student-t, copula-based
+2. Simulate N = 10,000 scenarios for the portfolio over horizon h
+3. Calculate portfolio P&L for each scenario
+4. VaR = Xth percentile of simulated losses
+
+**Advantages:**
+- Can model any return distribution (fat tails, skewness, correlation)
+- Can include options and non-linear instruments accurately
+- Can stress-test specific scenarios by modifying the simulation parameters
+
+**Disadvantages:**
+- Results depend heavily on the model chosen — "garbage in, garbage out"
+- Computationally intensive for large portfolios
+- Model risk: if your simulation model is wrong, your VaR is wrong
+
+**VaR for options:** Options have non-linear payoffs — parametric VaR (which assumes linear P&L) is useless for option portfolios. Monte Carlo or full revaluation is required.
+
+### VaR Backtesting
+
+A VaR model that says "99% of days you lose less than X" should have exceptions (losses > X) on approximately 1% of days.
+
+**Kupiec test (1995):**
+Tests whether the number of exceptions is consistent with the stated confidence level.
+
+If VaR model is correct: expected exceptions = (1 − α) × T
+Actual exceptions that are significantly higher → model is underestimating risk (bad)
+
+**Christoffersen test (1998):**
+Tests both coverage (correct number of exceptions) and independence (exceptions are not clustered). VaR exceptions should be random — if you have three exceptions in a row, the model is failing to capture the regime shift.
+
+**Basel III traffic lights:**
+The Basel framework uses a traffic light system for bank VaR backtesting over 250 trading days:
+- Green zone: 0–4 exceptions (model acceptable)
+- Yellow zone: 5–9 exceptions (model under scrutiny)
+- Red zone: 10+ exceptions (model rejected, capital multiplier increased)
+
+---
+
+## 2. CVaR (Conditional Value at Risk / Expected Shortfall)
+
+### Why CVaR Matters More Than VaR
+
+VaR tells you the threshold loss at a confidence level. It says nothing about how bad the losses are beyond that threshold. CVaR answers: "Given that we are in the worst X% of outcomes, what is our expected loss?"
+
+```
+CVaR(α) = E[Loss | Loss > VaR(α)]
+```
+
+For a 99% confidence level, CVaR is the average of the worst 1% of outcomes — the expected loss in a crisis.
+
+**Why CVaR is superior to VaR:**
+- CVaR is a coherent risk measure (VaR is not — VaR can fail subadditivity)
+- CVaR penalizes fat tails — two portfolios with the same VaR can have very different CVaR if one has heavier tails beyond the VaR threshold
+- CVaR is the right metric for tail-risk-sensitive strategies
+
+**FRTB (Fundamental Review of the Trading Book, 2019):**
+Basel regulators replaced VaR with Expected Shortfall (ES = CVaR) at 97.5% confidence level for market risk capital requirements. This confirms CVaR as the regulatory standard.
+
+**FERROQUANT risk reporting:** Report both VaR and CVaR. The ratio CVaR/VaR > 1.3 signals a fat-tailed portfolio — investigate what is driving it.
+
+### CVaR Estimation
+
+**Historical simulation CVaR:**
+Average of all returns below the VaR threshold in the historical distribution.
+
+```
+CVaR(99%) = Average of worst 1% of historical returns
+```
+
+**Parametric CVaR (normal distribution):**
+```
+CVaR(α) = Portfolio Value × σ_p × φ(z_α) / (1 − α)
+```
+
+Where φ(z_α) is the standard normal PDF at z_α.
+
+For the 99% level: CVaR ≈ 1.15 × VaR (under normality).
+
+**With fat tails (t-distribution):**
+CVaR/VaR ratio increases significantly — for a t-distribution with 4 degrees of freedom, CVaR at 99% ≈ 1.5–2.0 × VaR. This shows how much VaR underestimates risk in fat-tailed markets like PSX.
+
+---
+
+## 3. Stress Testing
+
+### Why Backtested VaR Is Not Enough
+
+VaR and CVaR are backward-looking — they estimate risk based on historical return distributions. Stress testing answers: "What would happen if an extreme but plausible scenario occurred that may not be in our historical data?"
+
+### Historical Scenario Stress Tests
+
+Replay specific historical crisis periods through the current portfolio:
+
+| Scenario | Period | KSE-100 Impact | PKR Impact |
+|---|---|---|---|
+| Global Financial Crisis | Aug–Dec 2008 | −55% | PKR −20% vs USD |
+| Pakistan 2018 Crisis | May–Dec 2018 | −27% | PKR −33% vs USD |
+| COVID-19 | Feb–Mar 2020 | −30% in 3 weeks | PKR −5% |
+| 2022 Economic Crisis | Mar–Jun 2022 | −25% | PKR −30% vs USD |
+| Pakistan IMF Exit Risk | Hypothetical | −40% to −60% | PKR −40% |
+
+**Applying historical scenarios:**
+1. Take the day-by-day P&L series for the scenario period
+2. Apply the historical returns of each constituent to the current portfolio weights
+3. Calculate cumulative portfolio loss over the scenario period
+4. Assess whether the fund would survive (meet margin calls, honor redemptions)
+
+### Hypothetical Stress Tests
+
+Design forward-looking scenarios based on current risks:
+
+**Scenario 1 — Pakistan IMF program collapse:**
+- KSE-100: −40% over 3 months
+- PKR/USD: 350 → 450 (−22%)
+- PIB yields: +500bps (PIB prices −20% for 5-year duration)
+- FERROQUANT impact: depends on current positioning
+
+**Scenario 2 — Regional conflict (India-Pakistan escalation):**
+- KSE-100: −35% in 5 trading days (circuit breakers triggered)
+- Trading halt: 5–10 trading days
+- FERROQUANT impact: unable to rebalance, margin calls possible if leveraged
+
+**Scenario 3 — Global liquidity crisis (2008-style):**
+- Global risk-off: all emerging markets sold
+- PSX volume drops 70%
+- Redemption requests surge to 25% of AUM
+- FERROQUANT impact: liquidity stress test (see Section 5)
+
+**Scenario 4 — Oil price spike (USD 150/barrel):**
+- Energy sector: +25% (OGDC, PPL, PSO outperform)
+- Cement sector: −15% (energy cost spike)
+- Textile sector: −20% (energy cost + import disruption)
+- Pakistan macro: CAD widens, PKR under pressure
+- FERROQUANT impact: sector-specific P&L
+
+### Reverse Stress Testing
+
+Instead of "what is the loss under scenario X?", ask: "What scenario would cause our fund to fail (lose > 30% NAV or become unable to meet redemptions)?"
+
+Work backwards:
+1. Define failure = loss of 30% of NAV
+2. What combination of market moves would cause this?
+3. How plausible is that combination?
+4. What positions or risk concentrations need to be reduced to prevent it?
+
+Reverse stress testing is required by AIFMD and UCITS regulations. It should be conducted quarterly.
+
+---
+
+## 4. Drawdown Management
+
+### Defining Drawdown
+
+**Peak-to-trough drawdown:** The maximum loss from a previous peak to a subsequent trough.
+
+```
+Drawdown(t) = (NAV(t) − Peak NAV prior to t) / Peak NAV prior to t
+```
+
+**Maximum drawdown (MDD):** The largest drawdown observed over the entire history.
+
+**Drawdown duration:** Time from the peak to recovery of the peak (or to present if not yet recovered).
+
+**Why drawdowns matter:**
+- Investors redeem during drawdowns — which locks in losses and forces further selling
+- Large drawdowns are existentially threatening: a 50% loss requires a 100% gain to recover
+- Performance fees cannot be earned until the HWM is recovered — drawdowns destroy the GP's economics
+
+### De-risking Rules
+
+A systematic drawdown management rule reduces exposure when the portfolio is in drawdown:
+
+**Volatility targeting:**
+```
+Target weight = (Target Vol / Realized Vol) × 1
+```
+
+If target is 15% annual vol and realized vol rises to 25%, reduce portfolio to 60% of full size. This is automatic and rules-based — no discretion.
+
+**Drawdown stop:**
+Define hard limits:
+- Monthly drawdown > 5%: review and assess
+- Monthly drawdown > 8%: reduce gross exposure by 25%
+- Cumulative drawdown > 15%: reduce to 50% gross exposure and call investment committee
+- Cumulative drawdown > 25%: halt new investments, contact LPs
+
+**Kelly criterion:**
+The Kelly criterion gives the theoretically optimal fraction of capital to risk:
+```
+f* = (p × b − q) / b
+```
+Where p = win probability, b = win/loss ratio, q = 1 − p.
+
+In practice, use half-Kelly (f*/2) for robustness — full Kelly is too aggressive and leads to large drawdowns.
+
+### Psychological Challenges of Drawdown Management
+
+The hardest part of drawdown management is not the mathematics — it is the psychology:
+
+**Cutting too early:** Reducing exposure at the bottom of a drawdown locks in losses and causes the fund to miss the recovery. This is the most common mistake.
+
+**Not cutting enough:** Holding through a deepening drawdown hoping for recovery is the second most common mistake.
+
+**Framework for FERROQUANT:**
+- Use automatic rules (volatility targeting, drawdown stops) — removes discretion at the worst moments
+- Pre-commit to the rules with the investment committee before a drawdown occurs
+- Separate the "should we change the strategy?" question (a research question for a calm moment) from the "should we cut risk now?" question (an automatic rule)
+
+---
+
+## 5. Tail Risk Hedging
+
+### Why Tail Risk Hedging Is Hard
+
+Tail risk hedges (protection against crashes) are expensive to hold and typically lose money in normal markets. The challenge:
+- If you hold expensive protection continuously, your Sharpe ratio suffers significantly
+- If you try to buy protection only before crashes, you are market-timing — almost impossible to do consistently
+- Most "tail risk" strategies lose 3–5% per year in normal markets to earn large payoffs in crises
+
+The decision: is the insurance premium worth it for FERROQUANT's LP base?
+
+### Put Options and Protective Puts
+
+Buying OTM put options on the KSE-100 (or PSX single-stock futures) provides direct tail protection:
+
+**Cost:** OTM put options with 20% OTM strike on PSX equities cost approximately 5–10% of the underlying per year given high implied volatility.
+
+**PSX options market:** Very illiquid. Single-stock futures are more liquid than options. For practical tail protection on PSX, a short futures position (reducing beta) is more feasible than buying OTM puts.
+
+### Variance Swaps
+
+A variance swap pays off when realized volatility exceeds the strike (implied volatility):
+- Long variance swap: you receive (realized vol² − strike vol²) × notional
+- Payoff is large when markets crash (realized vol spikes)
+- Cost: in normal markets, realized vol is typically below implied vol — variance swap loses value slowly
+
+**Availability on PSX:** Variance swaps are OTC instruments. Not available in Pakistan. Available on Gulf indices (S&P GCC, Tadawul) through international brokers.
+
+### Dynamic Hedging Approaches
+
+**VIX-based hedge:** When global VIX rises above a threshold (e.g., 25), reduce PSX equity exposure by 30%. When VIX normalizes, restore exposure. This captures global fear episodes that typically spill into PSX.
+
+**Trend-following overlay:** Allocate 5–10% of the fund to a simple trend-following strategy across PSX index futures (long when above 200-day MA, short when below). This provides cheap crisis alpha — the hedge tends to be short when markets are falling.
+
+**Cross-asset hedges:**
+- Long USD/PKR NDF when market stress indicators are high (PKR depreciates in crises)
+- Long gold futures (gold is a traditional Pakistan store of value — rises in PKR terms during crises)
+- Short crude oil futures (high oil → bad for Pakistan macro → bad for PSX)
+
+### Universa Approach (Tail Risk Insurance)
+
+Mark Spitznagel and Nassim Taleb's Universa fund takes an extreme approach: put nearly all capital in risk-free assets and spend 1–3% per year on deep OTM options that pay off in a crash. In 2020, Universa gained 3,612% while markets fell 30%.
+
+**Applicability to FERROQUANT:** Pure Universa approach is not feasible in Pakistan (no liquid options market). A modified approach:
+- Keep 95% of portfolio in regular strategy
+- Allocate 5% to explicit protection: short KSE index futures equivalent to 20% of portfolio (reduces beta), long gold, long USD NDF
+
+---
+
+## 6. Liquidity Risk
+
+### Sources of Liquidity Risk for Funds
+
+**Asset liquidity risk:** The portfolio contains assets that cannot be sold quickly without significant market impact. A stock that trades PKR 5M/day cannot be exited in a hurry if you hold PKR 200M of it.
+
+**Funding liquidity risk:** Investors redeem, forcing the fund to raise cash. If asset liquidity is poor, this forces fire sales at bad prices.
+
+**Interaction:** The worst-case scenario combines both: markets crash (asset liquidity falls), and investors simultaneously redeem (funding liquidity crisis). This is the 2008 dynamic that killed multiple hedge funds.
+
+### Liquidity-Adjusted VaR (LVaR)
+
+Standard VaR assumes positions can be liquidated instantly at market price. LVaR adjusts for the cost of liquidating positions:
+
+```
+LVaR = VaR + Liquidity Cost
+Liquidity Cost = (1/2) × Spread × Position Size
+```
+
+More precisely, for a large position relative to daily volume:
+
+```
+Liquidation period = Position / (Participation Rate × ADV)
+LVaR = Σᵢ VaRᵢ × √(Liquidation period_i)
+```
+
+**FERROQUANT example:**
+- OGDC position: PKR 300M
+- OGDC ADV: PKR 500M
+- Participation rate (maximum): 20% of ADV = PKR 100M/day
+- Liquidation period: 3 days
+- LVaR for OGDC position: single-stock VaR × √3 = 73% increase in effective VaR
+
+### Redemption Stress Testing
+
+Model the portfolio's ability to meet redemption requests:
+
+**Stress scenarios:**
+- Base case: 10% of AUM redeemed in one redemption window
+- Stress: 25% of AUM redeemed (gate trigger)
+- Severe stress: 40% of AUM redeemed simultaneously
+
+**Liquidity ladder:**
+Rank all portfolio positions by days-to-liquidate at 20% of ADV:
+- Tier 1 (< 1 day): cash, T-bills, on-the-run PIBs
+- Tier 2 (1–5 days): large-cap PSX stocks (OGDC, HBL, Engro)
+- Tier 3 (5–20 days): mid-cap PSX stocks
+- Tier 4 (> 20 days): small-cap stocks, illiquid bonds
+
+**Policy:** At least 70% of NAV must be in Tier 1 + Tier 2 assets. This ensures the fund can meet its 25% gate even under stressed market conditions.
+
+### Gates and Side Pockets
+
+**Gate:** Limits total redemptions to a percentage of NAV per period (e.g., 25% per quarter). Prevents forced fire sales.
+
+**Side pocket:** Segregates truly illiquid assets into a separate share class. Redeeming investors do not receive their share of side-pocketed assets until those assets are liquidated.
+
+**FERROQUANT gate policy:** 25% quarterly gate. If redemption requests exceed 25% in any quarter, redemptions are pro-rated and the excess carried forward to the next quarter.
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT's PKR 5B portfolio has the following characteristics:
+   - Portfolio daily volatility: 1.5%
+   - Student-t distribution fit: ν = 4 degrees of freedom
+   - 5-year historical worst daily return: −6.8%
+   - Beta to KSE-100: 0.75
+
+   (a) Calculate the 1-day 99% parametric VaR under the normality assumption. Express in both % and PKR terms.
+   (b) A colleague argues that because PSX returns have fat tails, the true 99% VaR is closer to the historical worst return of −6.8%. Calculate the parametric VaR using a Student-t distribution with ν = 4. How does this compare to the normal assumption?
+   (c) Over the past 250 trading days, FERROQUANT's portfolio experienced 7 days where losses exceeded the 99% parametric VaR. Using the Kupiec test logic, is this number of exceptions concerning? (At 99% confidence, expected exceptions = 2.5 over 250 days.)
+   (d) Calculate the 1-day 99% CVaR under the normal distribution assumption. Explain why the CVaR/VaR ratio > 1 even under normality, and how this ratio would change under the Student-t distribution.
+
+2. FERROQUANT is conducting quarterly stress testing. The current portfolio is:
+   - 40% Pakistan large-cap equities (KSE-100 beta 1.0)
+   - 25% Pakistan mid-cap equities (KSE-100 beta 1.3)
+   - 20% PIBs (5-year duration)
+   - 15% Cash/T-bills
+   
+   Apply the following stress scenario: Pakistan IMF program delayed, Moody's downgrades Pakistan to Caa1.
+   
+   (a) Estimate the stressed P&L for each asset class using reasonable assumptions. Show your reasoning.
+   (b) Calculate the total stressed portfolio loss in PKR terms (PKR 5B portfolio).
+   (c) FERROQUANT has a 15% NAV drawdown stop-loss rule. Does this scenario trigger the rule? If so, what actions should the risk committee take?
+   (d) Design one additional hypothetical stress scenario specific to FERROQUANT's risk profile that the IMF scenario above does not capture.
+
+3. FERROQUANT holds PKR 400M of a small-cap PSX stock with PKR 20M average daily volume. The stock has daily volatility of 2.5%.
+
+   (a) Calculate the liquidity-adjusted VaR for this position at 99% confidence, assuming a 20% participation rate and 5-day liquidation period. Compare it to the standard 1-day VaR.
+   (b) A stress scenario causes this stock's daily volume to fall 70% (to PKR 6M/day). Recalculate the liquidity-adjusted VaR under stressed conditions.
+   (c) FERROQUANT's investment policy limits any single position to 20 days-to-liquidate at 20% participation. Is this position within policy under normal conditions? Under stressed conditions?
+   (d) The fund receives redemption requests for 20% of NAV (PKR 1B). Using the liquidity ladder framework, identify which assets FERROQUANT should liquidate first and whether the small-cap position creates a problem.
+
+<ArticleNav
+  prev={{ title: "Module 78 — Machine Learning for Finance", href: "/financial-strategy/module-78-machine-learning-for-finance" }}
+  next={{ title: "Module 80 — Regulation for Investment Managers", href: "/financial-strategy/module-80-regulation-investment-managers" }}
+/>

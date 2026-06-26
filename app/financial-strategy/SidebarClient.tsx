@@ -361,6 +361,10 @@ const modules = [
     part: "Module 78 — Machine Learning for Finance",
     chapters: [{ chapter: "Machine Learning for Finance", items: [{ title: "Module 78 — Machine Learning for Finance", href: "/financial-strategy/module-78-machine-learning-for-finance" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 79 — Risk Management for Investment Managers",
+    chapters: [{ chapter: "Risk Management for Investment Managers", items: [{ title: "Module 79 — Risk Management for Investment Managers", href: "/financial-strategy/module-79-risk-management-investment-managers" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>
