@@ -1,0 +1,205 @@
+export const metadata = {
+  title: "Module 21 — Enterprise Risk Management | Financial Strategy — ByteWise",
+  description: "COSO ERM framework, risk appetite and tolerance, risk registers, KRIs, and the CFO's role in integrated risk management.",
+  openGraph: { title: "Module 21 — Enterprise Risk Management | Financial Strategy", description: "COSO ERM, risk appetite, risk registers, KRIs, and CFO risk governance.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 21 — Enterprise Risk Management
+
+COSO ERM framework, risk appetite setting, risk registers, key risk indicators, and the CFO's role as the organization's integrated risk officer.
+
+## Learning Objectives
+
+- Apply the COSO ERM 2017 framework to a real organization
+- Set and communicate risk appetite and risk tolerance statements
+- Build and maintain a risk register with quantified risk exposures
+- Design key risk indicators (KRIs) that provide early warning signals
+- Present the risk management framework to board and audit committee
+
+---
+
+## 1. What is Enterprise Risk Management?
+
+### ERM vs Traditional Risk Management
+
+| Traditional Risk Management | Enterprise Risk Management |
+|---|---|
+| Siloed — finance risks, operational risks managed separately | Integrated — all risk categories viewed as a portfolio |
+| Reactive — respond after risk materializes | Proactive — identify and mitigate before events occur |
+| Compliance-driven | Strategy-driven |
+| Owned by risk function | Owned by executive team and board |
+
+### Why ERM Matters to CFOs
+- **Capital efficiency:** Understanding the risk portfolio prevents over-provisioning of contingency capital
+- **Strategic decisions:** Risk-adjusted returns compare investment options on a like-for-like basis
+- **Investor confidence:** Institutional investors assess ERM maturity when pricing equity and debt
+- **Regulatory expectation:** SBP, SECP, and Basel frameworks all expect documented ERM for financial entities
+
+---
+
+## 2. COSO ERM 2017 Framework
+
+### Five Components
+
+| Component | Description |
+|---|---|
+| Governance & Culture | Board oversight, risk culture, ethical values |
+| Strategy & Objective-Setting | Risk appetite integrated with strategic planning |
+| Performance | Risk identification, assessment, prioritization, response |
+| Review & Revision | Review of ERM performance and improvement |
+| Information, Communication & Reporting | Risk information flowing up, down, and across |
+
+### 20 Principles
+COSO ERM 2017 contains 20 principles mapped across the five components. Key principles for CFOs:
+- **Principle 6:** Define Risk Appetite — The board approves, the CFO quantifies
+- **Principle 9:** Identifies Risk — Catalogue internal and external risk factors
+- **Principle 12:** Assesses Severity — Impact × Likelihood = Risk exposure
+- **Principle 13:** Prioritizes Risks — Focus resources on highest-exposure areas
+
+### Strategy-Risk Linkage
+Unlike older ERM frameworks, COSO 2017 explicitly links risk to strategy. Every strategic objective carries inherent risk. The CFO role is to quantify that risk:
+
+```
+Strategy → Objectives → Risks to achieving those objectives
+                     → Risk appetite for each objective
+                     → Controls and monitoring
+```
+
+---
+
+## 3. Risk Appetite and Tolerance
+
+### Risk Appetite Statement
+A risk appetite statement defines how much risk the organization is willing to accept in pursuit of its objectives. It must be:
+- **Quantified** — not just "we are risk-averse"
+- **Differentiated by risk category** — different appetite for credit risk vs reputational risk
+- **Board-approved and CEO-owned**
+
+**Example risk appetite statements:**
+- *Credit risk:* NPL ratio not to exceed 3% of loan portfolio
+- *Liquidity risk:* Minimum cash reserves to cover 3 months operating expenses at all times
+- *FX risk:* Natural hedge ratio not to fall below 70% of USD-denominated payables
+- *Reputational risk:* Zero tolerance for regulatory enforcement actions
+
+### Risk Tolerance vs Risk Appetite
+- **Risk appetite:** The amount of risk the organization is prepared to accept in pursuit of value
+- **Risk tolerance:** The acceptable variation around objectives — the operational boundaries within which risk must stay
+
+### Breaches and Escalation
+When risk metrics breach tolerance thresholds, escalation triggers must be pre-defined:
+- Level 1 breach: CFO notified within 24 hours; mitigation plan within 5 days
+- Level 2 breach (persistent or severe): Board notified at next meeting; immediate executive review
+- Level 3 breach: Emergency board session; regulatory notification if applicable
+
+---
+
+## 4. Risk Register
+
+### Risk Register Structure
+
+| Field | Content |
+|---|---|
+| Risk ID | Unique identifier |
+| Risk Description | What could go wrong — specific and actionable |
+| Risk Category | Strategic, financial, operational, compliance, reputational |
+| Risk Owner | Senior individual accountable for managing this risk |
+| Inherent Likelihood (1–5) | Probability before controls |
+| Inherent Impact (1–5) | Severity before controls |
+| Inherent Risk Score | Likelihood × Impact |
+| Controls in Place | Key controls mitigating the risk |
+| Residual Likelihood | Probability after controls |
+| Residual Impact | Severity after controls |
+| Residual Risk Score | Residual Likelihood × Residual Impact |
+| Risk Response | Avoid / Reduce / Transfer / Accept |
+| KRIs | Metrics that signal movement in this risk |
+| Review Date | When this risk was last assessed |
+
+### Risk Heat Map — Visualizing the Portfolio
+Plot all risks on a 5×5 matrix with Impact on the Y-axis and Likelihood on the X-axis:
+- **Red zone (top right):** High likelihood, high impact — immediate action required
+- **Amber zone:** Medium exposure — actively managed
+- **Green zone (bottom left):** Low likelihood or low impact — monitored
+
+### Quantitative Risk Assessment
+For material risks, move beyond 1–5 scoring to financial quantification:
+- **Expected Loss:** Probability × Impact in PKR
+- **Unexpected Loss:** Value at Risk at 95th or 99th percentile
+- **Stress Loss:** Impact under tail scenario (1-in-200 year event)
+
+---
+
+## 5. Key Risk Indicators (KRIs)
+
+### KRI vs KPI — the Difference
+- **KPI (Key Performance Indicator):** Measures what has happened — lagging, backward-looking
+- **KRI (Key Risk Indicator):** Measures what might happen — leading, forward-looking
+
+### KRI Design Principles
+Good KRIs are:
+- **Predictive** — change before the risk event occurs
+- **Measurable** — quantifiable with available data
+- **Timely** — reported frequently enough to enable response
+- **Threshold-triggered** — escalation protocol activated at defined levels
+
+### KRI Examples by Risk Category
+
+| Risk Category | KRI | Trigger Level |
+|---|---|---|
+| Liquidity | Cash runway (months of operating cost covered) | < 3 months = amber; < 2 months = red |
+| Credit | Receivables > 90 days as % of total | > 15% = amber; > 25% = red |
+| FX | Unhedged USD payables as % of total USD payables | > 30% = amber; > 50% = red |
+| Operational | Systems downtime hours per month | > 4 hours = amber; > 8 hours = red |
+| Compliance | Regulatory queries / notices received | Any = amber; Action taken = red |
+| People | Key person dependency — functions with single-person coverage | > 30% = amber |
+
+---
+
+## 6. Risk Response Strategies
+
+### The Four Responses
+
+| Response | When to Use | Example |
+|---|---|---|
+| **Avoid** | Risk too high relative to opportunity; terminate the activity | Exit a market with excessive regulatory or political risk |
+| **Reduce** | Mitigate likelihood or impact to acceptable level | Implement stronger controls, diversify suppliers |
+| **Transfer** | Shift financial consequence to a third party | Insurance, hedging, contractual risk transfer |
+| **Accept** | Risk within appetite; cost of mitigation exceeds benefit | Small operational risks not worth insuring |
+
+### Risk Response Cost-Benefit Analysis
+Not every risk should be mitigated. CFOs must evaluate:
+```
+Expected risk reduction (PKR) vs Cost of control (PKR)
+```
+If control cost > expected loss reduction, accept the risk unless reputational or regulatory factors override the financial logic.
+
+---
+
+## 7. Board and Audit Committee Reporting
+
+### Risk Management Report to Board
+Quarterly board report should include:
+- Risk heat map — has the risk profile changed since last quarter?
+- Top 10 risks with changes flagged
+- Risks approaching or breaching appetite thresholds
+- Emerging risks on the horizon
+- Risk management actions completed and pending
+
+### Integrated Risk and Finance Reporting
+Best practice: integrate risk reporting with financial reporting so the board sees risk alongside performance. The CFO is uniquely positioned to bridge this gap.
+
+---
+
+## Self-Assessment
+
+1. Your company is entering the Gulf market for the first time. Using the COSO ERM performance component, identify five risks to this strategic objective, assess their inherent risk scores (likelihood × impact), and propose a risk response for each.
+
+2. Design a risk appetite statement for a Pakistani mid-cap industrial company with PKR 5bn revenue, 60% domestic sales, 40% exports, and moderate leverage (Net Debt/EBITDA 2.5x). Cover at least four risk categories.
+
+3. Your CFO risk dashboard shows the receivables KRI has breached the amber threshold — receivables > 90 days now represent 18% of total (threshold was 15%). Walk through your escalation process and the management actions you would initiate.
+
+<ArticleNav
+  prev={{ title: "Module 20 — ESG & Sustainable Finance", href: "/financial-strategy/module-20-esg-sustainable-finance" }}
+  next={{ title: "Module 22 — Financial Risk: Market, Credit & Liquidity", href: "/financial-strategy/module-22-financial-risk" }}
+/>

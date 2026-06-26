@@ -1,0 +1,209 @@
+export const metadata = {
+  title: "Module 22 — Financial Risk: Market, Credit & Liquidity | Financial Strategy — ByteWise",
+  description: "Market risk (FX, interest rate, commodity), credit risk management, liquidity risk frameworks, and stress testing for CFOs.",
+  openGraph: { title: "Module 22 — Financial Risk | Financial Strategy", description: "FX risk, interest rate risk, credit risk, liquidity risk, Basel III, and stress testing.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 22 — Financial Risk: Market, Credit & Liquidity
+
+Market risk (FX, interest rate, commodity), credit risk management, liquidity risk frameworks, and stress testing. The CFO's toolkit for protecting the balance sheet.
+
+## Learning Objectives
+
+- Quantify FX, interest rate, and commodity risk exposures
+- Design credit risk management frameworks for receivables and counterparty risk
+- Apply liquidity risk metrics: LCR, NSFR, cash runway
+- Conduct stress tests and reverse stress tests
+- Communicate financial risk to the board in quantified terms
+
+---
+
+## 1. Market Risk — FX Exposure
+
+### Three Types of FX Risk
+
+| Type | Definition | Example |
+|---|---|---|
+| Transaction Risk | Risk from specific future foreign currency cash flows | Paying USD supplier invoice in 90 days |
+| Translation Risk | Risk of P&L/balance sheet changes when consolidating foreign subsidiaries | Dubai subsidiary earnings translated to PKR |
+| Economic Risk | Long-term impact of FX on competitive position and future cash flows | PKR depreciation making Pakistani exports cheaper |
+
+### Measuring FX Exposure
+- **Net exposure by currency:** Sum of all currency inflows minus all currency outflows for each currency
+- **Natural hedge ratio:** % of FX inflows that offset FX outflows in the same currency
+- **Sensitivity analysis:** Impact of 10%, 20%, 30% PKR depreciation on P&L and net assets
+
+### FX Risk Reporting
+
+| Currency | Payables (PKR) | Receivables (PKR) | Net Exposure (PKR) | Natural Hedge % | Unhedged Exposure |
+|---|---|---|---|---|---|
+| USD | 2,000M | 800M | (1,200M) | 40% | (720M) |
+| EUR | 500M | 200M | (300M) | 40% | (180M) |
+
+### FX Policy — Key Parameters
+- Maximum unhedged exposure per currency (PKR or %)
+- Mandatory hedging threshold: any exposure > X days or PKR amount requires hedge
+- Approved instruments: forwards, options (and which types), cross-currency swaps
+- Authorization levels: what can treasury manage vs what requires CFO/board approval
+
+---
+
+## 2. Market Risk — Interest Rate Risk
+
+### Fixed vs Floating Rate Risk
+
+**Floating rate risk (most common):** Borrowing at KIBOR + spread — rising rates increase interest costs directly.
+
+**Fixed rate risk:** Locked in at high rates if market rates fall; opportunity cost.
+
+**Duration and interest rate sensitivity:**
+```
+Interest Rate Sensitivity = Net Floating Rate Exposure × Rate Change
+Example: PKR 5bn floating rate debt × 1% rate rise = PKR 50M additional annual interest cost
+```
+
+### Interest Rate Risk Hedging
+- **Interest rate swaps:** Swap floating for fixed — pay fixed, receive floating; converts floating exposure to fixed
+- **Interest rate caps:** Maximum rate protection while retaining benefit if rates fall
+- **Cross-currency interest rate swaps:** Swap both currency and interest rate basis simultaneously
+
+### KIBOR and SBP Policy Rate Exposure (Pakistan Context)
+- SBP policy rate is the anchor for KIBOR
+- Pakistan experienced rapid rate cycles: 8% → 22% (2022–2023) → easing (2024–2025)
+- CFOs must model KIBOR sensitivity for every new borrowing and existing floating exposure
+- Covenant headroom should be stress-tested at KIBOR +400bps in budgets
+
+---
+
+## 3. Market Risk — Commodity Risk
+
+### Commodity Price Exposure Types
+- **Input commodity risk:** Raw material prices (cotton, steel, crude, wheat)
+- **Output commodity risk:** Product prices denominated in commodity markets
+- **Energy price risk:** Gas and electricity costs for energy-intensive industries
+
+### Pakistan Commodity Risk Context
+- **Textile sector:** Cotton price, yarn price, polyester price
+- **Cement:** Coal and fuel price (historically imported)
+- **Food processing:** Wheat, sugar, palm oil
+- **Power sector:** Furnace oil, natural gas, coal — fuel mix changes with policy
+
+### Commodity Hedging — When It Makes Sense
+Physical commodity hedging via futures and swaps requires:
+- Sufficient volume to make hedging cost-effective
+- Liquid futures market for the commodity
+- Management capability to monitor positions
+- Board-approved hedging policy
+
+---
+
+## 4. Credit Risk
+
+### Credit Risk Framework
+
+**Customer credit risk (trade receivables):**
+1. Credit assessment before extending terms — financial analysis, trade references
+2. Credit limits — maximum outstanding balance per customer
+3. Credit insurance — protects against debtor insolvency (EXIM Bank for export)
+4. Monitoring: aging report, debtor days trend, top-10 concentration
+5. Collection: escalation protocol at 30/60/90 days past due
+
+**Expected Credit Loss (ECL) — IFRS 9:**
+```
+ECL = Probability of Default (PD) × Exposure at Default (EAD) × Loss Given Default (LGD)
+```
+
+Three-stage model:
+- **Stage 1:** Performing — 12-month ECL
+- **Stage 2:** Significant credit deterioration — lifetime ECL
+- **Stage 3:** Credit-impaired — lifetime ECL + stop accruing interest revenue
+
+**Counterparty credit risk (treasury):**
+- Bank limits: maximum deposit/derivative exposure per bank counterparty
+- Rating requirements: minimum credit rating for approved bank counterparties
+- Diversification: no single bank > 30% of total treasury balances
+
+### Credit Concentration Risk
+
+| Metric | Definition | Typical Threshold |
+|---|---|---|
+| Single debtor concentration | Largest debtor / Total receivables | < 20% |
+| Top 5 debtor concentration | Top 5 debtors / Total receivables | < 50% |
+| Sector concentration | Largest sector / Total receivables | < 40% |
+
+---
+
+## 5. Liquidity Risk
+
+### Liquidity Coverage Ratio (LCR) — Basel III
+```
+LCR = High Quality Liquid Assets (HQLA) / Net Cash Outflows over 30 days ≥ 100%
+```
+For non-bank CFOs: ensure sufficient liquid assets to cover 30-day cash outflows in a stress scenario.
+
+### Net Stable Funding Ratio (NSFR) — Basel III
+```
+NSFR = Available Stable Funding / Required Stable Funding ≥ 100%
+```
+Addresses structural liquidity — ensures long-term assets are funded with stable long-term liabilities, not short-term funding.
+
+### Cash Runway
+```
+Cash Runway = Available Cash + Undrawn Credit Facilities / Monthly Cash Burn
+```
+Minimum 3–6 months runway as policy. Below 2 months = crisis-level liquidity risk.
+
+### Liquidity Ladder — 12-Month Cash Flow Forecast
+Build weekly/monthly cash flow forecast showing:
+- Operating cash inflows and outflows by period
+- Debt service schedule — principal and interest
+- Committed CAPEX payments
+- Net surplus/(deficit) by period
+- Available headroom from credit facilities
+
+### Liquidity Stress Testing
+Stress scenarios to test:
+- **Revenue shock:** 30% revenue decline for 3 months
+- **Customer default:** Loss of top 3 customers simultaneously
+- **Credit line withdrawal:** Bank withdraws revolving credit facility
+- **Combined stress:** Revenue shock + credit line withdrawal simultaneously
+
+---
+
+## 6. Stress Testing and Reverse Stress Testing
+
+### Stress Testing Mechanics
+1. Identify key financial risk variables (FX, interest rate, credit loss rate, revenue)
+2. Define stress scenarios — adverse but plausible (e.g., 1-in-10 year event)
+3. Apply stress to financial model — P&L and balance sheet impact
+4. Assess: can the entity absorb the stress? Are covenants breached? Is liquidity adequate?
+5. Identify mitigating actions available
+
+### Reverse Stress Testing
+Instead of asking "what happens if X goes wrong?" ask: "What would need to go wrong for the business to fail?"
+
+This surfaces non-obvious scenarios where multiple modest risks combine to produce catastrophic outcomes. Regulatory expectation for significant financial entities.
+
+### Board Stress Test Presentation
+Show:
+- Base case → Stress case → Available headroom
+- Key assumptions that drive the stress outcome
+- Management actions that would be triggered under stress
+- Residual risk after actions
+
+---
+
+## Self-Assessment
+
+1. Your company has USD 10M in payables due in 6 months and USD 4M in receivables due in 4 months. The current PKR/USD rate is 280. Calculate the net USD exposure and the P&L impact if PKR depreciates to 310 by the payment date. What hedge would you put in place?
+
+2. Design a credit risk framework for a Pakistani trading company with PKR 3bn in trade receivables across 150 customers. Cover: credit assessment, limits, monitoring, and IFRS 9 ECL staging.
+
+3. KIBOR rises from 15% to 20%. Your company has PKR 4bn in floating rate bank loans (KIBOR + 150bps) and PKR 2bn in fixed rate bonds (15% coupon). Calculate the impact on annual interest cost and assess whether existing EBITDA provides adequate interest coverage at the stressed rate.
+
+<ArticleNav
+  prev={{ title: "Module 21 — Enterprise Risk Management", href: "/financial-strategy/module-21-enterprise-risk-management" }}
+  next={{ title: "Module 23 — Derivatives & Hedging Strategy", href: "/financial-strategy/module-23-derivatives-hedging" }}
+/>

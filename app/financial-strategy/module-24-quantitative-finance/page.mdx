@@ -1,0 +1,214 @@
+export const metadata = {
+  title: "Module 24 — Quantitative Finance for CFOs | Financial Strategy — ByteWise",
+  description: "Value at Risk, Monte Carlo simulation, stochastic modeling, fixed income mathematics, and the quantitative toolkit every modern CFO must understand.",
+  openGraph: { title: "Module 24 — Quantitative Finance for CFOs | Financial Strategy", description: "VaR, Monte Carlo, fixed income math, options pricing, and quantitative finance for strategic decisions.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 24 — Quantitative Finance for CFOs
+
+Value at Risk, Monte Carlo simulation, fixed income mathematics, and the quantitative techniques modern CFOs need to understand, commission, and challenge.
+
+## Learning Objectives
+
+- Understand and interpret Value at Risk (VaR) metrics
+- Apply Monte Carlo simulation to financial decision-making
+- Master fixed income mathematics: pricing, yield, duration, convexity
+- Understand options pricing (Black-Scholes intuition) without being a quant
+- Use regression and statistical analysis to support CFO decisions
+
+---
+
+## 1. Value at Risk (VaR)
+
+### What VaR Measures
+VaR answers: *"What is the maximum loss over a given period at a given confidence level?"*
+
+```
+Example: VaR (95%, 1-day) = PKR 50M
+Interpretation: There is a 95% probability that we will NOT lose more than PKR 50M in a single day.
+Equivalently: In 1 out of 20 trading days, losses could exceed PKR 50M.
+```
+
+### Three VaR Methods
+
+| Method | How It Works | Strengths | Weaknesses |
+|---|---|---|---|
+| Historical | Use actual past return distribution | No distributional assumption | Past may not represent future |
+| Parametric (Variance-Covariance) | Assume normal distribution; use σ and ρ | Fast, simple | Underestimates tail risk; normality assumption |
+| Monte Carlo | Simulate thousands of scenarios | Flexible; handles non-linear instruments | Computationally intensive |
+
+### VaR Limitations — What Every CFO Must Know
+- **VaR does not predict the size of losses beyond the VaR threshold** — it just says they can happen
+- **Fat tails:** Real return distributions have more extreme events than normal distribution predicts
+- **Correlation breakdown:** Asset correlations spike in crises — diversification disappears when you need it most
+- **VaR is not a risk limit** — it is a measurement tool; Expected Shortfall (CVaR) is more conservative
+
+### Expected Shortfall (CVaR)
+```
+CVaR = Average loss in the worst (1 - confidence level)% of scenarios
+CVaR(95%) = Average of all losses exceeding the 95% VaR threshold
+```
+CVaR always exceeds VaR and is the preferred metric for risk limits under Basel III.
+
+---
+
+## 2. Monte Carlo Simulation in Finance
+
+### What Monte Carlo Does
+Simulates thousands of random future scenarios using probability distributions for key inputs, producing a full distribution of outcomes rather than a single-point estimate.
+
+### Steps in a CFO Monte Carlo Model
+1. Identify key uncertain variables (FX rate, EBITDA margin, commodity price)
+2. Assign probability distributions (normal, lognormal, triangular, uniform)
+3. Specify correlations between variables
+4. Run N simulations (10,000–100,000)
+5. Analyze output distribution: mean, percentiles, probability of target
+
+### Python Monte Carlo — FX and Revenue Combined
+```python
+import numpy as np
+
+n = 100_000
+rng = np.random.default_rng(42)
+
+# Correlated inputs: revenue growth and USD/PKR rate
+cov = [[0.0064, 0.0048],   # revenue growth var, covariance
+       [0.0048, 0.0144]]   # covariance, FX rate var
+rev_growth, fx_rate_change = rng.multivariate_normal(
+    [0.10, 0.05], cov, n).T  # 10% mean growth, 5% mean FX move
+
+base_revenue_pkr = 5_000  # PKR millions
+usd_payables_ratio = 0.40  # 40% of costs are USD
+
+revenue = base_revenue_pkr * (1 + rev_growth)
+usd_cost_increase = base_revenue_pkr * 0.60 * usd_payables_ratio * fx_rate_change
+ebitda_margin = 0.25 - usd_cost_increase / revenue
+ebitda = revenue * ebitda_margin
+
+print(f"Mean EBITDA: PKR {ebitda.mean():.0f}M")
+print(f"5th pct: PKR {np.percentile(ebitda, 5):.0f}M")
+print(f"95th pct: PKR {np.percentile(ebitda, 95):.0f}M")
+print(f"Prob EBITDA < 1000M: {(ebitda < 1000).mean():.1%}")
+```
+
+---
+
+## 3. Fixed Income Mathematics
+
+### Bond Pricing — Discounted Cash Flow
+```
+Bond Price = Σ [Coupon / (1 + y)^t] + [Face Value / (1 + y)^n]
+
+Where: y = yield to maturity, t = period, n = maturity
+```
+
+**Relationship between price and yield:**
+- When yield rises → bond price falls (inverse relationship)
+- A bond priced at par: coupon rate = yield to maturity
+- Premium bond: coupon rate > yield
+- Discount bond: coupon rate < yield
+
+### Duration — Measuring Interest Rate Sensitivity
+Duration is the weighted average time to receive the bond's cash flows. It measures the sensitivity of bond price to yield changes.
+
+```
+Modified Duration = Macaulay Duration / (1 + y)
+Price change % ≈ −Modified Duration × Δy
+```
+
+**Example:** 5-year bond, modified duration = 4.2
+- Yield rises by 1% (100bps) → price falls ~4.2%
+- For PKR 1bn portfolio: price change = −PKR 42M
+
+### Convexity — Second-Order Effect
+For large yield changes, duration alone underestimates the actual price change. Convexity captures the curvature of the price-yield relationship:
+```
+Price change = −Duration × Δy + ½ × Convexity × (Δy)²
+```
+Higher convexity = better risk profile (bond falls less on yield rises, gains more on yield falls).
+
+### Yield Curve and Its Information Content
+
+| Yield Curve Shape | What It Signals |
+|---|---|
+| Normal (upward sloping) | Healthy growth expectations, higher long-term rates |
+| Inverted (downward sloping) | Recession expected; long-term rates fall below short-term |
+| Flat | Uncertainty; transition between environments |
+| Humped | Peak rates expected at medium horizon |
+
+Pakistan yield curve: historically inverted during monetary tightening cycles (2022–2023 at peak policy rate).
+
+---
+
+## 4. Options Pricing — Intuition Without the Math
+
+### Black-Scholes Model — Key Variables
+
+| Variable | Symbol | Effect on Call Price |
+|---|---|---|
+| Underlying asset price | S | Higher S → higher call value |
+| Strike price | K | Higher K → lower call value |
+| Time to expiry | T | Longer T → higher value (more time for price to move) |
+| Volatility | σ | Higher σ → higher value (more chance of large moves) |
+| Risk-free rate | r | Higher r → higher call (cost of carry) |
+| Dividends | q | Higher dividends → lower call (stock drops ex-dividend) |
+
+### The Greeks — Risk Sensitivities of Options
+
+| Greek | Measures | CFO Implication |
+|---|---|---|
+| Delta | Sensitivity to underlying price | How much the hedge moves with the FX rate |
+| Gamma | Rate of change of delta | How quickly hedge ratio needs adjustment |
+| Theta | Time decay | Options lose value as expiry approaches — cost of waiting |
+| Vega | Sensitivity to volatility | Higher PKR volatility = more expensive options |
+
+### Real Options in Corporate Finance
+Real options apply option pricing logic to strategic decisions:
+- **Option to expand:** Value of the ability to scale up if a new market succeeds
+- **Option to abandon:** Value of the ability to exit if conditions deteriorate
+- **Option to delay:** Value of waiting before committing irreversible capital
+
+Real option value is missed by standard DCF. CFOs in high-uncertainty environments (new markets, R&D investments) should include real option value in capital allocation decisions.
+
+---
+
+## 5. Statistical Analysis for CFOs
+
+### Regression Analysis — Use Cases
+**Linear regression** explains the relationship between a dependent variable (e.g., revenue) and one or more independent variables (e.g., GDP growth, inflation, commodity price):
+```
+Revenue = α + β₁(GDP growth) + β₂(FX rate) + ε
+```
+- β₁ = 1.5 means: 1% GDP growth → 1.5% revenue growth
+- R² = 0.85 means: 85% of revenue variance explained by the model
+
+### Time Series Analysis for Forecasting
+- **Moving averages:** Smooth out seasonal fluctuations in sales data
+- **Exponential smoothing:** Weighted moving average that places more weight on recent observations
+- **ARIMA models:** Autoregressive integrated moving average — captures trend, seasonality, and autocorrelation
+- **Practical use:** Revenue forecasting, commodity price forecasting, working capital planning
+
+### Correlation and the Limits of Diversification
+```
+Portfolio Variance = w₁²σ₁² + w₂²σ₂² + 2w₁w₂ρ₁₂σ₁σ₂
+```
+Where ρ₁₂ = correlation between assets. If ρ = +1: no diversification. If ρ = −1: perfect diversification.
+
+CFO application: Correlations between business units' cash flows determine optimal capital allocation and cross-guarantee structures.
+
+---
+
+## Self-Assessment
+
+1. Your treasury portfolio of PKR 2bn has a 1-day VaR (95%) of PKR 15M. Explain to the board what this means, what it does NOT mean, and why the board should also look at Expected Shortfall.
+
+2. A 10-year PKR bond with 15% annual coupon is priced at par. Market yields then rise to 18%. Using duration (estimate: 6.5 years), calculate the approximate new price of the bond. How does convexity affect the actual price change?
+
+3. You are evaluating a new market entry with an NPV of −PKR 20M in the base case. However, if the market succeeds (40% probability), there is an option to double capacity with an NPV of +PKR 150M. How does real option analysis change the investment decision?
+
+<ArticleNav
+  prev={{ title: "Module 23 — Derivatives & Hedging Strategy", href: "/financial-strategy/module-23-derivatives-hedging" }}
+  next={{ title: "Module 25 — AI & Technology in Finance", href: "/financial-strategy/module-25-ai-technology-finance" }}
+/>

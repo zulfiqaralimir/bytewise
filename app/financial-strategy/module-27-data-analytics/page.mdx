@@ -1,0 +1,214 @@
+export const metadata = {
+  title: "Module 27 — Data Analytics & Financial Intelligence | Financial Strategy — ByteWise",
+  description: "Financial data architecture, KPI dashboards, Power BI and Python for CFOs, and building a data-driven finance function.",
+  openGraph: { title: "Module 27 — Data Analytics & Financial Intelligence | Financial Strategy", description: "Data architecture, KPI dashboards, Power BI, Python analytics, and the data-driven CFO.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 27 — Data Analytics & Financial Intelligence
+
+Financial data architecture, KPI dashboards, Power BI and Python for CFOs, and building a data-driven finance function that supports faster, better decisions.
+
+## Learning Objectives
+
+- Understand financial data architecture from ERP to dashboard
+- Build and interpret KPI dashboards at group, division, and product level
+- Apply Power BI and Python for financial analysis without being a data scientist
+- Design a finance data governance framework
+- Lead the transition from spreadsheet-based reporting to automated financial intelligence
+
+---
+
+## 1. Financial Data Architecture
+
+### The Data Stack for Finance
+
+```
+SOURCE SYSTEMS
+ERP (SAP/Oracle): G/L, AP, AR, Assets, Inventory
+CRM (Salesforce): Pipeline, customer revenue
+HR (Workday): Headcount, salaries
+Treasury (Kyriba): Cash, FX, debt
+                    ↓
+DATA INTEGRATION (ETL/ELT)
+Azure Data Factory, dbt, Fivetran
+Extract → Transform → Load
+                    ↓
+DATA WAREHOUSE
+Snowflake / BigQuery / Azure Synapse
+Central store of clean, governed financial data
+                    ↓
+SEMANTIC LAYER / DATA MODEL
+Defined business metrics, consistent definitions
+(Power BI datasets, dbt metrics layer, Looker LookML)
+                    ↓
+CONSUMPTION LAYER
+Power BI, Tableau, Excel (via Power Query)
+Finance team dashboards, board packs, ad-hoc analysis
+```
+
+### Data Quality — The CFO's First Concern
+A dashboard built on bad data is worse than no dashboard. Before investing in analytics:
+1. **Completeness:** Are all transactions captured in the ERP?
+2. **Accuracy:** Are chart of accounts mappings correct?
+3. **Timeliness:** Is data updated frequently enough for the intended use?
+4. **Consistency:** Is revenue defined the same way across all entities?
+5. **Governance:** Who can change master data and how are changes controlled?
+
+### Data Governance Framework for Finance
+- **Data owner:** Each financial metric has a business owner (not IT)
+- **Data definition catalogue:** Agreed definitions for Revenue, EBITDA, Working Capital, etc.
+- **Data lineage:** Document where each number comes from (source system → transformation → output)
+- **Access controls:** Who can see what financial data — role-based permissions
+- **Audit trail:** All changes to financial data must be logged and attributable
+
+---
+
+## 2. KPI Dashboard Design
+
+### CFO Dashboard Hierarchy
+
+| Level | Audience | Frequency | Metrics |
+|---|---|---|---|
+| Group Executive | CEO, CFO | Daily | Revenue run rate, cash position, top 3 risks |
+| Board Pack | Board, NED | Monthly | EBITDA, EPS, ROCE, Covenant headroom, risk heat map |
+| Business Unit | BU CFO, MD | Weekly | Revenue vs budget, margin, working capital |
+| Operational | Finance team | Daily | Cash collections, AP payments due, payroll |
+
+### The 12 CFO Metrics That Matter Most
+
+| # | Metric | Formula | Why It Matters |
+|---|---|---|---|
+| 1 | Revenue Growth | (Current − Prior) / Prior | Top-line momentum |
+| 2 | Gross Margin % | Gross Profit / Revenue | Pricing and cost efficiency |
+| 3 | EBITDA Margin % | EBITDA / Revenue | Operating profitability |
+| 4 | Net Profit Margin % | Net Profit / Revenue | Bottom-line return |
+| 5 | ROCE | EBIT / Capital Employed | Capital allocation efficiency |
+| 6 | Net Debt / EBITDA | Net Debt / LTM EBITDA | Leverage and covenant risk |
+| 7 | Interest Coverage | EBIT / Interest Expense | Debt service capacity |
+| 8 | Current Ratio | Current Assets / Current Liabilities | Short-term liquidity |
+| 9 | Debtor Days | Receivables / Revenue × 365 | Collection efficiency |
+| 10 | Creditor Days | Payables / COGS × 365 | Payment timing management |
+| 11 | Inventory Days | Inventory / COGS × 365 | Stock efficiency |
+| 12 | Cash Conversion Cycle | Debtor Days + Inventory Days − Creditor Days | Working capital efficiency |
+
+### Design Principles for Executive Dashboards
+- **Maximum 5–7 metrics per view** — executives cannot absorb more at once
+- **Variance highlighted immediately** — red/amber/green vs budget and prior period
+- **Trend visible** — 12-month sparklines show trajectory, not just point in time
+- **Drilldown available** — headline number → division → product → customer
+- **Mobile-first** — CFO and CEO check dashboards on phones in meetings
+
+---
+
+## 3. Power BI for Finance
+
+### Power BI Architecture for CFOs
+
+```
+Data Sources → Power Query (Transform) → Data Model (DAX) → Visuals
+```
+
+**Power Query:** Clean and transform raw ERP data (remove duplicates, fix formats, merge tables)
+
+**DAX (Data Analysis Expressions):** Create calculated measures (Year-over-Year growth, rolling 12-month average, budget variance %)
+
+### Key DAX Measures for Finance Teams
+```
+Revenue YoY Growth =
+  DIVIDE(
+    [Revenue] - CALCULATE([Revenue], SAMEPERIODLASTYEAR(Date[Date])),
+    CALCULATE([Revenue], SAMEPERIODLASTYEAR(Date[Date]))
+  )
+
+EBITDA Margin =
+  DIVIDE([EBITDA], [Revenue])
+
+Budget Variance % =
+  DIVIDE([Actual] - [Budget], ABS([Budget]))
+```
+
+### Automating the Monthly CFO Pack in Power BI
+Replace manual Excel CFO pack with a Power BI report that:
+- Updates automatically when ERP data refreshes
+- Shows all entities on one page with consistent formatting
+- Flags variances automatically
+- Can be published to SharePoint/Teams for board distribution
+
+---
+
+## 4. Python for CFO Analytics
+
+### Python in the Finance Function — Use Cases
+
+| Use Case | Libraries |
+|---|---|
+| Automated financial report generation | pandas, openpyxl, matplotlib |
+| Revenue forecasting | scikit-learn, LightGBM |
+| Anomaly detection in transactions | sklearn.ensemble, pyod |
+| Monte Carlo simulation | numpy |
+| Bond pricing and duration | scipy |
+| Scenario analysis automation | pandas, numpy |
+
+### Practical Python: Automated Variance Analysis
+```python
+import pandas as pd
+
+# Load actuals and budget from ERP export
+actuals = pd.read_excel("actuals.xlsx")
+budget  = pd.read_excel("budget.xlsx")
+
+df = actuals.merge(budget, on=["entity", "month", "cost_centre", "gl_account"])
+df["variance"]   = df["actual"] - df["budget"]
+df["variance_pct"] = df["variance"] / df["budget"].abs()
+
+# Flag material variances (> 10% and > PKR 1M)
+material = df[(df["variance_pct"].abs() > 0.10) & (df["variance"].abs() > 1_000_000)]
+material.to_excel("material_variances.xlsx", index=False)
+print(f"Material variances: {len(material)} line items")
+```
+
+### Building the Finance Data Team
+A modern finance function needs:
+- **Data analyst (Finance):** SQL, Power BI, Excel advanced — builds dashboards, automates reports
+- **FP&A analyst:** Business knowledge + Excel/Python + storytelling
+- **Financial systems specialist:** ERP/data warehouse interface, data governance
+- CFO does not need to code — but needs to speak the language to lead the team
+
+---
+
+## 5. From Spreadsheets to Financial Intelligence
+
+### The Spreadsheet Trap
+Signs that the finance function is over-reliant on Excel:
+- Monthly close requires 3+ days of "pulling numbers together"
+- Board pack takes 2 weeks to prepare
+- Different analysts produce different versions of "the same" number
+- A single person's absence breaks a critical report
+- Historical data cannot be easily retrieved
+
+### Migration Path to Automated Financial Intelligence
+```
+Phase 1: Data Hygiene — clean up ERP chart of accounts; standardize cost centres
+Phase 2: Data Warehouse — extract ERP data to Snowflake/BigQuery; build base tables
+Phase 3: Metrics Layer — define KPIs with agreed formulas in dbt or Power BI
+Phase 4: Dashboards — replace Excel reports with Power BI dashboards
+Phase 5: Forecasting — replace Excel forecast models with driver-based tool (Anaplan/Pigment)
+Phase 6: AI Augmentation — add ML forecasting, anomaly detection, narrative generation
+```
+
+---
+
+## Self-Assessment
+
+1. Your finance team spends 15 days preparing the monthly board pack from 8 different Excel files. Design a 6-month automation roadmap: which tools would you deploy, in what order, and how would you measure success?
+
+2. Your group has three entities in three countries with different ERP systems. You want a single CFO dashboard showing consolidated revenue, EBITDA, and cash. What data integration approach would you use and what are the key data governance decisions?
+
+3. Revenue growth is reported as 18% for Q3, but the CEO believes it should be higher. You discover three different teams are using three different revenue definitions. How do you establish a single source of truth?
+
+<ArticleNav
+  prev={{ title: "Module 26 — FinTech & Digital Finance", href: "/financial-strategy/module-26-fintech-digital-finance" }}
+  next={{ title: "Module 28 — CFO Leadership & Finance Team Management", href: "/financial-strategy/module-28-cfo-leadership" }}
+/>

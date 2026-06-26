@@ -1,0 +1,188 @@
+export const metadata = {
+  title: "Module 23 — Derivatives & Hedging Strategy | Financial Strategy — ByteWise",
+  description: "Forwards, futures, options, swaps — how derivatives work, hedge accounting under IFRS 9, and building a hedging policy for CFOs.",
+  openGraph: { title: "Module 23 — Derivatives & Hedging Strategy | Financial Strategy", description: "Forwards, options, swaps, hedge accounting under IFRS 9, and hedging policy design.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 23 — Derivatives & Hedging Strategy
+
+Forwards, futures, options, and swaps — how they work, when to use them, hedge accounting under IFRS 9, and designing a corporate hedging policy.
+
+## Learning Objectives
+
+- Understand the mechanics of forwards, futures, options, and swaps
+- Apply hedge accounting criteria under IFRS 9
+- Design a corporate hedging policy appropriate to a non-financial entity
+- Calculate payoffs and P&L impact of common hedging strategies
+- Present hedging rationale and results to the board
+
+---
+
+## 1. Derivatives — The Basics
+
+### Why Corporations Use Derivatives
+Corporations use derivatives not to speculate but to manage risk:
+- **Lock in costs:** FX forwards to fix USD payable cost in PKR
+- **Lock in revenues:** Commodity futures to fix selling price
+- **Reduce interest cost volatility:** Interest rate swaps to convert floating to fixed
+- **Buy protection:** Options to cap FX or interest rate exposure while retaining upside
+
+### Key Derivative Types
+
+| Instrument | Obligation | Exchange-Traded? | Flexibility |
+|---|---|---|---|
+| Forward | Obligatory for both parties | No (OTC) | Fully customizable size and date |
+| Future | Obligatory for both parties | Yes | Standardized size and date |
+| Option (bought) | Right but no obligation for buyer | Both OTC and exchange | Flexible but costs premium |
+| Swap | Obligatory exchange of cash flows | OTC | Highly customizable |
+
+---
+
+## 2. FX Forwards and Futures
+
+### Forward Contract Mechanics
+A forward contract locks in an FX rate today for settlement at a future date.
+
+```
+Company needs to pay USD 1M in 90 days
+Current spot rate: PKR 280/USD
+90-day forward rate: PKR 284/USD (forward points reflect interest rate differential)
+
+By entering the forward:
+- Company locks in total cost of PKR 284M
+- If spot at maturity is 300 → saved PKR 16M vs no hedge
+- If spot at maturity is 270 → paid PKR 14M more vs no hedge (opportunity cost)
+```
+
+### Forward Rate Calculation — Interest Rate Parity
+```
+Forward Rate = Spot Rate × (1 + domestic interest rate) / (1 + foreign interest rate)
+```
+
+For Pakistan (high PKR rates vs USD rates): forward PKR rates are at a persistent discount vs USD, meaning USD forwards are always more expensive in PKR terms than spot.
+
+### NDFs (Non-Deliverable Forwards) — Pakistan Relevance
+For Pakistani rupee, the NDF market provides offshore forward rate pricing. Onshore forward market is constrained by SBP regulations on FX forward contracts for corporates. CFOs should be aware of SBP guidelines on which instruments are permitted and for which purposes.
+
+---
+
+## 3. Options
+
+### Call Option vs Put Option
+
+| | Call Option | Put Option |
+|---|---|---|
+| Right to | Buy the underlying | Sell the underlying |
+| Used by | Buyer expecting price to rise | Buyer expecting price to fall |
+| FX hedge: | Right to buy USD at strike price | Right to sell USD at strike price |
+
+### Option Premium — The Cost of Protection
+Unlike forwards, options require payment of a premium upfront. The premium reflects:
+- **Intrinsic value:** How much in-the-money the option is
+- **Time value:** Time remaining until expiry × volatility
+
+Higher volatility = higher option premium. In PKR/USD markets, high implied volatility (from PKR instability) means options are expensive.
+
+### Common Corporate Option Strategies
+
+**Purchased call/put:** Simple downside protection with unlimited upside. Cost = premium.
+
+**Zero-cost collar:** Buy an option and simultaneously sell an option in the opposite direction, netting the premium to zero. Caps both upside and downside within a band. No premium cost.
+
+```
+Example: USD payable hedge
+Buy USD call at 290 (cap the PKR cost at 290)
+Sell USD put at 270 (give up benefit if PKR strengthens below 270)
+Net premium: zero
+Range: worst case 290, best case 270
+```
+
+---
+
+## 4. Interest Rate Swaps
+
+### Plain Vanilla Interest Rate Swap Mechanics
+One party pays fixed, one pays floating. Notional principal is never exchanged — only the interest differential.
+
+```
+Company A: has floating rate debt (KIBOR + 150bps), fears KIBOR rising
+Swap bank: pays Company A floating (KIBOR + 150bps), receives fixed 16%
+
+Net for Company A:
+- Pays KIBOR + 150bps on loan
+- Receives KIBOR + 150bps from swap
+- Pays 16% fixed on swap
+= Net cost: 16% fixed (regardless of where KIBOR moves)
+```
+
+### Cross-Currency Swaps
+Exchange both currency and interest basis:
+- Company A has PKR floating rate funding but needs USD
+- Swap: receive PKR floating, pay USD fixed
+- Used to synthetically create USD fixed rate funding from PKR base
+
+---
+
+## 5. Hedge Accounting Under IFRS 9
+
+### Why Hedge Accounting Matters
+Without hedge accounting, derivatives are marked to market through P&L — creating volatility in earnings even when the hedge is economically effective. IFRS 9 hedge accounting allows the hedge and the hedged item to be accounted for consistently.
+
+### Three Types of Hedging Relationships
+
+| Type | What It Hedges | Accounting Treatment |
+|---|---|---|
+| Fair Value Hedge | Changes in fair value of a recognized asset or liability | Both hedge and hedged item remeasured through P&L — offsets |
+| Cash Flow Hedge | Variability in future cash flows (forecasted transactions) | Effective portion deferred in OCI; recycled to P&L when transaction occurs |
+| Net Investment Hedge | Currency risk of foreign subsidiaries | Effective portion in OCI (within translation reserve); released on disposal |
+
+### IFRS 9 Hedge Accounting Criteria
+1. **Formal designation and documentation** — hedge relationship formally designated and documented at inception
+2. **Economic relationship** — hedge and hedged item move in opposite directions
+3. **Credit risk does not dominate** — credit risk does not prevent hedge from achieving offset
+4. **Hedge ratio documentation** — quantity of hedging instrument vs hedged item clearly stated
+
+### Hedge Effectiveness Testing
+- **Prospective:** At inception, demonstrate the hedge will be effective going forward
+- **Retrospective:** Actual effectiveness measured each reporting date
+- No longer required to be within 80–125% range (IFRS 9 replaced IAS 39 bright line)
+
+---
+
+## 6. Corporate Hedging Policy Design
+
+### What a Hedging Policy Must Contain
+1. **Objective:** Risk management only — no speculative positions
+2. **Risk identification:** Which risk categories are eligible for hedging
+3. **Hedging horizon:** Maximum tenor of hedging instruments (e.g., 12 months rolling)
+4. **Approved instruments:** Which derivatives are permitted
+5. **Hedging ratios:** Target hedge ratio by exposure type (e.g., 70–100% of USD payables)
+6. **Counterparties:** Approved banks and credit rating requirements
+7. **Authorization:** Who can enter derivatives and up to what notional size
+8. **Reporting:** Frequency and content of treasury reporting to CFO and board
+9. **Hedge accounting:** Whether hedge accounting will be applied and which relationships
+
+### Layered Hedging Approach
+Rather than hedging 100% at one point in time, layer hedges over time:
+- 12 months out: hedge 40% of forecast exposure
+- 6 months out: hedge additional 30% (total 70%)
+- 3 months out: hedge additional 20% (total 90%)
+
+This averages the hedging rate over time, avoiding the risk of hedging at a bad rate at a single point.
+
+---
+
+## Self-Assessment
+
+1. Your company must pay EUR 2M in 6 months. The spot EUR/PKR rate is 305 and the 6-month forward is 315. If you use a forward contract, what is your locked-in PKR cost? If the EUR/PKR rate at maturity turns out to be 290, calculate your opportunity cost.
+
+2. You have PKR 3bn in KIBOR-linked floating rate borrowings. KIBOR is currently 15%. You want to convert to fixed rate using an interest rate swap. The bank offers: you pay 16.5% fixed, receive KIBOR flat. Calculate your net interest cost under the swap and compare it to your unhedged cost if KIBOR rises to 20%.
+
+3. Your audit team questions why FX forward mark-to-market losses of PKR 50M are in OCI rather than P&L. Explain the IFRS 9 cash flow hedge accounting treatment and what conditions must be met for this to be permitted.
+
+<ArticleNav
+  prev={{ title: "Module 22 — Financial Risk: Market, Credit & Liquidity", href: "/financial-strategy/module-22-financial-risk" }}
+  next={{ title: "Module 24 — Quantitative Finance for CFOs", href: "/financial-strategy/module-24-quantitative-finance" }}
+/>

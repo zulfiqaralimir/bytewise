@@ -1,0 +1,169 @@
+export const metadata = {
+  title: "Module 26 — FinTech & Digital Finance | Financial Strategy — ByteWise",
+  description: "Digital payments, open banking, blockchain in finance, embedded finance, and the CFO's role in navigating the FinTech ecosystem.",
+  openGraph: { title: "Module 26 — FinTech & Digital Finance | Financial Strategy", description: "Digital payments, open banking, blockchain, DeFi, embedded finance, and CFO strategy.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 26 — FinTech & Digital Finance
+
+Digital payments infrastructure, open banking, blockchain applications in corporate finance, embedded finance, and the strategic choices CFOs face in the FinTech ecosystem.
+
+## Learning Objectives
+
+- Understand the digital payments landscape and its working capital implications
+- Apply open banking frameworks to treasury and cash management
+- Evaluate blockchain use cases in corporate finance and supply chain
+- Assess embedded finance opportunities and risks
+- Make build vs partner vs buy decisions for FinTech capabilities
+
+---
+
+## 1. Digital Payments Infrastructure
+
+### Payment Rail Types
+
+| Rail | Speed | Cost | Use Case |
+|---|---|---|---|
+| IBFT (Pakistan) | Same-day | Very low | Domestic transfers between banks |
+| Raast (Pakistan) | Real-time | Free for consumers | P2P, G2P payments, growing B2B |
+| SWIFT (international) | 1–3 days | Moderate | Cross-border B2B and treasury |
+| SEPA (Europe) | Same-day | Low | EUR zone payments |
+| ACH (USA) | 1–2 days | Low | USD domestic |
+| Card networks (Visa/Mastercard) | Instant authorization, T+2 settlement | 1.5–3.5% | Consumer and B2B card payments |
+
+### Working Capital Impact of Payment Terms and Rails
+- Faster payment rails enable just-in-time payments — preserve cash longer
+- Early payment discounts: paying 10 days early for 2% discount = 72% annualized return
+- Supply chain finance: bank pays supplier early at a discount; company pays bank on original terms
+
+### Pakistan Digital Payments Context
+- **Raast:** State Bank of Pakistan's instant payment infrastructure — free, real-time, API-enabled
+- **1LINK:** Pakistan's shared ATM/payment switch
+- **JazzCash, EasyPaisa:** Mobile wallets with 30M+ users — key for B2C collection
+- **SECP sandbox:** FinTech regulatory sandbox enabling new payment product testing
+- SBP foreign exchange regulations govern cross-border digital payment flows
+
+---
+
+## 2. Open Banking and Treasury Automation
+
+### What is Open Banking?
+Open Banking enables third-party applications to access bank account data and initiate payments via APIs, with customer consent.
+
+**Treasury applications:**
+- **Cash pooling automation:** Aggregate balances across multiple bank accounts instantly
+- **Payment initiation:** ERP-to-bank payment initiation without manual SWIFT files
+- **Bank statement automation:** Real-time transaction feeds replacing MT940 file batches
+- **FX best execution:** Compare rates across multiple banks in real-time
+
+### Cash Visibility — The CFO's Core Open Banking Use Case
+```
+ERP (SAP/Oracle)
+      ↓ API
+TMS (Treasury Management System)
+      ↓ Open Banking APIs
+All bank accounts across all countries
+      ↓
+Real-time global cash position
+```
+
+Benefit: eliminate the 1–3 day lag in knowing actual cash position. Enable same-day investment of surplus cash.
+
+### Pakistan Open Banking Status
+SBP's Open Banking Regulatory Framework (2022) requires banks to expose APIs for account information and payment initiation. Adoption is growing — relevant for CFOs building treasury automation.
+
+---
+
+## 3. Blockchain in Corporate Finance
+
+### Blockchain Applications With Real Traction
+
+| Application | How It Works | Status |
+|---|---|---|
+| Trade finance | Smart contracts replace Letters of Credit; documents verified on blockchain | Live: HSBC, Contour, TradeLens |
+| Cross-border payments | Blockchain rails bypass correspondent banking; faster and cheaper | Live: Ripple, JPM Coin |
+| Securities settlement | T+0 settlement vs T+2 for traditional equities | Pilot phase in multiple markets |
+| Supply chain provenance | Track materials from source to delivery on-chain | Live: IBM Food Trust, De Beers |
+| Tokenized assets | Real estate, bonds, private equity tokenized on blockchain | Growing: BlackRock BUIDL fund |
+
+### Smart Contracts in Trade Finance
+Traditional Letters of Credit involve 5–7 parties, 20+ documents, 7–10 days. Smart contract LC:
+- Conditions encoded in contract: "Release payment when shipping documents verified by oracle"
+- Automatic execution on condition fulfilment
+- Immutable audit trail
+- Reduces fraud risk (documents cannot be altered)
+
+### Crypto and Stablecoin for CFOs
+CFOs encounter crypto in treasury (some companies hold Bitcoin reserves), payment rails (stablecoin cross-border payments), and client/supplier requirements (digital asset businesses).
+
+**CFO risk considerations for any crypto exposure:**
+- **Volatility risk:** Bitcoin drawdowns of 50–80% are not uncommon
+- **IFRS accounting:** Digital assets classified as intangibles under IAS 38 (no mark-to-market through P&L for volatile assets) — unless actively traded
+- **Regulatory risk:** SBP position on crypto is restrictive; UAE and Saudi have clearer frameworks
+- **Custody risk:** Self-custody vs regulated custodian decision
+
+---
+
+## 4. Embedded Finance
+
+### What is Embedded Finance?
+Financial services (credit, insurance, payments) embedded directly into non-financial products and workflows.
+
+**Examples:**
+- BNPL (Buy Now Pay Later) at e-commerce checkout
+- Insurance embedded in travel booking
+- Working capital credit offered by ERP software to supplier
+- Instant insurance claims processing triggered by IoT sensor data
+
+### CFO Use Cases — Embedded Finance as Revenue Stream
+Companies with strong distribution and customer data can embed financial services:
+- **B2B BNPL:** Offer payment terms to customers, monetize via factoring or risk-sharing with a fintech
+- **Supply chain lending:** Extend or connect early payment finance to suppliers
+- **Insurance partnerships:** Earn referral income by integrating insurance into product purchase flow
+
+### Embedded Finance — Regulatory and Risk Considerations
+- License requirements: offering credit or insurance typically requires regulated entity or licensed partner
+- Data protection: financial data embedded in product creates new data governance obligations
+- Balance sheet risk: if company retains credit risk on embedded lending, capital implications arise
+- SECP and SBP licensing: Pakistan regulatory environment for non-bank financial services
+
+---
+
+## 5. FinTech Strategy for CFOs — Build, Partner, or Buy?
+
+### Decision Framework
+
+| Option | When to Choose | Risk | Reward |
+|---|---|---|---|
+| Build (in-house) | Core to competitive advantage; unique data required | High execution risk; 2–3x cost overrun common | Full control; proprietary capability |
+| Partner (white-label or API) | Need speed to market; non-core capability | Dependency risk; margin sharing | Fast, lower capital requirement |
+| Buy (acquire FinTech) | Capability already exists at target; faster than build | Integration risk; overpay risk | Talent + technology acquisition |
+
+### Incumbent Bank vs FinTech Tradeoffs for CFOs
+When selecting banking partners vs FinTech vendors:
+
+| Criteria | Traditional Bank | FinTech |
+|---|---|---|
+| Trust and regulatory standing | High | Variable |
+| API capability | Improving but often slow | Native API-first |
+| Credit products | Full suite | Often limited |
+| International reach | Strong | Often limited |
+| Pricing | Higher | Competitive |
+| Customer experience | Improving | Typically superior |
+
+---
+
+## Self-Assessment
+
+1. Your company collects PKR 500M per month in consumer payments through a cash agent network. A FinTech offers to digitize this via mobile wallet integration, reducing collection time from 5 days to 1 day. Calculate the working capital benefit and assess what you would need to evaluate before signing.
+
+2. Your supply chain finance program relies on a single bank. A blockchain-based trade finance platform offers multi-funder access with automated LC execution. What due diligence would you conduct before recommending board approval?
+
+3. A digital asset company offers to pay for a major contract in USDC (a stablecoin). Under what conditions would you accept, and how would you account for it under IFRS?
+
+<ArticleNav
+  prev={{ title: "Module 25 — AI & Technology in Finance", href: "/financial-strategy/module-25-ai-technology-finance" }}
+  next={{ title: "Module 27 — Data Analytics & Financial Intelligence", href: "/financial-strategy/module-27-data-analytics" }}
+/>

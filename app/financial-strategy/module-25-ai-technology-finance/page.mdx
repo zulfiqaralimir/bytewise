@@ -1,0 +1,193 @@
+export const metadata = {
+  title: "Module 25 — AI & Technology in Finance | Financial Strategy — ByteWise",
+  description: "AI applications in financial forecasting, fraud detection, NLP for financial documents, and the CFO's technology leadership agenda.",
+  openGraph: { title: "Module 25 — AI & Technology in Finance | Financial Strategy", description: "AI in finance: forecasting, fraud detection, NLP, LLMs, and the CFO technology agenda.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 25 — AI & Technology in Finance
+
+AI applications in financial forecasting, fraud detection, NLP for financial documents, and what every CFO needs to know about the technology transformation of the finance function.
+
+## Learning Objectives
+
+- Identify where AI creates measurable value in CFO functions
+- Understand how machine learning models work at a conceptual level
+- Apply AI to financial forecasting, anomaly detection, and document processing
+- Evaluate AI vendor claims critically — what to ask before buying
+- Lead the finance function's AI adoption roadmap
+
+---
+
+## 1. AI in Financial Forecasting
+
+### Classical vs ML Forecasting
+
+| Approach | Method | Strengths | Weaknesses |
+|---|---|---|---|
+| Classical (ARIMA, exponential smoothing) | Time series statistics | Interpretable, proven | Limited input variables |
+| Machine Learning (XGBoost, LightGBM) | Gradient boosted trees | Handles many inputs, non-linear | Less interpretable, needs more data |
+| Deep Learning (LSTM, Transformer) | Neural networks on sequences | Captures complex patterns | Data-hungry, black box |
+
+### Revenue Forecasting with Machine Learning
+ML models can incorporate many more signals than traditional statistical forecasting:
+- Lagged sales data
+- Macroeconomic indicators (GDP, CPI, KIBOR)
+- Commodity prices
+- Seasonal dummies
+- Sales pipeline data
+- Web traffic or search trend data
+
+```python
+import lightgbm as lgb
+from sklearn.model_selection import train_test_split
+
+# Feature set: economic and operational drivers
+features = ['month', 'gdp_growth', 'cpi', 'kibor', 'usd_pkr', 
+            'lag_1_revenue', 'lag_12_revenue', 'pipeline_value']
+target = 'monthly_revenue'
+
+X_train, X_test, y_train, y_test = train_test_split(
+    df[features], df[target], test_size=0.2, shuffle=False)
+
+model = lgb.LGBMRegressor(n_estimators=200, learning_rate=0.05)
+model.fit(X_train, y_train)
+```
+
+### Cash Flow Forecasting Automation
+- Connect to ERP (SAP, Oracle) for actual P2P and O2C data
+- Use ML to forecast collection timing from receivables aging
+- Automate bank balance aggregation via Open Banking APIs
+- Produce 13-week rolling cash forecast with confidence intervals
+
+---
+
+## 2. AI in Fraud and Anomaly Detection
+
+### Why Rules-Based Fraud Detection Fails
+Traditional rule-based systems (e.g., "flag all transactions > PKR 1M") generate too many false positives and miss sophisticated fraud that stays below thresholds. AI learns patterns from historical data and flags deviations from normal behavior.
+
+### Unsupervised Anomaly Detection — How It Works
+Isolation Forest, Local Outlier Factor, and Autoencoders learn what "normal" looks like and flag statistical outliers:
+- Journal entries posted at unusual times (3am weekends)
+- Vendors added and paid within hours (procurement fraud)
+- Round-number transactions in high frequency (test transactions before larger fraud)
+- Accounts payable payments to unusual bank accounts
+
+### Supervised Fraud Classification
+When labeled fraud examples exist, train a classifier:
+- Features: transaction amount, time, user ID, vendor category, posting pattern
+- Labels: fraud / not fraud (from historical cases)
+- Model: XGBoost classifier with class imbalance handling (SMOTE, class weights)
+- Output: probability of fraud per transaction → route high-probability cases for review
+
+### AI in Expense Management
+- Receipt OCR (Optical Character Recognition): extract vendor, amount, date from images
+- Policy violation detection: identify claims above per-diem limits, duplicate submissions, disallowed categories
+- Duplicate detection: identify near-identical claims across different employees (collusion)
+
+---
+
+## 3. NLP and Large Language Models in Finance
+
+### Document Processing with NLP
+
+**Contract analysis:**
+- Extract key terms (payment terms, penalties, termination clauses) from vendor contracts
+- Flag unusual clauses vs standard contract templates
+- Summarize long contracts for CFO review
+
+**Financial statement analysis:**
+- Parse competitor annual reports and extract key ratios automatically
+- Sentiment analysis on earnings call transcripts to detect management tone shifts
+- Regulatory document monitoring: extract SECP/SBP circulars and summarize actions required
+
+### LLMs in CFO Workflows
+Modern LLMs (GPT-4, Claude) can assist with:
+- First draft of board papers, investor presentations, management reports
+- Summarizing audit findings and risk register updates
+- Answering internal finance team questions from policy documents
+- Drafting variance analysis narrative from structured financial data
+
+**CFO protocol for LLM use:**
+- Never input commercially sensitive or personally identifiable data into public LLMs
+- Always verify quantitative outputs independently
+- Use as a drafting accelerator, not as a decision maker
+- Implement enterprise-grade LLM APIs with data isolation agreements
+
+### AI-Powered Financial Statement Generation
+Emerging capability: structured ERP data → automated financial report generation. Already used in:
+- Automated earnings releases (Associated Press, Reuters)
+- Regulatory reporting automation
+- Management commentary first drafts
+
+---
+
+## 4. Robotic Process Automation (RPA)
+
+### Finance Processes Suitable for RPA
+
+| Process | Automation Candidate |
+|---|---|
+| Bank reconciliation | Extract bank statement + match to GL ledger |
+| Intercompany reconciliation | Extract balances from each entity + match/flag discrepancies |
+| Invoice processing | Extract invoice data + match to PO + route for approval |
+| Month-end close tasks | Run standard journal postings, allocations, consolidation steps |
+| Regulatory report preparation | Extract data from ERP + populate SECP/SBP report templates |
+
+### RPA + AI = Intelligent Process Automation (IPA)
+Pure RPA can only follow rules. Adding AI (document understanding, anomaly detection, decision logic) creates IPA that can handle unstructured inputs and exceptions.
+
+### RPA ROI Framework
+```
+Annual Hours Saved × Cost per Hour = Annual Savings
+Implementation Cost + Annual Maintenance = Total Cost
+Payback Period = Total Cost / Annual Savings
+```
+
+Typical RPA ROI for finance function: 12–18 month payback on well-chosen use cases.
+
+---
+
+## 5. CFO Technology Leadership
+
+### The Finance Technology Stack
+
+| Layer | Systems |
+|---|---|
+| ERP (core) | SAP S/4HANA, Oracle Cloud ERP, Microsoft Dynamics |
+| FP&A & Planning | Anaplan, Adaptive Insights, Pigment, Board |
+| Data Warehouse | Snowflake, BigQuery, Azure Synapse |
+| BI & Reporting | Power BI, Tableau, Looker |
+| Treasury Management | Kyriba, FIS Quantum, SAP Treasury |
+| AI/ML Platform | Azure ML, AWS SageMaker, Databricks |
+
+### CFO Questions Before Buying Any Technology
+1. What specific CFO decision or process does this improve?
+2. What is the data requirement and do we have the data quality to support it?
+3. What is the implementation timeline and total cost of ownership (not just license)?
+4. How will we measure ROI and by what date?
+5. Who internally owns the implementation and ongoing operation?
+
+### Avoiding the AI Hype Trap
+Many AI vendor claims are aspirational. CFOs should ask for:
+- **Proof of concept on your data:** Not a generic demo
+- **Explainability:** Can the model's output be explained to the audit committee?
+- **Accuracy benchmarks:** Against what baseline? On what test set?
+- **Failure modes:** What does the model get wrong and how often?
+
+---
+
+## Self-Assessment
+
+1. Your CFO wants to implement AI-based revenue forecasting to replace the current Excel-based process. Design the business case: identify the data required, the model approach, how you would measure success, and the key risks.
+
+2. Internal audit identifies 15 anomalous journal entries from your accounts payable team using an AI anomaly detection tool. The entries are all legitimate corrections, but posted at 2am by one user. How do you respond and what control enhancement does this suggest?
+
+3. A technology vendor offers an "AI-powered CFO assistant" that will read your financial data and answer board questions automatically. What questions do you ask before signing the contract? What conditions would you include in the contract?
+
+<ArticleNav
+  prev={{ title: "Module 24 — Quantitative Finance for CFOs", href: "/financial-strategy/module-24-quantitative-finance" }}
+  next={{ title: "Module 26 — FinTech & Digital Finance", href: "/financial-strategy/module-26-fintech-digital-finance" }}
+/>

@@ -1,0 +1,200 @@
+export const metadata = {
+  title: "Module 34 — Islamic Finance & Shariah-Compliant Structures | Financial Strategy — ByteWise",
+  description: "Islamic finance principles, key Shariah-compliant instruments, sukuk structuring, AAOIFI standards, and practical Islamic finance for Pakistani and Gulf CFOs.",
+  openGraph: { title: "Module 34 — Islamic Finance | Financial Strategy", description: "Islamic finance principles, sukuk, murabaha, musharakah, AAOIFI standards, and Pakistan/Gulf practice.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 34 — Islamic Finance & Shariah-Compliant Structures
+
+Islamic finance principles, key instruments (sukuk, murabaha, ijara, musharakah), AAOIFI standards, and practical application for Pakistani and Gulf CFOs.
+
+## Learning Objectives
+
+- Understand the Shariah principles that prohibit riba and how alternatives work
+- Apply key Islamic finance instruments: murabaha, ijara, musharakah, mudarabah
+- Structure and evaluate sukuk for corporate financing
+- Apply AAOIFI standards to Islamic financial instruments
+- Manage Islamic finance in a dual (conventional + Islamic) banking relationship
+
+---
+
+## 1. Islamic Finance Principles
+
+### The Core Prohibition — Riba
+Riba (loosely: interest or usury) is prohibited in Islamic law. This prohibition covers any predetermined, fixed return on a loan or debt. The implication: Islamic finance cannot use conventional interest-bearing debt instruments.
+
+### Other Shariah Principles
+
+| Principle | Meaning | Financial Implication |
+|---|---|---|
+| Riba prohibition | No interest on money | Debt instruments must be restructured as trade or equity |
+| Gharar prohibition | No excessive uncertainty | Derivatives with speculative elements may not be permissible |
+| Maysir prohibition | No gambling | Pure options with speculative intent not permissible |
+| Asset-backing | Financing must be tied to real assets | Money cannot be lent for nothing — must be linked to a transaction |
+| Profit and loss sharing | Returns must reflect actual economic risk | Investor bears some downside risk; not guaranteed return |
+
+### Halal Sectors and Haram Exclusions
+Islamic finance institutions cannot finance:
+- Alcohol production or distribution
+- Conventional banking (interest-based)
+- Pork products
+- Gambling or gaming
+- Weapons manufacture
+- Adult entertainment
+
+For Pakistani and Gulf corporate CFOs: ensure no revenue stream from haram sectors if seeking Islamic financing; screen potential Islamic finance investors for sector exclusions.
+
+---
+
+## 2. Key Islamic Finance Instruments
+
+### Murabaha — Cost-Plus Sale
+The Islamic bank buys the asset (commodity, equipment, raw material) and sells it to the customer at cost plus a disclosed profit margin, with deferred payment.
+
+```
+Customer needs: Steel sheets worth PKR 100M
+Conventional: Bank lends PKR 100M at 18% interest
+Islamic (Murabaha): Bank buys steel sheets for PKR 100M
+                    Bank sells to customer for PKR 118M payable in 12 months
+                    No interest — but the economics are equivalent
+```
+
+**CFO considerations:**
+- Profit rate vs interest rate: economically equivalent; accounting treatment differs
+- IFRS treatment: IFRS 9 applies to murabaha payables — still classified as financial liabilities
+- Commodity murabaha: frequently used for working capital by using a commodity exchange as the underlying (tawarruq structure)
+
+### Ijara — Islamic Leasing
+The bank buys and leases an asset to the customer. The customer pays rent, not interest. At the end of the ijara term, ownership may transfer (ijara wa iqtina — finance lease equivalent).
+
+```
+IFRS 16 treatment: Ijara finance lease = same accounting as conventional finance lease
+                   Right-of-use asset + lease liability recognized
+```
+
+### Musharakah — Partnership
+Both the bank and customer contribute capital to a joint venture. Profits are shared in agreed ratios; losses are shared in proportion to capital contribution.
+
+**Diminishing musharakah (for real estate / project finance):**
+The bank's share reduces over time as the customer buys out the bank's portion:
+```
+Bank: 80% ownership initially
+Customer buys 5% each year for 16 years
+At maturity: customer owns 100%
+```
+
+### Mudarabah — Sleeping Partnership
+Bank provides capital (rab ul maal); customer provides expertise and management (mudarib). Profit is shared in agreed ratio; loss falls on the capital provider (bank) unless due to mudarib's negligence.
+
+Used primarily for: investment accounts, sukuk structuring, collective investment schemes.
+
+### Istisna — Manufacturing Contract
+Islamic alternative to project finance / construction financing. Bank contracts to deliver a manufactured item or construction project at a future date for a fixed price. Customer pays in installments. The bank (or its contractor) builds/manufactures the asset.
+
+**Pakistan relevance:** Frequently used by HBFC, NBFC, and development finance institutions for construction and infrastructure projects.
+
+---
+
+## 3. Sukuk
+
+### What Is Sukuk?
+Sukuk are Islamic securities representing proportionate ownership in an underlying asset, usufruct, project, or business activity. They are not debt instruments — they represent beneficial ownership of assets.
+
+**Key distinction from bonds:**
+- Bond: Obligation to repay principal + interest
+- Sukuk: Ownership stake in underlying asset + profit distributions from that asset
+
+### Major Sukuk Structures
+
+| Structure | Underlying | Return Mechanism |
+|---|---|---|
+| Ijara sukuk | Real estate, equipment, infrastructure | Rental income from the asset |
+| Musharakah sukuk | Business partnership interest | Profit from the business |
+| Mudarabah sukuk | Investment activity | Profit from investment |
+| Murabaha sukuk | Trade receivables | Profit from murabaha transactions |
+| Istisna/Wakala sukuk | Construction project | Project returns |
+
+### Pakistan Sukuk Market
+- Government of Pakistan regularly issues GoP Ijara Sukuk (GoIJS) — benchmark for PKR Islamic yield curve
+- SECP and PSX have rules for corporate sukuk issuance
+- WAPDA, Pak Motorway, Nayatel, Bank Alfalah among corporate sukuk issuers
+- CFOs of large companies can raise PKR 1–5bn through PSX sukuk
+
+### UAE / Gulf Sukuk — International Market
+- Nasdaq Dubai is the world's largest sukuk listing venue
+- USD sukuk placed with Gulf Islamic banks, pension funds, and SWFs
+- Typical yield: SOFR + 150–250bps for investment grade issuers; higher for sub-investment grade
+- Shariah board: independent scholars must certify the sukuk structure before issuance
+
+---
+
+## 4. AAOIFI Standards
+
+### What is AAOIFI?
+Accounting and Auditing Organization for Islamic Financial Institutions (AAOIFI) — the standard-setting body for Islamic finance. Issues:
+- Shariah standards (mandatory in Bahrain, Pakistan, Sudan; adopted in UAE and Gulf)
+- Accounting standards
+- Auditing standards
+- Ethics standards
+
+### AAOIFI Accounting Standards vs IFRS
+
+| Issue | IFRS Treatment | AAOIFI Approach |
+|---|---|---|
+| Zakat | Not addressed | AAOIFI FAS 9: Zakat provision and disclosure required |
+| Investment accounts | IFRS 9 financial instrument | AAOIFI FAS 25: Off-balance sheet restricted investment accounts |
+| Diminishing musharakah | Finance lease (IFRS 16) | Equity partnership treatment |
+| Sukuk | IFRS 9 financial instrument (often) | AAOIFI: substance-based treatment as ownership interest |
+
+**Pakistan practice:** SBP has mandated AAOIFI Shariah standards for Islamic banks in Pakistan. IFRS remain the accounting standards; AAOIFI Shariah standards govern permissible structures.
+
+### Shariah Supervisory Board
+Every Islamic financial institution has a Shariah Supervisory Board (SSB) — independent scholars who:
+- Approve new products and structures
+- Issue fatwas (religious rulings) on permissibility
+- Audit compliance with Shariah in practice
+- Issue annual Shariah compliance report
+
+CFOs engaging Islamic banks must work with the bank's SSB directly for complex structured transactions.
+
+---
+
+## 5. Practical Islamic Finance for CFOs
+
+### Managing Dual Banking Relationships
+Many Pakistani companies maintain both conventional and Islamic banking relationships:
+- Separate facilities with separate documentation (murabaha facility agreement, not loan agreement)
+- Shariah-compliant collateral: mortgage of assets permissible; guarantee of conventional debt by Islamic bank may not be
+- Profit rate vs interest rate: economically aligned but reported differently in financial statements
+
+### Islamic Finance for Pakistan-Gulf Cross-Border Transactions
+- Gulf Islamic investors strongly prefer Shariah-compliant investment structures
+- Pakistani companies seeking Gulf capital should consider:
+  - Musharakah-based equity investment (preferred over conventional equity by some Gulf investors)
+  - Sukuk for debt capital (avoids riba for Gulf Islamic institutional investors)
+  - Commodity murabaha for working capital lines through Gulf Islamic banks
+- IsDB (Islamic Development Bank) — a major DFI for Islamic finance in OIC member countries including Pakistan
+
+### Accounting for Islamic Finance Under IFRS
+IFRS does not have a dedicated Islamic finance standard. Practical CFO approach:
+- Murabaha payable: Classified as trade payable or financial liability under IFRS 9; amortized cost using effective interest rate
+- Ijara: Apply IFRS 16 — right-of-use asset and lease liability
+- Sukuk issued: If sukuk are economically debt (guaranteed return, fixed maturity, no genuine ownership risk) → IFRS 9 financial liability
+- Musharakah: If genuine risk-sharing → equity or liability depending on terms
+
+---
+
+## Self-Assessment
+
+1. Your company needs PKR 2bn in trade finance for cotton import. Your lead conventional bank quotes KIBOR + 250bps for a running finance facility. Your Islamic bank quotes Murabaha at a profit rate equivalent to KIBOR + 200bps. Compare the instruments: mechanics, documentation, IFRS accounting, and your recommendation.
+
+2. You are structuring a PKR 5bn corporate sukuk to fund a 5-year infrastructure project (a distribution network). Which sukuk structure would you use — ijara, istisna, or musharakah — and why? Describe the structure, the Shariah requirements, and the SECP approval process.
+
+3. A Gulf SWF indicates they can only invest through a Shariah-compliant structure. Your company's existing investment is structured as conventional equity in a Pakistan holding company. What restructuring options exist and what are the CFO's financial implications of each?
+
+<ArticleNav
+  prev={{ title: "Module 33 — Gulf & MENA Finance for CFOs", href: "/financial-strategy/module-33-gulf-mena-finance" }}
+  next={{ title: "Module 35 — Cross-Border Finance & Transfer Pricing", href: "/financial-strategy/module-35-cross-border-finance" }}
+/>

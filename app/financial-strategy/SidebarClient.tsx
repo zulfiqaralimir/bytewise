@@ -85,9 +85,7 @@ const modules = [
   },
   {
     part: "Module 13 — Implementation and Control Procedures",
-    chapters: [
-      { chapter: "Implementation and Control Procedures", items: [] as { title: string; href: string }[] },
-    ],
+    chapters: [{ chapter: "Implementation and Control Procedures", items: [] as { title: string; href: string }[] }],
   },
   {
     part: "Module 14 — IFRS and IAS",
@@ -105,6 +103,90 @@ const modules = [
         ] as { title: string; href: string }[],
       },
     ],
+  },
+  {
+    part: "Module 15 — Taxation for CFOs",
+    chapters: [{ chapter: "Corporate Tax Strategy & Compliance", items: [{ title: "Module 15 — Taxation for CFOs", href: "/financial-strategy/module-15-taxation" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 16 — Audit, Internal Controls & Governance",
+    chapters: [{ chapter: "Audit, Controls & Governance", items: [{ title: "Module 16 — Audit, Internal Controls & Governance", href: "/financial-strategy/module-16-audit-controls-governance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 17 — Budgeting, Forecasting & FP&A",
+    chapters: [{ chapter: "Budgeting, Forecasting & FP&A", items: [{ title: "Module 17 — Budgeting, Forecasting & FP&A", href: "/financial-strategy/module-17-budgeting-forecasting-fpa" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 18 — Management Accounting for CFOs",
+    chapters: [{ chapter: "Management Accounting for CFOs", items: [{ title: "Module 18 — Management Accounting for CFOs", href: "/financial-strategy/module-18-management-accounting" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 19 — Financial Modeling & Decision Support",
+    chapters: [{ chapter: "Financial Modeling & Decision Support", items: [{ title: "Module 19 — Financial Modeling & Decision Support", href: "/financial-strategy/module-19-financial-modeling" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 20 — ESG & Sustainable Finance",
+    chapters: [{ chapter: "ESG & Sustainable Finance", items: [{ title: "Module 20 — ESG & Sustainable Finance", href: "/financial-strategy/module-20-esg-sustainable-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 21 — Enterprise Risk Management",
+    chapters: [{ chapter: "Enterprise Risk Management", items: [{ title: "Module 21 — Enterprise Risk Management", href: "/financial-strategy/module-21-enterprise-risk-management" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 22 — Financial Risk: Market, Credit & Liquidity",
+    chapters: [{ chapter: "Market, Credit & Liquidity Risk", items: [{ title: "Module 22 — Financial Risk: Market, Credit & Liquidity", href: "/financial-strategy/module-22-financial-risk" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 23 — Derivatives & Hedging Strategy",
+    chapters: [{ chapter: "Derivatives & Hedging Strategy", items: [{ title: "Module 23 — Derivatives & Hedging Strategy", href: "/financial-strategy/module-23-derivatives-hedging" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 24 — Quantitative Finance for CFOs",
+    chapters: [{ chapter: "Quantitative Finance for CFOs", items: [{ title: "Module 24 — Quantitative Finance for CFOs", href: "/financial-strategy/module-24-quantitative-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 25 — AI & Technology in Finance",
+    chapters: [{ chapter: "AI & Technology in Finance", items: [{ title: "Module 25 — AI & Technology in Finance", href: "/financial-strategy/module-25-ai-technology-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 26 — FinTech & Digital Finance",
+    chapters: [{ chapter: "FinTech & Digital Finance", items: [{ title: "Module 26 — FinTech & Digital Finance", href: "/financial-strategy/module-26-fintech-digital-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 27 — Data Analytics & Financial Intelligence",
+    chapters: [{ chapter: "Data Analytics & Financial Intelligence", items: [{ title: "Module 27 — Data Analytics & Financial Intelligence", href: "/financial-strategy/module-27-data-analytics" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 28 — CFO Leadership & Finance Team Management",
+    chapters: [{ chapter: "CFO Leadership & Finance Team Management", items: [{ title: "Module 28 — CFO Leadership & Finance Team Management", href: "/financial-strategy/module-28-cfo-leadership" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 29 — Investor Relations & Capital Markets Communication",
+    chapters: [{ chapter: "Investor Relations & Capital Markets Communication", items: [{ title: "Module 29 — Investor Relations & Capital Markets Communication", href: "/financial-strategy/module-29-investor-relations" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 30 — Board Reporting & Corporate Governance",
+    chapters: [{ chapter: "Board Reporting & Corporate Governance", items: [{ title: "Module 30 — Board Reporting & Corporate Governance", href: "/financial-strategy/module-30-board-reporting" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 31 — Stakeholder & Banking Relationships",
+    chapters: [{ chapter: "Stakeholder & Banking Relationships", items: [{ title: "Module 31 — Stakeholder & Banking Relationships", href: "/financial-strategy/module-31-stakeholder-banking" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 32 — Pakistan Financial Landscape for CFOs",
+    chapters: [{ chapter: "Pakistan Financial Landscape", items: [{ title: "Module 32 — Pakistan Financial Landscape for CFOs", href: "/financial-strategy/module-32-pakistan-financial-landscape" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 33 — Gulf & MENA Finance for CFOs",
+    chapters: [{ chapter: "Gulf & MENA Finance", items: [{ title: "Module 33 — Gulf & MENA Finance for CFOs", href: "/financial-strategy/module-33-gulf-mena-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 34 — Islamic Finance & Shariah-Compliant Structures",
+    chapters: [{ chapter: "Islamic Finance & Shariah-Compliant Structures", items: [{ title: "Module 34 — Islamic Finance & Shariah-Compliant Structures", href: "/financial-strategy/module-34-islamic-finance" }] as { title: string; href: string }[] }],
+  },
+  {
+    part: "Module 35 — Cross-Border Finance & Transfer Pricing",
+    chapters: [{ chapter: "Cross-Border Finance & Transfer Pricing", items: [{ title: "Module 35 — Cross-Border Finance & Transfer Pricing", href: "/financial-strategy/module-35-cross-border-finance" }] as { title: string; href: string }[] }],
   },
 ];
 
@@ -181,7 +263,7 @@ export function FinancialStrategySidebar() {
       <aside
         className={`fixed top-0 left-0 bottom-0 w-72 z-40 flex flex-col transition-transform duration-300
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
-        style={{ background: "#080d1a", borderRight: "1px solid #1e2d45" }}
+        style={{ background: "#0d1630", borderRight: "1px solid #1e2d45" }}
       >
         {/* Brand */}
         <div className="p-6" style={{ borderBottom: "1px solid #1e2d45" }}>

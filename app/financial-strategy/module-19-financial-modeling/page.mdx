@@ -1,0 +1,252 @@
+export const metadata = {
+  title: "Module 19 — Financial Modeling & Decision Support | Financial Strategy — ByteWise",
+  description: "Building board-ready financial models — three-statement integration, scenario analysis, Monte Carlo simulation, and model governance for CFOs.",
+  openGraph: { title: "Module 19 — Financial Modeling & Decision Support | Financial Strategy", description: "Three-statement models, scenario analysis, Monte Carlo, DCF, and model governance.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 19 — Financial Modeling & Decision Support
+
+Building board-ready financial models — three-statement integration, scenario analysis, Monte Carlo simulation, and model governance for CFOs.
+
+## Learning Objectives
+
+- Build an integrated three-statement financial model from scratch
+- Apply scenario and sensitivity analysis to support capital decisions
+- Use Monte Carlo simulation for risk quantification
+- Establish model governance standards for a finance function
+- Present model outputs to boards and investors with appropriate narrative
+
+---
+
+## 1. Financial Modeling Principles
+
+### FAST Standard
+Good financial models are:
+- **F**lexible — assumptions are inputs, not hardcoded values
+- **A**ppropriate — level of detail matches the decision at hand
+- **S**tructured — consistent row/column layout, no crossing lines of logic
+- **T**ransparent — anyone who reads the model understands what it does
+
+### Separation of Inputs, Calculations, and Outputs
+Every professional model has three distinct zones:
+1. **Inputs sheet:** All assumptions in one place — highlighted in blue, never buried in formulas
+2. **Calculations sheets:** Raw computations — one calculation per cell, no nested IFs inside SUMs
+3. **Output sheets:** Dashboard, charts, summary tables — referenced from calculations, never computed directly
+
+### Error-Proofing Techniques
+- Balance sheet check: Assets = Liabilities + Equity (flag if off)
+- Cash flow check: Opening + net cash flow = Closing cash
+- Cross-totals: Row totals match column totals in schedules
+- No hardcoded numbers inside formulas — every number traceable to an input
+
+### Model Documentation and Version Control
+- Version naming: Model_vX.X_YYYY-MM-DD
+- Change log on the cover sheet
+- Assumption log explaining why each assumption was chosen
+- Locked sheets for calculations; unlocked only the inputs sheet for users
+
+---
+
+## 2. Three-Statement Model Integration
+
+### The Linkage Architecture
+
+```
+Income Statement → Net Income → Retained Earnings → Equity (Balance Sheet)
+Income Statement → Depreciation → Added back in Operating Cash Flow
+Balance Sheet → Working Capital Changes → Operating Cash Flow
+Balance Sheet → CAPEX → Investing Cash Flow
+Balance Sheet → Debt changes → Financing Cash Flow
+Cash Flow Statement → Net Change in Cash → Cash on Balance Sheet
+```
+
+### Key Schedules
+
+**Working Capital Schedule:**
+```
+Receivables = Revenue / 365 × Debtor days assumption
+Payables = COGS / 365 × Creditor days assumption
+Inventory = COGS / 365 × Inventory days assumption
+```
+
+**Debt and Interest Schedule:**
+```
+Opening debt
++ New drawdowns
+− Repayments
+= Closing debt
+Interest = Average of opening and closing debt × interest rate
+(This creates a circular reference — handle with iteration or approximation)
+```
+
+**Fixed Asset and Depreciation Schedule:**
+```
+Opening net book value
++ CAPEX additions
+− Depreciation
+= Closing net book value
+Depreciation = Opening NBV × depreciation rate (or straight-line over useful life)
+```
+
+**Equity and Retained Earnings Roll-Forward:**
+```
+Opening retained earnings
++ Net profit for period
+− Dividends
+= Closing retained earnings
+```
+
+### Circularity Handling
+The interest-on-average-debt circular reference (interest affects profit affects cash affects debt balance affects interest) can be handled by:
+- Enabling iterative calculation in Excel settings (simplest)
+- Using prior period closing balance as approximation (avoids circularity)
+- Building a separate debt/interest iteration loop
+
+---
+
+## 3. Scenario & Sensitivity Analysis
+
+### One-Variable Sensitivity Tables
+Shows how the output metric (e.g., NPV, EPS) changes across a range of one input assumption. Output: a single-column or single-row table.
+
+### Two-Variable Data Tables
+Shows how the output changes across a grid of two simultaneous input changes — e.g., revenue growth rate vs EBITDA margin. Produces a matrix output — the CFO's most useful tool for presenting uncertainty.
+
+### Scenario Manager — Base, Bull, Bear Cases
+Scenario manager allows switching between complete assumption sets with one click. Each scenario should represent a coherent story, not just random number changes.
+
+### Tornado Charts for Key Driver Ranking
+Rank inputs by their impact on the output metric (e.g., NPV). The longest bar (widest swing) is the most critical assumption to get right. Focus due diligence resources proportionally to tornado rankings.
+
+---
+
+## 4. Monte Carlo Simulation
+
+### Probability Distributions for Key Inputs
+Instead of three scenarios, assign probability distributions to each key input:
+- Revenue growth: normally distributed, mean 15%, std dev 8%
+- EBITDA margin: triangular distribution, min 20%, mode 28%, max 35%
+- CAPEX: uniform distribution, PKR 100M–150M
+
+### Correlation Between Variables
+Revenue growth and margin are often positively correlated (volume leverage). CAPEX and revenue are often positively correlated (investment drives growth). Ignoring correlation understates risk.
+
+### Output Distribution Interpretation
+Run 10,000+ simulations. The output distribution shows:
+- Mean NPV and its confidence interval
+- Probability of positive NPV
+- 5th and 95th percentile outcomes
+- The shape of the distribution (fat tails indicate tail risk)
+
+### Python/Excel Implementation
+```python
+import numpy as np
+
+n_simulations = 10000
+revenue_growth = np.random.normal(0.15, 0.08, n_simulations)
+ebitda_margin  = np.random.triangular(0.20, 0.28, 0.35, n_simulations)
+
+# Simple EBITDA simulation
+revenue = 1000 * (1 + revenue_growth)
+ebitda  = revenue * ebitda_margin
+
+print(f"Mean EBITDA: {ebitda.mean():.1f}")
+print(f"5th pct: {np.percentile(ebitda, 5):.1f}")
+print(f"95th pct: {np.percentile(ebitda, 95):.1f}")
+```
+
+---
+
+## 5. Valuation Models
+
+### DCF Model Build — FCFF vs FCFE Approaches
+
+**FCFF (Free Cash Flow to Firm):**
+```
+EBIT × (1 − tax rate)
++ Depreciation & Amortization
+− CAPEX
+− Increase in Working Capital
+= FCFF
+Discount at WACC → Enterprise Value
+EV − Net Debt = Equity Value
+```
+
+**FCFE (Free Cash Flow to Equity):**
+```
+Net Income
++ Depreciation & Amortization
+− CAPEX
+− Increase in Working Capital
++ Net Borrowing
+= FCFE
+Discount at cost of equity → Equity Value directly
+```
+
+### LBO Model Basics
+LBO models value a business from a private equity buyer's perspective:
+- Purchase financed with ~60–70% debt, ~30–40% equity
+- Value creation through: leverage paydown, EBITDA growth, multiple expansion
+- Returns measured by IRR and MOIC on equity invested
+
+### Sum-of-Parts Valuation for Conglomerates
+For multi-business groups, value each business separately using the most appropriate method, then:
+```
+Total Group Value = Sum of individual business values
+                  − Holding company costs (capitalized)
+                  − Conglomerate discount (10–20% typically)
+```
+
+---
+
+## 6. Model Governance
+
+### Model Risk Management Framework
+Models used in material decisions (M&A pricing, debt capacity, investor presentations) require:
+- Independent validation by a second modeler
+- Documentation of all assumptions and their basis
+- Sensitivity analysis included by default
+- Version control and audit trail
+
+### CFO Sign-Off Responsibilities
+The CFO who presents a model output to the board takes ownership of:
+- The assumptions (were they reasonable and well-documented?)
+- The mechanics (was the model correctly built?)
+- The output (was it fairly presented without cherry-picking scenarios?)
+
+---
+
+## 7. Board-Ready Outputs
+
+### Executive Summary Dashboard Design
+Board members read the executive summary and skip to questions. The one-page dashboard must show:
+- Revenue, EBITDA, net profit vs budget and prior year
+- Cash position and liquidity headroom
+- Key risks and sensitivities
+- Three-scenario outcome range
+
+### Waterfall Charts for Bridge Analysis
+Waterfall charts show movement from one figure to another, with each contributing factor as a bar — the clearest way to present variance analysis and value bridge in M&A.
+
+### Presenting Uncertainty Without Losing Credibility
+Boards distrust false precision. Present ranges with confidence:
+- "Our base case NPV is PKR 450M, with a range of PKR 300M–600M depending on volume growth assumptions"
+- Show what would need to be true for the downside case to occur
+- Commit to updating the board when key assumptions prove materially different
+
+---
+
+## Self-Assessment
+
+1. Build the structure (not the formulas, but the architecture) of a three-statement model for a manufacturing company with three product lines, two currencies, and a five-year projection horizon. Identify the key schedules required.
+
+2. Your DCF model gives a base case NPV of PKR 200M. A sensitivity table shows NPV ranges from PKR 50M to PKR 400M depending on discount rate and terminal growth rate assumptions. How do you present this to the board?
+
+3. A board director asks why you have used iterative calculation to handle the interest circularity in your model. Explain the mechanics and the alternative approach.
+
+<ArticleNav
+  prev={{ title: "Module 18 — Management Accounting for CFOs", href: "/financial-strategy/module-18-management-accounting" }}
+  next={{ title: "Module 20 — ESG & Sustainable Finance", href: "/financial-strategy/module-20-esg-sustainable-finance" }}
+/>

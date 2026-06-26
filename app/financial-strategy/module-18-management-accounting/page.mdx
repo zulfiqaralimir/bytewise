@@ -1,0 +1,211 @@
+export const metadata = {
+  title: "Module 18 — Management Accounting for CFOs | Financial Strategy — ByteWise",
+  description: "Costing, contribution analysis, pricing decisions, and the management accounting toolkit that connects financial data to operational decisions.",
+  openGraph: { title: "Module 18 — Management Accounting for CFOs | Financial Strategy", description: "Marginal vs absorption costing, contribution analysis, breakeven, ABC, and relevant costs.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 18 — Management Accounting for CFOs
+
+Costing, contribution analysis, pricing decisions, and the management accounting toolkit that connects financial data to operational decisions.
+
+## Learning Objectives
+
+- Apply marginal and absorption costing to product and service decisions
+- Conduct breakeven and contribution analysis for pricing decisions
+- Identify relevant costs for make vs buy and outsourcing decisions
+- Use activity-based costing to understand true product profitability
+- Design management accounting reports that drive operational decisions
+
+---
+
+## 1. Cost Classification
+
+### Fixed vs Variable vs Semi-Variable Costs
+
+| Type | Behaviour | Example |
+|---|---|---|
+| Fixed | Constant regardless of volume | Rent, depreciation, management salaries |
+| Variable | Proportional to volume | Raw materials, direct labour (if paid per unit), commissions |
+| Semi-variable | Fixed element plus variable | Utilities, telephone, maintenance contracts |
+
+### Direct vs Indirect Costs
+- **Direct costs:** Traceable specifically to a product/service — direct materials, direct labour
+- **Indirect costs (overheads):** Cannot be directly traced — allocated/absorbed using a basis
+
+### Sunk Costs vs Relevant Costs — The CFO Decision Filter
+**Sunk costs** are past expenditures that cannot be recovered — irrelevant to future decisions regardless of size. The psychological pull of sunk costs ("we've already spent PKR 50M on this project") is one of the most dangerous biases in capital allocation.
+
+**Relevant costs** for a decision are:
+- Future (not past)
+- Incremental (change as a result of the decision)
+- Cash flows (not accounting allocations)
+
+---
+
+## 2. Marginal vs Absorption Costing
+
+### Mechanics
+
+**Marginal costing:** Only variable production costs included in product cost. Fixed overheads treated as period costs — expensed in full regardless of inventory levels.
+
+**Absorption costing:** Fixed production overheads absorbed into product cost using a pre-determined overhead absorption rate (OAR).
+
+```
+OAR = Budgeted fixed overhead / Budgeted activity level
+```
+
+### Profit Difference and Inventory Valuation Impact
+
+```
+If inventory increases: Absorption profit > Marginal profit
+                        (fixed costs carried in inventory, not expensed)
+If inventory decreases: Absorption profit < Marginal profit
+If inventory unchanged: Profits are equal
+```
+
+### IFRS Requirement
+IAS 2 (Inventories) requires absorption costing for financial reporting — fixed production overheads must be included in inventory cost. Marginal costing is for internal management decisions only.
+
+---
+
+## 3. Contribution Analysis
+
+### Contribution Formula
+```
+Contribution = Revenue − Variable Costs
+Contribution per unit = Selling price − Variable cost per unit
+Contribution margin ratio (C/S ratio) = Contribution / Revenue
+```
+
+### Multi-Product Contribution Analysis
+When selling multiple products, calculate contribution per unit for each. Used to rank products by profitability and inform pricing decisions.
+
+### Limiting Factor Analysis — Optimizing Scarce Resources
+When one resource is scarce (machine hours, skilled labour, raw material), maximize contribution per unit of the limiting factor:
+
+```
+Rank products by: Contribution per unit / Units of limiting factor consumed
+```
+
+Produce in order of ranking until the limiting factor is exhausted.
+
+---
+
+## 4. Breakeven Analysis
+
+### Breakeven Point
+
+```
+Breakeven (units) = Fixed Costs / Contribution per unit
+Breakeven (revenue) = Fixed Costs / C/S ratio
+```
+
+### Margin of Safety
+```
+Margin of Safety = Budgeted sales − Breakeven sales
+Margin of Safety % = Margin of Safety / Budgeted sales × 100
+```
+
+A higher margin of safety means more buffer before losses begin.
+
+### Target Profit Analysis
+```
+Units required for target profit = (Fixed Costs + Target Profit) / Contribution per unit
+```
+
+### Operating Leverage and Risk
+High fixed cost businesses have high operating leverage — small revenue changes produce large profit changes (amplified in both directions). Relevant when assessing acquisition targets or evaluating business model changes.
+
+---
+
+## 5. Activity-Based Costing (ABC)
+
+### Why Traditional Costing Distorts Product Profitability
+Traditional costing allocates overheads on a single basis (e.g., machine hours). This over-costs high-volume simple products and under-costs low-volume complex products that consume disproportionate support activity.
+
+### Cost Pools and Cost Drivers
+
+| Cost Pool | Cost Driver |
+|---|---|
+| Customer support | Number of customer support tickets |
+| Order processing | Number of orders |
+| Quality inspection | Number of inspection hours |
+| Supplier management | Number of suppliers |
+
+### ABC Implementation in Service Businesses
+ABC is particularly valuable in professional services where time is the critical resource:
+- Law firms: cost pool by practice area, driver: billable hours
+- Advisory firms: cost pool by service line, driver: engagement hours
+
+### Time-Driven ABC
+A simplified ABC variant: assign costs based on time required for each activity. Easier to maintain and update as business processes change.
+
+---
+
+## 6. Relevant Costs for CFO Decisions
+
+### Make vs Buy Analysis
+Compare:
+- **Make:** Incremental costs of internal production (materials, labour, variable overheads, any additional fixed costs)
+- **Buy:** External supplier price + any additional costs (delivery, quality management)
+- **Qualitative factors:** Capacity flexibility, IP protection, supplier reliability, strategic capability retention
+
+### Outsourcing Decisions
+Beyond the make vs buy calculation, consider:
+- Transition costs (one-off)
+- Lost internal capability (hard to reverse)
+- Dependency risk on external provider
+- Quality control loss
+
+### Shut Down vs Continue a Division
+Shut down if: Contribution from division < Avoidable fixed costs of that division
+
+A division showing a net loss may still be worth retaining if its contribution covers some shared fixed costs — and those fixed costs would not disappear on closure.
+
+### Pricing Special Orders Below Full Cost
+Accept a special order below full absorption cost if:
+- Order uses spare capacity (no opportunity cost)
+- Incremental revenue > incremental variable costs
+- Order does not undercut regular customers or set a pricing precedent
+
+---
+
+## 7. Transfer Pricing (Management Perspective)
+
+### Internal Transfer Pricing — Three Methods
+
+| Method | Formula | Best When |
+|---|---|---|
+| Cost-based | Marginal cost or full cost | Selling division has no external market |
+| Market-based | External market price | Competitive external market exists |
+| Negotiated | Between cost and market price | Both divisions have market access |
+
+### The General Transfer Pricing Rule
+```
+Minimum transfer price = Marginal cost + Opportunity cost (lost contribution from external sales)
+```
+
+If the selling division has spare capacity: minimum price = marginal cost only
+If the selling division is at full capacity: minimum price = marginal cost + contribution foregone on displaced external sales
+
+### Divisional Performance Measurement
+Transfer pricing directly affects divisional P&L — an unfair transfer price distorts performance measurement and damages manager motivation. The CFO must ensure transfer pricing policies are commercially logical and consistently applied.
+
+---
+
+## Self-Assessment
+
+1. A product sells for PKR 500. Variable costs are PKR 300 per unit. Fixed costs are PKR 2,000,000. Calculate breakeven volume, breakeven revenue, and the margin of safety if budgeted sales are 15,000 units.
+
+2. Your factory has 10,000 machine hours available. Product A uses 2 hours/unit with contribution PKR 100. Product B uses 1 hour/unit with contribution PKR 60. Determine the optimal production mix.
+
+3. A division shows a net loss of PKR 5M. Its contribution is PKR 8M, and avoidable fixed costs if the division closes are PKR 3M. Should the division be shut down?
+
+4. Your purchasing team recommends outsourcing component manufacturing to an external supplier at PKR 200/unit vs internal cost of PKR 220/unit (PKR 150 variable + PKR 70 fixed overhead allocation). The fixed overhead is not avoidable. What is the correct analysis?
+
+<ArticleNav
+  prev={{ title: "Module 17 — Budgeting, Forecasting & FP&A", href: "/financial-strategy/module-17-budgeting-forecasting-fpa" }}
+  next={{ title: "Module 19 — Financial Modeling & Decision Support", href: "/financial-strategy/module-19-financial-modeling" }}
+/>

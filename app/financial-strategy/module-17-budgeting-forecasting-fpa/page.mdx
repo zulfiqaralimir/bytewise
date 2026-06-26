@@ -1,0 +1,221 @@
+export const metadata = {
+  title: "Module 17 — Budgeting, Forecasting & FP&A | Financial Strategy — ByteWise",
+  description: "The CFO's planning toolkit — zero-based budgeting, driver-based models, rolling forecasts, scenario planning, and variance analysis.",
+  openGraph: { title: "Module 17 — Budgeting, Forecasting & FP&A | Financial Strategy", description: "Budget process design, driver-based models, rolling forecasts, scenario planning, and variance analysis.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 17 — Budgeting, Forecasting & FP&A
+
+The CFO's planning toolkit — zero-based budgeting, driver-based models, rolling forecasts, scenario planning, and variance analysis that drives decisions.
+
+## Learning Objectives
+
+- Design and lead the annual budget process for a multi-entity group
+- Build driver-based financial models linked to operational assumptions
+- Implement rolling forecast methodology replacing static annual budgets
+- Conduct variance analysis that identifies root causes not just numbers
+- Communicate FP&A insights to non-financial stakeholders
+
+---
+
+## 1. The Budget Process
+
+### Budget Calendar and Process Design
+A well-designed budget calendar prevents chaos. A typical 3-month budget cycle for a September year-end:
+
+```
+July:      Strategic objectives communicated by board
+August:    Business units submit bottom-up plans
+September: CFO challenges and consolidates
+October:   Board review and approval
+November:  Final budget distributed; tracking begins
+```
+
+### Top-Down vs Bottom-Up Budgeting
+
+| | Top-Down | Bottom-Up |
+|---|---|---|
+| Starts with | Board/CEO targets | Business unit submissions |
+| Advantage | Strategic alignment, speed | Operational realism, buy-in |
+| Risk | Disconnected from operational reality | Gaming, padding, slow |
+| Best for | Early-stage companies, crisis mode | Mature operations |
+| In practice | Hybrid — targets set top-down, plans built bottom-up |
+
+### Incremental vs Zero-Based Budgeting (ZBB)
+
+**Incremental budgeting:** Start with last year's actual, apply growth assumptions. Fast but perpetuates inefficiency — every line item survives unless challenged.
+
+**Zero-based budgeting:** Every activity must justify its existence and cost from scratch. Expensive and time-consuming, but powerful for cost transformation programs. Best applied to overhead functions every 3–5 years rather than annually.
+
+### Budget Negotiation
+The CFO's role is to challenge the assumptions, not just the numbers:
+- What operational activity drives this cost?
+- What happens if volume is 20% lower?
+- Which costs are fixed and which are variable?
+- What return does this investment generate?
+
+### Capital Budget vs Operating Budget
+- **CAPEX budget:** Investment decisions with multi-year returns — link to Module 8/9
+- **OPEX budget:** Period costs — depreciation, salaries, overheads
+- IFRS 16: operating lease payments now split between capital (principal) and operating (interest + depreciation)
+
+---
+
+## 2. Driver-Based Budgeting
+
+### Identifying Key Value Drivers
+Value drivers are the operational inputs that most directly determine financial outputs. For each business unit, identify 5–8 drivers that explain 80%+ of revenue and cost variance.
+
+**Example driver identification for a SaaS business:**
+
+| Driver | Links to |
+|---|---|
+| New customer contracts signed | Revenue |
+| Average contract value | Revenue |
+| Churn rate | Revenue (reduction) |
+| Headcount by function | Salaries |
+| Server utilization rate | Infrastructure costs |
+
+### Building a Driver Tree
+
+```
+Volume (customers × contracts)
+    × Average Revenue per Contract
+    = Revenue
+    − Variable Costs (% of revenue)
+    = Gross Profit
+    − Fixed Overheads
+    = EBITDA
+    − Depreciation & Amortization
+    = EBIT
+```
+
+### Sensitivity of P&L to Key Driver Changes
+Once the driver model is built, run sensitivities:
+- Revenue: what if contracts are 10% below forecast?
+- Margins: what if input costs rise 15%?
+- FX: what if PKR depreciates 20% vs USD?
+
+This is the foundation for scenario planning (see Section 4).
+
+---
+
+## 3. Rolling Forecasts
+
+### 12+0 vs 18-Month Rolling Forecast Methodology
+- **12+0 (static annual budget):** Budget fixed at year-start; monthly tracking against it. Problem: budget becomes irrelevant by month 6 as conditions change.
+- **12-month rolling forecast:** Always forecasting the next 12 months. Every month, add a new month at the end and revise the forecast for known changes.
+- **18-month rolling:** Extends visibility beyond the year-end; useful for cash flow and covenant headroom planning.
+
+### Frequency: Monthly Re-Forecast vs Quarterly
+- Monthly re-forecast: most responsive, highest workload
+- Quarterly: right balance for most entities — deep refresh four times per year
+- Monthly light-touch update between quarterly deep refreshes
+
+### How Rolling Forecasts Replace the Annual Budget Trap
+The annual budget becomes obsolete when conditions change significantly (commodity price shock, FX move, regulatory change). Rolling forecasts allow the organization to continuously adapt resource allocation rather than being locked into year-old assumptions.
+
+### Technology Requirements
+Rolling forecasts at scale require planning tools beyond Excel:
+- **Anaplan, Adaptive Insights, Pigment:** Purpose-built FP&A platforms
+- Integration with ERP (SAP, Oracle) for actuals data feed
+- Driver-based input models that non-finance managers can update
+
+---
+
+## 4. Scenario Planning & Stress Testing
+
+### Base Case, Upside, Downside Scenario Construction
+
+| Scenario | Description | Key Assumptions |
+|---|---|---|
+| Base case | Most likely outcome | Current trends continue |
+| Upside | Bull case — favourable conditions | Higher volume, better margins, favourable FX |
+| Downside | Bear case — adverse conditions | Volume shortfall, cost pressure, adverse FX |
+| Stress case | Severe but plausible shock | Recession, FX crisis, key customer loss |
+
+### Macroeconomic Scenario Integration (Pakistan/Gulf Context)
+- PKR/USD rate: import cost impact, dollar-denominated debt service
+- SBP policy rate: cost of borrowing for floating rate debt
+- CPI inflation: input cost escalation, salary pressure
+- Karachi stock market: for entities with listed equity exposure
+
+### Presenting Scenarios to Board
+The board needs to make decisions from scenarios, not just see them. Present:
+- What each scenario means for liquidity, covenant headroom, and dividends
+- Which decisions change between scenarios
+- What actions management can take to shift from downside to base
+
+---
+
+## 5. Variance Analysis
+
+### Price vs Volume vs Mix Variance Decomposition
+
+**Revenue variance = Price variance + Volume variance + Mix variance**
+
+```
+Price variance:  (Actual price − Budget price) × Actual volume
+Volume variance: (Actual volume − Budget volume) × Budget price
+Mix variance:    Budget price × (Actual mix − Budget mix) × Total actual volume
+```
+
+This decomposition tells the CFO whether a revenue shortfall is because:
+- Prices were lower than expected (pricing issue)
+- Fewer units were sold (volume/demand issue)
+- The product mix shifted to lower-margin products (mix issue)
+
+### FX Variance Isolation in International Operations
+For entities with multi-currency operations, isolate FX impact:
+- Retranslate actuals at budget FX rates
+- FX variance = actual result at actual rates minus actual result at budget rates
+- Presents underlying operational performance separately from FX impact
+
+### Writing the Variance Narrative
+A variance report that says "Revenue was PKR 50M below budget" is useless. The narrative must say:
+- *Why* it happened (root cause)
+- *Where* it happened (geography/product/customer)
+- *What is being done* about it
+- *Whether it will recur* in future periods
+
+---
+
+## 6. FP&A Function Design
+
+### Business Partnering Model
+FP&A business partners are embedded with operational teams — attending their meetings, understanding their business, challenging their assumptions, and translating operational performance into financial language.
+
+### FP&A Team Structure
+
+| Role | Responsibility |
+|---|---|
+| Head of FP&A | Budget process ownership, board reporting, strategic planning |
+| Business partners (by division/geography) | Embedded support, variance analysis, local forecasting |
+| Consolidation analyst | Group roll-up, intercompany eliminations |
+| Systems/data analyst | ERP, planning tools, data integrity |
+
+### CFO as Chief Performance Officer
+The CFO who only reports historical results is a historian. The modern CFO:
+- Drives the performance conversation in the organization
+- Challenges operational managers on their forecasts
+- Identifies early warning signals before they hit the P&L
+- Connects daily operational data to monthly financial outcomes
+
+---
+
+## Self-Assessment
+
+1. Your technology business has three product lines: SaaS subscriptions, professional services, and hardware. Construct a driver tree that connects operational activity to group EBITDA.
+
+2. The board has asked for a budget by October 31. Design a 3-month budget calendar and identify the five most important CFO interventions in the process.
+
+3. Actual revenue for Q1 was PKR 180M against budget of PKR 200M. Price per unit was PKR 90 vs budget PKR 100; actual units were 2,000 vs budget 2,000. Decompose the variance into price and volume components and explain what it tells you.
+
+4. Your CFO report shows EBITDA is PKR 15M below budget but operating cash flow is only PKR 5M below. What might explain the difference and how would you investigate it?
+
+<ArticleNav
+  prev={{ title: "Module 16 — Audit, Internal Controls & Governance", href: "/financial-strategy/module-16-audit-controls-governance" }}
+  next={{ title: "Module 18 — Management Accounting for CFOs", href: "/financial-strategy/module-18-management-accounting" }}
+/>
