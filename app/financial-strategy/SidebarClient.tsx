@@ -377,6 +377,10 @@ const modules = [
     part: "Module 82 — Commodity Markets & Trading",
     chapters: [{ chapter: "Commodity Markets & Trading", items: [{ title: "Module 82 — Commodity Markets & Trading", href: "/financial-strategy/module-82-commodity-markets-trading" }] as { title: string; href: string }[] }],
   },
+  {
+    part: "Module 83 — Global Macro Trading",
+    chapters: [{ chapter: "Global Macro Trading", items: [{ title: "Module 83 — Global Macro Trading", href: "/financial-strategy/module-83-global-macro-trading" }] as { title: string; href: string }[] }],
+  },
 ];
 
 const allHrefs = modules.flatMap((m) =>

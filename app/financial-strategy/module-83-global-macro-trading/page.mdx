@@ -1,0 +1,393 @@
+export const metadata = {
+  title: "Module 83 — Global Macro Trading | Financial Strategy — ByteWise",
+  description: "FX carry, rates macro, equity macro, commodity macro — how discretionary and systematic macro funds build and express global macro views across asset classes.",
+  openGraph: { title: "Module 83 — Global Macro Trading | Financial Strategy", description: "Global macro strategy: FX carry trades, rates curves, equity country allocation, commodity macro, and Pakistan/Gulf macro opportunities.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 83 — Global Macro Trading
+
+Global macro is the broadest strategy in finance — it involves forming views on entire economies, interest rate cycles, currency regimes, and cross-asset relationships, then expressing those views through leveraged derivatives positions. From George Soros breaking the Bank of England to Ray Dalio's All Weather portfolio, macro thinking shapes the largest capital flows in global markets. FERROQUANT's systematic macro book operates at the intersection of fundamental research and quantitative signal construction.
+
+## Learning Objectives
+
+- Explain the mechanics and risks of FX carry trades
+- Understand the yield curve as a macro signal and trading instrument
+- Apply country equity allocation frameworks using macro signals
+- Identify commodity macro trades using fundamental supply/demand analysis
+- Distinguish discretionary from systematic macro approaches
+- Apply global macro frameworks to Pakistan and Gulf investment themes
+
+---
+
+## 1. What is Global Macro?
+
+### Definition and Scope
+
+Global macro funds take large, directional positions based on views about macroeconomic variables — interest rates, inflation, growth, exchange rates, and cross-country comparisons.
+
+**What macro funds trade:**
+- **Currencies (FX):** Largest liquid macro market. Views on central bank policy, current account dynamics, and capital flows
+- **Fixed income:** Government bond yield curves globally; duration bets based on inflation/growth views
+- **Equities:** Country-level equity index positions (not stock picking) based on growth and monetary cycle analysis
+- **Commodities:** Macro demand/supply views expressed through commodity futures
+
+**Macro fund size:** Hedge funds like Bridgewater ($150B), Caxton, Tudor, Moore, Rokos, and Brevan Howard run macro books ranging from $5B to $150B. Macro strategies total ~$600–800B in AUM globally.
+
+### Discretionary vs. Systematic Macro
+
+**Discretionary macro:**
+- Portfolio manager forms fundamental views and executes trades
+- Examples: Soros, Druckenmiller, Moore Capital
+- Edge: the ability to process complex qualitative information (political risk, central bank communication nuance, geopolitical shifts)
+- Risk: key-man dependency, emotional biases, capacity constraints
+
+**Systematic macro (CTA / trend-following):**
+- Rules-based signals derived from price data, economic data releases, or quantitative factors
+- Examples: Man AHL, Winton, Two Sigma macro book, FERROQUANT
+- Edge: discipline, diversification, no emotional override, scalable
+- Risk: model risk, regime changes, trend reversal in trending environments
+
+**FERROQUANT's approach:** Primarily systematic, incorporating:
+- Trend signals (momentum) across FX, rates, equities, commodities
+- Carry signals (FX carry, yield curve carry)
+- Macro factor signals (inflation surprises, PMI revisions, central bank policy gaps)
+- Pakistan/Gulf country-specific fundamental overlays
+
+---
+
+## 2. FX Carry Trade
+
+### Mechanics
+
+The FX carry trade borrows in low-interest-rate currencies and invests in high-interest-rate currencies, profiting from the interest rate differential (the "carry").
+
+**Uncovered Interest Rate Parity (UIP) — the theory:**
+```
+E[ΔS] = i_domestic − i_foreign
+```
+
+UIP says the expected depreciation of the high-yielding currency exactly offsets the interest rate advantage — so expected returns from carry should be zero.
+
+**The carry trade works because UIP fails empirically:**
+High-yielding currencies tend to appreciate (or at least not depreciate enough to offset the carry). This "forward premium puzzle" is one of the most robust anomalies in finance.
+
+**Basic carry trade mechanics:**
+1. Identify a funding currency (low rates): JPY (1-2%), CHF (near zero), EUR (periodically)
+2. Identify a carry currency (high rates): AUD, NZD, BRL, TRY, INR, PKR (in theory)
+3. Borrow in JPY at 1%, convert to AUD, invest in AUD cash at 5%
+4. Net carry: +4% per year (before exchange rate changes)
+5. If AUD depreciates less than 4% against JPY → profitable trade
+
+**The carry trade unwind:** Carry trades are profitable during calm periods and catastrophically lose money during risk-off episodes. When volatility spikes, carry traders rush to unwind simultaneously, causing sharp moves in funding currencies (JPY appreciates rapidly) and carry currencies (AUD, EM FX sell off sharply).
+
+### FX Carry Decomposition
+
+**Total FX carry return:**
+```
+Total Return = Interest Rate Differential + Currency Return
+
+Where:
+Interest Rate Differential = i_carry − i_funding  (positive, the "carry")
+Currency Return = appreciation/(depreciation) of carry currency
+```
+
+**Carry-to-volatility ratio (Sharpe-like signal):**
+```
+Carry Signal = (i_domestic − i_foreign) / Implied FX Volatility
+```
+
+Higher ratios indicate better risk-adjusted carry — the interest rate differential compensates well for the volatility of the exchange rate.
+
+### Pakistan FX Carry
+
+**Pakistan's carry characteristics:**
+- PKR cash rates: KIBOR 12–17% depending on SBP policy cycle (2022–2024: peak ~22%)
+- USD rates: 4–5% (Federal Funds rate 2023–2024)
+- Carry: +7–12% per year at PKR's peak rates
+
+**Why PKR carry is complex:**
+1. **Capital controls:** SBP restricts non-residents from freely converting PKR → USD. Offshore non-deliverable forward (NDF) market exists in Dubai/London, but bid-ask spreads are wide.
+2. **Devaluation risk:** PKR has periodically devalued significantly (2018: PKR/USD from 110 to 160; 2022-2023: 200 to 300+). One devaluation can wipe out years of carry.
+3. **Repatriation risk:** Even if carry is earned, getting USD out of Pakistan is subject to SBP approval
+4. **Liquidity risk:** No liquid derivatives market for PKR risk management
+
+**PKR NDF carry trade:**
+- Trade in offshore NDF market (not available to domestic Pakistani funds without SECP approval)
+- Long PKR/short USD NDF at spot minus the forward discount (which reflects the carry)
+- FERROQUANT can access PKR carry via equity positions in high-dividend PSX companies with PKR earnings (partial proxy)
+
+### Systematic FX Carry Portfolio Construction
+
+**Universe:** G10 currencies (USD, EUR, JPY, GBP, CHF, AUD, NZD, CAD, SEK, NOK) + selected EM currencies with liquid derivatives
+
+**Signal construction:**
+```
+Carry_i = (3-month forward premium or discount for currency i)
+         = (r_domestic − r_foreign) × T
+```
+
+**Portfolio:**
+1. Rank currencies by carry signal
+2. Long top tertile (highest carry), short bottom tertile (lowest carry)
+3. Weight by inverse volatility (equal risk contribution)
+4. Rebalance monthly
+
+**Risk management:**
+- Maximum position size per currency: 10% of gross exposure
+- Volatility target: annualized 10% for the carry portfolio
+- Drawdown stop: close all positions if drawdown exceeds 15%
+
+---
+
+## 3. Rates Macro: Yield Curve Trading
+
+### Yield Curve Shapes and Macro Signals
+
+The yield curve is the most powerful macro signal in fixed income:
+
+**Normal (upward sloping):** Long-term rates > short-term rates. Signals: economy healthy, future growth/inflation expected, Fed neutral/easy.
+
+**Inverted (downward sloping):** Short-term rates > long-term rates. Signals: central bank has raised rates aggressively, recession expected, long-term inflation expectations falling.
+
+**Flat:** Short-term rates ≈ long-term rates. Transition state — either steepening toward normal or inverting.
+
+**Historical recession signal:** In the US, every recession since 1955 was preceded by an inverted yield curve (2s10s spread negative). False positive rate: low. Lead time: 6–24 months before recession.
+
+### Yield Curve Trades
+
+**Duration trade (outright):**
+- Bullish rates (expect rates to fall): Go long 10-year bonds (or pay floating on 10-year swap)
+- Bearish rates (expect rates to rise): Go short 10-year bonds (or pay fixed on 10-year swap)
+
+**Curve steepener:**
+- Buy short-term bond (or pay fixed on short-dated swap) — profit if short-term yields fall
+- Short long-term bond (or pay fixed on long-dated swap) — profit if long-term yields rise
+- Net effect: profits if the curve steepens (long rates rise more than short rates, or short rates fall more than long rates)
+- When to trade: Early in a rate-cutting cycle (short rates fall fast as Fed cuts, but long rates may stay elevated from growth/inflation expectations)
+
+**Curve flattener:**
+- Short short-term bond, long long-term bond
+- Profits if curve flattens (short rates rise faster or long rates fall faster)
+- When to trade: During aggressive tightening cycles (short rates rise with Fed, but long rates are anchored by recession expectations)
+
+**Butterfly trade:**
+- Long the body (5-year bond), short the wings (2-year and 10-year bonds)
+- Profits if the curve develops a "belly" — 5-year yields fall relative to 2-year and 10-year
+- Used to express specific views on curve shape without outright duration exposure
+
+### Pakistan Yield Curve Macro
+
+**PIB yield curve:**
+- 3-year PIBs vs. 10-year PIBs — the key Pakistan curve trade
+- SBP tightening cycle (2021–2023): Curve inverted as policy rate hit 22%, short-term rates > long-term
+
+**FERROQUANT Pakistan rates macro view:**
+- Scenario: SBP begins rate-cutting cycle after inflation peaks
+- Trade: Long 5-year PIBs (duration ≈ 4.2 years) + pay floating on KIBOR IRS
+- Both positions benefit from rate cuts: PIBs gain in price, the receiver swap gains mark-to-market
+
+**Curve steepener trade (Pakistan):**
+- Short 3-year PIBs (financed via repo), long 10-year PIBs
+- Thesis: SBP cuts short-end rates, long end sticky (fiscal concerns, IMF program uncertainty)
+- Risk: IMF program disruption causes long-end sell-off faster than short-end
+
+---
+
+## 4. Equity Macro: Country Allocation
+
+### Why Country-Level Equity Allocation?
+
+In global macro, equity exposure is typically expressed through country indices (S&P 500 futures, Nikkei futures, Eurostoxx futures, PSX futures) rather than individual stocks. Country macro factors dominate individual stock alphas in emerging markets.
+
+**Country equity macro framework:**
+
+| Factor | Indicator | Data Source |
+|---|---|---|
+| Valuation | CAPE (cyclically adjusted P/E) | Stock market/earnings data |
+| Momentum | 12-1 month return | Exchange data |
+| Macro growth | PMI, GDP revisions | Markit PMI, Refinitiv |
+| Monetary policy | Policy rate level and direction | Central bank websites |
+| Currency carry | FX carry signal | IMM/IFR data |
+| Earnings revision | Analyst upgrade/downgrade ratio | Bloomberg consensus |
+
+**Systematic country rotation model:**
+1. Score each country on each factor (z-score normalized)
+2. Combine scores with weights (e.g., 30% momentum, 20% valuation, 20% earnings revision, 30% macro)
+3. Long top quartile countries, short bottom quartile
+4. Express via index futures (CME S&P futures, Eurex DAX futures, SGX Nifty futures, etc.)
+
+### Pakistan Equity Macro
+
+**PSX country allocation signals:**
+- **Valuation:** PSX historically cheap (P/E 5–8x) — contrarian value signal
+- **Macro improvement:** IMF program stabilization, current account surplus → positive macro signal
+- **Currency stability:** PKR stability encourages foreign portfolio inflows
+- **Interest rate cycle:** Rate-cutting cycle → re-rating of equity multiples
+
+**PSX vs. regional equity markets:**
+PSX tends to show high correlation with regional EM equity performance during global risk-off periods but can outperform during Pakistan-specific political/economic normalization.
+
+**FERROQUANT Pakistan equity macro trades:**
+- Long KSE-100 index (via PSX index futures or basket of large caps) during SBP cutting cycle
+- Long financial sector (HBL, UBL, MCB) as rate-sensitive play on PIB gains and NIM compression risk fading
+- Long fertilizer/agriculture sector (Engro, FFC) as proxy for agricultural commodity tailwinds during La Niña (higher Pakistan crop yields)
+
+---
+
+## 5. Commodity Macro Strategies
+
+### Macro-Driven Commodity Views
+
+**Supply-side macro:**
+- OPEC production decisions → crude oil price
+- Chile/Peru political risk → copper supply disruption → copper price
+- LNG supply from Qatar/Australia → global gas prices
+- Pakistan WAPDA hydro capacity → domestic coal/LNG demand
+
+**Demand-side macro:**
+- China PMI and construction spending → iron ore, copper, aluminum demand
+- Global GDP growth rate → energy demand growth
+- EV adoption rate → lithium, cobalt, copper demand surge
+- Population growth + income growth in South Asia → food demand → agricultural prices
+
+**Macro commodity trades:**
+- **China slowdown trade:** Short copper, short iron ore, short Australian dollar (a commodity currency)
+- **Energy transition trade:** Long copper and lithium (EV demand), long uranium (nuclear renaissance), short thermal coal (long-term)
+- **Dollar macro trade:** Long gold, long commodity index when USD weakens (commodities priced in USD — a weaker dollar makes them cheaper for non-USD buyers, boosting demand)
+
+### Cross-Asset Macro Relationships
+
+**The commodity-currency nexus:**
+Many currency pairs are highly correlated with commodity prices:
+
+| Currency | Commodity | Correlation |
+|---|---|---|
+| AUD | Iron ore, copper | +0.75 |
+| CAD | Crude oil (WTI) | +0.70 |
+| NOK | Brent crude | +0.65 |
+| BRL | Iron ore, soybeans | +0.60 |
+| RUB | Crude oil | +0.75 (pre-2022) |
+
+**FERROQUANT application:**
+Long crude oil + short USD/NOK (effectively long NOK) as a combined macro trade:
+- If crude rises → NOK appreciates → double benefit
+- If crude falls → NOK weakens → both positions lose (correlation risk)
+- Risk management: treat combined position as one macro theme with appropriate sizing
+
+---
+
+## 6. Macro Risk Management
+
+### Position Sizing in Macro Strategies
+
+**Volatility targeting:**
+Size each position so that its individual contribution to portfolio volatility is equal:
+```
+Position Size = (Target Volatility / Instrument Volatility) × Capital
+```
+
+If target portfolio volatility = 15%, and crude oil volatility = 30%:
+```
+Crude oil position = 15% / 30% = 50% of capital
+```
+
+**Kelly Criterion for macro bets:**
+```
+Kelly fraction = (p × b − q) / b
+Where: p = probability of win, q = 1 − p, b = odds (win/loss ratio)
+```
+
+In practice, use fractional Kelly (25–50% of full Kelly) to account for estimation error.
+
+### Macro Regime Analysis
+
+Macro positions perform differently in different regimes. FERROQUANT uses a **4-quadrant regime framework** (inspired by Dalio's "All Weather" model):
+
+| Quadrant | Growth vs. Expectations | Inflation vs. Expectations | Best Assets |
+|---|---|---|---|
+| 1: Goldilocks | Rising | Falling | Equities, credit |
+| 2: Reflation | Rising | Rising | Commodities, TIPS, EM equities |
+| 3: Stagflation | Falling | Rising | Commodities, short bonds, short equities |
+| 4: Deflation/Recession | Falling | Falling | Long bonds, gold, USD |
+
+**Signal construction:**
+- Growth signal: GDP surprise index, PMI trends
+- Inflation signal: CPI surprises vs. expectations, breakeven inflation rate changes
+- Classify current regime and tilt portfolio toward regime-appropriate assets
+
+### Pakistan Macro Regime (as of 2024–2025)
+
+**Post-IMF program characteristics:**
+- Inflation: peaking/declining (Phase 4 → transitioning to Phase 1)
+- Growth: recovering from 2023 recession
+- Current account: moving toward surplus from large deficit
+- Policy rate: declining from 22% peak
+- PKR: stabilizing after 2022–2023 devaluation
+
+**Implied regime:** Transitioning from Stagflation (2022–2023) to Goldilocks (2024–2025) as inflation falls and growth recovers.
+
+**Regime trade for Pakistan:**
+- Goldilocks: Long PIBs (duration), Long KSE-100, Long PKR
+- Risk: Regime reversal if IMF program stalls, political instability, oil price spike
+
+---
+
+## 7. Gulf Macro Themes
+
+### UAE/Saudi Arabia Macro Dynamics
+
+**Oil dependence:** GCC economies are highly correlated with oil prices. Higher oil → fiscal surplus → government spending → domestic growth.
+
+**Qatar fixed rate to USD:** QAR pegged at 3.64 QAR/USD. No currency carry in QAR. But Qatari sovereign bonds offer spread over US Treasuries — a "pure credit" macro trade.
+
+**DIFC/ADGM as macro hubs:** Abu Dhabi and Dubai have become significant global macro trading hubs, particularly for:
+- Regional geopolitical risk trades (Israel/Palestine, Iran tensions, Red Sea shipping disruptions)
+- EM carry trades (GCC as USD bloc, local rates attract EM carry seekers)
+- Commodity macro (Qatar LNG, UAE oil, Saudi Aramco correlations)
+
+**FERROQUANT Gulf macro trades:**
+- Long Abu Dhabi sovereign bonds + long Saudi equities (Tadawul) during oil price recovery
+- Short Dubai real estate exposure (REITs or proxies) during oil price crash
+- Long DIFC/ADGM-based alternative investment funds as Gulf macro participation for Pakistani HNWI clients
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT is constructing a systematic FX carry portfolio. The following data is available:
+   
+   | Currency | 3M Interest Rate | Implied Volatility |
+   |---|---|---|
+   | USD | 5.25% | — |
+   | EUR | 4.00% | 6.5% |
+   | JPY | 0.10% | 8.2% |
+   | AUD | 4.35% | 9.8% |
+   | BRL | 10.50% | 14.5% |
+   | TRY | 40.00% | 22.0% |
+   | NZD | 5.50% | 10.1% |
+   
+   (a) Calculate the carry (vs. USD) and carry-to-volatility ratio for each non-USD currency. Which two currencies have the best risk-adjusted carry?
+   (b) Construct a long-short carry portfolio: long the top 2 risk-adjusted carry currencies, short the bottom 2. Show the expected annual carry from this portfolio (assume equal position sizes in USD terms).
+   (c) Justify why TRY has the highest nominal carry but may not be the best carry trade candidate. What additional risk factors must be assessed?
+   (d) A risk-off event causes a simultaneous 3% USD appreciation against all currencies. The portfolio also suffers from a sharp unwind of carry positions, causing an additional 2% loss beyond the USD move. Calculate the total P&L impact on a USD 50M carry portfolio.
+
+2. FERROQUANT has a view that the SBP will cut rates significantly over the next 18 months (from 22% to 14%) as Pakistan's inflation normalizes under the IMF program. Design a rates macro trade:
+   
+   (a) Identify the three specific instruments FERROQUANT should use to express this view and explain the rationale for each.
+   (b) Calculate the approximate P&L for a long position in PKR 1 billion of 10-year PIBs if rates move from 13% yield to 10% yield. (Use modified duration ≈ 6.5 years.)
+   (c) What specific risks could prevent this trade from working, and how would FERROQUANT hedge or monitor each risk?
+   (d) The same rate-cutting view could also be expressed as a curve steepener (the short end falls more than the long end). In what economic scenario would a curve steepener outperform a simple long-duration trade? In what scenario would it underperform?
+
+3. FERROQUANT is building a macro regime allocation model for its Pakistan portfolio. Using the 4-quadrant framework:
+   
+   (a) Pakistan in Q2 2022: inflation was 20%+ and rising, GDP growth was declining sharply. Classify the regime and identify the three portfolio positions most appropriate for this regime. Evaluate each position in terms of how it would have actually performed.
+   (b) Pakistan in Q4 2024: inflation is falling toward 8–10%, GDP growth is recovering to 3–4%, policy rate has been cut from 22% to 15%. Classify the new regime and identify the three most appropriate new portfolio positions.
+   (c) The model gives a "regime change signal" in August 2024 — transitioning from stagflation to Goldilocks. Design the specific trades to execute this transition, including approximate position sizes for a PKR 5B portfolio.
+   (d) What is the primary risk of regime-based portfolio management? How can it be managed?
+
+<ArticleNav
+  prev={{ title: "Module 82 — Commodity Markets & Trading", href: "/financial-strategy/module-82-commodity-markets-trading" }}
+  next={{ title: "Module 84 — Quantitative Risk Models: EVT & Copulas", href: "/financial-strategy/module-84-quantitative-risk-models-evt-copulas" }}
+/>
