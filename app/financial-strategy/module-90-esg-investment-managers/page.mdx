@@ -1,0 +1,287 @@
+export const metadata = {
+  title: "Module 90 — ESG for Investment Managers | Financial Strategy — ByteWise",
+  description: "ESG integration in quantitative strategies, factor-based ESG, greenwashing risk, SFDR Article 8/9 classification, Gulf SWF ESG mandates, and Pakistan ESG landscape.",
+  openGraph: { title: "Module 90 — ESG for Investment Managers | Financial Strategy", description: "ESG data, factor construction, SFDR classification, greenwashing risk, Gulf ESG mandates, and quantitative ESG integration for FERROQUANT.", type: "article" },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Module 90 — ESG for Investment Managers
+
+ESG (Environmental, Social, and Governance) has moved from a niche ethical screen to a mainstream investment consideration — driven by regulatory pressure, institutional investor mandates, and growing evidence that ESG factors predict long-term risks that financial statements miss. For FERROQUANT, ESG matters on three levels: as a potential alpha signal (ESG data predicts stock returns), as a risk management tool (poor governance often predates financial fraud), and as a commercial necessity (Gulf sovereign wealth funds increasingly require ESG compliance from asset managers seeking mandates).
+
+## Learning Objectives
+
+- Explain the three pillars of ESG and why each matters financially
+- Distinguish ESG screening, integration, and impact investing approaches
+- Construct and evaluate quantitative ESG signals
+- Navigate SFDR Article 6/8/9 classification requirements
+- Understand greenwashing risk and how to mitigate it
+- Apply ESG to Gulf SWF mandates and Pakistan's emerging ESG landscape
+
+---
+
+## 1. ESG Framework: What Each Pillar Captures
+
+### Environmental (E)
+
+**What it measures:** A company's impact on and exposure to environmental risks.
+
+| Metric | What It Signals | Financially Relevant Because |
+|---|---|---|
+| Carbon emissions (Scope 1, 2, 3) | Direct/indirect greenhouse gas | Carbon pricing risk; stranded asset risk |
+| Water consumption | Operational water intensity | Water scarcity risk in water-stressed regions |
+| Waste generation/recycling | Operational efficiency | Regulatory fines; remediation costs |
+| Renewable energy usage | Transition risk exposure | Future cost structure; regulatory exposure |
+| Biodiversity impact | Land use, deforestation | Regulatory and social license risk |
+
+**Financially material example:** A Pakistan cement company with high energy intensity (coal-powered kilns) faces rising input costs as Pakistan transitions toward RLNG and renewable energy. The company's environmental profile is directly linked to its long-term profitability.
+
+### Social (S)
+
+**What it measures:** A company's relationships with employees, communities, and supply chains.
+
+| Metric | What It Signals | Financially Relevant Because |
+|---|---|---|
+| Worker safety (injury rates) | Operational risk | Liability, productivity, regulatory |
+| Labor practices (fair wages, no child labor) | Supply chain risk | Reputational risk, market access |
+| Community relations | License to operate | Project delays, protests, disruptions |
+| Gender diversity | Governance quality | Research shows diverse boards outperform |
+| Data privacy | Customer data protection | Regulatory fines (GDPR, PDPA) |
+
+**Pakistan context:** PSX-listed companies in textile and manufacturing sectors face scrutiny over labor practices (child labor, minimum wage compliance, factory safety — post-Baldia fire reforms) from international buyers and investors.
+
+### Governance (G)
+
+**What it measures:** The quality of a company's leadership, accountability, and shareholder rights.
+
+| Metric | What It Signals | Financially Relevant Because |
+|---|---|---|
+| Board independence | Management oversight quality | Fraud prevention; strategic oversight |
+| CEO/Chairman separation | Power concentration | Governance risk |
+| Audit quality (Big 4 vs. local) | Financial reporting reliability | Fraud risk proxy |
+| Related-party transactions | Minority shareholder risk | Cash diversion risk |
+| Ownership concentration | Founder/family control | Minority shareholder rights |
+
+**Pakistan G-factor:** PSX-listed companies often have concentrated family ownership (>50% family holding). This is not inherently bad — family-controlled businesses can be better aligned with long-term value creation — but it increases related-party transaction risk and minority shareholder oppression risk.
+
+---
+
+## 2. ESG Investment Approaches
+
+### Negative Screening (Exclusion)
+
+**Exclude companies involved in:**
+- Controversial weapons (cluster munitions, chemical/biological/nuclear)
+- Tobacco
+- Gambling and adult entertainment
+- Alcohol (critical for Islamic finance-compliant mandates — covered in Module 91)
+- Fossil fuels (for climate-focused mandates)
+
+**Minimum viable screen for Gulf SWF mandates:**
+Many GCC sovereign wealth funds require negative screens on:
+- Companies deriving >10% revenue from tobacco
+- Companies manufacturing controversial weapons
+- Companies with major ESG controversies (e.g., Volkswagen emissions scandal, BP Deepwater Horizon)
+
+### ESG Integration
+
+**Not exclusion — weighting adjustment:** ESG scores modify valuations rather than eliminating companies.
+
+**Approaches:**
+1. **Best-in-class:** Hold the highest ESG-scoring companies within each sector (not just "clean" sectors). A high-ESG oil company is preferred over a low-ESG oil company — sector exposure maintained.
+2. **ESG tilt:** Overweight high-ESG stocks, underweight low-ESG stocks within the portfolio. Maintain sector neutrality to avoid unintended sector bets.
+3. **ESG factor integration:** Include ESG scores as an additional factor alongside momentum, value, and quality in the quantitative model.
+
+### Thematic / Impact Investing
+
+**Thematic:** Concentrate in themes — renewable energy, water infrastructure, digital inclusion, healthcare access. Accepts sector concentration for thematic exposure.
+
+**Impact:** Target measurable positive outcomes (jobs created, CO2 avoided, loans to underserved communities). Requires impact measurement and reporting — not just screening.
+
+---
+
+## 3. Quantitative ESG Signals
+
+### ESG as a Factor
+
+**ESG score:** Aggregated score from data providers (MSCI ESG, Sustainalytics, Bloomberg ESG). Covers E, S, and G sub-scores.
+
+**ESG momentum:** Change in ESG score over time. Improving ESG scores predict positive stock returns (rising ESG score → institutional buying). More alpha than the level of the ESG score.
+
+**ESG controversy score:** Flag companies with active ESG controversies (environmental spills, labor lawsuits, governance scandals). Companies with recent major controversies tend to underperform.
+
+**Governance quality proxy (G-factor):**
+- Audit quality (Big 4 = 1, non-Big 4 = 0)
+- Board independence ratio
+- Related-party transaction intensity (related-party transactions / total revenue)
+- Ownership concentration (family/founder % → higher concentration = lower G score)
+
+**G-factor as a fraud predictor for Pakistan:**
+PSX has had numerous corporate governance failures (Bank Alfalah loan book issues, TFC defaults, related-party abuse). A quantitative G-score that penalizes weak governance has served as a genuine risk-reduction signal in Pakistani equities.
+
+### IC Analysis of ESG Signals on PSX
+
+**Challenge:** ESG data coverage for PSX is limited. MSCI covers ~30 KSE-100 companies. Bloomberg ESG covers ~20. Many PSX companies have no formal ESG scoring.
+
+**FERROQUANT's approach:**
+1. Use available third-party ESG data for large-caps
+2. Build an internal "mini-ESG" score using proxy metrics available from annual reports:
+   - G-factor: board composition, audit quality, related-party transactions (from SECP filings)
+   - E-proxy: energy intensity (from production data in annual reports)
+   - S-proxy: workforce safety (accidents reported in annual report)
+3. Back-test this internal score as a long/short signal on KSE-100
+
+---
+
+## 4. SFDR Classification (EU Sustainable Finance Disclosure Regulation)
+
+### Article 6, 8, and 9
+
+SFDR requires EU-regulated funds (UCITS, AIFs marketed in EU) to disclose their ESG approach in one of three categories:
+
+**Article 6 — "No specific ESG claims":**
+The fund does not integrate ESG systematically. No specific ESG disclosures required beyond a brief explanation of why ESG isn't integrated.
+- Label: No ESG label
+- Marketing claim: Cannot claim to be "sustainable" or "ESG"
+
+**Article 8 — "Promotes environmental or social characteristics":**
+The fund promotes E or S characteristics as part of its investment strategy, but the primary objective is financial return.
+- Examples: A diversified fund that applies ESG screens + uses ESG tilt
+- Required: Pre-contractual and periodic disclosure of how ESG characteristics are achieved
+- Label: "Light Green"
+
+**Article 9 — "Has sustainable investment as its objective":**
+The fund's primary objective is sustainable investment (measurable positive impact).
+- Examples: A climate-focused fund that invests only in renewable energy companies
+- Required: Detailed impact reporting, EU taxonomy alignment
+- Label: "Dark Green"
+
+**FERROQUANT's SFDR classification:**
+If FERROQUANT markets to EU investors through a DIFC-to-Europe structure, it must classify:
+- Base strategy (PSX momentum + PIBs): likely **Article 6** (no ESG claims)
+- ESG-tilted version: **Article 8** (promotes governance as a characteristic)
+- Cannot claim Article 9 without dedicated impact measurement
+
+### Greenwashing Risk
+
+**Greenwashing:** Claiming ESG compliance or impact without genuine underlying practice.
+
+**Regulatory risk:** EU regulators have investigated multiple funds for misleading Article 8/9 claims. Fines and reputational damage.
+
+**FERROQUANT greenwashing protection:**
+- Only market the fund using SFDR language that matches the actual investment process
+- Document ESG integration in the investment policy statement (IPS)
+- Annual review of ESG score coverage and methodology
+- Never use ESG labels in marketing without SFDR-compliant underlying process
+
+---
+
+## 5. Gulf SWF ESG Mandates
+
+### ADIA (Abu Dhabi Investment Authority)
+
+ADIA manages ~$993B and has made ESG integration mandatory for external managers:
+- Requires external managers to sign the ADIA ESG Manager Framework
+- Assesses ESG capability during manager due diligence
+- Reports its own portfolio carbon footprint and expects managers to provide data
+
+**ADIA's priorities:**
+- Climate risk integration (physical and transition risk)
+- Board diversity and governance quality
+- Human capital management
+
+**For FERROQUANT to access ADIA mandates:** Must demonstrate ESG integration process, must be able to report portfolio ESG scores and carbon footprint.
+
+### Mubadala Investment Company (Abu Dhabi)
+
+**AUM:** ~$276B. Focus on technology, energy transition, and infrastructure.
+
+**ESG requirements for external managers:**
+- Signed UN PRI (Principles for Responsible Investment) commitment
+- Annual ESG reporting using TCFD (Task Force on Climate-related Financial Disclosures) framework
+- Anti-bribery and corruption policy aligned with UNODC standards
+
+### Qatar Investment Authority (QIA)
+
+**AUM:** ~$475B. Focus on financial services, real estate, and diversified assets.
+
+**ESG approach:** Less prescriptive than ADIA. Focuses on governance (board quality) and controversy avoidance. Growing emphasis on climate risk.
+
+### What FERROQUANT Needs for GCC SWF Access
+
+**Minimum ESG infrastructure for GCC SWF mandates:**
+1. UN PRI signatory status (free to join, annual reporting required)
+2. ESG integration policy document
+3. Portfolio ESG score reporting capability
+4. Board diversity and governance policy
+5. Anti-bribery/corruption policy (FCPA/Bribery Act compliance)
+6. Annual ESG report to investors
+
+---
+
+## 6. Pakistan's ESG Landscape
+
+### PSX ESG Developments
+
+**PSX and SECP ESG initiatives:**
+- SECP launched **Environmental and Social Risk Management (ESRM) guidelines** in 2017
+- PSX introduced the **Pakistan ESG Index** (tracking high-ESG-scoring KSE-100 companies) in 2020
+- SECP sustainability reporting guidelines (voluntary initially, moving toward mandatory for listed companies)
+- State Bank of Pakistan (SBP) introduced **Green Banking Policy** and **Green Taxonomy** (2021) to encourage environmental lending
+
+**Pakistan Sustainability Reporting:**
+- Large listed companies required to include sustainability disclosures in annual reports (SECP directive 2019)
+- Coverage of GHG emissions, water use, labor practices, board diversity
+- Enforcement is light → compliance is patchy → data quality is inconsistent
+
+### Pakistan ESG Challenges
+
+**Structural constraints:**
+- Limited data availability: Most PSX companies lack international-standard ESG disclosures
+- Governance weaknesses: Related-party transactions, family control, audit quality gaps are widespread
+- Environmental: Pakistan is a major climate-vulnerable country (floods, heat stress) but its industry's environmental disclosure is underdeveloped
+- Social: Labor practices in textile sector (Pakistan's largest export industry) are scrutinized by international buyers — creating ESG risk for FERROQUANT's portfolio exposure
+
+**ESG opportunity:**
+- Companies improving governance (hiring Big 4 auditors, reducing related-party transactions, adding independent directors) tend to see valuation re-rating
+- FERROQUANT's G-factor-focused signal captures this re-rating momentum before it fully shows in price
+
+---
+
+## Self-Assessment
+
+1. FERROQUANT is evaluating two PSX textile companies for inclusion in its equity book:
+   
+   **Company A (NML — Nishat Mills):**
+   - Board: 9 members, 3 independent (33% independence)
+   - Auditor: KPMG Pakistan (Big 4)
+   - Related-party transactions: 8% of revenue
+   - ESG controversy score: None recent
+   - Environmental: Energy intensity falling 5%/year; LEED-certified factory
+   
+   **Company B (Mytextile Ltd):**
+   - Board: 7 members, 1 independent (14% independence)
+   - Auditor: Small local firm
+   - Related-party transactions: 22% of revenue
+   - ESG controversy score: 1 recent factory safety incident
+   - Environmental: No disclosure
+   
+   Both companies have similar valuations (P/E 8x) and momentum signals.
+   
+   (a) Score each company on a simple G-factor (0–10 scale) using: board independence, audit quality, related-party transaction intensity. Which scores higher?
+   (b) FERROQUANT's portfolio manager wants to include both stocks equally. FERROQUANT's risk manager disagrees, citing the G-factor difference. Make the risk manager's argument: what specific financial risks does the G-factor difference represent?
+   (c) If FERROQUANT applies a "best-in-class" ESG approach to the textile sector, how should it adjust the position sizes of Company A vs. Company B? Show the weight adjustment methodology.
+   (d) A Gulf SWF investor reviewing FERROQUANT's portfolio asks for the ESG score of each holding. Company B has no MSCI ESG score. How should FERROQUANT handle this gap in external ESG coverage?
+
+2. FERROQUANT is considering registering as a UN PRI signatory and classifying its primary fund as SFDR Article 8:
+   
+   (a) List the five commitments a UN PRI signatory must make. For each, identify the specific action FERROQUANT must take to comply.
+   (b) For SFDR Article 8 classification, FERROQUANT must "promote" a specific environmental or social characteristic. Which characteristic should FERROQUANT promote given its PSX focus? Justify your choice and explain how it would be operationalized in the investment process.
+   (c) An EU investor asks: "Is this fund Article 9 — does it have sustainable investment as its primary objective?" Why would claiming Article 9 be inappropriate for FERROQUANT's current strategy? What additional changes to the strategy would be required to genuinely qualify as Article 9?
+   (d) Six months after claiming Article 8, FERROQUANT's risk team identifies that 15% of the equity book is invested in companies with active ESG controversies (factory accidents, regulatory investigations). What are the legal and reputational risks? What immediate actions should FERROQUANT take?
+
+<ArticleNav
+  prev={{ title: "Module 89 — Tax for Investment Managers", href: "/financial-strategy/module-89-tax-investment-managers" }}
+  next={{ title: "Module 91 — Islamic Finance for Investment Managers", href: "/financial-strategy/module-91-islamic-finance-investment-managers" }}
+/>
