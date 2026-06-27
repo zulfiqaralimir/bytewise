@@ -1,0 +1,248 @@
+export const metadata = {
+  title: "Apple's AFM 3 Core Advanced: How a New AI Architecture Could Redefine On-Device Intelligence — ByteWise CS Book",
+  description: "Apple's latest Foundation Model introduces a smarter alternative to traditional Mixture-of-Experts architectures, bringing faster, more capable AI directly to iPhones and Macs.",
+  keywords: ["Apple AFM 3", "on-device AI", "Mixture of Experts", "Apple Intelligence", "Foundation Models", "Instruction-Following Pruning", "Apple silicon", "on-device LLM"],
+  openGraph: {
+    title: "Apple's AFM 3 Core Advanced: How a New AI Architecture Could Redefine On-Device Intelligence — ByteWise CS Book",
+    description: "Apple's latest Foundation Model introduces a smarter alternative to traditional Mixture-of-Experts architectures, bringing faster, more capable AI directly to iPhones and Macs.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { AudioPlayer } from "@/app/components/AudioPlayer";
+
+# Apple's AFM 3 Core Advanced: How a New AI Architecture Could Redefine On-Device Intelligence
+
+*Apple's latest Foundation Model introduces a smarter alternative to traditional Mixture-of-Experts architectures, bringing faster, more capable AI directly to iPhones and Macs.*
+
+<AudioPlayer src="/audio/apple-afm-3-core-advanced.mp3" title="Listen to this article" />
+
+---
+
+## Introduction
+
+Artificial intelligence has rapidly evolved from cloud-based chatbots into powerful assistants capable of running complex reasoning tasks. Yet one challenge has remained difficult to overcome: **bringing large language models directly onto consumer devices without sacrificing speed or battery life.**
+
+Apple believes it has found a solution.
+
+With the introduction of **AFM 3 Core Advanced**, Apple is taking a major step toward making sophisticated AI run natively on iPhones, iPads, and Macs. Rather than relying entirely on cloud servers, the new model is engineered to perform advanced language, speech, and multimodal tasks directly on Apple silicon.
+
+What makes this release particularly noteworthy isn't just the model itself—it's the **new architecture** behind it. By rethinking how Mixture-of-Experts (MoE) models activate their neural networks, Apple has developed an approach that significantly reduces memory usage while improving inference speed.
+
+Combined with Apple's growing AI partnership with Google and its expanding Foundation Models Framework, AFM 3 Core Advanced represents an important milestone in the future of private, efficient, and on-device AI.
+
+---
+
+## What Is AFM 3 Core Advanced?
+
+AFM 3 Core Advanced is part of Apple's third-generation **Apple Foundation Models (AFM 3)** family.
+
+Unlike cloud-hosted models that require continuous internet connectivity, AFM 3 Core Advanced is specifically designed to operate **locally on Apple hardware**.
+
+The model supports:
+
+* Text understanding and generation
+* Speech recognition
+* Speech generation
+* Image understanding
+* Tool usage
+* Multi-step reasoning
+* Support for 25 languages
+
+Apple plans to deploy the model through upcoming operating system updates for Macs and the **iPhone 17 Pro, Pro Max, and Air** models.
+
+The broader AFM 3 family also includes cloud-based variants optimized for larger workloads, but AFM 3 Core Advanced is designed for users who value speed, privacy, and offline capabilities.
+
+---
+
+## A New Take on the Mixture-of-Experts Architecture
+
+Most modern large language models rely on a **Mixture-of-Experts (MoE)** architecture.
+
+Instead of activating every parameter for every token, MoE models activate only a subset of specialized neural networks—or "experts"—for each piece of text. This approach delivers impressive performance while reducing computational costs.
+
+However, MoE introduces a practical challenge.
+
+Traditional MoE systems continuously switch between experts for nearly every generated token. As a result, the entire model typically needs to remain loaded into active memory (RAM or VRAM), which limits deployment on resource-constrained devices such as smartphones.
+
+Apple's engineers approached this problem differently.
+
+---
+
+## Introducing Instruction-Following Pruning
+
+Rather than relying on routing layers inside the model to determine which experts should process each token, AFM 3 Core Advanced uses a **separate transformer** to make those decisions.
+
+Apple refers to this method as **Instruction-Following Pruning**.
+
+Instead of changing experts for every token, the model keeps the same experts active across multiple tokens whenever possible.
+
+This seemingly simple change has significant implications.
+
+Because experts remain active longer, the system can efficiently store portions of the model in flash storage instead of requiring everything to reside in high-speed memory.
+
+The result is:
+
+* Lower RAM requirements
+* Faster inference
+* Better energy efficiency
+* Larger AI models running directly on mobile devices
+
+For users, this translates into smoother AI experiences without constantly relying on cloud infrastructure.
+
+---
+
+## Optimized for Apple Silicon
+
+AFM 3 Core Advanced has been built specifically for Apple's custom silicon architecture.
+
+Modern Apple chips combine powerful CPUs, GPUs, and Neural Engines into highly integrated systems optimized for machine learning workloads.
+
+By tailoring the model to this hardware, Apple can achieve greater efficiency than generic AI models designed for multiple platforms.
+
+The model's architecture also enables:
+
+* Faster response times
+* Lower power consumption
+* Improved thermal performance
+* Better multitasking alongside other applications
+
+These optimizations are particularly important for smartphones, where battery life and memory are critical resources.
+
+---
+
+## Multimodal Intelligence
+
+Today's AI assistants need to understand more than text.
+
+AFM 3 Core Advanced supports multiple input types, including:
+
+* Written language
+* Voice conversations
+* Images
+
+It can generate both **text and natural speech**, enabling richer interactions across Apple's ecosystem.
+
+This multimodal capability opens the door to more intelligent personal assistants, accessibility features, document understanding, visual search, and hands-free productivity tools.
+
+---
+
+## Training Without Personal User Data
+
+Privacy has long been one of Apple's strongest differentiators.
+
+According to Apple, AFM 3 Core Advanced was trained using:
+
+* Publicly available information
+* Licensed datasets
+* Research study data
+* Synthetic data
+
+Notably, Apple states that **user interactions and personal customer data were not used during training**.
+
+The training pipeline included pretraining, supervised fine-tuning, and reinforcement learning.
+
+This approach aligns with Apple's long-standing emphasis on protecting user privacy while still delivering competitive AI capabilities.
+
+---
+
+## Built on Google's AI Research
+
+One of the most significant announcements surrounding AFM 3 is Apple's expanded collaboration with Google.
+
+Earlier this year, Apple entered a multi-year agreement that allows it to use Google's Gemini models as the foundation for portions of its AI development.
+
+However, Apple emphasizes that AFM 3 is **not simply a rebranded Gemini model**.
+
+Instead, Apple uses **knowledge distillation**, a process where a smaller model learns from a larger teacher model while developing its own optimized architecture.
+
+This allows Apple to benefit from Google's advances in large-scale AI while creating models specifically optimized for Apple hardware.
+
+---
+
+## More Choice for Developers
+
+Alongside AFM 3, Apple announced important updates to its **Foundation Models Framework**.
+
+Rather than limiting developers to Apple's own AI models, the framework will support multiple providers implementing Apple's LanguageModel protocol.
+
+Developers will be able to integrate models from companies such as Anthropic and Google alongside Apple's Foundation Models.
+
+This flexibility gives developers the freedom to choose the best model for their application's requirements, whether they prioritize local inference, cloud-scale reasoning, or specialized capabilities.
+
+---
+
+## Why This Matters
+
+Running advanced AI locally has several advantages over relying entirely on cloud services.
+
+### Better Privacy
+
+Sensitive conversations, documents, and images can remain on the device rather than being transmitted to remote servers.
+
+### Faster Responses
+
+Local processing reduces network latency, resulting in more immediate interactions.
+
+### Offline Availability
+
+Many AI features continue working without an internet connection.
+
+### Lower Cloud Costs
+
+Developers can reduce infrastructure expenses by shifting some inference directly to users' devices.
+
+As AI becomes embedded into everyday applications, these benefits become increasingly valuable.
+
+---
+
+## What We Still Don't Know
+
+While AFM 3 Core Advanced introduces several promising architectural innovations, Apple has not yet disclosed:
+
+* Benchmark performance against competing models
+* Maximum context window
+* Token generation speed
+* Training dataset size
+* Exact reasoning capabilities
+
+The company has indicated that additional technical details and benchmark results will be released later this year.
+
+Until then, much of the industry's evaluation will depend on real-world testing once the model becomes available.
+
+---
+
+## The Bigger Picture
+
+The launch of AFM 3 Core Advanced reflects a broader shift in artificial intelligence.
+
+Instead of pushing every computation to massive cloud data centers, companies are increasingly designing AI that runs efficiently on consumer hardware.
+
+Apple's approach suggests that the future of AI will likely be **hybrid**.
+
+Complex reasoning tasks may continue using cloud infrastructure, while everyday interactions happen instantly and privately on local devices.
+
+By combining architectural innovation with custom silicon and strategic partnerships, Apple is positioning itself to play a significant role in this next phase of AI computing.
+
+---
+
+## Final Thoughts
+
+AFM 3 Core Advanced is more than another large language model—it represents Apple's vision for practical, private, and efficient artificial intelligence.
+
+Its Instruction-Following Pruning architecture addresses one of the biggest challenges facing on-device AI: how to deliver sophisticated capabilities without overwhelming memory and power constraints.
+
+Combined with multimodal intelligence, optimized Apple silicon integration, and an expanding ecosystem for third-party AI models, AFM 3 lays the foundation for a new generation of intelligent applications that run directly on users' devices.
+
+While benchmark results are still forthcoming, the architectural innovations alone make AFM 3 Core Advanced one of the most intriguing AI developments to watch in the coming year.
+
+As on-device AI continues to mature, Apple's latest Foundation Model demonstrates that the future of artificial intelligence may not live exclusively in the cloud—it may increasingly live in your pocket.
+
+<ArticleNav
+  prev={{
+    title: "GLM-5.2: The Open-Weight AI Model Challenging GPT and Claude",
+    href: "/docs/cs-book/part-7-ai-and-llms/glm-5-2",
+  }}
+  next={null}
+/>
