@@ -101,6 +101,7 @@ const chapters = [
       { title: "Case Study: Bloomberg-Style Fintech Platform", href: "/docs/cs-book/part-7-ai-and-llms/blackirontimes-fintech-platform" },
       { title: "How AI Model Distillation Works", href: "/docs/cs-book/part-7-ai-and-llms/ai-model-distillation" },
       { title: "Practical Project: Distilling a Mathematics AI Model", href: "/docs/cs-book/part-7-ai-and-llms/ai-model-distillation-project" },
+      { title: "Loop Engineering: The Three Feedback Loops Behind AI-Native Product Development", href: "/docs/cs-book/part-7-ai-and-llms/loop-engineering" },
     ],
   },
   {
