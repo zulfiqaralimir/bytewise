@@ -1,0 +1,258 @@
+export const metadata = {
+  title: "ESMFold2: How AI Is Learning the Language of Biology to Accelerate Drug Discovery — ByteWise CS Book",
+  description: "By treating proteins, DNA, RNA, and other biological molecules like a language, ESMFold2 is bringing the power of large language models to structural biology.",
+  keywords: ["ESMFold2", "protein folding", "AI drug discovery", "biological language model", "ESMC", "transformer biology", "structural biology", "AlphaFold", "EvolutionaryScale"],
+  openGraph: {
+    title: "ESMFold2: How AI Is Learning the Language of Biology to Accelerate Drug Discovery — ByteWise CS Book",
+    description: "By treating proteins, DNA, RNA, and other biological molecules like a language, ESMFold2 is bringing the power of large language models to structural biology.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { AudioPlayer } from "@/app/components/AudioPlayer";
+
+# ESMFold2: How AI Is Learning the Language of Biology to Accelerate Drug Discovery
+
+*By treating proteins, DNA, RNA, and other biological molecules like a language, ESMFold2 is bringing the power of large language models to structural biology.*
+
+<AudioPlayer src="/audio/esmfold2.mp3" title="Listen to this article" />
+
+---
+
+## Introduction
+
+Artificial intelligence has already transformed how we write code, generate images, and communicate with machines. Now, the same principles behind large language models are reshaping one of the most important fields in science: **biology**.
+
+For decades, determining the three-dimensional structure of proteins and other biological molecules has been one of the biggest challenges in biomedical research. These structures determine how molecules interact, influence diseases, and guide the development of new medicines.
+
+The breakthrough came with **AlphaFold**, Google's AI system that revolutionized protein structure prediction and earned widespread recognition for its scientific impact. Since then, researchers have continued pushing the boundaries of AI-driven molecular modeling.
+
+One of the latest advances is **ESMFold2**, an open-source model developed by researchers at Biohub and EvolutionaryScale. Unlike previous systems, ESMFold2 borrows ideas from large language models, allowing it to understand biological molecules in much the same way AI understands human language.
+
+The result is a faster, more flexible approach to predicting molecular structures—especially when little biological information is available.
+
+---
+
+## Why Molecular Structure Matters
+
+Every living organism depends on biological molecules working together with extraordinary precision.
+
+Proteins fold into complex three-dimensional shapes that determine their function. DNA stores genetic information. RNA helps translate that information into proteins. Small molecules bind to proteins, enabling or blocking biological processes.
+
+If scientists can accurately predict these structures, they can:
+
+* Design new medicines faster
+* Better understand genetic diseases
+* Engineer proteins for industrial applications
+* Develop targeted cancer therapies
+* Respond more rapidly to emerging viruses
+* Advance synthetic biology
+
+Traditionally, determining molecular structures required years of laboratory experiments using techniques such as X-ray crystallography or cryo-electron microscopy.
+
+AI has dramatically shortened this timeline.
+
+---
+
+## From AlphaFold to ESMFold2
+
+AlphaFold demonstrated that deep learning could predict protein structures with remarkable accuracy.
+
+However, models like AlphaFold 3 typically depend on an important input called a **Multiple Sequence Alignment (MSA)**.
+
+An MSA compares a protein or DNA sequence against many similar sequences collected from biological databases.
+
+These evolutionary relationships provide valuable clues about how molecules fold.
+
+The downside? Generating MSAs requires searching enormous databases, finding related biological sequences, aligning them correctly, and spending additional computation before prediction even begins.
+
+For newly discovered proteins—or entirely synthetic molecules—suitable evolutionary relatives may not even exist.
+
+This limitation inspired researchers to rethink the problem.
+
+---
+
+## Treating Biology Like a Language
+
+Large language models succeed because they learn relationships between words from billions of text examples.
+
+Researchers behind ESMFold2 realized biological sequences behave similarly.
+
+Proteins consist of amino acids. DNA and RNA consist of nucleotide bases. Just as words form sentences, biological building blocks form meaningful sequences.
+
+Instead of relying solely on evolutionary comparisons, ESMFold2 learns directly from billions of biological sequences using transformer-based language models.
+
+This allows it to understand molecular "grammar" without always requiring evolutionary context.
+
+In essence, proteins become sentences. Amino acids become words. Biology becomes a language.
+
+---
+
+## What Is ESMFold2?
+
+ESMFold2 is a **6.2-billion-parameter AI model** capable of predicting the three-dimensional structures of multiple biological molecule types, including:
+
+* Proteins
+* DNA
+* RNA
+* Protein-DNA complexes
+* Protein-RNA complexes
+* Small molecules described using SMILES notation
+
+Unlike previous generations, ESMFold2 supports both traditional MSA-based prediction and transformer-generated molecular embeddings.
+
+This hybrid approach provides researchers with greater flexibility depending on the information available.
+
+---
+
+## Meet ESMC: The Biological Language Model
+
+At the heart of ESMFold2 is **ESMC**, a transformer model trained on approximately **2.8 billion protein sequences**.
+
+Its training resembles that of modern language models.
+
+Instead of predicting missing words, ESMC predicts missing amino acids within biological sequences.
+
+Through this process, it learns statistical relationships between molecular components.
+
+The resulting embeddings capture structural and functional information without explicitly comparing sequences to related proteins.
+
+This enables ESMFold2 to make accurate predictions even when evolutionary data is limited.
+
+---
+
+## How ESMFold2 Works
+
+ESMFold2 combines several AI techniques into a sophisticated prediction pipeline.
+
+### Step 1: Multiple Molecular Embeddings
+
+The system creates three complementary representations:
+
+* Sequence embeddings generated by ESMC
+* Atomic embeddings representing individual atoms
+* Multiple Sequence Alignment (MSA) embeddings when available
+
+Each embedding captures different aspects of molecular information.
+
+### Step 2: Estimating Molecular Relationships
+
+A specialized neural network analyzes these embeddings to estimate distances between amino acids, nucleotides, and atoms.
+
+Initially, this representation begins as random noise. The model then refines it through repeated inference cycles, gradually improving its understanding of the molecule's geometry.
+
+### Step 3: Diffusion-Based Structure Prediction
+
+Once pairwise distances have been estimated, a diffusion model predicts the precise three-dimensional coordinates of every atom.
+
+Diffusion models have already transformed image generation through systems like Stable Diffusion. ESMFold2 applies the same principle to molecular geometry, gradually removing uncertainty until a stable molecular structure emerges.
+
+### Step 4: Confidence Estimation
+
+Rather than producing only a molecular structure, ESMFold2 also estimates the uncertainty associated with its predictions.
+
+Researchers can therefore distinguish between highly reliable structural regions and areas where additional laboratory validation may be necessary.
+
+---
+
+## Strong Performance Without Evolutionary Data
+
+One of ESMFold2's biggest strengths is its ability to work effectively **without requiring MSAs**.
+
+When only protein sequences are available, the model outperforms several competing systems.
+
+In benchmark evaluations using the Local Distance Difference Test (lDDT), ESMFold2 achieved higher structural accuracy than comparable models that do not use MSAs.
+
+When MSAs are available, its performance remains competitive with leading molecular prediction systems, demonstrating that researchers do not sacrifice accuracy by adopting the new architecture.
+
+This flexibility makes ESMFold2 particularly valuable for studying:
+
+* Newly discovered proteins
+* Rapidly evolving viruses
+* Synthetic biology constructs
+* Rare biological molecules
+* Engineered therapeutic proteins
+
+---
+
+## Open Science for the Research Community
+
+Another major advantage of ESMFold2 is its openness.
+
+Researchers can access:
+
+* A free online interface
+* Downloadable model weights
+* APIs for integration into scientific workflows
+* Hugging Face deployment options
+
+Unlike proprietary systems, open-weight models encourage transparency, reproducibility, and collaboration across academia and industry.
+
+Scientists worldwide can adapt, improve, and extend the model without licensing barriers.
+
+---
+
+## Why This Matters for Drug Discovery
+
+Drug discovery depends on understanding molecular interactions. Every new medicine must bind precisely to its biological target. The more accurately researchers predict molecular structures, the faster they can identify promising therapeutic candidates.
+
+By reducing dependence on multiple sequence alignments, ESMFold2 removes one of the major bottlenecks in structural biology.
+
+This could accelerate research into:
+
+* Cancer therapeutics
+* Antiviral drugs
+* Antibiotic development
+* Gene-editing technologies
+* Personalized medicine
+* Protein engineering
+
+For rapidly evolving pathogens, where evolutionary information is often incomplete, this advantage becomes especially important.
+
+---
+
+## Large Language Models Are Expanding Beyond Text
+
+Perhaps the most fascinating aspect of ESMFold2 is what it represents.
+
+The transformer architecture that powers modern language models is proving useful far beyond human language.
+
+Researchers are increasingly applying transformer models to:
+
+* Biology
+* Chemistry
+* Genomics
+* Materials science
+* Robotics
+* Climate modeling
+
+In each domain, the underlying principle remains the same: find patterns in sequences, learn meaningful representations, predict what comes next.
+
+The remarkable success of language models suggests that many scientific problems can be viewed as sequence prediction tasks.
+
+Biology is simply the latest—and perhaps one of the most impactful—examples.
+
+---
+
+## Final Thoughts
+
+ESMFold2 demonstrates how advances in artificial intelligence continue to reshape scientific discovery.
+
+By combining transformer-based biological language models with state-of-the-art molecular prediction techniques, it removes important barriers that have traditionally slowed structural biology research.
+
+Its ability to predict molecular structures without relying exclusively on evolutionary alignments opens exciting possibilities for studying novel proteins, synthetic molecules, and emerging pathogens.
+
+Equally important, its open-source availability ensures that these capabilities are accessible to researchers around the world—not just those with access to proprietary platforms.
+
+As AI continues to bridge disciplines, the distinction between language and biology grows increasingly blurred. The same transformer architectures that understand human conversations are now helping scientists decode the language of life itself.
+
+That convergence may prove to be one of the most transformative developments in modern biomedical research.
+
+<ArticleNav
+  prev={{
+    title: "Apple's AFM 3 Core Advanced: On-Device AI Architecture",
+    href: "/docs/cs-book/part-7-ai-and-llms/apple-afm-3-core-advanced",
+  }}
+  next={null}
+/>

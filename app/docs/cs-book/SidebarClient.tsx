@@ -104,6 +104,7 @@ const chapters = [
       { title: "Loop Engineering: The Three Feedback Loops Behind AI-Native Product Development", href: "/docs/cs-book/part-7-ai-and-llms/loop-engineering" },
       { title: "GLM-5.2: The Open-Weight AI Model Challenging GPT and Claude", href: "/docs/cs-book/part-7-ai-and-llms/glm-5-2" },
       { title: "Apple's AFM 3 Core Advanced: On-Device AI Architecture", href: "/docs/cs-book/part-7-ai-and-llms/apple-afm-3-core-advanced" },
+      { title: "ESMFold2: How AI Is Learning the Language of Biology", href: "/docs/cs-book/part-7-ai-and-llms/esmfold2" },
     ],
   },
   {
