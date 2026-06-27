@@ -313,7 +313,9 @@ const chapters = [
       },
       {
         chapter: "Chapter 1: Foundations",
-        items: [],
+        items: [
+          { title: "1.1 How to Discover What Projects Are Being Built in Silicon Valley", href: "/docs/cs-book/part-15-marketing-engineering/chapter-1/1-1-discover-silicon-valley-projects" },
+        ],
       },
       {
         chapter: "Chapter 2: Brand & Positioning",
