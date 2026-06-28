@@ -101,3 +101,7 @@ body {
 }
 
 html { scroll-behavior: smooth; }
+
+/* Revision highlights — for key terms in networking articles */
+.rev-key { color: #ff4444 !important; font-weight: bold; }
+.rev-concept { color: #f59e0b !important; font-weight: bold; }
