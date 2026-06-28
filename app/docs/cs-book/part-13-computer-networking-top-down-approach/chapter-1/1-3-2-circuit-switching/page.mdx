@@ -1,0 +1,643 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+# Section 1.3.2 Circuit Switching
+
+## Introduction to Circuit Switching
+
+In the previous section, we learned that the Internet primarily uses **Packet Switching**. Data is divided into packets, and each packet travels independently through the network.
+
+Now, let's study another communication technique called:
+
+> **Circuit Switching**
+
+Before the Internet became popular, most telephone networks relied on Circuit Switching. Even today, understanding Circuit Switching is important because it helps us compare different approaches to network communication.
+
+---
+
+# Learning Objectives
+
+After completing this section, you should be able to:
+
+- Explain what Circuit Switching is.
+- Understand how a dedicated communication path is established.
+- Describe the three phases of Circuit Switching.
+- Explain why traditional telephone networks used Circuit Switching.
+- Understand Frequency Division Multiplexing (FDM) and Time Division Multiplexing (TDM).
+- Compare Packet Switching and Circuit Switching.
+
+---
+
+# What Is Circuit Switching?
+
+Circuit Switching is a communication technique in which a **dedicated communication path (called a circuit)** is established between the sender and the receiver before any data is transmitted.
+
+Unlike Packet Switching, where packets may take different routes, Circuit Switching reserves a single path that remains exclusively available for the communicating devices throughout the communication session.
+
+Definition:
+
+> **Circuit Switching is a networking technique in which network resources are reserved and a dedicated end-to-end communication path is established before data transmission begins.**
+
+---
+
+# Real-World Analogy
+
+Imagine you reserve an entire railway track for a special train.
+
+```text
+City A ========================== City B
+
+Entire railway track reserved
+for only one train.
+```
+
+No other train is allowed to use that track until your train completes its journey.
+
+Circuit Switching works in exactly the same way.
+
+---
+
+# Dedicated Communication Path
+
+The most important characteristic of Circuit Switching is:
+
+## Dedicated Path
+
+Before communication begins, the network reserves:
+
+- Communication links
+- Switches
+- Bandwidth
+
+These resources remain unavailable to everyone else until communication finishes.
+
+Example:
+
+```text
+Computer A
+
+↓
+
+Switch 1
+
+↓
+
+Switch 2
+
+↓
+
+Switch 3
+
+↓
+
+Computer B
+```
+
+The entire route is reserved. Even if no data is being transmitted, the reserved resources remain occupied.
+
+---
+
+# Three Phases of Circuit Switching
+
+Circuit Switching occurs in three major phases.
+
+```text
+1. Circuit Establishment
+
+↓
+
+2. Data Transfer
+
+↓
+
+3. Circuit Release
+```
+
+---
+
+# Phase 1: Circuit Establishment
+
+Before sending any data, the network first establishes a complete end-to-end circuit.
+
+Each switch reserves resources for the connection.
+
+Only after the circuit is successfully established can communication begin.
+
+---
+
+# Phase 2: Data Transfer
+
+Once the circuit exists, data flows through the already-established path.
+
+```text
+Computer A
+
+═══════════════════════
+
+Computer B
+```
+
+Since the path is already reserved:
+
+- No route lookup is needed.
+- No forwarding table search occurs.
+- Delay becomes more predictable.
+- Data follows the same path throughout the session.
+
+---
+
+# Phase 3: Circuit Release
+
+After communication finishes, the network releases:
+
+- Reserved bandwidth
+- Reserved switches
+- Reserved communication links
+
+These resources become available for other users.
+
+---
+
+# Why Telephone Networks Used Circuit Switching
+
+Traditional telephone systems carry continuous voice and real-time conversations, which require:
+
+- Predictable delay
+- Continuous bandwidth
+- Consistent quality
+
+Circuit Switching satisfies these requirements because bandwidth is reserved and nobody competes for the circuit.
+
+---
+
+# Guaranteed Bandwidth
+
+One major advantage of Circuit Switching is:
+
+## Guaranteed Bandwidth
+
+Suppose a communication link supports 100 Mbps. If the network reserves 20 Mbps for your connection, those 20 Mbps remain available throughout your communication — even during silence.
+
+This causes resource wastage when the user is idle, because other users still cannot use the reserved bandwidth.
+
+---
+
+# Advantages of Circuit Switching
+
+- **Dedicated Communication Path** — no competition with other users
+- **Predictable Delay** — communication quality remains stable
+- **Guaranteed Bandwidth** — bandwidth remains reserved
+- **Consistent Performance** — suitable for continuous communication
+
+---
+
+# Disadvantages of Circuit Switching
+
+- **Resource Wastage** — reserved bandwidth may remain idle
+- **Circuit Setup Time** — communication cannot begin immediately
+- **Limited Scalability** — only a limited number of circuits can exist simultaneously
+- **Poor Resource Sharing** — idle resources cannot easily be shared with others
+
+---
+
+# Frequency Division Multiplexing (FDM)
+
+An important question: **If every user receives a dedicated circuit, how can thousands of users share the same physical communication link?**
+
+The answer is:
+
+> **Multiplexing**
+
+Multiplexing allows multiple communication sessions to share a single physical communication medium without interfering with each other.
+
+The first multiplexing technique is:
+
+> **Frequency Division Multiplexing (FDM)**
+
+---
+
+# What Is Multiplexing?
+
+> **Multiplexing is the technique of allowing multiple communication sessions to share the same physical communication link simultaneously.**
+
+Instead of installing a separate cable for every user, one communication link is shared efficiently.
+
+---
+
+# What Is FDM?
+
+Frequency Division Multiplexing divides the available communication bandwidth into several **non-overlapping frequency bands**. Each communication session receives its own frequency band.
+
+Definition:
+
+> **FDM is a multiplexing technique in which the available bandwidth is divided into multiple frequency channels, with each channel carrying a separate communication session simultaneously.**
+
+---
+
+# Visualizing FDM
+
+Suppose one communication link supports 100 MHz. Instead of giving the entire bandwidth to one user, it is divided:
+
+```text
+----------------------------------------------------
+
+User A  (25 MHz)
+
+User B  (25 MHz)
+
+User C  (25 MHz)
+
+User D  (25 MHz)
+
+----------------------------------------------------
+```
+
+All users communicate simultaneously.
+
+---
+
+# Real-Life Analogy: FM Radio
+
+FM radio stations broadcast simultaneously.
+
+```text
+90.0 MHz
+
+92.0 MHz
+
+95.5 MHz
+
+98.0 MHz
+```
+
+Each station uses a different frequency. Signals do not interfere because each occupies a separate frequency band. FDM follows exactly the same principle.
+
+---
+
+# Guard Bands
+
+Between two neighboring frequency channels, small unused frequency ranges are inserted called:
+
+## Guard Bands
+
+Purpose: Prevent interference between adjacent channels.
+
+```text
+-------------------------------------------------------------
+
+Channel A
+
+Guard Band
+
+Channel B
+
+Guard Band
+
+Channel C
+
+-------------------------------------------------------------
+```
+
+Guard bands carry **no data** — they exist only to reduce interference.
+
+---
+
+# FDM Advantages
+
+- Simultaneous communication
+- Dedicated bandwidth per session
+- Predictable performance
+- Continuous transmission — ideal for analog systems
+
+# FDM Disadvantages
+
+- Wasted bandwidth — idle users still occupy frequency channels
+- Guard bands reduce efficiency
+- Limited number of users
+- Complex hardware required
+
+---
+
+# Where Is FDM Used?
+
+- Traditional Telephone Networks
+- FM Radio Broadcasting
+- Television Broadcasting
+- Cable Television
+- Satellite Communication
+
+---
+
+# Time Division Multiplexing (TDM)
+
+Instead of dividing **frequency**, TDM divides **time**.
+
+Definition:
+
+> **Time Division Multiplexing (TDM) is a multiplexing technique in which users share a communication link by transmitting during different time slots.**
+
+---
+
+# Real-Life Analogy
+
+Imagine four students sharing one microphone.
+
+```text
+Student A → First 10 seconds
+
+Student B → Next 10 seconds
+
+Student C → Next 10 seconds
+
+Student D → Next 10 seconds
+```
+
+After Student D finishes, the cycle repeats. Everyone shares the same microphone, but at different times.
+
+---
+
+# What Is a Time Slot?
+
+> A small interval of time assigned to one communication session.
+
+```text
+Time Slot 1 → User A
+
+Time Slot 2 → User B
+
+Time Slot 3 → User C
+
+Time Slot 4 → User D
+```
+
+Only the assigned user may transmit during that slot.
+
+---
+
+# What Is a Frame?
+
+A group of consecutive time slots is called a:
+
+## Frame
+
+```text
+Frame
+
+-------------------------------------
+
+Slot A
+
+Slot B
+
+Slot C
+
+Slot D
+
+-------------------------------------
+```
+
+After the frame finishes, a new frame begins immediately. This continues throughout the communication session.
+
+---
+
+# Visualizing TDM
+
+```text
+Time →
+
++------------------------------------------------+
+
+| A | B | C | D | A | B | C | D | A | B | C | D |
+
++------------------------------------------------+
+```
+
+Only one user transmits at any instant.
+
+---
+
+# Synchronization
+
+An important requirement of TDM is:
+
+## Synchronization
+
+All devices must agree on when a frame starts, when each time slot begins, and when each time slot ends.
+
+Without synchronization, users would transmit at the wrong times, causing signals to overlap and communication to become corrupted.
+
+---
+
+# Idle Time Slot Problem
+
+Just like FDM reserves a frequency, TDM reserves a time slot.
+
+Even if the user has nothing to send, the time slot remains reserved:
+
+```text
+A
+
+B
+
+(empty)  ← User C is silent, but slot cannot be reused
+
+D
+```
+
+Bandwidth is wasted.
+
+---
+
+# FDM vs TDM Comparison
+
+| Feature | FDM | TDM |
+|---------|-----|-----|
+| Resource Divided | Frequency | Time |
+| Users Transmit | Simultaneously | Sequentially |
+| Unit Assigned | Frequency Channel | Time Slot |
+| Requires Guard Bands | Yes | No |
+| Requires Synchronization | Minimal | Essential |
+| Best Suited For | Analog Systems | Digital Systems |
+
+---
+
+# TDM Advantages
+
+- Simple sharing — only one communication link needed
+- No frequency interference
+- Full link capacity during each time slot
+- Efficient for digital communication
+
+# TDM Disadvantages
+
+- Synchronization required
+- Idle slots waste capacity
+- Limited number of users
+
+---
+
+# Applications of TDM
+
+- Digital Telephone Networks
+- ISDN
+- SONET/SDH Optical Networks
+- Satellite Communication
+- Early Cellular Systems
+
+---
+
+# Packet Switching vs. Circuit Switching
+
+We have now studied both communication techniques. Let's compare them directly.
+
+---
+
+# Two Different Philosophies
+
+## Packet Switching Philosophy
+
+> "Do not reserve resources."
+
+- Divide data into packets.
+- Share network resources dynamically.
+- Forward packets independently.
+- Use bandwidth only when needed.
+
+---
+
+## Circuit Switching Philosophy
+
+> "Reserve the communication path first."
+
+- Reserve bandwidth before transmitting.
+- Keep resources dedicated until communication finishes.
+
+---
+
+# Complete Comparison Table
+
+| Feature | Packet Switching | Circuit Switching |
+|---------|-----------------|-------------------|
+| Communication Unit | Packets | Dedicated Circuit |
+| Resource Allocation | Shared | Reserved |
+| Setup Required | No | Yes |
+| Bandwidth Usage | Dynamic | Fixed |
+| Efficiency | High | Lower |
+| Delay | Variable | Predictable |
+| Queueing | Possible | Minimal |
+| Packet Loss | Possible | Rare |
+| Scalability | Excellent | Limited |
+| Fault Tolerance | High | Lower |
+| Bandwidth Waste | Very Low | High |
+| Best For | Computer Networks | Telephone Networks |
+| Internet Uses | Yes | No |
+
+---
+
+# Why Did the Internet Choose Packet Switching?
+
+Packet Switching became the foundation of the Internet because:
+
+- **Better Resource Sharing** — thousands of users efficiently share the same communication links
+- **Higher Efficiency** — bandwidth is consumed only when needed
+- **Better Scalability** — supports billions of connected devices
+- **Fault Tolerance** — packets can take alternative routes if failures occur
+- **Cost Effectiveness** — shared infrastructure reduces deployment cost
+- **Better Support for Bursty Traffic** — most Internet applications transmit data irregularly with pauses between actions
+
+---
+
+# Why Telephone Networks Preferred Circuit Switching
+
+Voice communication requires continuous transmission, predictable delay, and consistent quality. Circuit Switching provides reserved bandwidth and stable communication — exactly what real-time voice needs.
+
+---
+
+# Real-World Applications
+
+| Application | Preferred Technique |
+|-------------|---------------------|
+| Internet Browsing | Packet Switching |
+| Email | Packet Switching |
+| Cloud Computing | Packet Switching |
+| Video Streaming | Packet Switching |
+| Traditional Telephone Network | Circuit Switching |
+| Legacy Voice Infrastructure | Circuit Switching |
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> Packet Switching is always faster.
+
+Not necessarily. During congestion, Packet Switching may experience queueing delay and packet loss.
+
+---
+
+## Misconception 2
+
+> Circuit Switching never wastes resources.
+
+Incorrect. Idle reserved bandwidth cannot be used by other users.
+
+---
+
+## Misconception 3
+
+> Packets always follow the same path.
+
+Incorrect. Different packets may take completely different routes.
+
+---
+
+## Misconception 4
+
+> Circuit Switching is obsolete.
+
+Incorrect. Circuit Switching concepts remain important in telecommunications, optical networks, and legacy infrastructure.
+
+---
+
+# Key Takeaways
+
+- Circuit Switching establishes a dedicated communication path before transmitting data.
+- Communication occurs in three phases: Circuit Establishment, Data Transfer, Circuit Release.
+- FDM shares a link by dividing frequency into channels separated by guard bands.
+- TDM shares a link by dividing time into slots grouped into frames.
+- Both FDM and TDM may waste resources when users are idle — a key reason the Internet chose Packet Switching.
+- Packet Switching shares resources dynamically, making it efficient and highly scalable.
+- Circuit Switching reserves resources, providing predictable performance but lower efficiency.
+- The Internet adopted Packet Switching because it better supports modern data communication.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Circuit Switching | Communication technique that reserves a dedicated communication path before transmission begins. |
+| Circuit | A reserved communication path between sender and receiver. |
+| Dedicated Path | A communication path reserved exclusively for one communication session. |
+| Circuit Establishment | The process of creating a dedicated communication path before transmitting data. |
+| Circuit Release | The process of freeing reserved network resources after communication ends. |
+| Guaranteed Bandwidth | Bandwidth permanently reserved for a communication session until the circuit is released. |
+| Multiplexing | Technique that allows multiple communication sessions to share one communication medium. |
+| FDM | Multiplexing technique that divides available bandwidth into separate frequency channels. |
+| Frequency Channel | Portion of the frequency spectrum allocated to one communication session. |
+| Guard Band | Small unused frequency range separating adjacent channels to prevent interference. |
+| TDM | Multiplexing technique that allows multiple users to share a link by transmitting during different time slots. |
+| Time Slot | A fixed interval of time assigned to one communication session. |
+| Frame | A complete cycle containing one time slot for every user. |
+| Synchronization | Coordination ensuring all devices agree on the timing of frames and time slots. |
+| Bursty Traffic | Communication pattern in which data is transmitted irregularly with periods of silence. |
+| Dynamic Resource Sharing | Sharing communication resources based on demand rather than permanent reservation. |
+
+---
+
+<ArticleNav
+  prev={{ title: "1.3 The Network Core", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-3-the-network-core" }}
+  next={null}
+/>
