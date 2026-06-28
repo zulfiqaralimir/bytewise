@@ -27,9 +27,9 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 ## The Scaling Problem Nobody Talks About
 
-On Black Friday 2022, DoorDash's engineering team preemptively added dozens of database shards to handle the expected surge. If their system had used naive modulo hashing to distribute orders across shards, that scale-up would have required moving most of the order history to new shards — an operation taking hours and causing cascading cache misses. Instead, because their distributed cache uses consistent hashing, adding nodes moved only a fraction of the data, and the scale-up completed in minutes.
+On Black Friday 2022, DoorDash's engineering team <span style={{ color: "#f97316", fontWeight: 700 }}>preemptively added dozens of database shards to handle the expected surge.</span> If their system had used naive modulo hashing to distribute orders across shards, that scale-up would have required moving most of the order history to new shards — an operation taking hours and causing cascading cache misses. Instead, because their <span style={{ color: "#10b981", fontWeight: 700 }}>distributed cache uses consistent hashing, adding nodes moved only a fraction of the data, and the scale-up completed in minutes.</span>
 
-This is the quiet power of consistent hashing: it transforms the act of scaling from a disruptive, data-shuffling catastrophe into a surgical, minimal-movement operation. It's not famous in the way that B-trees or quicksort are famous — it doesn't appear in algorithms textbooks — but it underpins the infrastructure of nearly every large distributed system running at internet scale: Amazon DynamoDB, Apache Cassandra, Redis Cluster, Akamai's CDN, and more.
+This is the <span style={{ color: "#a78bfa", fontWeight: 700 }}>quiet power of consistent hashing: it transforms the act of scaling from a disruptive, data-shuffling catastrophe into a surgical, minimal-movement operation.</span> It's not famous in the way that B-trees or quicksort are famous — it doesn't appear in algorithms textbooks — but it underpins the infrastructure of nearly every large distributed system running at internet scale: Amazon DynamoDB, Apache Cassandra, Redis Cluster, Akamai's CDN, and more.
 
 > **Important distinction:** Consistent hashing is a distributed systems and system design concept, not a classical algorithm. Although it uses hash functions internally, its primary purpose is **data partitioning across distributed nodes** — deciding which server owns which data, and doing so in a way that survives the reality of servers constantly joining, leaving, and failing.
 
@@ -54,9 +54,9 @@ Hash("User123") = 92381
 92381 % 5 = 2   ← now must go to Server 2
 ```
 
-For a system with 100 million keys, a change from 4 to 5 servers causes approximately 80% of keys to migrate to a different server. Every cache becomes cold. Every database shard must receive a flood of writes. The cluster spends hours reshuffling data instead of serving users.
+<span style={{ color: "#f59e0b", fontWeight: 700 }}>For a system with 100 million keys, a change from 4 to 5 servers causes approximately 80% of keys to migrate to a different server. Every cache becomes cold. Every database shard must receive a flood of writes. The cluster spends hours reshuffling data instead of serving users.</span>
 
-This is called the **rehashing problem**, and it is why naive modulo hashing doesn't work in production distributed systems.
+This is called the **rehashing problem**, and it is why <span style={{ color: "#ef4444", fontWeight: 700 }}>naive modulo hashing doesn't work in production distributed systems.</span>
 
 ### What Consistent Hashing Does Differently
 
