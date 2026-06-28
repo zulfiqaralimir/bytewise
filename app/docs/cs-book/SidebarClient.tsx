@@ -228,6 +228,7 @@ const chapters = [
         items: [
           { title: "1.1 What Is the Internet?", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-1-what-is-the-internet" },
           { title: "1.2 The Network Edge", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-2-the-network-edge" },
+          { title: "1.3 The Network Core", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-3-the-network-core" },
         ],
       },
       {
