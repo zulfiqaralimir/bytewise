@@ -217,7 +217,7 @@ A lookup hits a vnode, which maps to a physical server. The ring is now densely 
 | 1 | High (~30%) | Minimal memory, poor balance |
 | 10 | Moderate (~10%) | Good for small clusters |
 | 100 | Low (~3%) | Production default (Cassandra, DynamoDB) |
-| 1000 | Very low (<1%) | Better balance, higher metadata overhead |
+| 1000 | Very low (&lt;1%) | Better balance, higher metadata overhead |
 
 Cassandra defaults to 256 vnodes per physical node. DynamoDB uses a similar approach internally.
 
@@ -450,7 +450,7 @@ These are questions that demonstrate deep understanding of consistent hashing in
 | More complex implementation | A TreeMap + vnode management is significantly more code than `hash % N` |
 | Metadata overhead | With 1,000 servers × 256 vnodes = 256,000 ring positions to store and gossip |
 | Replica management complexity | Ensuring replicas land on different physical nodes (not just different vnodes) requires extra logic |
-| Not the right tool for everything | For small systems (< 5 servers), modulo hashing is simpler and the scaling cost is acceptable |
+| Not the right tool for everything | For small systems (&lt; 5 servers), modulo hashing is simpler and the scaling cost is acceptable |
 
 ## Summary
 
