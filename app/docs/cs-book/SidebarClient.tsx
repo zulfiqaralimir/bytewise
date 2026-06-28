@@ -51,6 +51,7 @@ const chapters = [
   {
     part: "Part 3 — System Design",
     items: [
+      { title: "System Design Fundamentals", href: "/docs/cs-book/part-3-system-design/system-design-fundamentals" },
       { title: "Complete System Design Roadmap 2025", href: "/docs/cs-book/part-3-system-design/system-design-overview" },
       { title: "10-Step System Design Interview Framework", href: "/docs/cs-book/part-3-system-design/system-design-interview-framework" },
       { title: "APIs & REST", href: "/docs/cs-book/part-3-system-design/apis-and-rest" },
