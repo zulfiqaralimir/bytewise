@@ -57,6 +57,7 @@ const chapters = [
       { title: "Databases", href: "/docs/cs-book/part-3-system-design/databases" },
       { title: "Caching", href: "/docs/cs-book/part-3-system-design/caching" },
       { title: "Load Balancing", href: "/docs/cs-book/part-3-system-design/load-balancing" },
+      { title: "Consistent Hashing", href: "/docs/cs-book/part-3-system-design/consistent-hashing" },
     ],
   },
   {

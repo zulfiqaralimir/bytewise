@@ -1,0 +1,469 @@
+export const metadata = {
+  title: "Consistent Hashing — ByteWise CS Book",
+  description:
+    "Master consistent hashing: how the hash ring works, virtual nodes, data replication, and why Cassandra, DynamoDB, and Redis Cluster use it to scale without disruption.",
+  keywords: [
+    "consistent hashing",
+    "hash ring",
+    "virtual nodes",
+    "distributed systems",
+    "data partitioning",
+    "Cassandra",
+    "DynamoDB",
+    "Redis Cluster",
+    "horizontal scaling",
+    "load balancing",
+  ],
+  openGraph: {
+    title: "Consistent Hashing — ByteWise CS Book",
+    description:
+      "Learn how consistent hashing solves data partitioning in distributed systems — minimizing data movement when nodes are added or removed.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Consistent Hashing
+
+## The Scaling Problem Nobody Talks About
+
+On Black Friday 2022, DoorDash's engineering team preemptively added dozens of database shards to handle the expected surge. If their system had used naive modulo hashing to distribute orders across shards, that scale-up would have required moving most of the order history to new shards — an operation taking hours and causing cascading cache misses. Instead, because their distributed cache uses consistent hashing, adding nodes moved only a fraction of the data, and the scale-up completed in minutes.
+
+This is the quiet power of consistent hashing: it transforms the act of scaling from a disruptive, data-shuffling catastrophe into a surgical, minimal-movement operation. It's not famous in the way that B-trees or quicksort are famous — it doesn't appear in algorithms textbooks — but it underpins the infrastructure of nearly every large distributed system running at internet scale: Amazon DynamoDB, Apache Cassandra, Redis Cluster, Akamai's CDN, and more.
+
+> **Important distinction:** Consistent hashing is a distributed systems and system design concept, not a classical algorithm. Although it uses hash functions internally, its primary purpose is **data partitioning across distributed nodes** — deciding which server owns which data, and doing so in a way that survives the reality of servers constantly joining, leaving, and failing.
+
+## Concept Explanation
+
+### The Naive Approach: Modulo Hashing
+
+The obvious way to distribute data across `N` servers is:
+
+```
+server_index = Hash(key) % N
+```
+
+This works perfectly — until `N` changes.
+
+Add a fifth server to a four-server cluster, and `N` jumps to 5. Now re-run the formula for every key:
+
+```
+Hash("User123") = 92381
+
+92381 % 4 = 1   ← was on Server 1
+92381 % 5 = 2   ← now must go to Server 2
+```
+
+For a system with 100 million keys, a change from 4 to 5 servers causes approximately 80% of keys to migrate to a different server. Every cache becomes cold. Every database shard must receive a flood of writes. The cluster spends hours reshuffling data instead of serving users.
+
+This is called the **rehashing problem**, and it is why naive modulo hashing doesn't work in production distributed systems.
+
+### What Consistent Hashing Does Differently
+
+Instead of hashing data into a fixed-size list of servers, consistent hashing hashes **both servers and data into the same circular address space** — the **hash ring**.
+
+Imagine every possible hash value arranged around a circle, from 0 to 2³² (for 32-bit hash functions):
+
+```
+              0
+           /     \
+      270°         90°
+          \     /
+            180°
+```
+
+The circle wraps: position 2³² − 1 is adjacent to position 0. There is no beginning or end.
+
+**Both servers and data keys are placed on this ring** using the same hash function.
+
+The rule for data placement is then beautifully simple:
+
+> A key belongs to the **first server encountered moving clockwise** around the ring.
+
+No division. No modulo. No dependence on total server count.
+
+### Mapping Servers and Keys
+
+Suppose we hash four servers and place them on the ring:
+
+```
+         Server A (at 45°)
+             |
+  Server D ──┤── Server B (at 135°)
+ (at 315°)   |
+         Server C (at 225°)
+```
+
+Now hash some keys:
+
+| Key | Hash position | First clockwise server |
+|---|---|---|
+| `User:1001` | 60° | Server B (135°) |
+| `User:2042` | 160° | Server C (225°) |
+| `Order:5581` | 280° | Server D (315°) |
+| `Session:9` | 340° | Server A (45°, wraps around) |
+
+Each key walks clockwise and stops at the first server it hits. The assignment depends only on the positions of keys and servers — not on how many total servers exist.
+
+## Mathematical Foundation
+
+### Expected Keys per Server
+
+With `N` servers distributed uniformly on a ring of size `M` hash values, each server is expected to own `M / N` of the key space. With uniform hashing, the expected fraction each server handles is `1/N`.
+
+In practice, hash functions don't produce perfectly uniform server placements, which is why virtual nodes exist (covered below).
+
+### Data Movement on Scaling
+
+When a new server is added at a random position on the ring:
+
+- Only the keys between the **predecessor** and the **new server** need to move
+- Expected fraction of keys that must migrate: `1 / (N + 1)`
+- For `N = 9` servers: only ~10% of keys move when the 10th server joins
+
+Compare this to modulo hashing, where adding one server to `N` causes roughly `(N−1)/N` ≈ 90%+ of keys to remap.
+
+### Lookup Time Complexity
+
+Efficient ring lookup requires an ordered data structure mapping positions to server IDs:
+
+| Operation | With sorted array (binary search) | With balanced BST (TreeMap) |
+|---|---|---|
+| Find server for key | O(log N) | O(log N) |
+| Add server | O(N) rebuild or O(log N) insert | O(log N) |
+| Remove server | O(N) rebuild or O(log N) delete | O(log N) |
+
+In practice, TreeMap / SortedDict is the standard implementation. With `V` virtual nodes per server:
+
+$$T_{\text{lookup}} = O(\log(V \times N))$$
+
+## Algorithm / Logic
+
+### Step 1 — Build the Ring
+
+```
+CONSISTENT_HASH_INIT(servers):
+  ring = SortedDict()          // position → server_id
+  for each server in servers:
+    pos = hash(server.id) % RING_SIZE
+    ring[pos] = server.id
+  return ring
+```
+
+### Step 2 — Look Up a Key
+
+```
+FIND_SERVER(ring, key):
+  pos = hash(key) % RING_SIZE
+  // Find first position >= pos (clockwise)
+  successor = ring.ceiling_key(pos)
+  if successor is None:
+    return ring.first()        // wrap around to start of ring
+  return ring[successor]
+```
+
+### Step 3 — Add a New Server
+
+```
+ADD_SERVER(ring, server):
+  pos = hash(server.id) % RING_SIZE
+  ring[pos] = server.id
+  // Only keys between (predecessor of pos) and pos need migration
+  migrate_keys(from_server=ring.predecessor(pos), to_server=server, key_range=...)
+```
+
+### Step 4 — Remove a Server
+
+```
+REMOVE_SERVER(ring, server):
+  pos = hash(server.id) % RING_SIZE
+  successor = ring.ceiling_key(pos + 1) or ring.first()
+  migrate_keys(from_server=server, to_server=successor, key_range=...)
+  ring.remove(pos)
+```
+
+The key insight in both add and remove: only the keys in the **arc** immediately preceding the affected position change servers. Everything else is untouched.
+
+## Virtual Nodes
+
+### Why Naive Consistent Hashing Fails in Practice
+
+With only one ring position per physical server, random placement produces uneven arcs:
+
+```
+Server A owns: 40° arc   (40% of keys)
+Server B owns: 5° arc    (5% of keys)
+Server C owns: 30° arc   (30% of keys)
+Server D owns: 25° arc   (25% of keys)
+```
+
+Server A handles 8× the traffic of Server B. This is worse than round-robin.
+
+### Virtual Nodes Solve the Imbalance
+
+Instead of placing each physical server at one position, each server is represented by **V virtual nodes** (vnodes), each at a different position on the ring:
+
+```
+Server A → A_1 (22°), A_2 (148°), A_3 (267°), A_4 (310°) ...
+Server B → B_1 (55°), B_2 (103°), B_3 (220°), B_4 (348°) ...
+```
+
+A lookup hits a vnode, which maps to a physical server. The ring is now densely populated with interleaved virtual positions, and by the law of large numbers, each physical server ends up owning a share of the ring close to `1/N`.
+
+**Effect of increasing V:**
+
+| V (vnodes per server) | Load standard deviation | Trade-off |
+|---|---|---|
+| 1 | High (~30%) | Minimal memory, poor balance |
+| 10 | Moderate (~10%) | Good for small clusters |
+| 100 | Low (~3%) | Production default (Cassandra, DynamoDB) |
+| 1000 | Very low (<1%) | Better balance, higher metadata overhead |
+
+Cassandra defaults to 256 vnodes per physical node. DynamoDB uses a similar approach internally.
+
+**Heterogeneous hardware:** Virtual nodes also let high-capacity servers claim more vnodes, receiving proportionally more data without any changes to the ring algorithm.
+
+## Replication
+
+High availability in distributed systems requires that each piece of data exist on multiple servers. Consistent hashing integrates naturally with replication.
+
+### N-Way Replication
+
+For a replication factor of `R`, instead of storing data only on the first clockwise server, store it on the first `R` clockwise servers:
+
+```
+FIND_REPLICAS(ring, key, R):
+  servers = []
+  pos = hash(key) % RING_SIZE
+  for i in range(R):
+    successor = ring.ceiling_key(pos + i) or ring.first()
+    servers.append(ring[successor])
+  return servers   // [primary, replica_1, replica_2, ...]
+```
+
+In Cassandra with replication factor 3:
+
+```
+Key "User:1001" → hash → position 60°
+
+Primary   → Server B (135°)
+Replica 1 → Server C (225°)
+Replica 2 → Server D (315°)
+```
+
+If Server B fails, Server C is promoted to primary — no rebalancing, no reconfiguration. The ring already encodes the failover chain.
+
+### Quorum Reads and Writes
+
+With `R` replicas, `N` nodes, and quorum `Q = ⌊R/2⌋ + 1`:
+
+- A **write** succeeds if `Q` replicas acknowledge
+- A **read** succeeds if `Q` replicas respond, and the client takes the most recent value
+
+This gives both durability and read availability even under partial failures.
+
+## Programming Implementation
+
+**Python — Consistent Hash Ring with Virtual Nodes:**
+
+```python
+import hashlib
+from sortedcontainers import SortedDict
+from typing import List, Optional
+
+class ConsistentHashRing:
+    """
+    Consistent hash ring with virtual nodes.
+    Uses SHA-256 truncated to 32 bits for position assignment.
+    """
+
+    def __init__(self, vnodes: int = 100):
+        self.vnodes = vnodes
+        self.ring: SortedDict = SortedDict()   # position → server_id
+        self.servers: set = set()
+
+    def _hash(self, key: str) -> int:
+        return int(hashlib.sha256(key.encode()).hexdigest(), 16) % (2**32)
+
+    def add_server(self, server_id: str) -> None:
+        self.servers.add(server_id)
+        for i in range(self.vnodes):
+            vnode_key = f"{server_id}#vnode{i}"
+            pos = self._hash(vnode_key)
+            self.ring[pos] = server_id
+
+    def remove_server(self, server_id: str) -> None:
+        self.servers.discard(server_id)
+        for i in range(self.vnodes):
+            vnode_key = f"{server_id}#vnode{i}"
+            pos = self._hash(vnode_key)
+            self.ring.pop(pos, None)
+
+    def get_server(self, key: str) -> Optional[str]:
+        if not self.ring:
+            return None
+        pos = self._hash(key)
+        # Find the first vnode clockwise at or after `pos`
+        idx = self.ring.bisect_left(pos)
+        if idx == len(self.ring):
+            idx = 0    # wrap around
+        return self.ring.peekitem(idx)[1]
+
+    def get_replicas(self, key: str, count: int) -> List[str]:
+        """Return `count` distinct servers starting from the key's primary."""
+        if not self.ring or count > len(self.servers):
+            return list(self.servers)
+        pos = self._hash(key)
+        idx = self.ring.bisect_left(pos)
+        seen = set()
+        replicas = []
+        for _ in range(len(self.ring)):
+            server = self.ring.peekitem(idx % len(self.ring))[1]
+            if server not in seen:
+                seen.add(server)
+                replicas.append(server)
+                if len(replicas) == count:
+                    break
+            idx += 1
+        return replicas
+
+    def load_distribution(self) -> dict:
+        """Show what fraction of the ring each server owns (by vnode count)."""
+        counts: dict = {}
+        for server in self.ring.values():
+            counts[server] = counts.get(server, 0) + 1
+        total = sum(counts.values())
+        return {k: round(v / total * 100, 1) for k, v in sorted(counts.items())}
+
+
+# ── Example usage ─────────────────────────────────────────────────────────────
+
+ring = ConsistentHashRing(vnodes=150)
+for s in ["cache-01", "cache-02", "cache-03", "cache-04"]:
+    ring.add_server(s)
+
+print(ring.get_server("user:1001"))          # → 'cache-03'
+print(ring.get_replicas("user:1001", 2))     # → ['cache-03', 'cache-01']
+print(ring.load_distribution())              # → {'cache-01': 25.2, 'cache-02': 24.7, ...}
+
+# Scale up — add a fifth cache node
+ring.add_server("cache-05")
+print(ring.get_server("user:1001"))          # May now route to 'cache-05' if it landed nearby
+# Only ~20% of keys moved. Everything else stayed put.
+```
+
+**Key → Server mapping before and after scaling:**
+
+```python
+keys = [f"user:{i}" for i in range(1000)]
+
+before = {k: ring_4_servers.get_server(k) for k in keys}
+after  = {k: ring_5_servers.get_server(k) for k in keys}
+
+moved = sum(1 for k in keys if before[k] != after[k])
+print(f"Keys moved: {moved}/1000 ({moved/10:.1f}%)")
+# Output: Keys moved: 198/1000 (19.8%)
+# With modulo hashing: ~800 keys would have moved
+```
+
+## Real-World Applications
+
+### Systems That Use Consistent Hashing
+
+| System | How It Uses Consistent Hashing |
+|---|---|
+| **Apache Cassandra** | Partitions rows across nodes; each node owns a token range on the ring; 256 vnodes by default |
+| **Amazon DynamoDB** | Internal partitioning; hash key maps data to a physical partition via ring |
+| **Redis Cluster** | 16,384 hash slots distributed across nodes; consistent hashing maps keys to slots |
+| **Memcached** | Client-side ring used by libketama and most Memcached client libraries |
+| **Akamai CDN** | Routes URL requests to edge servers; minimizes object movement as servers join/leave |
+| **Riak** | Decentralized NoSQL; all nodes are equal peers on a ring; no single point of failure |
+| **ScyllaDB** | Same ring model as Cassandra, tuned for C++ performance |
+| **Discord** | Uses consistent hashing for WebSocket session affinity — a user's messages always route to the same gateway server |
+
+### The Caching Layer Story
+
+Consistent hashing's original motivation (Karger et al., 1997 MIT paper) was **web caching**. The problem: a CDN with 100 edge servers uses `URL % 100` to route requests. A single server failure causes every URL that hashed to that server to suddenly hash to a different server — creating a thundering herd of cache misses that overwhelms origin servers.
+
+With consistent hashing, one server failing means only the URLs on that server's arc become cache misses. The other 99% of cached content remains correctly routed. This single property changes CDN failure mode from "catastrophic stampede" to "graceful degradation."
+
+## Handling Hotspots
+
+Consistent hashing distributes keys uniformly only if the key hash distribution is uniform. Skewed workloads (e.g., one celebrity's posts getting 10 million reads) can still create **hotspot servers** even with vnodes.
+
+**Mitigation strategies:**
+
+| Problem | Strategy |
+|---|---|
+| One key gets enormous traffic | Add a random suffix to the key: `celebrity:42:shard_7` — distribute across `K` shards |
+| One server range gets hot due to natural key clustering | Increase vnode count; use a better hash function (MurmurHash3, xxHash) |
+| Temporal hotspots (e.g., New Year's Eve timestamps) | Salted keys or time-bucketed partitioning layered on top of the ring |
+| New server receives too many migration writes at once | Throttle migration via a token bucket; prioritize read traffic |
+
+## Interview Questions
+
+These are questions that demonstrate deep understanding of consistent hashing in system design interviews.
+
+**Conceptual:**
+- Why doesn't modulo hashing scale when the number of servers changes?
+- What does it mean for a hash ring to "wrap around"? Why is that useful?
+- If you have 4 servers and add a 5th, what fraction of data moves with consistent hashing vs. modulo hashing?
+
+**Virtual Nodes:**
+- Why does a single ring position per server cause load imbalance?
+- How do virtual nodes improve this? What are the trade-offs of a very high vnode count?
+- How would you assign more vnodes to a server with higher storage capacity?
+
+**Failure & Replication:**
+- Server C fails. Which keys are affected? Where do they go?
+- How does replication factor 3 interact with the ring?
+- What is a quorum read/write and why is it needed with replicated consistent hashing?
+
+**Implementation:**
+- What data structure would you use to implement the ring? What is the lookup time complexity?
+- How would you detect that a specific server has failed and remove it from the ring?
+- How do you prevent a new server from being overwhelmed by migration traffic when it joins?
+
+**Design Scenarios:**
+- Design a distributed caching layer for a system with 50 million users. How many nodes? How many vnodes?
+- A single user generates 1,000× the normal traffic. Consistent hashing doesn't help — what does?
+- Why does Discord use consistent hashing for WebSocket sessions, not just for data storage?
+
+## Advantages and Limitations
+
+### Advantages
+
+| Advantage | Detail |
+|---|---|
+| Minimal data movement | Only `1/(N+1)` of keys move when one server joins a cluster of N |
+| Horizontal scalability | Add servers without stopping the cluster or rewriting data distribution logic |
+| Fault tolerance | One server failing affects only its arc; rest of the cluster is unaffected |
+| Built-in replication support | R consecutive servers on the ring provide a natural replica chain |
+| Heterogeneous hardware support | More powerful servers get more vnodes — no special-case logic needed |
+| No central coordinator | Every node knows the ring; no master server to be a bottleneck |
+
+### Limitations
+
+| Limitation | Detail |
+|---|---|
+| Hotspots still possible | Skewed key distribution can concentrate load; requires application-level mitigations |
+| More complex implementation | A TreeMap + vnode management is significantly more code than `hash % N` |
+| Metadata overhead | With 1,000 servers × 256 vnodes = 256,000 ring positions to store and gossip |
+| Replica management complexity | Ensuring replicas land on different physical nodes (not just different vnodes) requires extra logic |
+| Not the right tool for everything | For small systems (< 5 servers), modulo hashing is simpler and the scaling cost is acceptable |
+
+## Summary
+
+- **Traditional modulo hashing** (`hash(key) % N`) causes roughly `(N−1)/N` of all keys to move when a server is added or removed — catastrophic at scale.
+- **Consistent hashing** places both servers and keys on a circular hash ring. Each key belongs to the first server clockwise from its position.
+- When a server joins or leaves, only the keys in the **preceding arc** move — expected fraction: `1/(N+1)`.
+- **Virtual nodes** give each physical server multiple ring positions, producing even load distribution and supporting heterogeneous hardware.
+- **Replication** is built naturally into the ring: the `R` clockwise successors of a key's hash are its replicas.
+- **Time complexity:** O(log(V × N)) for lookup using a sorted data structure, where V is the vnode count and N is the server count.
+- Consistent hashing is the foundation of Cassandra's token ring, DynamoDB's partition model, Redis Cluster's slot distribution, and CDN cache routing.
+- It is not a classical algorithm — it is a **distributed systems technique** that uses hashing to solve data placement and load distribution at scale.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/load-balancing", label: "Load Balancing" }}
+  next={{ href: "/docs/cs-book/part-4-advanced/cap-theorem", label: "CAP Theorem" }}
+/>
