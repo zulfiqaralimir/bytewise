@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "beyond-devaluation-structural-reforms",
+    title: "Beyond Devaluation: Why Structural Reforms Matter More Than a Weaker Currency for Export Growth",
+    description:
+      "Can a cheaper currency make a country more competitive? Long-term export success depends far more on productivity, infrastructure, energy costs, and sound economic policies than on exchange rates alone.",
+    date: "July 1, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "how-to-read-a-sam",
     title: "How to Read a Social Accounting Matrix (SAM)",
     description:
