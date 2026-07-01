@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
 import Link from "next/link";
+import BlogSidebar from "./BlogSidebar";
 
 export default function BlogLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-white">
       {/* Top nav */}
       <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-black text-xl text-gray-900">
             Byte<span className="text-blue-500">Wise</span>
           </Link>
@@ -18,14 +19,20 @@ export default function BlogLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-12">
-        <div className="prose prose-gray prose-lg max-w-none">
-          {children}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex gap-10">
+          <BlogSidebar />
+
+          <main className="flex-1 min-w-0">
+            <div className="prose prose-gray prose-lg max-w-none">
+              {children}
+            </div>
+          </main>
         </div>
-      </main>
+      </div>
 
       <footer className="border-t border-gray-200 bg-slate-50 mt-20">
-        <div className="max-w-3xl mx-auto px-6 py-8 text-center text-sm text-gray-500">
+        <div className="max-w-7xl mx-auto px-6 py-8 text-center text-sm text-gray-500">
           <p className="font-semibold text-gray-700 mb-1">ByteWise</p>
           <p>By Zulfiqar Ali Mir · Programming Concepts Explained from First Principles</p>
         </div>
