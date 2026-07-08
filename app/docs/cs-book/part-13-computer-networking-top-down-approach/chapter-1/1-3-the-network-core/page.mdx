@@ -1021,7 +1021,7 @@ This process takes only microseconds in modern routers.
 
 # The Next Hop Concept
 
-Routers usually do **not** know the complete path to the destination.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>Routers usually do **not** know the complete path to the destination.</span>
 
 Instead, they know only where to send the packet next.
 
@@ -1053,47 +1053,13 @@ Each router only decides: **Where should the packet go next?**
 
 ---
 
-# Complete Packet Journey
+# <span style={{ color: "#22d3ee", fontWeight: 700 }}>Complete Packet Journey</span>
 
-```text
-Browser
-   ↓
-Operating System creates packets
-   ↓
-Packets leave the laptop
-   ↓
-Home Router
-   ↓
-ISP Router
-   ↓
-Regional Router
-   ↓
-Backbone Router
-   ↓
-Google Router
-   ↓
-Google Server
-```
+<pre style={{ background: "#374151", color: "#cdd6f4", padding: "1.5rem", borderRadius: "0.5rem", overflowX: "auto", marginBottom: "1.5rem" }}><code style={{ background: "none", color: "inherit", padding: 0, fontSize: "0.875rem" }}>{"Browser\n   ↓\n"}<span style={{ color: "#fb923c", fontWeight: 700 }}>Operating System creates packets</span>{"\n   ↓\nPackets leave the laptop\n   ↓\nHome Router\n   ↓\nISP Router\n   ↓\nRegional Router\n   ↓\nBackbone Router\n   ↓\nGoogle Router\n   ↓\nGoogle Server"}</code></pre>
 
-Every router repeats exactly the same forwarding algorithm:
+<span style={{ color: "#c084fc", fontWeight: 700 }}>Every router repeats exactly the same forwarding algorithm:</span>
 
-```text
-Receive Packet
-       ↓
-Store Packet
-       ↓
-Read Header
-       ↓
-Extract Destination IP
-       ↓
-Consult Forwarding Table
-       ↓
-Choose Next Hop
-       ↓
-Queue (if necessary)
-       ↓
-Transmit Packet
-```
+<pre style={{ background: "#374151", color: "#cdd6f4", padding: "1.5rem", borderRadius: "0.5rem", overflowX: "auto", marginBottom: "1.5rem" }}><code style={{ background: "none", color: "inherit", padding: 0, fontSize: "0.875rem" }}>{"Receive Packet\n       ↓\nStore Packet\n       ↓\nRead Header\n       ↓\nExtract Destination IP\n       ↓\nConsult Forwarding Table\n       ↓\nChoose Next Hop\n       ↓\n"}<span style={{ color: "#f472b6", fontWeight: 700 }}>Queue (if necessary)</span>{"\n       ↓\nTransmit Packet"}</code></pre>
 
 ---
 
@@ -1103,7 +1069,7 @@ Transmit Packet
 
 > Routers read the entire packet.
 
-**Incorrect.** Routers primarily inspect the **packet header**, especially the destination IP address. The payload remains untouched.
+**Incorrect.** <span style={{ color: "#4ade80", fontWeight: 700 }}>Routers primarily inspect the packet header, especially the destination IP address.</span> The payload remains untouched.
 
 ---
 
@@ -1127,7 +1093,7 @@ Transmit Packet
 
 > Packet Switching guarantees zero delay.
 
-**Incorrect.** Packets may experience Transmission Delay, Queueing Delay, Processing Delay, and Propagation Delay.
+**Incorrect.** Packets may experience <span style={{ color: "#818cf8", fontWeight: 700 }}>Transmission Delay, Queueing Delay, Processing Delay, and Propagation Delay.</span>
 
 ---
 
