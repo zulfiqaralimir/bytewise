@@ -1,0 +1,881 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+# Section 1.4 Delay, Loss, and Throughput in Packet-Switched Networks (Part 4B)
+
+# Processing Delay and Queueing Delay
+
+In the previous section, we learned that every packet experiences **Nodal Delay** whenever it reaches a router.
+
+Recall the equation:
+
+```text
+d_nodal
+
+=
+
+d_proc
+
++
+
+d_queue
+
++
+
+d_trans
+
++
+
+d_prop
+```
+
+where:
+
+- `d_proc` = Processing Delay
+- `d_queue` = Queueing Delay
+- `d_trans` = Transmission Delay
+- `d_prop` = Propagation Delay
+
+In this section, we will study the **first two components** in detail:
+
+- Processing Delay
+- Queueing Delay
+
+These delays occur **inside the router** before a packet is transmitted onto the next communication link.
+
+---
+
+# Overview of Packet Processing
+
+Suppose a packet arrives at a router.
+
+The router cannot immediately send it to the next destination.
+
+Instead, the packet goes through several stages.
+
+```text
+Packet Arrives
+
+↓
+
+Processing
+
+↓
+
+Queue (if necessary)
+
+↓
+
+Transmission
+
+↓
+
+Propagation
+```
+
+The first two stages occur **inside the router**.
+
+---
+
+# Processing Delay (`d_proc`)
+
+## What Is Processing Delay?
+
+Processing Delay is:
+
+> **The time required by a router to examine the packet, determine where it should go, and prepare it for forwarding.**
+
+Before forwarding a packet, the router must first understand it.
+
+---
+
+# Real-Life Analogy
+
+Imagine a parcel arriving at a courier office.
+
+The employee does not immediately send it.
+
+First, they:
+
+- Read the destination address.
+- Check whether the parcel is damaged.
+- Decide which truck should carry it.
+- Attach routing labels.
+
+Only then is the parcel forwarded.
+
+A router behaves in exactly the same way.
+
+---
+
+# What Happens During Processing?
+
+When a packet reaches a router, several operations occur.
+
+### Step 1 — Receive the Packet
+
+The router receives the complete packet.
+
+```text
+Incoming Link
+
+↓
+
+Router
+```
+
+---
+
+### Step 2 — Read the Packet Header
+
+The router examines the **header**, not the payload.
+
+The header contains important information such as:
+
+- Source IP Address
+- Destination IP Address
+- Protocol Type
+- Time-to-Live (TTL)
+- Packet Length
+
+---
+
+### Step 3 — Error Checking
+
+The router checks whether the packet has been corrupted during transmission.
+
+This is usually done using error-detection fields such as a checksum.
+
+If the packet is corrupted:
+
+```text
+Packet
+
+↓
+
+Discard
+```
+
+---
+
+### Step 4 — Forwarding Table Lookup
+
+The router searches its forwarding table.
+
+Example:
+
+| Destination Network | Next Hop |
+|---------------------|----------|
+| Network A | Link 1 |
+| Network B | Link 2 |
+| Network C | Link 3 |
+
+If the destination belongs to **Network B**, the router chooses **Link 2**.
+
+---
+
+### Step 5 — Prepare for Transmission
+
+After determining the outgoing link,
+
+the router prepares the packet for transmission.
+
+If the outgoing link is free,
+
+the packet proceeds immediately.
+
+Otherwise,
+
+it enters a queue.
+
+---
+
+# Visualizing Processing Delay
+
+```text
+Packet Arrives
+
+↓
+
+Read Header
+
+↓
+
+Check Errors
+
+↓
+
+Forwarding Table Lookup
+
+↓
+
+Select Outgoing Link
+
+↓
+
+Ready for Transmission
+```
+
+---
+
+# How Long Is Processing Delay?
+
+Processing Delay is usually very small.
+
+Modern routers are extremely powerful.
+
+Typical values:
+
+```text
+Less than 1 millisecond
+```
+
+or even
+
+```text
+Microseconds
+```
+
+In high-performance routers,
+
+Processing Delay is often negligible compared to other delays.
+
+---
+
+# What Affects Processing Delay?
+
+Several factors influence Processing Delay.
+
+## Router Hardware
+
+A faster processor examines packets more quickly.
+
+---
+
+## Router Architecture
+
+Specialized hardware such as ASICs (Application-Specific Integrated Circuits) can perform forwarding much faster than general-purpose CPUs.
+
+---
+
+## Packet Complexity
+
+Certain packets require additional processing,
+
+such as security checks or Quality of Service (QoS) decisions.
+
+---
+
+## Routing Table Size
+
+Larger forwarding tables may require more sophisticated lookup algorithms,
+
+although modern routers optimize these operations efficiently.
+
+---
+
+# Example
+
+Suppose a router receives:
+
+```text
+1 Million Packets per Second
+```
+
+Each packet requires:
+
+```text
+1 Microsecond
+```
+
+of processing.
+
+The router continuously processes incoming packets before forwarding them.
+
+---
+
+# Important Observation
+
+Processing Delay is generally:
+
+- Small
+- Predictable
+- Nearly constant
+
+Unlike Queueing Delay,
+
+it does not vary dramatically under normal conditions.
+
+---
+
+# Queueing Delay (`d_queue`)
+
+Now suppose the router has finished processing the packet.
+
+Question:
+
+> **Can the router always transmit the packet immediately?**
+
+The answer is:
+
+> **No.**
+
+If another packet is already being transmitted,
+
+the new packet must wait.
+
+This waiting time is called:
+
+> **Queueing Delay**
+
+---
+
+# What Is Queueing Delay?
+
+Definition:
+
+> **Queueing Delay is the time a packet spends waiting in a router's buffer before it can be transmitted.**
+
+Unlike Processing Delay,
+
+Queueing Delay depends on network traffic.
+
+---
+
+# Real-Life Analogy
+
+Imagine arriving at a bank.
+
+If no customers are waiting:
+
+```text
+You
+
+↓
+
+Cashier
+```
+
+You are served immediately.
+
+Queueing Delay is:
+
+```text
+0 seconds
+```
+
+---
+
+Now imagine:
+
+```text
+Customer 1
+
+Customer 2
+
+Customer 3
+
+You
+```
+
+You must wait.
+
+That waiting time is your Queueing Delay.
+
+Routers behave in exactly the same way.
+
+---
+
+# Router Buffer
+
+Packets waiting for transmission are stored in:
+
+## Buffer
+
+Definition:
+
+> **A buffer is temporary memory used to store packets before transmission.**
+
+Think of the buffer as the waiting room inside a router.
+
+---
+
+# Queue Formation
+
+Suppose packets arrive like this:
+
+```text
+Packet A
+
+Packet B
+
+Packet C
+
+Packet D
+```
+
+Only one packet can use the outgoing link.
+
+The others wait.
+
+```text
+Outgoing Link
+
+↓
+
+Packet A (Being Sent)
+
+Packet B (Waiting)
+
+Packet C (Waiting)
+
+Packet D (Waiting)
+```
+
+This waiting line is called a **queue**.
+
+---
+
+# Why Does Queueing Occur?
+
+Queueing occurs whenever:
+
+```text
+Packet Arrival Rate
+
+>
+
+Packet Transmission Rate
+```
+
+In other words,
+
+packets arrive faster than the router can transmit them.
+
+---
+
+# Packet Arrival Rate
+
+The **Packet Arrival Rate** is:
+
+> The number of packets arriving at the router per unit time.
+
+Example:
+
+```text
+500 packets/second
+```
+
+---
+
+# Packet Transmission Rate
+
+The **Packet Transmission Rate** is:
+
+> The number of packets the router can transmit per unit time.
+
+Example:
+
+```text
+400 packets/second
+```
+
+---
+
+# What Happens?
+
+If:
+
+```text
+Arrival Rate
+
+<
+
+Transmission Rate
+```
+
+The queue remains short.
+
+Queueing Delay is very small.
+
+---
+
+If:
+
+```text
+Arrival Rate
+
+=
+
+Transmission Rate
+```
+
+The router operates at full capacity.
+
+Small queues may appear.
+
+---
+
+If:
+
+```text
+Arrival Rate
+
+>
+
+Transmission Rate
+```
+
+The queue grows continuously.
+
+Queueing Delay increases rapidly.
+
+---
+
+# Example
+
+Suppose a router can transmit:
+
+```text
+100 packets/second
+```
+
+But receives:
+
+```text
+150 packets/second
+```
+
+Every second:
+
+- 100 packets leave.
+- 150 packets arrive.
+
+Result:
+
+```text
+50 New Packets
+```
+
+remain in the queue.
+
+Over time,
+
+the queue becomes longer and longer.
+
+---
+
+# Variable Nature of Queueing Delay
+
+Unlike Processing Delay,
+
+Queueing Delay is unpredictable.
+
+Sometimes:
+
+```text
+0 milliseconds
+```
+
+Sometimes:
+
+```text
+5 milliseconds
+```
+
+Sometimes:
+
+```text
+500 milliseconds
+```
+
+Sometimes:
+
+```text
+Several seconds
+```
+
+It depends entirely on network traffic.
+
+---
+
+# Traffic Intensity
+
+Kurose introduces an important concept called:
+
+## Traffic Intensity
+
+Traffic Intensity measures how heavily a communication link is being used.
+
+It compares:
+
+- Packet arrival rate
+- Transmission capacity
+
+A simple interpretation is:
+
+```text
+Traffic Intensity
+
+=
+
+Traffic Entering
+
+/
+
+Traffic Leaving
+```
+
+In later chapters, this is expressed mathematically using arrival rates (`a`), packet length (`L`), and transmission rate (`R`).
+
+For now,
+
+remember:
+
+- Low Traffic Intensity → Small queues
+- High Traffic Intensity → Long queues
+
+---
+
+# Three Traffic Conditions
+
+## Light Traffic
+
+```text
+Packets
+
+↓
+
+Router
+
+↓
+
+Immediately Sent
+```
+
+Queue:
+
+```text
+Empty
+```
+
+Queueing Delay:
+
+```text
+Almost Zero
+```
+
+---
+
+## Moderate Traffic
+
+```text
+Packets
+
+↓
+
+Router
+
+↓
+
+Small Queue
+
+↓
+
+Transmission
+```
+
+Queueing Delay:
+
+```text
+Small
+```
+
+---
+
+## Heavy Traffic
+
+```text
+Packets
+
+Packets
+
+Packets
+
+Packets
+
+Packets
+```
+
+Router cannot keep up.
+
+Large queue forms.
+
+Queueing Delay becomes significant.
+
+---
+
+# Can Queueing Delay Become Very Large?
+
+Yes.
+
+If packets continue arriving faster than they leave,
+
+the queue keeps growing.
+
+Eventually:
+
+- Packets wait longer.
+- Buffers fill.
+- Packet Loss occurs.
+
+This is one reason Internet connections slow down during busy periods.
+
+---
+
+# Processing Delay vs Queueing Delay
+
+| Feature | Processing Delay | Queueing Delay |
+|----------|------------------|----------------|
+| Occurs During | Packet examination | Waiting for transmission |
+| Depends On | Router hardware | Network traffic |
+| Predictability | Predictable | Highly variable |
+| Typical Duration | Microseconds | 0 ms to several seconds |
+| Main Cause | Header processing | Busy outgoing link |
+
+---
+
+# Why Are These Delays Important?
+
+Consider an online game.
+
+If Processing Delay is:
+
+```text
+1 microsecond
+```
+
+but Queueing Delay becomes:
+
+```text
+300 milliseconds
+```
+
+The player notices lag.
+
+Clearly,
+
+Queueing Delay has a much greater impact.
+
+---
+
+# Big Picture
+
+Every packet reaching a router experiences:
+
+```text
+Packet Arrives
+        │
+        ▼
+Processing Delay
+        │
+        ▼
+Queueing Delay
+        │
+        ▼
+Transmission Delay
+        │
+        ▼
+Propagation Delay
+        │
+        ▼
+Next Router
+```
+
+The first two stages occur entirely inside the router.
+
+---
+
+# Key Takeaways
+
+- Processing Delay is the time required to examine and prepare a packet for forwarding.
+- Processing Delay is usually very small and nearly constant.
+- Queueing Delay is the time a packet waits inside the router's buffer.
+- Queueing Delay depends on network traffic.
+- Buffers temporarily store packets waiting for transmission.
+- Heavy traffic increases Queueing Delay.
+- If traffic continues increasing, Packet Loss may occur.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Processing Delay (`d_proc`) | Time required for a router to examine, verify, and prepare a packet for forwarding. |
+| Queueing Delay (`d_queue`) | Time a packet spends waiting in a router's buffer before transmission. |
+| Buffer | Temporary memory inside a router used to store packets awaiting transmission. |
+| Queue | Ordered list of packets waiting to use an outgoing communication link. |
+| Packet Arrival Rate | Number of packets arriving at a router per unit time. |
+| Packet Transmission Rate | Number of packets a router can transmit per unit time. |
+| Traffic Intensity | Measure of how heavily a communication link is utilized relative to its capacity. |
+| Forwarding Table | Data structure used by routers to determine the next hop for packets. |
+| Checksum | Error-detection value used to identify packet corruption during transmission. |
+| ASIC (Application-Specific Integrated Circuit) | Specialized hardware used in routers to accelerate packet forwarding. |
+
+---
+
+# Summary Diagram
+
+```text
+Incoming Packet
+        │
+        ▼
+Read Packet Header
+        │
+        ▼
+Check for Errors
+        │
+        ▼
+Search Forwarding Table
+        │
+        ▼
+Determine Outgoing Link
+        │
+        ▼
+If Link Busy?
+   │           │
+  No          Yes
+   │           │
+   ▼           ▼
+Transmit   Wait in Buffer
+               │
+               ▼
+         Queueing Delay
+               │
+               ▼
+           Transmission
+```
+
+---
+
+## End of Part 4B
+
+### Next Part (4C)
+
+In the next part, we will study the remaining two components of nodal delay:
+
+- **Transmission Delay (`d_trans`)**
+- **Propagation Delay (`d_prop`)**
+- Mathematical formulas
+- Numerical examples
+- Why these two delays are often confused
+- Transmission Delay vs. Propagation Delay comparison
+- Real-world fiber optic examples
+- Technical vocabulary
+
+<ArticleNav
+  prev={{ title: "1.4 Delay, Loss, and Throughput (Part 4A)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4a" }}
+  next={null}
+/>
