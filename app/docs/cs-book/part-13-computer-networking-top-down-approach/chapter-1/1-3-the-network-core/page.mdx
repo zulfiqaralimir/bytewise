@@ -760,7 +760,7 @@ The answer: they wait.
 
 A router can process only a limited number of packets every second.
 
-If packets arrive faster than they can be transmitted, they wait in a:
+<span style={{ color: "#fb923c", fontWeight: 700 }}>If packets arrive faster than they can be transmitted, they wait in a:</span>
 
 ## Queue
 
@@ -772,7 +772,7 @@ A router contains memory called a:
 
 ## Buffer
 
-Packets are temporarily stored inside this buffer before being forwarded.
+<span style={{ color: "#4ade80", fontWeight: 700 }}>Packets are temporarily stored inside this buffer before being forwarded.</span>
 
 ```text
 Incoming Packets
@@ -814,7 +814,7 @@ This waiting time is called:
 
 > The time a packet spends waiting inside a router's buffer before transmission.
 
-Unlike Transmission Delay, Queueing Delay is **not fixed**. It depends on:
+<span style={{ color: "#818cf8", fontWeight: 700 }}>Unlike Transmission Delay, Queueing Delay is **not fixed**.</span> It depends on:
 
 - Current traffic
 - Number of arriving packets
@@ -849,7 +849,7 @@ When too many packets compete for limited network resources, the network experie
 
 > Congestion occurs when packet arrival rate exceeds the network's forwarding capacity.
 
-Causes of Congestion:
+<span style={{ color: "#f472b6", fontWeight: 700 }}>Causes of Congestion:</span>
 
 - Many users online simultaneously
 - Limited bandwidth on a link
@@ -867,7 +867,7 @@ Consequences:
 
 # Packet Loss
 
-Buffers are not infinite — they have limited storage.
+<span style={{ color: "#f87171", fontWeight: 700 }}>Buffers are not infinite — they have limited storage.</span>
 
 Suppose the buffer is full:
 
@@ -891,12 +891,12 @@ This is called:
 
 ## Packet Loss
 
-Different applications react differently to packet loss:
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>Different applications react differently to packet loss:</span>
 
 | Application | Effect |
 |-------------|--------|
-| Email | Can retransmit |
-| Web Browsing | Can retransmit |
+| Email | <span style={{ color: "#a3e635", fontWeight: 700 }}>Can retransmit</span> |
+| Web Browsing | <span style={{ color: "#a3e635", fontWeight: 700 }}>Can retransmit</span> |
 | Video Streaming | May skip frames |
 | Voice Calls | Broken audio |
 | Online Gaming | Lag |
@@ -929,7 +929,7 @@ Packet Loss Occurs
 Congestion Becomes Worse
 ```
 
-Understanding this chain is extremely important because later chapters discuss:
+<span style={{ color: "#e879f9", fontWeight: 700 }}>Understanding this chain is extremely important because later chapters discuss:</span>
 
 - TCP Congestion Control
 - Active Queue Management
@@ -944,7 +944,7 @@ Another important question:
 
 > **How does a router know where to send a packet?**
 
-Every router maintains a table called the:
+<span style={{ color: "#facc15", fontWeight: 700 }}>Every router maintains a table called the:</span>
 
 ## Forwarding Table
 
@@ -952,7 +952,7 @@ A Forwarding Table tells the router:
 
 > If a packet is destined for a particular network, which outgoing link should be used?
 
-Think of it as a GPS navigation system — it examines your destination and chooses the best road, step by step.
+<span style={{ color: "#fb7185", fontWeight: 700 }}>Think of it as a GPS navigation system — it examines your destination and chooses the best road, step by step.</span>
 
 ---
 
