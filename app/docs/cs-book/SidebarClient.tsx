@@ -234,6 +234,7 @@ const chapters = [
           { title: "1.3 The Network Core", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-3-the-network-core" },
           { title: "1.3.2 Circuit Switching", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-3-2-circuit-switching" },
           { title: "1.3.3 A Network of Networks", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-3-3-a-network-of-networks" },
+          { title: "1.4 Delay, Loss, and Throughput (Part 4A)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4a" },
         ],
       },
       {
