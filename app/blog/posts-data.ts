@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "redis",
+    title: "Redis Is Not Just a Cache: The Architecture, Patterns, and Trade-offs Every Engineer Should Know",
+    description:
+      "Why Redis's single-threaded, in-memory design makes it fast — and the six production patterns built on top of it: caching, rate limiting, leaderboards, sessions, distributed locks, and pub/sub.",
+    date: "July 9, 2026",
+    tag: "System Design",
+  },
+  {
     slug: "beyond-devaluation-structural-reforms",
     title: "Beyond Devaluation: Why Structural Reforms Matter More Than a Weaker Currency for Export Growth",
     description:

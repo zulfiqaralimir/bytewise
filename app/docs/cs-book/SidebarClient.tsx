@@ -57,6 +57,7 @@ const chapters = [
       { title: "APIs & REST", href: "/docs/cs-book/part-3-system-design/apis-and-rest" },
       { title: "Databases", href: "/docs/cs-book/part-3-system-design/databases" },
       { title: "Caching", href: "/docs/cs-book/part-3-system-design/caching" },
+      { title: "Redis", href: "/docs/cs-book/part-3-system-design/redis" },
       { title: "Load Balancing", href: "/docs/cs-book/part-3-system-design/load-balancing" },
       { title: "Consistent Hashing", href: "/docs/cs-book/part-3-system-design/consistent-hashing" },
     ],

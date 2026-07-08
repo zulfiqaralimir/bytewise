@@ -1,0 +1,149 @@
+export const metadata = {
+  title: "Redis Is Not Just a Cache: The Architecture, Patterns, and Trade-offs Every Engineer Should Know — ByteWise",
+  description:
+    "Redis is not just a cache. A deep dive into why Redis is fast (single-threaded, in-memory, O(1) lookups), the six production patterns built on top of it, persistence trade-offs, and how to scale it.",
+  keywords: [
+    "Redis",
+    "single-threaded architecture",
+    "in-memory data structure server",
+    "cache-aside",
+    "rate limiting",
+    "sorted sets",
+    "leaderboards",
+    "distributed locks",
+    "pub/sub",
+    "Redis Streams",
+    "RDB",
+    "AOF",
+    "Redis Cluster",
+  ],
+  openGraph: {
+    title: "Redis Is Not Just a Cache: The Architecture, Patterns, and Trade-offs Every Engineer Should Know",
+    description:
+      "Why Redis's single-threaded design makes it fast, and the six production patterns — caching, rate limiting, leaderboards, sessions, locks, pub/sub — built on top of it.",
+    type: "article",
+  },
+};
+
+# Redis Is Not Just a Cache: The Architecture, Patterns, and Trade-offs Every Engineer Should Know
+
+If you asked most developers what Redis is for, you'd probably get one answer: "it's a cache." And sure, that's true — but it's also selling Redis massively short.
+
+In real production systems, Redis quietly does a lot of heavy lifting: storing user sessions, powering live leaderboards, rate-limiting APIs, coordinating distributed jobs, driving real-time messaging, and shielding your main database when traffic suddenly spikes.
+
+What's even more interesting is *how* Redis manages to do all of this so fast — and the secret is a design decision that sounds, on paper, like a terrible idea.
+
+Let's break it all down.
+
+## So What Actually Is Redis?
+
+Redis stands for **RE**mote **D**ictionary **S**erver. That name is a hint: it's not really a cache first — it's a **data structure server**.
+
+Think about the data structures you already use in code every day: hash maps, sets, sorted lists. Redis takes those exact structures, keeps them in RAM on a dedicated server, and lets every instance of your application share them over the network.
+
+You might be thinking: *my app already has hash maps — why pay a network round trip to use one somewhere else?*
+
+The answer is **shared state**. The moment you're running more than one instance of your service (which is basically every production system), an in-process hash map starts to fragment. Each instance keeps its own copy, and those copies can drift out of sync. Redis solves that by giving every instance a single, consistent, atomic view of the data — with sub-millisecond access.
+
+## Why Redis Is So Fast
+
+There are four main reasons Redis performs the way it does:
+
+- **Everything lives in memory.** Reading from RAM takes around 100 nanoseconds, while a disk read is in the microsecond-to-millisecond range — multiple orders of magnitude slower. That's why Redis usually responds in under a millisecond and why it often sits in front of slower databases like Postgres or MySQL.
+- **Constant-time lookups.** Under the hood, Redis uses a hash table to map keys to values. Whether you have a thousand keys or 100 million, finding one takes roughly the same amount of time. Compare that to a relational database walking a B-tree index and pulling pages off disk.
+- **A single thread — and that's a feature, not a limitation.** When your bottleneck is memory access rather than CPU, extra threads mostly just add overhead: context switching, lock contention, and cache invalidation across cores. Redis skips all of that. One thread runs an event loop with non-blocking I/O, so it can juggle thousands of open client connections — while one client's response is traveling over the network, the thread is already working on the next command. (Redis 6+ does use a couple of extra threads for network I/O, but the actual command execution still happens sequentially, which is exactly why every command stays atomic.)
+- **Written in C, tuned for cache locality.** Hand-tuned memory management, optimized data structures, and no garbage collector randomly pausing execution.
+
+**The catch:** because everything runs on one thread, a single slow command — like scanning a massive collection — blocks every other client behind it. One bad query can stall your entire cache. It's a classic production incident, and a great thing to bring up if you're ever asked about Redis in a system design interview.
+
+## The Patterns Developers Actually Build With Redis
+
+Okay — Redis is fast. So what do you actually *do* with it? Here are the six patterns that show up constantly in real systems.
+
+### 1. Caching (Cache-Aside)
+
+This is the pattern everyone knows:
+
+- Your service checks Redis first.
+- **Cache hit** → return the result immediately.
+- **Cache miss** → query the database, write the result into Redis with a TTL (say, 5 minutes), then return it.
+
+The TTL keeps data from going permanently stale. Since Redis memory is finite, you'll also configure a max memory limit with an eviction policy like **LRU** (least recently used), so when memory fills up, the oldest unused keys get evicted automatically.
+
+**Watch out for cache stampedes.** If a popular key expires and 10,000 requests miss at the exact same instant, they all slam your database simultaneously. Common fixes:
+
+- Jitter your TTLs so keys don't all expire at once.
+- Let one request rebuild the value while everyone else briefly serves the stale copy.
+
+### 2. Rate Limiting
+
+Say you want to cap an API at 100 requests per minute per user. You:
+
+- Increment a counter key like `rate:user:1`.
+- Set a 60-second TTL on it.
+- Reject requests once the count passes 100.
+
+Because Redis operations are atomic, a thousand concurrent requests can't corrupt the count. No locks, no coordination service — just a few commands and you're done.
+
+### 3. Leaderboards With Sorted Sets
+
+A **sorted set** keeps every member ordered by score, with logarithmic-time inserts and updates. Think of a LeetCode-style contest ranking:
+
+- Every time someone solves a problem, update their score with `ZADD`.
+- Fetch the live top 10 with a single `ZRANGE` command.
+
+Building this on a relational database usually means constantly re-sorting or maintaining extra indexes on every write. In Redis, it's just the native data structure doing what it's built for.
+
+### 4. Session Storage With Hashes
+
+When a user logs in, you can store their session — user ID, permissions, preferences — as a Redis hash under a key like `session:abc123`, with a TTL matching your session length.
+
+- Any of your servers can read that session on any request, so users stay logged in no matter which instance handles them.
+- A hash lets you read or update a single field without deserializing the entire object.
+
+This is one of the most common real-world Redis workloads out there.
+
+### 5. Distributed Locks
+
+Sometimes you need to guarantee that only *one* worker across your whole fleet runs a job — say, a nightly billing task. Redis handles this with a single command:
+
+- `SET lock_key value NX PX <timeout>` — `NX` means "only set if it doesn't already exist," and `PX` sets an expiration so a crashed worker can't hold the lock forever.
+- Whoever's `SET` succeeds owns the lock. Everyone else backs off, because the operation is atomic — there's no race between checking and setting.
+
+There are sharper edge cases in distributed environments (that's what the **Redlock** algorithm exists for), but the single-instance version covers a surprising amount of real-world ground.
+
+### 6. Real-Time Messaging With Pub/Sub
+
+Servers subscribe to channels, and anyone can publish to them. In a chat app, if User A on Server 1 messages User B on Server 2, Server 1 just publishes to User B's channel and Redis routes it instantly.
+
+**One caveat:** Pub/Sub is *at-most-once* delivery. If the subscriber is disconnected when the message goes out, it's gone for good. If you need guaranteed delivery, that's what **Redis Streams** are for — an append-only log with consumer groups, essentially a lightweight Kafka or dedicated message queue.
+
+## What Happens When Redis Fails? (Persistence: RDB vs. AOF)
+
+Since everything lives in RAM, what happens if the server dies? By default — the data is gone.
+
+For a pure cache, that's usually fine: your database is still the source of truth, and the cache just rebuilds itself on demand. The only real cost is a slow few minutes while it warms back up.
+
+But if Redis is holding data you actually care about, you've got two persistence options:
+
+- **RDB snapshots** — write the entire database to disk every few minutes. Cheap, and great for fast restarts, but you lose everything since the last snapshot.
+- **AOF (Append-Only File)** — logs every write command, typically flushing to disk once per second. A crash costs you at most about a second of writes.
+
+Most production setups run **both**: AOF for durability, RDB for fast recovery.
+
+But honestly, the more interesting question isn't *which persistence setting to use* — it's: **should Redis be holding your only copy of anything?** Nine times out of ten, the answer is no. Your system of record should stay in Postgres (or whatever durable store you trust), and Redis should handle the fast-moving, easily rebuildable stuff it was designed for.
+
+## Scaling Redis
+
+What happens when one instance isn't enough?
+
+- **Reads are the bottleneck?** Add **replicas**. The primary handles all writes and streams changes to replicas, which serve read traffic. Bonus: if the primary goes down, a replica can be promoted — giving you high availability for free.
+- **Writes are the bottleneck?** **Shard.** Split the key space across multiple independent instances, usually by hashing the key. You can do this yourself client-side with consistent hashing, or let **Redis Cluster** handle sharding and failover for you (at the cost of more operational complexity).
+
+One important gotcha: a single key — like one giant sorted set — can't be split across nodes. That means **hot keys** are a real scaling problem worth designing around from the start.
+
+## The Bottom Line
+
+Redis is a deliberately simple design: a single-threaded, in-memory data structure server. But on top of that simplicity sits an entire ecosystem of patterns — caching, rate limiting, leaderboards, session storage, distributed locks, and real-time messaging — that make it one of the most versatile tools in a backend engineer's toolkit.
+
+Understanding *why* it's fast (and where it can bite you) is what separates "I've used Redis for caching" from actually knowing how to design systems around it — which is exactly the kind of depth that shows up in system design interviews and in production incidents alike.
