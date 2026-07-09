@@ -16,7 +16,7 @@ Now we will study the remaining two delays:
 - Transmission Delay (`d_trans`)
 - Propagation Delay (`d_prop`)
 
-These two delays occur **after the router has decided to forward the packet**.
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>These two delays occur after the router has decided to forward the packet.</span>
 
 Although they sound similar, they represent **completely different concepts**. Many beginners confuse them, so understanding the difference is extremely important.
 
@@ -45,9 +45,9 @@ Propagation Delay
 Next Router
 ```
 
-The first two delays occur **inside the router**.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>The first two delays occur inside the router.</span>
 
-The last two delays occur **while the packet leaves the router and travels across the communication link**.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>The last two delays occur while the packet leaves the router and travels across the communication link.</span>
 
 ---
 
@@ -61,21 +61,21 @@ There are two different questions:
 
 ### Question 1
 
-> How long does it take for the **entire train to enter the tunnel?**
+> <span style={{ color: "#14b8a6", fontWeight: 700 }}>How long does it take for the entire train to enter the tunnel?</span>
 
-This corresponds to:
+<span style={{ color: "#eab308", fontWeight: 700 }}>This corresponds to:</span>
 
-> **Transmission Delay**
+> <span style={{ color: "#d946ef", fontWeight: 700 }}>Transmission Delay</span>
 
 ---
 
 ### Question 2
 
-> After the train has entered the tunnel, how long does it take for the front of the train to reach the other side?
+> <span style={{ color: "#0ea5e9", fontWeight: 700 }}>After the train has entered the tunnel, how long does it take for the front of the train to reach the other side?</span>
 
-This corresponds to:
+<span style={{ color: "#84cc16", fontWeight: 700 }}>This corresponds to:</span>
 
-> **Propagation Delay**
+> <span style={{ color: "#fb7185", fontWeight: 700 }}>Propagation Delay</span>
 
 Notice:
 
@@ -99,7 +99,7 @@ The router is **not waiting for the packet to reach the destination**.
 
 Instead,
 
-the router is busy **sending the bits onto the wire (or fiber).**
+<span style={{ color: "#c084fc", fontWeight: 700 }}>the router is busy sending the bits onto the wire (or fiber).</span>
 
 ---
 
@@ -113,11 +113,11 @@ You begin pouring water into it.
 
 Question:
 
-> **How long does it take to pour all the water into the pipe?**
+> <span style={{ color: "#60a5fa", fontWeight: 700 }}>How long does it take to pour all the water into the pipe?</span>
 
-This corresponds to:
+<span style={{ color: "#e879f9", fontWeight: 700 }}>This corresponds to:</span>
 
-> **Transmission Delay**
+> <span style={{ color: "#fde047", fontWeight: 700 }}>Transmission Delay</span>
 
 ---
 
@@ -145,9 +145,9 @@ Letter 3
 Letter 100
 ```
 
-The time required to insert all letters is:
+<span style={{ color: "#fca5a5", fontWeight: 700 }}>The time required to insert all letters is:</span>
 
-Transmission Delay.
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>Transmission Delay.</span>
 
 Whether the letters have reached their destination is a different matter.
 
@@ -155,9 +155,9 @@ Whether the letters have reached their destination is a different matter.
 
 # Why Does Transmission Delay Exist?
 
-Communication links transmit data:
+<span style={{ color: "#fdba74", fontWeight: 700 }}>Communication links transmit data:</span>
 
-**Bit by bit**
+<span style={{ color: "#86efac", fontWeight: 700 }}>Bit by bit</span>
 
 They do **not** send an entire packet instantaneously.
 
@@ -330,7 +330,7 @@ Long Delay
 
 ## Link Speed
 
-Higher bandwidth reduces Transmission Delay.
+<span style={{ color: "#a5b4fc", fontWeight: 700 }}>Higher bandwidth reduces Transmission Delay.</span>
 
 Example:
 
@@ -381,7 +381,7 @@ Now the packet has completely entered the communication link.
 
 Question:
 
-> **How long does the signal need to travel through the communication medium?**
+> <span style={{ color: "#38bdf8", fontWeight: 700 }}>How long does the signal need to travel through the communication medium?</span>
 
 This is called:
 
@@ -393,15 +393,15 @@ This is called:
 
 Propagation Delay is:
 
-> **The time required for a signal to travel from the sender to the receiver through the physical communication medium.**
+> **The time required for a signal to travel from the sender to the receiver <span style={{ color: "#fbbf24", fontWeight: 700 }}>through the physical communication medium.</span>**
 
 ---
 
 # Real-Life Analogy
 
-Imagine shouting across a valley.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>Imagine shouting across a valley.</span>
 
-Your voice travels through the air.
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>Your voice travels through the air.</span>
 
 Even though sound is fast,
 
@@ -415,7 +415,7 @@ network signals require time to travel.
 
 # Another Analogy
 
-Imagine a train.
+<span style={{ color: "#eab308", fontWeight: 700 }}>Imagine a train.</span>
 
 After the train has completely left the station,
 
@@ -498,13 +498,11 @@ Notice:
 
 Signals in fiber travel at approximately:
 
-```text
-Two-thirds
+<span style={{ color: "#d946ef", fontWeight: 700 }}>Two-thirds</span>
 
-of
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>of</span>
 
-the speed of light.
-```
+<span style={{ color: "#84cc16", fontWeight: 700 }}>the speed of light.</span>
 
 ---
 
@@ -598,7 +596,7 @@ This is one of the most important comparisons in networking.
 
 | Feature | Transmission Delay | Propagation Delay |
 |----------|-------------------|-------------------|
-| Definition | Time to push all bits onto the link | Time for signal to travel through the link |
+| Definition | <span style={{ color: "#fb7185", fontWeight: 700 }}>Time to push all bits onto the link</span> | <span style={{ color: "#c084fc", fontWeight: 700 }}>Time for signal to travel through the link</span> |
 | Depends On | Packet Length and Link Speed | Distance and Propagation Speed |
 | Formula | `L / R` | `d / s` |
 | Affected by Packet Size | Yes | No |
