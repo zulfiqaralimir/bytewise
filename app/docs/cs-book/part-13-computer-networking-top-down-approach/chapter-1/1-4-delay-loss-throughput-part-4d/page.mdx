@@ -4,7 +4,7 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 # Queueing Delay, Traffic Intensity, Packet Loss, and Congestion
 
-In the previous parts, we studied all four components of **Nodal Delay**:
+In the previous parts, <span style={{ color: "#38bdf8", fontWeight: 700 }}>we studied all four components of Nodal Delay:</span>
 
 - Processing Delay (`d_proc`)
 - Queueing Delay (`d_queue`)
@@ -15,15 +15,15 @@ Among these four delays, one behaves very differently from the others.
 
 That delay is:
 
-> **Queueing Delay**
+> <span style={{ color: "#fbbf24", fontWeight: 700 }}>Queueing Delay</span>
 
-Unlike the other three delays, Queueing Delay is **highly unpredictable**.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>Unlike the other three delays, Queueing Delay is highly unpredictable.</span>
 
 Sometimes it is almost zero.
 
 Sometimes it becomes several seconds.
 
-Sometimes it becomes so large that packets are dropped before they can even be transmitted.
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>Sometimes it becomes so large that packets are dropped</span> before they can even be transmitted.
 
 This section explains why this happens.
 
@@ -33,7 +33,7 @@ This section explains why this happens.
 
 Recall the definition.
 
-> **Queueing Delay is the time a packet spends waiting in a router's buffer before it can be transmitted onto the outgoing communication link.**
+> **Queueing Delay is the time a packet <span style={{ color: "#eab308", fontWeight: 700 }}>spends waiting in a router's buffer</span> before it can be transmitted onto the outgoing communication link.**
 
 The key word here is:
 
@@ -115,9 +115,9 @@ Packet D
 Router
 ```
 
-The outgoing communication link can transmit only one packet at a time.
+<span style={{ color: "#d946ef", fontWeight: 700 }}>The outgoing communication link can transmit only one packet at a time.</span>
 
-The remaining packets wait.
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>The remaining packets wait.</span>
 
 ```text
 Outgoing Link
@@ -189,7 +189,7 @@ This fact becomes extremely important later.
 
 # What Determines Queue Length?
 
-The length of the queue depends upon two things.
+<span style={{ color: "#84cc16", fontWeight: 700 }}>The length of the queue depends upon two things.</span>
 
 ## 1. Packet Arrival Rate
 
@@ -586,15 +586,15 @@ Packets wait longer and longer.
 
 Eventually,
 
-the queue would become infinitely long.
+<span style={{ color: "#fb7185", fontWeight: 700 }}>the queue would become infinitely long.</span>
 
 ---
 
-However,
+<span style={{ color: "#c084fc", fontWeight: 700 }}>However,</span>
 
-real routers prevent this from happening because:
+<span style={{ color: "#60a5fa", fontWeight: 700 }}>real routers prevent this from happening because:</span>
 
-Buffers have limited size.
+<span style={{ color: "#e879f9", fontWeight: 700 }}>Buffers have limited size.</span>
 
 ---
 
@@ -634,15 +634,15 @@ Nowhere.
 
 # Packet Loss
 
-When the buffer becomes full,
+<span style={{ color: "#fde047", fontWeight: 700 }}>When the buffer becomes full,</span>
 
-the router has only one option.
+<span style={{ color: "#fca5a5", fontWeight: 700 }}>the router has only one option.</span>
 
-It discards the arriving packet.
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>It discards the arriving packet.</span>
 
-This is called:
+<span style={{ color: "#fdba74", fontWeight: 700 }}>This is called:</span>
 
-> **Packet Loss**
+> <span style={{ color: "#86efac", fontWeight: 700 }}>Packet Loss</span>
 
 ---
 
@@ -680,9 +680,9 @@ Not because the packet is damaged.
 
 ---
 
-# What Happens After Packet Loss?
+# <span style={{ color: "#38bdf8", fontWeight: 700 }}>What Happens After Packet Loss?</span>
 
-Different applications react differently.
+<span style={{ color: "#a5b4fc", fontWeight: 700 }}>Different applications react differently.</span>
 
 ---
 
@@ -706,7 +706,7 @@ The email still arrives correctly.
 
 Small losses may cause:
 
-- Reduced video quality
+- <span style={{ color: "#fbbf24", fontWeight: 700 }}>Reduced video quality</span>
 - Buffering
 
 ---
@@ -738,7 +738,7 @@ Now we arrive at another important concept.
 
 Congestion occurs when:
 
-> **The network receives more traffic than it can efficiently handle.**
+> <span style={{ color: "#f43f5e", fontWeight: 700 }}>The network receives more traffic than it can efficiently handle.</span>
 
 Think of a highway during rush hour.
 
@@ -781,7 +781,7 @@ Congestion usually results from:
 - Large downloads
 - Video streaming
 - Software updates
-- Cloud backups
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Cloud backups</span>
 
 ---
 
@@ -857,21 +857,21 @@ Poor Network Performance
 
 ---
 
-# Router Buffer Management
+# <span style={{ color: "#d946ef", fontWeight: 700 }}>Router Buffer Management</span>
 
-Modern routers use different techniques to manage congestion.
+<span style={{ color: "#eab308", fontWeight: 700 }}>Modern routers use different techniques</span> to manage congestion.
 
 Examples include:
 
-- First-In, First-Out (FIFO)
-- Priority Queueing
-- Weighted Fair Queueing (WFQ)
-- Random Early Detection (RED)
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>First-In, First-Out (FIFO)</span>
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>Priority Queueing</span>
+- <span style={{ color: "#fb7185", fontWeight: 700 }}>Weighted Fair Queueing (WFQ)</span>
+- <span style={{ color: "#c084fc", fontWeight: 700 }}>Random Early Detection (RED)</span>
 
-These techniques determine:
+<span style={{ color: "#60a5fa", fontWeight: 700 }}>These techniques determine:</span>
 
-- Which packet should be transmitted next.
-- Which packet should be dropped when buffers become full.
+- <span style={{ color: "#e879f9", fontWeight: 700 }}>Which packet should be transmitted next.</span>
+- <span style={{ color: "#fde047", fontWeight: 700 }}>Which packet should be dropped when buffers become full.</span>
 
 We will study these techniques in later chapters.
 
@@ -976,7 +976,7 @@ Reduced Network Performance
 
 ---
 
-## End of Part 4D
+## <span style={{ color: "#fca5a5", fontWeight: 700 }}>End of Part 4D</span>
 
 ### Next Part (4E)
 
