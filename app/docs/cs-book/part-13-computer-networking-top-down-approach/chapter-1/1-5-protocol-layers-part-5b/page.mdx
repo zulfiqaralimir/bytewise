@@ -1,0 +1,933 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 1.5 Protocol Layers and Their Service Models (Part 5B)
+
+# The Internet Protocol Stack (Five-Layer Model)
+
+In the previous part, we learned **why networking is divided into layers**.
+
+Now another important question arises.
+
+> **How many layers does the Internet actually use?**
+
+There are two famous networking models:
+
+- The **Internet Protocol Stack (5-layer model)** (used in Kurose)
+- The **OSI Reference Model (7-layer model)**
+
+In this chapter, Kurose first explains the **Internet Protocol Stack**, because it represents how the Internet actually works.
+
+Later, we will compare it with the OSI model.
+
+---
+
+# What Is a Protocol Stack?
+
+Definition:
+
+> **A Protocol Stack is a collection of protocol layers that work together to provide end-to-end communication between networked devices.**
+
+Each layer:
+
+- Performs a specific task.
+- Uses services from the layer below.
+- Provides services to the layer above.
+
+Together,
+
+all layers enable complete communication.
+
+---
+
+# The Internet Protocol Stack
+
+The Internet Protocol Stack consists of **five layers**.
+
+```text
++-----------------------------+
+|     Application Layer       |
++-----------------------------+
+|      Transport Layer        |
++-----------------------------+
+|       Network Layer         |
++-----------------------------+
+|         Link Layer          |
++-----------------------------+
+|      Physical Layer         |
++-----------------------------+
+```
+
+This is one of the most important diagrams in computer networking.
+
+You should memorize it.
+
+---
+
+# Understanding the Layer Order
+
+Notice the order carefully.
+
+```text
+Application
+
+↓
+
+Transport
+
+↓
+
+Network
+
+↓
+
+Link
+
+↓
+
+Physical
+```
+
+When sending data,
+
+communication moves **from top to bottom**.
+
+When receiving data,
+
+communication moves **from bottom to top**.
+
+---
+
+# Why This Order?
+
+Each layer depends on the services provided by the layer below it.
+
+For example,
+
+The Application Layer cannot directly send electrical signals.
+
+Instead,
+
+it requests help from:
+
+```text
+Transport Layer
+
+↓
+
+Network Layer
+
+↓
+
+Link Layer
+
+↓
+
+Physical Layer
+```
+
+Finally,
+
+the Physical Layer sends the actual bits.
+
+---
+
+# Overview of Each Layer
+
+Before studying each layer individually,
+
+let's briefly understand their responsibilities.
+
+| Layer | Main Responsibility |
+|--------|----------------------|
+| Application | Provides network services to applications. |
+| Transport | Provides end-to-end communication between processes. |
+| Network | Determines how packets travel across multiple networks. |
+| Link | Transfers frames between directly connected devices. |
+| Physical | Transmits raw bits through the communication medium. |
+
+Think of each layer as answering a different question.
+
+---
+
+# Application Layer
+
+## Main Responsibility
+
+The Application Layer provides network services directly to user applications.
+
+Notice something important.
+
+The Application Layer is **not** the application itself.
+
+Instead,
+
+it provides networking support to applications.
+
+---
+
+# Examples
+
+Applications include:
+
+- Web Browser
+- Email Client
+- WhatsApp
+- Zoom
+- Google Chrome
+- Firefox
+- Microsoft Outlook
+
+These applications use Application Layer protocols to communicate.
+
+---
+
+# Common Application Layer Protocols
+
+Examples include:
+
+- HTTP
+- HTTPS
+- FTP
+- SMTP
+- POP3
+- IMAP
+- DNS
+- DHCP
+- SSH
+
+Each protocol serves a different purpose.
+
+---
+
+# Example
+
+Suppose you open:
+
+```text
+https://www.google.com
+```
+
+The browser uses:
+
+```text
+HTTP
+
+or
+
+HTTPS
+```
+
+to request a webpage.
+
+The Application Layer creates the message.
+
+---
+
+# Application Layer Data
+
+At this layer,
+
+the information is simply called:
+
+```text
+Message
+```
+
+Example:
+
+```text
+GET /index.html HTTP/1.1
+```
+
+The Application Layer does not worry about:
+
+- Routers
+- IP Addresses
+- Ethernet
+- WiFi
+
+Its job is simply to create application data.
+
+---
+
+# Transport Layer
+
+The Application Layer now passes its message downward.
+
+The next layer is:
+
+> **Transport Layer**
+
+---
+
+# Main Responsibility
+
+The Transport Layer provides:
+
+> **Logical communication between application processes running on different hosts.**
+
+Notice the words:
+
+> **Processes**
+
+Not computers.
+
+This is an important distinction.
+
+---
+
+# Real-Life Analogy
+
+Imagine a hotel.
+
+The building represents:
+
+```text
+Computer
+```
+
+Each room represents:
+
+```text
+Application Process
+```
+
+A courier must deliver a parcel to:
+
+Not just the hotel,
+
+but to the correct room.
+
+Similarly,
+
+the Transport Layer delivers data to the correct application.
+
+---
+
+# Services Provided
+
+The Transport Layer may provide:
+
+- Reliability
+- Error recovery
+- Flow control
+- Congestion control
+- Multiplexing
+- Demultiplexing
+
+Different protocols provide different services.
+
+---
+
+# Common Transport Layer Protocols
+
+The Internet mainly uses:
+
+- TCP
+- UDP
+
+We will study these in later chapters.
+
+---
+
+# TCP
+
+TCP provides:
+
+- Reliable communication.
+- Ordered delivery.
+- Error recovery.
+- Flow control.
+- Congestion control.
+
+Suitable for:
+
+- Web browsing
+- Email
+- Banking
+- File transfer
+
+---
+
+# UDP
+
+UDP provides:
+
+- Faster communication.
+- Lower overhead.
+- No guaranteed delivery.
+
+Suitable for:
+
+- Voice calls
+- Video streaming
+- Online gaming
+- Live broadcasting
+
+---
+
+# Transport Layer Data
+
+After processing,
+
+the Application Layer message becomes a:
+
+```text
+Segment
+```
+
+Notice the terminology.
+
+Application Layer:
+
+```text
+Message
+```
+
+Transport Layer:
+
+```text
+Segment
+```
+
+---
+
+# Network Layer
+
+The Transport Layer passes the segment downward.
+
+Now we reach:
+
+> **Network Layer**
+
+---
+
+# Main Responsibility
+
+The Network Layer is responsible for:
+
+> **Moving packets from the source host to the destination host across multiple interconnected networks.**
+
+This layer answers:
+
+> **Which path should the packet take?**
+
+---
+
+# Main Tasks
+
+The Network Layer performs:
+
+- Logical Addressing
+- Routing
+- Packet Forwarding
+
+---
+
+# IP Address
+
+The Network Layer uses:
+
+```text
+IP Addresses
+```
+
+Examples:
+
+```text
+192.168.1.10
+
+8.8.8.8
+
+172.217.20.14
+```
+
+These addresses identify devices across networks.
+
+---
+
+# Routers Operate Here
+
+Routers primarily work at the:
+
+> **Network Layer**
+
+Their main responsibility is:
+
+```text
+Receive Packet
+
+↓
+
+Examine Destination IP
+
+↓
+
+Forward Packet
+```
+
+---
+
+# Common Network Layer Protocols
+
+Examples:
+
+- IPv4
+- IPv6
+- ICMP
+
+Routing protocols such as OSPF and BGP also operate in this layer's functionality, although they serve specialized routing purposes.
+
+---
+
+# Network Layer Data
+
+After processing,
+
+the segment becomes a:
+
+```text
+Packet
+
+or
+
+Datagram
+```
+
+---
+
+# Link Layer
+
+The packet now reaches the:
+
+> **Link Layer**
+
+---
+
+# Main Responsibility
+
+The Link Layer delivers data between:
+
+> **Directly connected neighboring devices.**
+
+Unlike the Network Layer,
+
+it does **not** move data across the entire Internet.
+
+Instead,
+
+it moves data one hop at a time.
+
+---
+
+# Example
+
+```text
+Laptop
+
+↓
+
+WiFi Router
+```
+
+This communication uses the Link Layer.
+
+---
+
+Another example:
+
+```text
+Router A
+
+↓
+
+Router B
+```
+
+Again,
+
+the Link Layer handles communication over this single physical link.
+
+---
+
+# Main Tasks
+
+The Link Layer performs:
+
+- Framing
+- Error Detection
+- Medium Access Control (MAC)
+- Link-Level Addressing
+
+---
+
+# MAC Address
+
+Unlike the Network Layer,
+
+the Link Layer uses:
+
+```text
+MAC Addresses
+```
+
+Examples:
+
+```text
+00:1A:2B:3C:4D:5E
+```
+
+Every network interface card has a MAC address.
+
+---
+
+# Common Link Layer Technologies
+
+Examples include:
+
+- Ethernet
+- WiFi (IEEE 802.11)
+- PPP
+
+These technologies define how neighboring devices communicate.
+
+---
+
+# Link Layer Data
+
+The Network Layer packet becomes a:
+
+```text
+Frame
+```
+
+Notice the terminology.
+
+Transport:
+
+```text
+Segment
+```
+
+↓
+
+Network:
+
+```text
+Packet
+```
+
+↓
+
+Link:
+
+```text
+Frame
+```
+
+---
+
+# Physical Layer
+
+Finally,
+
+the frame reaches the:
+
+> **Physical Layer**
+
+---
+
+# Main Responsibility
+
+The Physical Layer is responsible for:
+
+> **Transmitting raw bits through the communication medium.**
+
+This is the lowest layer.
+
+---
+
+# What Does It Actually Send?
+
+The Physical Layer does not understand:
+
+- HTTP
+- TCP
+- IP
+
+It simply transmits:
+
+```text
+0
+
+1
+
+0
+
+1
+
+1
+
+0
+
+1
+```
+
+These binary digits become:
+
+- Electrical signals
+- Optical signals
+- Radio waves
+
+depending on the communication medium.
+
+---
+
+# Physical Media
+
+Examples include:
+
+- Copper Cable
+- Fiber Optic Cable
+- WiFi Radio Waves
+- Bluetooth
+- Cellular Networks
+
+---
+
+# Physical Layer Data
+
+At this layer,
+
+the information is simply:
+
+```text
+Bits
+```
+
+---
+
+# Complete Data Transformation
+
+As data moves downward,
+
+its name changes.
+
+```text
+Application Layer
+
+↓
+
+Message
+
+↓
+
+Transport Layer
+
+↓
+
+Segment
+
+↓
+
+Network Layer
+
+↓
+
+Packet (Datagram)
+
+↓
+
+Link Layer
+
+↓
+
+Frame
+
+↓
+
+Physical Layer
+
+↓
+
+Bits
+```
+
+This terminology is extremely important.
+
+---
+
+# Complete Communication Flow
+
+Suppose you open Google's homepage.
+
+```text
+Browser
+
+↓
+
+Application Layer
+
+↓
+
+Transport Layer
+
+↓
+
+Network Layer
+
+↓
+
+Link Layer
+
+↓
+
+Physical Layer
+
+↓
+
+Internet
+
+↓
+
+Physical Layer
+
+↓
+
+Link Layer
+
+↓
+
+Network Layer
+
+↓
+
+Transport Layer
+
+↓
+
+Application Layer
+
+↓
+
+Google Server
+```
+
+Each layer performs its own responsibilities.
+
+---
+
+# Layer Responsibilities Summary
+
+| Layer | Data Unit | Main Responsibility | Example Protocols |
+|--------|-----------|--------------------|-------------------|
+| Application | Message | Network services for applications | HTTP, HTTPS, DNS, SMTP, FTP |
+| Transport | Segment | End-to-end process communication | TCP, UDP |
+| Network | Packet (Datagram) | Routing and logical addressing | IPv4, IPv6, ICMP |
+| Link | Frame | Communication between neighboring devices | Ethernet, WiFi, PPP |
+| Physical | Bits | Transmission of signals | Fiber, Copper, Radio |
+
+---
+
+# Easy Memory Trick
+
+Remember this order:
+
+```text
+Application
+
+Transport
+
+Network
+
+Link
+
+Physical
+```
+
+One simple mnemonic is:
+
+> **"All Teachers Need Loving Pupils."**
+
+The first letter of each word matches the layer:
+
+- **A** → Application
+- **T** → Transport
+- **N** → Network
+- **L** → Link
+- **P** → Physical
+
+---
+
+# Key Takeaways
+
+- The Internet Protocol Stack contains five layers.
+- Each layer has a specific responsibility.
+- Data moves downward when sending and upward when receiving.
+- The name of the data changes at each layer.
+- Different protocols operate at different layers.
+- Together, all five layers provide complete end-to-end communication.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Protocol Stack | Collection of networking layers working together to provide communication services. |
+| Application Layer | Layer providing networking services to user applications. |
+| Transport Layer | Layer providing logical communication between application processes. |
+| Network Layer | Layer responsible for routing packets across interconnected networks. |
+| Link Layer | Layer responsible for communication between directly connected devices. |
+| Physical Layer | Layer responsible for transmitting raw bits over the communication medium. |
+| Message | Data unit used at the Application Layer. |
+| Segment | Data unit used at the Transport Layer. |
+| Packet (Datagram) | Data unit used at the Network Layer. |
+| Frame | Data unit used at the Link Layer. |
+| Bits | Binary data transmitted by the Physical Layer. |
+
+---
+
+# Summary Diagram
+
+```text
+Application Layer   → Message
+          │
+          ▼
+Transport Layer     → Segment
+          │
+          ▼
+Network Layer       → Packet
+          │
+          ▼
+Link Layer          → Frame
+          │
+          ▼
+Physical Layer      → Bits
+          │
+          ▼
+Communication Medium
+```
+
+---
+
+## End of Part 5B
+
+### Next Part (5C)
+
+In the next part, we will study:
+
+- **Encapsulation**
+- **Decapsulation**
+- How headers are added at each layer
+- Header vs Payload
+- Complete packet formation
+- Complete packet journey
+- Real-world examples
+- ASCII diagrams
+- Technical vocabulary
+
+<ArticleNav
+  prev={{ title: "1.5 Protocol Layers and Their Service Models (Part 5A)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5a" }}
+  next={null}
+/>

@@ -240,6 +240,8 @@ const chapters = [
           { title: "1.4 Delay, Loss, and Throughput (Part 4D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4d" },
           { title: "1.4 Delay, Loss, and Throughput (Part 4E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4e" },
           { title: "1.4 Delay, Loss, and Throughput (Part 4F)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4f" },
+          { title: "1.5 Protocol Layers and Their Service Models (Part 5A)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5a" },
+          { title: "1.5 Protocol Layers and Their Service Models (Part 5B)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5b" },
         ],
       },
       {
