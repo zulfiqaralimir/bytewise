@@ -145,11 +145,11 @@ The Application Layer provides network services directly to user applications.
 
 Notice something important.
 
-The Application Layer is **not** the application itself.
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>The Application Layer is not the application itself.</span>
 
-Instead,
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>Instead,</span>
 
-it provides networking support to applications.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>it provides networking support to applications.</span>
 
 ---
 
@@ -169,19 +169,19 @@ These applications use Application Layer protocols to communicate.
 
 ---
 
-# Common Application Layer Protocols
+# <span style={{ color: "#14b8a6", fontWeight: 700 }}>Common Application Layer Protocols</span>
 
 Examples include:
 
-- HTTP
-- HTTPS
-- FTP
-- SMTP
-- POP3
-- IMAP
-- DNS
-- DHCP
-- SSH
+- <span style={{ color: "#eab308", fontWeight: 700 }}>HTTP</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>HTTPS</span>
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>FTP</span>
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>SMTP</span>
+- <span style={{ color: "#fb7185", fontWeight: 700 }}>POP3</span>
+- <span style={{ color: "#c084fc", fontWeight: 700 }}>IMAP</span>
+- <span style={{ color: "#60a5fa", fontWeight: 700 }}>DNS</span>
+- <span style={{ color: "#e879f9", fontWeight: 700 }}>DHCP</span>
+- <span style={{ color: "#fde047", fontWeight: 700 }}>SSH</span>
 
 Each protocol serves a different purpose.
 
@@ -207,15 +207,15 @@ HTTPS
 
 to request a webpage.
 
-The Application Layer creates the message.
+<span style={{ color: "#fca5a5", fontWeight: 700 }}>The Application Layer creates the message.</span>
 
 ---
 
 # Application Layer Data
 
-At this layer,
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>At this layer,</span>
 
-the information is simply called:
+<span style={{ color: "#fdba74", fontWeight: 700 }}>the information is simply called:</span>
 
 ```text
 Message
@@ -234,13 +234,13 @@ The Application Layer does not worry about:
 - Ethernet
 - WiFi
 
-Its job is simply to create application data.
+<span style={{ color: "#86efac", fontWeight: 700 }}>Its job is simply to create application data.</span>
 
 ---
 
 # Transport Layer
 
-The Application Layer now passes its message downward.
+<span style={{ color: "#a5b4fc", fontWeight: 700 }}>The Application Layer now passes its message downward.</span>
 
 The next layer is:
 
@@ -252,7 +252,7 @@ The next layer is:
 
 The Transport Layer provides:
 
-> **Logical communication between application processes running on different hosts.**
+> Logical communication between <span style={{ color: "#38bdf8", fontWeight: 700 }}>application processes</span> running on different hosts.
 
 Notice the words:
 
@@ -266,7 +266,7 @@ This is an important distinction.
 
 # Real-Life Analogy
 
-Imagine a hotel.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>Imagine a hotel.</span>
 
 The building represents:
 
@@ -288,13 +288,13 @@ but to the correct room.
 
 Similarly,
 
-the Transport Layer delivers data to the correct application.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>the Transport Layer delivers data to the correct application.</span>
 
 ---
 
 # Services Provided
 
-The Transport Layer may provide:
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>The Transport Layer may provide:</span>
 
 - Reliability
 - Error recovery
@@ -303,16 +303,16 @@ The Transport Layer may provide:
 - Multiplexing
 - Demultiplexing
 
-Different protocols provide different services.
+<span style={{ color: "#eab308", fontWeight: 700 }}>Different protocols provide different services.</span>
 
 ---
 
 # Common Transport Layer Protocols
 
-The Internet mainly uses:
+The Internet <span style={{ color: "#d946ef", fontWeight: 700 }}>mainly uses:</span>
 
-- TCP
-- UDP
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>TCP</span>
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>UDP</span>
 
 We will study these in later chapters.
 
@@ -356,9 +356,9 @@ Suitable for:
 
 # Transport Layer Data
 
-After processing,
+<span style={{ color: "#fb7185", fontWeight: 700 }}>After processing,</span>
 
-the Application Layer message becomes a:
+<span style={{ color: "#c084fc", fontWeight: 700 }}>the Application Layer message becomes a:</span>
 
 ```text
 Segment
@@ -394,11 +394,11 @@ Now we reach:
 
 The Network Layer is responsible for:
 
-> **Moving packets from the source host to the destination host across multiple interconnected networks.**
+> <span style={{ color: "#60a5fa", fontWeight: 700 }}>Moving packets from the source host to the destination host across multiple interconnected networks.</span>
 
 This layer answers:
 
-> **Which path should the packet take?**
+> <span style={{ color: "#e879f9", fontWeight: 700 }}>Which path should the packet take?</span>
 
 ---
 
@@ -460,19 +460,19 @@ Forward Packet
 
 Examples:
 
-- IPv4
-- IPv6
-- ICMP
+- <span style={{ color: "#fde047", fontWeight: 700 }}>IPv4</span>
+- <span style={{ color: "#fca5a5", fontWeight: 700 }}>IPv6</span>
+- <span style={{ color: "#93c5fd", fontWeight: 700 }}>ICMP</span>
 
-Routing protocols such as OSPF and BGP also operate in this layer's functionality, although they serve specialized routing purposes.
+<span style={{ color: "#fdba74", fontWeight: 700 }}>Routing protocols such as OSPF and BGP also operate in this layer's functionality, although they serve specialized routing purposes.</span>
 
 ---
 
 # Network Layer Data
 
-After processing,
+<span style={{ color: "#86efac", fontWeight: 700 }}>After processing,</span>
 
-the segment becomes a:
+<span style={{ color: "#a5b4fc", fontWeight: 700 }}>the segment becomes a:</span>
 
 ```text
 Packet
@@ -496,7 +496,7 @@ The packet now reaches the:
 
 The Link Layer delivers data between:
 
-> **Directly connected neighboring devices.**
+> <span style={{ color: "#38bdf8", fontWeight: 700 }}>Directly connected neighboring devices.</span>
 
 Unlike the Network Layer,
 
@@ -504,7 +504,7 @@ it does **not** move data across the entire Internet.
 
 Instead,
 
-it moves data one hop at a time.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>it moves data one hop at a time.</span>
 
 ---
 
@@ -518,7 +518,7 @@ Laptop
 WiFi Router
 ```
 
-This communication uses the Link Layer.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>This communication uses the Link Layer.</span>
 
 ---
 
@@ -534,7 +534,7 @@ Router B
 
 Again,
 
-the Link Layer handles communication over this single physical link.
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>the Link Layer handles communication over this single physical link.</span>
 
 ---
 
@@ -544,16 +544,16 @@ The Link Layer performs:
 
 - Framing
 - Error Detection
-- Medium Access Control (MAC)
-- Link-Level Addressing
+- <span style={{ color: "#eab308", fontWeight: 700 }}>Medium Access Control (MAC)</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Link-Level Addressing</span>
 
 ---
 
 # MAC Address
 
-Unlike the Network Layer,
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Unlike the Network Layer,</span>
 
-the Link Layer uses:
+<span style={{ color: "#84cc16", fontWeight: 700 }}>the Link Layer uses:</span>
 
 ```text
 MAC Addresses
@@ -565,7 +565,7 @@ Examples:
 00:1A:2B:3C:4D:5E
 ```
 
-Every network interface card has a MAC address.
+<span style={{ color: "#fb7185", fontWeight: 700 }}>Every network interface card has a MAC address.</span>
 
 ---
 
@@ -577,13 +577,13 @@ Examples include:
 - WiFi (IEEE 802.11)
 - PPP
 
-These technologies define how neighboring devices communicate.
+<span style={{ color: "#c084fc", fontWeight: 700 }}>These technologies define how neighboring devices communicate.</span>
 
 ---
 
 # Link Layer Data
 
-The Network Layer packet becomes a:
+<span style={{ color: "#60a5fa", fontWeight: 700 }}>The Network Layer packet becomes a:</span>
 
 ```text
 Frame
@@ -629,7 +629,7 @@ the frame reaches the:
 
 The Physical Layer is responsible for:
 
-> **Transmitting raw bits through the communication medium.**
+> <span style={{ color: "#e879f9", fontWeight: 700 }}>Transmitting raw bits through the communication medium.</span>
 
 This is the lowest layer.
 
@@ -637,13 +637,13 @@ This is the lowest layer.
 
 # What Does It Actually Send?
 
-The Physical Layer does not understand:
+<span style={{ color: "#fde047", fontWeight: 700 }}>The Physical Layer does not understand:</span>
 
 - HTTP
 - TCP
 - IP
 
-It simply transmits:
+<span style={{ color: "#fca5a5", fontWeight: 700 }}>It simply transmits:</span>
 
 ```text
 0
@@ -661,13 +661,13 @@ It simply transmits:
 1
 ```
 
-These binary digits become:
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>These binary digits become:</span>
 
-- Electrical signals
-- Optical signals
-- Radio waves
+- <span style={{ color: "#fdba74", fontWeight: 700 }}>Electrical signals</span>
+- <span style={{ color: "#86efac", fontWeight: 700 }}>Optical signals</span>
+- <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Radio waves</span>
 
-depending on the communication medium.
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>depending on the communication medium.</span>
 
 ---
 
@@ -677,7 +677,7 @@ Examples include:
 
 - Copper Cable
 - Fiber Optic Cable
-- WiFi Radio Waves
+- <span style={{ color: "#fbbf24", fontWeight: 700 }}>WiFi Radio Waves</span>
 - Bluetooth
 - Cellular Networks
 
@@ -685,9 +685,9 @@ Examples include:
 
 # Physical Layer Data
 
-At this layer,
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>At this layer,</span>
 
-the information is simply:
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>the information is simply:</span>
 
 ```text
 Bits
@@ -835,7 +835,7 @@ Physical
 
 One simple mnemonic is:
 
-> **"All Teachers Need Loving Pupils."**
+> <span style={{ color: "#eab308", fontWeight: 700 }}>"All Teachers Need Loving Pupils."</span>
 
 The first letter of each word matches the layer:
 
@@ -899,7 +899,7 @@ Communication Medium
 
 ---
 
-## End of Part 5B
+## <span style={{ color: "#d946ef", fontWeight: 700 }}>End of Part 5B</span>
 
 ### Next Part (5C)
 
