@@ -1,0 +1,999 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+# Section 1.4 Delay, Loss, and Throughput in Packet-Switched Networks (Part 4D)
+
+# Queueing Delay, Traffic Intensity, Packet Loss, and Congestion
+
+In the previous parts, we studied all four components of **Nodal Delay**:
+
+- Processing Delay (`d_proc`)
+- Queueing Delay (`d_queue`)
+- Transmission Delay (`d_trans`)
+- Propagation Delay (`d_prop`)
+
+Among these four delays, one behaves very differently from the others.
+
+That delay is:
+
+> **Queueing Delay**
+
+Unlike the other three delays, Queueing Delay is **highly unpredictable**.
+
+Sometimes it is almost zero.
+
+Sometimes it becomes several seconds.
+
+Sometimes it becomes so large that packets are dropped before they can even be transmitted.
+
+This section explains why this happens.
+
+---
+
+# Revisiting Queueing Delay
+
+Recall the definition.
+
+> **Queueing Delay is the time a packet spends waiting in a router's buffer before it can be transmitted onto the outgoing communication link.**
+
+The key word here is:
+
+> **Waiting**
+
+A packet is not being processed.
+
+It is not being transmitted.
+
+It is simply waiting because another packet is currently using the communication link.
+
+---
+
+# Why Does Queueing Occur?
+
+Imagine a single cashier in a supermarket.
+
+Customers arrive continuously.
+
+If customers arrive slowly,
+
+everyone is served immediately.
+
+```text
+Customer
+
+↓
+
+Cashier
+
+↓
+
+Leaves
+```
+
+No queue forms.
+
+---
+
+Now imagine customers arrive much faster.
+
+```text
+Customer 1
+
+Customer 2
+
+Customer 3
+
+Customer 4
+
+Customer 5
+```
+
+Only one cashier exists.
+
+A waiting line forms.
+
+Networking works exactly the same way.
+
+---
+
+# Router Queue
+
+Suppose a router receives packets like this.
+
+```text
+Incoming Packets
+
+Packet A
+
+Packet B
+
+Packet C
+
+Packet D
+
+↓
+
+Router
+```
+
+The outgoing communication link can transmit only one packet at a time.
+
+The remaining packets wait.
+
+```text
+Outgoing Link
+
+↓
+
+Packet A  (Being Sent)
+
+Packet B  (Waiting)
+
+Packet C  (Waiting)
+
+Packet D  (Waiting)
+```
+
+This waiting line is called a:
+
+> **Queue**
+
+---
+
+# Router Buffer
+
+Where are these waiting packets stored?
+
+They are stored inside the router's:
+
+> **Buffer**
+
+The buffer is simply temporary memory.
+
+```text
++---------------------------+
+
+Packet A
+
+Packet B
+
+Packet C
+
+Packet D
+
++---------------------------+
+
+Router Buffer
+```
+
+Think of it as the waiting room inside the router.
+
+---
+
+# Important Observation
+
+Every router has:
+
+- Limited processing power
+- Limited bandwidth
+- Limited memory
+
+Therefore,
+
+buffers are **not infinite**.
+
+They have a fixed capacity.
+
+This fact becomes extremely important later.
+
+---
+
+# What Determines Queue Length?
+
+The length of the queue depends upon two things.
+
+## 1. Packet Arrival Rate
+
+How quickly packets arrive.
+
+---
+
+## 2. Packet Departure Rate
+
+How quickly packets leave.
+
+---
+
+Imagine a bathtub.
+
+Water enters through the tap.
+
+Water leaves through the drain.
+
+If:
+
+```text
+Water In
+
+=
+
+Water Out
+```
+
+The water level stays constant.
+
+---
+
+If:
+
+```text
+Water In
+
+>
+
+Water Out
+```
+
+The water level rises.
+
+Eventually,
+
+the bathtub overflows.
+
+Router buffers behave in exactly the same way.
+
+---
+
+# Traffic Intensity
+
+Kurose introduces one of the most important concepts in networking.
+
+It is called:
+
+> **Traffic Intensity**
+
+Traffic Intensity tells us:
+
+> **How busy a communication link is.**
+
+It compares:
+
+- How much traffic arrives.
+- How much traffic the link can handle.
+
+---
+
+# Mathematical Formula
+
+Traffic Intensity is represented as:
+
+```text
+La / R
+```
+
+where:
+
+| Symbol | Meaning |
+|----------|----------|
+| `L` | Packet Length (bits) |
+| `a` | Average Packet Arrival Rate (packets/second) |
+| `R` | Transmission Rate (bits/second) |
+
+Notice something important.
+
+The numerator:
+
+```text
+La
+```
+
+represents:
+
+```text
+Bits Arriving Per Second
+```
+
+The denominator:
+
+```text
+R
+```
+
+represents:
+
+```text
+Bits That Can Be Transmitted Per Second
+```
+
+Therefore,
+
+Traffic Intensity compares:
+
+```text
+Incoming Traffic
+
+/
+
+Available Capacity
+```
+
+---
+
+# Understanding the Formula
+
+Suppose:
+
+Packet Length:
+
+```text
+L = 1,000 bits
+```
+
+Packet Arrival Rate:
+
+```text
+a = 50 packets/sec
+```
+
+Transmission Rate:
+
+```text
+R = 100,000 bits/sec
+```
+
+Then:
+
+```text
+La
+
+=
+
+1000 × 50
+
+=
+
+50,000 bits/sec
+```
+
+Traffic Intensity becomes:
+
+```text
+La/R
+
+=
+
+50,000
+
+/
+
+100,000
+
+=
+
+0.5
+```
+
+Meaning:
+
+The communication link is using about **50% of its capacity**.
+
+---
+
+# Interpretation of Traffic Intensity
+
+The value of:
+
+```text
+La/R
+```
+
+is extremely important.
+
+---
+
+## Case 1
+
+```text
+La/R << 1
+```
+
+Example:
+
+```text
+0.2
+```
+
+Meaning:
+
+The link is lightly loaded.
+
+Packets leave faster than they arrive.
+
+Queueing Delay is almost zero.
+
+---
+
+## Case 2
+
+```text
+La/R ≈ 1
+```
+
+Example:
+
+```text
+0.95
+```
+
+Meaning:
+
+The link is operating close to its maximum capacity.
+
+Small fluctuations in traffic can create noticeable queues.
+
+Queueing Delay begins to increase.
+
+---
+
+## Case 3
+
+```text
+La/R > 1
+```
+
+Example:
+
+```text
+1.2
+```
+
+Meaning:
+
+Traffic arrives faster than the router can transmit it.
+
+The queue grows continuously.
+
+If this condition continues,
+
+the buffer eventually becomes full.
+
+---
+
+# Visualizing Traffic Intensity
+
+### Low Traffic
+
+```text
+Packets
+
+↓
+
+Router
+
+↓
+
+Immediately Sent
+```
+
+Queue:
+
+```text
+Empty
+```
+
+---
+
+### Medium Traffic
+
+```text
+Packets
+
+↓
+
+Router
+
+↓
+
+Small Queue
+
+↓
+
+Outgoing Link
+```
+
+Queueing Delay:
+
+Small.
+
+---
+
+### Heavy Traffic
+
+```text
+Packets
+
+Packets
+
+Packets
+
+Packets
+
+Packets
+
+↓
+
+Router
+```
+
+Large queue.
+
+Packets wait longer.
+
+---
+
+# What Happens When Traffic Intensity Is Greater Than 1?
+
+Imagine a printer.
+
+The printer can print:
+
+```text
+100 Pages/Minute
+```
+
+But students submit:
+
+```text
+150 Pages/Minute
+```
+
+Every minute:
+
+```text
+50 Pages
+```
+
+remain waiting.
+
+After several minutes,
+
+a very long queue forms.
+
+Routers behave in exactly the same way.
+
+---
+
+# Can Queueing Delay Become Infinite?
+
+In theory,
+
+yes.
+
+If:
+
+```text
+Arrival Rate
+
+>
+
+Departure Rate
+```
+
+for a long period,
+
+the queue continues growing.
+
+Packets wait longer and longer.
+
+Eventually,
+
+the queue would become infinitely long.
+
+---
+
+However,
+
+real routers prevent this from happening because:
+
+Buffers have limited size.
+
+---
+
+# Buffer Overflow
+
+Suppose a router buffer can store:
+
+```text
+100 Packets
+```
+
+Current state:
+
+```text
+Packet 1
+
+Packet 2
+
+...
+
+Packet 100
+```
+
+The buffer is full.
+
+Now another packet arrives.
+
+Question:
+
+Where can it be stored?
+
+Answer:
+
+Nowhere.
+
+---
+
+# Packet Loss
+
+When the buffer becomes full,
+
+the router has only one option.
+
+It discards the arriving packet.
+
+This is called:
+
+> **Packet Loss**
+
+---
+
+# Visual Example
+
+```text
+Incoming Packet
+
+↓
+
+Router Buffer
+
+████████████████████
+
+FULL
+
+↓
+
+Packet Dropped
+```
+
+The packet never reaches its destination.
+
+---
+
+# Why Does Packet Loss Occur?
+
+Packet Loss usually occurs because:
+
+- Heavy traffic
+- Congestion
+- Full router buffers
+
+Not because the packet is damaged.
+
+---
+
+# What Happens After Packet Loss?
+
+Different applications react differently.
+
+---
+
+## Web Browsing
+
+Lost packets are retransmitted.
+
+The page loads slightly slower.
+
+---
+
+## Email
+
+Lost packets are retransmitted.
+
+The email still arrives correctly.
+
+---
+
+## Video Streaming
+
+Small losses may cause:
+
+- Reduced video quality
+- Buffering
+
+---
+
+## Voice Calls
+
+Packet loss may produce:
+
+- Broken audio
+- Missing words
+
+---
+
+## Online Gaming
+
+Packet loss causes:
+
+- Lag
+- Teleporting players
+- Delayed actions
+
+---
+
+# Congestion
+
+Now we arrive at another important concept.
+
+> **Congestion**
+
+Congestion occurs when:
+
+> **The network receives more traffic than it can efficiently handle.**
+
+Think of a highway during rush hour.
+
+---
+
+# Highway Analogy
+
+Normal traffic.
+
+```text
+🚗 🚗 🚗
+```
+
+Cars move freely.
+
+---
+
+Rush hour.
+
+```text
+🚗🚗🚗🚗🚗🚗🚗🚗🚗🚗
+```
+
+Traffic slows.
+
+Vehicles stop.
+
+Congestion occurs.
+
+The Internet experiences the same phenomenon.
+
+---
+
+# Causes of Congestion
+
+Congestion usually results from:
+
+- Too many users
+- Limited bandwidth
+- Large downloads
+- Video streaming
+- Software updates
+- Cloud backups
+
+---
+
+# Effects of Congestion
+
+Congestion produces several problems.
+
+## Longer Queueing Delay
+
+Packets wait longer.
+
+---
+
+## Buffer Overflow
+
+Queues become larger than available memory.
+
+---
+
+## Packet Loss
+
+Packets are dropped.
+
+---
+
+## Lower Throughput
+
+Users receive less useful data.
+
+---
+
+## Higher Latency
+
+Applications become slower.
+
+---
+
+# Complete Sequence
+
+Everything we have learned is connected.
+
+```text
+Many Packets Arrive
+
+↓
+
+Traffic Intensity Increases
+
+↓
+
+Queue Forms
+
+↓
+
+Queueing Delay Increases
+
+↓
+
+Buffer Becomes Full
+
+↓
+
+Packet Loss
+
+↓
+
+Congestion
+
+↓
+
+Poor Network Performance
+```
+
+---
+
+# Router Buffer Management
+
+Modern routers use different techniques to manage congestion.
+
+Examples include:
+
+- First-In, First-Out (FIFO)
+- Priority Queueing
+- Weighted Fair Queueing (WFQ)
+- Random Early Detection (RED)
+
+These techniques determine:
+
+- Which packet should be transmitted next.
+- Which packet should be dropped when buffers become full.
+
+We will study these techniques in later chapters.
+
+---
+
+# Relationship Between Traffic Intensity and Queueing Delay
+
+One of the most important graphs in networking shows:
+
+```text
+Queueing Delay
+       ▲
+       │
+       │
+       │
+       │
+       │
+       │
+       │
+       └────────────────────────►
+
+          Traffic Intensity (La/R)
+
+          0      0.5    0.8   0.9   1
+```
+
+Interpretation:
+
+- At low traffic intensity, Queueing Delay is almost zero.
+- As traffic intensity approaches 1, Queueing Delay increases rapidly.
+- Near full utilization, even small increases in traffic can produce very large delays.
+
+This is why networks often become slow **before** they become completely saturated.
+
+---
+
+# Key Takeaways
+
+- Queueing Delay occurs because packets wait in router buffers.
+- Buffers have limited capacity.
+- Traffic Intensity is measured by:
+
+```text
+La/R
+```
+
+- Low Traffic Intensity results in short queues.
+- High Traffic Intensity produces long queues.
+- When Traffic Intensity exceeds the transmission capacity for an extended period, buffers fill.
+- Full buffers cause Packet Loss.
+- Packet Loss and large Queueing Delays are symptoms of Congestion.
+- Congestion significantly degrades network performance.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Queue | Ordered list of packets waiting for transmission. |
+| Buffer | Temporary memory used by routers to store packets awaiting transmission. |
+| Queueing Delay (`d_queue`) | Time a packet waits in the buffer before transmission. |
+| Traffic Intensity (`La/R`) | Ratio comparing incoming traffic to the transmission capacity of a communication link. |
+| Packet Arrival Rate (`a`) | Average number of packets arriving per second. |
+| Packet Length (`L`) | Size of each packet measured in bits. |
+| Transmission Rate (`R`) | Maximum number of bits that can be transmitted per second. |
+| Buffer Overflow | Situation in which a router's buffer becomes completely full. |
+| Packet Loss | Discarding of packets because no buffer space is available. |
+| Congestion | Condition where network traffic exceeds available resources, leading to delays and packet loss. |
+| FIFO (First-In, First-Out) | Queue management strategy that transmits packets in the order they arrive. |
+| Weighted Fair Queueing (WFQ) | Queue scheduling algorithm that allocates bandwidth fairly among different traffic flows. |
+| Random Early Detection (RED) | Congestion avoidance algorithm that proactively drops or marks packets before the buffer becomes full. |
+
+---
+
+# Summary Diagram
+
+```text
+Packets Arrive
+      │
+      ▼
+Traffic Intensity (La/R)
+      │
+      ▼
+Queue Forms
+      │
+      ▼
+Queueing Delay Increases
+      │
+      ▼
+Buffer Fills
+      │
+      ▼
+Packet Loss
+      │
+      ▼
+Congestion
+      │
+      ▼
+Reduced Network Performance
+```
+
+---
+
+## End of Part 4D
+
+### Next Part (4E)
+
+In the next part, we will study:
+
+- **End-to-End Delay**
+- Multi-hop communication
+- Delay calculation across multiple routers
+- Mathematical formulas
+- Worked numerical examples from Kurose
+- Internet path analysis
+- Why long-distance communication takes more time
+- Technical vocabulary
+
+<ArticleNav
+  prev={{ title: "1.4 Delay, Loss, and Throughput (Part 4C)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4c" }}
+  next={null}
+/>
