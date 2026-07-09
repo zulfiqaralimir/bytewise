@@ -4,9 +4,9 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 # Processing Delay and Queueing Delay
 
-In the previous section, we learned that every packet experiences **Nodal Delay** whenever it reaches a router.
+In the previous section, we learned that every packet experiences <span style={{ color: "#38bdf8", fontWeight: 700 }}>Nodal Delay whenever it reaches a router.</span>
 
-Recall the equation:
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>Recall the equation:</span>
 
 ```text
 d_nodal
@@ -35,12 +35,12 @@ where:
 - `d_trans` = Transmission Delay
 - `d_prop` = Propagation Delay
 
-In this section, we will study the **first two components** in detail:
+In this section, <span style={{ color: "#f43f5e", fontWeight: 700 }}>we will study the first two components in detail:</span>
 
-- Processing Delay
-- Queueing Delay
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Processing Delay</span>
+- <span style={{ color: "#eab308", fontWeight: 700 }}>Queueing Delay</span>
 
-These delays occur **inside the router** before a packet is transmitted onto the next communication link.
+<span style={{ color: "#d946ef", fontWeight: 700 }}>These delays occur inside the router before a packet is transmitted onto the next communication link.</span>
 
 ---
 
@@ -129,21 +129,21 @@ Router
 
 The router examines the **header**, not the payload.
 
-The header contains important information such as:
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>The header contains important information such as:</span>
 
-- Source IP Address
-- Destination IP Address
-- Protocol Type
-- Time-to-Live (TTL)
-- Packet Length
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>Source IP Address</span>
+- <span style={{ color: "#fb7185", fontWeight: 700 }}>Destination IP Address</span>
+- <span style={{ color: "#c084fc", fontWeight: 700 }}>Protocol Type</span>
+- <span style={{ color: "#60a5fa", fontWeight: 700 }}>Time-to-Live (TTL)</span>
+- <span style={{ color: "#e879f9", fontWeight: 700 }}>Packet Length</span>
 
 ---
 
 ### Step 3 — Error Checking
 
-The router checks whether the packet has been corrupted during transmission.
+<span style={{ color: "#fde047", fontWeight: 700 }}>The router checks whether the packet has been corrupted during transmission.</span>
 
-This is usually done using error-detection fields such as a checksum.
+This is usually done using error-detection fields such as a <span style={{ color: "#fca5a5", fontWeight: 700 }}>checksum</span>.
 
 If the packet is corrupted:
 
@@ -179,13 +179,13 @@ After determining the outgoing link,
 
 the router prepares the packet for transmission.
 
-If the outgoing link is free,
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>If the outgoing link is free,</span>
 
-the packet proceeds immediately.
+<span style={{ color: "#fdba74", fontWeight: 700 }}>the packet proceeds immediately.</span>
 
-Otherwise,
+<span style={{ color: "#86efac", fontWeight: 700 }}>Otherwise,</span>
 
-it enters a queue.
+<span style={{ color: "#a5b4fc", fontWeight: 700 }}>it enters a queue.</span>
 
 ---
 
@@ -237,7 +237,7 @@ Microseconds
 
 In high-performance routers,
 
-Processing Delay is often negligible compared to other delays.
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>Processing Delay is often negligible compared to other delays.</span>
 
 ---
 
@@ -253,23 +253,23 @@ A faster processor examines packets more quickly.
 
 ## Router Architecture
 
-Specialized hardware such as ASICs (Application-Specific Integrated Circuits) can perform forwarding much faster than general-purpose CPUs.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>Specialized hardware such as ASICs (Application-Specific Integrated Circuits) can perform forwarding much faster than general-purpose CPUs.</span>
 
 ---
 
 ## Packet Complexity
 
-Certain packets require additional processing,
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>Certain packets require additional processing,</span>
 
-such as security checks or Quality of Service (QoS) decisions.
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>such as security checks or Quality of Service (QoS) decisions.</span>
 
 ---
 
 ## Routing Table Size
 
-Larger forwarding tables may require more sophisticated lookup algorithms,
+Larger forwarding tables may require more <span style={{ color: "#eab308", fontWeight: 700 }}>sophisticated lookup algorithms,</span>
 
-although modern routers optimize these operations efficiently.
+<span style={{ color: "#d946ef", fontWeight: 700 }}>although modern routers optimize these operations efficiently.</span>
 
 ---
 
@@ -335,9 +335,9 @@ Definition:
 
 > **Queueing Delay is the time a packet spends waiting in a router's buffer before it can be transmitted.**
 
-Unlike Processing Delay,
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Unlike Processing Delay,</span>
 
-Queueing Delay depends on network traffic.
+<span style={{ color: "#84cc16", fontWeight: 700 }}>Queueing Delay depends on network traffic.</span>
 
 ---
 
@@ -393,7 +393,7 @@ Packets waiting for transmission are stored in:
 
 Definition:
 
-> **A buffer is temporary memory used to store packets before transmission.**
+> <span style={{ color: "#fb7185", fontWeight: 700 }}>A buffer is temporary memory used to store packets before transmission.</span>
 
 Think of the buffer as the waiting room inside a router.
 
