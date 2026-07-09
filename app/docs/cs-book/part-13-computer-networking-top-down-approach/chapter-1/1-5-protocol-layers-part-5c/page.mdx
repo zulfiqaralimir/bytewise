@@ -1,0 +1,1060 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 1.5 Protocol Layers and Their Service Models (Part 5C)
+
+# Encapsulation and Decapsulation
+
+In the previous part, we learned about the **five layers of the Internet Protocol Stack**.
+
+We also learned that when data travels from the sender to the receiver, it passes through every layer.
+
+Now another important question arises.
+
+> **How does each layer add its own information without destroying the original data?**
+
+For example,
+
+Suppose you type:
+
+```text
+Hello
+```
+
+into WhatsApp.
+
+By the time this message reaches the Physical Layer, it contains much more than just the word:
+
+```text
+Hello
+```
+
+It now contains:
+
+- TCP information
+- IP information
+- Ethernet information
+- Error detection information
+
+How is all this information added?
+
+The answer is:
+
+> **Encapsulation**
+
+---
+
+# What Is Encapsulation?
+
+Definition:
+
+> **Encapsulation is the process of adding protocol information to data as it moves down the protocol stack from the Application Layer to the Physical Layer.**
+
+Notice the phrase:
+
+> **Adding protocol information**
+
+The original application data is **not replaced**.
+
+Instead,
+
+each layer **wraps** the data with its own control information.
+
+---
+
+# Real-Life Analogy
+
+Imagine sending a gift.
+
+First,
+
+you have the gift itself.
+
+```text
+Gift
+```
+
+Now you wrap it.
+
+```text
+Gift
+
+↓
+
+Gift Box
+```
+
+Next,
+
+you place the box inside another package.
+
+```text
+Gift Box
+
+↓
+
+Shipping Box
+```
+
+Finally,
+
+you attach:
+
+- Address
+- Tracking Number
+- Shipping Label
+
+The gift is still inside.
+
+Nothing has been removed.
+
+Instead,
+
+additional information has been added.
+
+Networking works exactly the same way.
+
+---
+
+# Another Analogy
+
+Think about mailing a letter.
+
+Step 1:
+
+Write the letter.
+
+```text
+Letter
+```
+
+Step 2:
+
+Place it inside an envelope.
+
+```text
+Envelope
+
+↓
+
+Letter
+```
+
+Step 3:
+
+Write:
+
+- Destination Address
+- Return Address
+- Postal Code
+
+The original letter remains unchanged.
+
+Similarly,
+
+network layers keep adding information around the original message.
+
+---
+
+# Why Is Encapsulation Necessary?
+
+Each layer performs a different task.
+
+Therefore,
+
+each layer needs different information.
+
+Example:
+
+The Transport Layer needs:
+
+- Port Numbers
+
+The Network Layer needs:
+
+- IP Addresses
+
+The Link Layer needs:
+
+- MAC Addresses
+
+Instead of mixing everything together,
+
+each layer adds only the information it requires.
+
+---
+
+# Header
+
+The information added by a layer is called a:
+
+> **Header**
+
+Definition:
+
+> **A Header is control information added to data by a protocol layer.**
+
+Headers tell the receiving device how to process the data.
+
+---
+
+# Payload
+
+The original data carried inside the header is called the:
+
+> **Payload**
+
+Definition:
+
+> **Payload is the actual data being carried by a protocol.**
+
+For example,
+
+At the Transport Layer:
+
+```text
+Application Message
+```
+
+becomes the payload.
+
+---
+
+# Header + Payload
+
+Every protocol data unit generally consists of:
+
+```text
+Header
+
++
+
+Payload
+```
+
+Visual representation:
+
+```text
++-------------------+--------------------+
+
+Header
+
+Payload
+
++-------------------+--------------------+
+```
+
+---
+
+# Encapsulation Begins
+
+Suppose an application creates:
+
+```text
+Hello World
+```
+
+Initially,
+
+this is simply:
+
+```text
+Message
+```
+
+No networking information has been added yet.
+
+---
+
+# Step 1 — Application Layer
+
+The Application Layer creates:
+
+```text
+Message
+
+↓
+
+Hello World
+```
+
+The message is passed downward.
+
+---
+
+# Step 2 — Transport Layer
+
+The Transport Layer adds:
+
+- Source Port
+- Destination Port
+- Sequence Number (TCP)
+- Other transport information
+
+Now the data becomes:
+
+```text
++----------------------+
+
+TCP Header
+
++----------------------+
+
+Hello World
+```
+
+This complete unit is called a:
+
+> **Segment**
+
+---
+
+# Step 3 — Network Layer
+
+The Network Layer adds:
+
+- Source IP Address
+- Destination IP Address
+- TTL
+- Protocol Field
+
+Now we have:
+
+```text
++----------------------+
+
+IP Header
+
++----------------------+
+
+TCP Header
+
+Hello World
+```
+
+This becomes a:
+
+> **Packet**
+
+or
+
+> **Datagram**
+
+---
+
+# Step 4 — Link Layer
+
+The Link Layer adds:
+
+- Source MAC Address
+- Destination MAC Address
+- Frame Check Sequence (FCS)
+
+Now we obtain:
+
+```text
++----------------------+
+
+Ethernet Header
+
++----------------------+
+
+IP Header
+
+TCP Header
+
+Hello World
+
++----------------------+
+
+Trailer
+```
+
+This becomes a:
+
+> **Frame**
+
+Notice something new.
+
+The Link Layer usually adds:
+
+- Header
+- Trailer
+
+The trailer often contains error-detection information such as a Frame Check Sequence (FCS).
+
+---
+
+# Step 5 — Physical Layer
+
+The Physical Layer does not add another header.
+
+Instead,
+
+it converts the entire frame into:
+
+```text
+0
+
+1
+
+1
+
+0
+
+0
+
+1
+
+1
+
+0
+
+...
+```
+
+These bits become:
+
+- Electrical signals
+- Optical signals
+- Radio waves
+
+depending on the communication medium.
+
+---
+
+# Complete Encapsulation Process
+
+```text
+Application Layer
+
+Message
+
+↓
+
+Transport Layer
+
+TCP Header
+
++
+
+Message
+
+↓
+
+Network Layer
+
+IP Header
+
++
+
+TCP Header
+
++
+
+Message
+
+↓
+
+Link Layer
+
+Ethernet Header
+
++
+
+IP Header
+
++
+
+TCP Header
+
++
+
+Message
+
++
+
+Trailer
+
+↓
+
+Physical Layer
+
+Bits
+```
+
+Notice:
+
+Each lower layer **treats everything it receives from the layer above as its payload**.
+
+---
+
+# Visualizing Encapsulation
+
+```text
+Application Data
+
+↓
+
+[TCP Header]
+
+↓
+
+[IP Header]
+
+[TCP Header]
+
+↓
+
+[Ethernet Header]
+
+[IP Header]
+
+[TCP Header]
+
+↓
+
+Bits
+```
+
+Every layer wraps the previous layer.
+
+This is why the process is called:
+
+> **Encapsulation**
+
+---
+
+# Why Is This Design Useful?
+
+Suppose engineers improve TCP.
+
+Only the Transport Layer changes.
+
+The Network Layer continues working normally.
+
+Similarly,
+
+suppose IPv6 replaces IPv4.
+
+The Application Layer remains unchanged.
+
+Layer independence makes networking flexible.
+
+---
+
+# Decapsulation
+
+Now let's look at the receiving computer.
+
+The receiver gets:
+
+```text
+Bits
+```
+
+Question:
+
+How does the receiver recover:
+
+```text
+Hello World
+```
+
+The answer is:
+
+> **Decapsulation**
+
+---
+
+# What Is Decapsulation?
+
+Definition:
+
+> **Decapsulation is the process of removing protocol headers and trailers as data moves upward through the protocol stack at the receiving device.**
+
+Notice:
+
+Encapsulation:
+
+```text
+Add Information
+```
+
+Decapsulation:
+
+```text
+Remove Information
+```
+
+---
+
+# Step 1 — Physical Layer
+
+The receiver obtains:
+
+```text
+Bits
+```
+
+These bits are converted back into:
+
+```text
+Frame
+```
+
+The frame moves upward.
+
+---
+
+# Step 2 — Link Layer
+
+The Link Layer:
+
+- Checks the Frame Check Sequence.
+- Verifies the frame.
+- Removes the Ethernet Header.
+- Removes the Trailer.
+
+Remaining data:
+
+```text
+IP Header
+
+TCP Header
+
+Message
+```
+
+This is passed upward.
+
+---
+
+# Step 3 — Network Layer
+
+The Network Layer examines:
+
+- Destination IP Address
+- TTL
+- Other IP fields
+
+After processing,
+
+it removes the IP Header.
+
+Remaining data:
+
+```text
+TCP Header
+
+Message
+```
+
+Passed upward.
+
+---
+
+# Step 4 — Transport Layer
+
+The Transport Layer examines:
+
+- Port Numbers
+- Sequence Numbers
+- Acknowledgment Numbers
+
+After processing,
+
+it removes the TCP Header.
+
+Remaining data:
+
+```text
+Hello World
+```
+
+---
+
+# Step 5 — Application Layer
+
+Finally,
+
+the original application receives:
+
+```text
+Hello World
+```
+
+Exactly the same message created by the sender.
+
+---
+
+# Complete Decapsulation Process
+
+```text
+Bits
+
+↓
+
+Frame
+
+↓
+
+Remove Ethernet Header
+
+↓
+
+Packet
+
+↓
+
+Remove IP Header
+
+↓
+
+Segment
+
+↓
+
+Remove TCP Header
+
+↓
+
+Message
+
+↓
+
+Application
+```
+
+The reverse of encapsulation.
+
+---
+
+# Encapsulation vs Decapsulation
+
+| Encapsulation | Decapsulation |
+|---------------|---------------|
+| Sender Side | Receiver Side |
+| Adds Headers | Removes Headers |
+| Moves Down the Stack | Moves Up the Stack |
+| Creates Frames and Packets | Extracts Original Message |
+
+---
+
+# Header vs Payload
+
+One of the most important concepts in networking.
+
+Suppose we have:
+
+```text
+TCP Header
+
++
+
+Application Message
+```
+
+For TCP:
+
+```text
+TCP Header
+
+↓
+
+Header
+
+Application Message
+
+↓
+
+Payload
+```
+
+Now this entire segment reaches the Network Layer.
+
+For IP:
+
+```text
+IP Header
+
+↓
+
+Header
+
+Entire TCP Segment
+
+↓
+
+Payload
+```
+
+Notice:
+
+The **entire Transport Layer segment becomes the payload of the Network Layer**.
+
+Every layer treats the data received from the layer above as its payload.
+
+---
+
+# Nested Boxes Analogy
+
+Imagine a set of nested gift boxes.
+
+```text
+Small Box
+
+↓
+
+Medium Box
+
+↓
+
+Large Box
+
+↓
+
+Shipping Carton
+```
+
+To reach the smallest gift,
+
+you remove one box at a time.
+
+Networking works exactly the same way.
+
+---
+
+# Complete Communication Example
+
+Suppose you send:
+
+```text
+Hi
+```
+
+Sender:
+
+```text
+Application
+
+↓
+
+Hi
+
+↓
+
+TCP Header Added
+
+↓
+
+IP Header Added
+
+↓
+
+Ethernet Header Added
+
+↓
+
+Bits
+```
+
+Receiver:
+
+```text
+Bits
+
+↓
+
+Remove Ethernet Header
+
+↓
+
+Remove IP Header
+
+↓
+
+Remove TCP Header
+
+↓
+
+Hi
+```
+
+The original message is recovered.
+
+---
+
+# Why Is Encapsulation Important?
+
+Without encapsulation,
+
+every protocol would need to understand every other protocol.
+
+Instead,
+
+each protocol handles only its own header.
+
+This keeps networking:
+
+- Modular
+- Organized
+- Scalable
+- Easier to maintain
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> Encapsulation changes the original application data.
+
+Incorrect.
+
+The original data remains unchanged.
+
+Headers are added around it.
+
+---
+
+## Misconception 2
+
+> Every layer understands every protocol.
+
+Incorrect.
+
+Each layer processes only its own header.
+
+---
+
+## Misconception 3
+
+> The Physical Layer adds another header.
+
+Incorrect.
+
+The Physical Layer transmits bits.
+
+It does not add protocol headers.
+
+---
+
+## Misconception 4
+
+> Headers remain forever.
+
+Incorrect.
+
+Each receiving layer removes its corresponding header during decapsulation.
+
+---
+
+# Key Takeaways
+
+- Encapsulation adds protocol information as data moves downward.
+- Decapsulation removes protocol information as data moves upward.
+- Every layer adds its own header.
+- The Link Layer often adds both a header and a trailer.
+- The original application data becomes the payload for lower layers.
+- Layered encapsulation makes networking modular and standardized.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Encapsulation | Process of adding protocol headers (and sometimes trailers) as data moves down the protocol stack. |
+| Decapsulation | Process of removing protocol headers and trailers as data moves up the protocol stack. |
+| Header | Control information added by a protocol layer. |
+| Payload | Actual data carried by a protocol data unit. |
+| Trailer | Control information added at the end of a frame, commonly used for error detection. |
+| Protocol Data Unit (PDU) | Data unit exchanged by a specific protocol layer. |
+| Frame Check Sequence (FCS) | Error-detection field typically stored in the Link Layer trailer. |
+| Segment | Transport Layer PDU. |
+| Packet (Datagram) | Network Layer PDU. |
+| Frame | Link Layer PDU. |
+
+---
+
+# Summary Diagram
+
+```text
+SENDER
+
+Application
+    │
+    ▼
+Message
+    │
+    ▼
++ TCP Header
+    │
+    ▼
+Segment
+    │
+    ▼
++ IP Header
+    │
+    ▼
+Packet
+    │
+    ▼
++ Ethernet Header
++ Trailer
+    │
+    ▼
+Frame
+    │
+    ▼
+Bits
+═══════════════════════════════
+Network
+═══════════════════════════════
+Bits
+    │
+    ▼
+Frame
+    │
+    ▼
+Remove Ethernet Header & Trailer
+    │
+    ▼
+Packet
+    │
+    ▼
+Remove IP Header
+    │
+    ▼
+Segment
+    │
+    ▼
+Remove TCP Header
+    │
+    ▼
+Message
+    │
+    ▼
+RECEIVER APPLICATION
+```
+
+---
+
+## End of Part 5C
+
+### Next Part (5D)
+
+In the next part, we will study:
+
+- **OSI Reference Model (7-Layer Model)**
+- Comparison between the Internet Protocol Stack and the OSI Model
+- Why the Internet uses the TCP/IP model instead of OSI
+- Advantages and disadvantages of layered architectures
+- Service Models
+- Complete comparison tables
+- Technical vocabulary
+
+<ArticleNav
+  prev={{ title: "1.5 Protocol Layers and Their Service Models (Part 5B)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5b" }}
+  next={{ title: "1.5 Protocol Layers and Their Service Models (Part 5D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5d" }}
+/>
