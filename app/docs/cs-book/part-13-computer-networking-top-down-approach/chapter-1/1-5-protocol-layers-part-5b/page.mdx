@@ -2,7 +2,7 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 # Section 1.5 Protocol Layers and Their Service Models (Part 5B)
 
-# The Internet Protocol Stack (Five-Layer Model)
+# <span style={{ color: "#38bdf8", fontWeight: 700 }}>The Internet Protocol Stack (Five-Layer Model)</span>
 
 In the previous part, we learned **why networking is divided into layers**.
 
@@ -10,12 +10,12 @@ Now another important question arises.
 
 > **How many layers does the Internet actually use?**
 
-There are two famous networking models:
+There are <span style={{ color: "#fbbf24", fontWeight: 700 }}>two famous networking models:</span>
 
-- The **Internet Protocol Stack (5-layer model)** (used in Kurose)
-- The **OSI Reference Model (7-layer model)**
+- The <span style={{ color: "#f43f5e", fontWeight: 700 }}>Internet Protocol Stack (5-layer model) (used in Kurose)</span>
+- The <span style={{ color: "#14b8a6", fontWeight: 700 }}>OSI Reference Model (7-layer model)</span>
 
-In this chapter, Kurose first explains the **Internet Protocol Stack**, because it represents how the Internet actually works.
+In this chapter, Kurose first explains the **Internet Protocol Stack**, because <span style={{ color: "#eab308", fontWeight: 700 }}>it represents how the Internet actually works.</span>
 
 Later, we will compare it with the OSI model.
 
@@ -27,15 +27,15 @@ Definition:
 
 > **A Protocol Stack is a collection of protocol layers that work together to provide end-to-end communication between networked devices.**
 
-Each layer:
+<span style={{ color: "#d946ef", fontWeight: 700 }}>Each layer:</span>
 
-- Performs a specific task.
-- Uses services from the layer below.
-- Provides services to the layer above.
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>Performs a specific task.</span>
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>Uses services from the layer below.</span>
+- <span style={{ color: "#fb7185", fontWeight: 700 }}>Provides services to the layer above.</span>
 
-Together,
+<span style={{ color: "#c084fc", fontWeight: 700 }}>Together,</span>
 
-all layers enable complete communication.
+<span style={{ color: "#60a5fa", fontWeight: 700 }}>all layers enable complete communication.</span>
 
 ---
 
@@ -43,27 +43,15 @@ all layers enable complete communication.
 
 The Internet Protocol Stack consists of **five layers**.
 
-```text
-+-----------------------------+
-|     Application Layer       |
-+-----------------------------+
-|      Transport Layer        |
-+-----------------------------+
-|       Network Layer         |
-+-----------------------------+
-|         Link Layer          |
-+-----------------------------+
-|      Physical Layer         |
-+-----------------------------+
-```
+<pre style={{ background: "#374151", color: "#cdd6f4", padding: "1.5rem", borderRadius: "0.5rem", overflowX: "auto", marginBottom: "1.5rem" }}><code style={{ background: "none", color: "inherit", padding: 0, fontSize: "0.875rem" }}>{"+-----------------------------+\n|     "}<span style={{ color: "#e879f9", fontWeight: 700 }}>Application Layer</span>{"       |\n+-----------------------------+\n|      "}<span style={{ color: "#fde047", fontWeight: 700 }}>Transport Layer</span>{"        |\n+-----------------------------+\n|       "}<span style={{ color: "#fca5a5", fontWeight: 700 }}>Network Layer</span>{"         |\n+-----------------------------+\n|         "}<span style={{ color: "#93c5fd", fontWeight: 700 }}>Link Layer</span>{"          |\n+-----------------------------+\n|      "}<span style={{ color: "#fdba74", fontWeight: 700 }}>Physical Layer</span>{"         |\n+-----------------------------+"}</code></pre>
 
 This is one of the most important diagrams in computer networking.
 
-You should memorize it.
+You should <span style={{ color: "#86efac", fontWeight: 700 }}>memorize it.</span>
 
 ---
 
-# Understanding the Layer Order
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Understanding the Layer Order</span>
 
 Notice the order carefully.
 
