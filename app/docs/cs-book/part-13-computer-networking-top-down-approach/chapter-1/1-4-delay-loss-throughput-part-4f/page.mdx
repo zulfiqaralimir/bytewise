@@ -1,0 +1,1223 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+# Section 1.4 Delay, Loss, and Throughput in Packet-Switched Networks (Part 4F)
+
+# Throughput in Computer Networks
+
+So far in this section, we have learned about:
+
+- Processing Delay
+- Queueing Delay
+- Transmission Delay
+- Propagation Delay
+- End-to-End Delay
+- Packet Loss
+- Congestion
+
+Now another important question arises.
+
+> **Even if packets successfully reach their destination, how much data can actually be delivered every second?**
+
+This introduces one of the most important performance metrics in networking:
+
+> **Throughput**
+
+---
+
+# What Is Throughput?
+
+Definition:
+
+> **Throughput is the rate at which data is successfully delivered from the sender to the receiver over a network.**
+
+In simple words,
+
+Throughput answers the question:
+
+> **How much useful data reaches the destination every second?**
+
+---
+
+# Real-Life Analogy
+
+Imagine a water pipeline.
+
+The pipe has a maximum capacity.
+
+```text
+Water Tank
+
+↓
+
+Pipe
+
+↓
+
+House
+```
+
+Question:
+
+How many liters of water reach your house every second?
+
+That is similar to:
+
+> Throughput
+
+---
+
+# Another Analogy
+
+Imagine a highway.
+
+Suppose:
+
+```text
+500 Cars
+```
+
+successfully pass through every hour.
+
+The highway throughput is:
+
+```text
+500 Cars/Hour
+```
+
+Similarly,
+
+network throughput measures:
+
+```text
+Bits/Second
+```
+
+or
+
+```text
+Bytes/Second
+```
+
+---
+
+# Units of Throughput
+
+Throughput is commonly measured in:
+
+```text
+bits/second (bps)
+```
+
+Examples:
+
+```text
+1 Kbps
+
+1 Mbps
+
+100 Mbps
+
+1 Gbps
+
+10 Gbps
+```
+
+Sometimes,
+
+applications display:
+
+```text
+MB/s
+
+(Megabytes per second)
+```
+
+Remember:
+
+```text
+1 Byte = 8 Bits
+```
+
+---
+
+# Throughput vs Transmission Rate
+
+Many beginners think these two terms mean the same thing.
+
+They do not.
+
+---
+
+## Transmission Rate
+
+Transmission Rate is:
+
+> **The maximum capacity of a communication link.**
+
+Example:
+
+```text
+100 Mbps Fiber Link
+```
+
+---
+
+## Throughput
+
+Throughput is:
+
+> **The actual amount of useful data successfully delivered.**
+
+Example:
+
+```text
+Actual Download Speed
+
+↓
+
+65 Mbps
+```
+
+Even though the link supports:
+
+```text
+100 Mbps
+```
+
+---
+
+# Why Are They Different?
+
+Because many factors reduce throughput.
+
+Examples:
+
+- Network congestion
+- Packet loss
+- Protocol overhead
+- Shared bandwidth
+- Slow routers
+- Bottleneck links
+
+---
+
+# Example
+
+Suppose your ISP advertises:
+
+```text
+100 Mbps Internet
+```
+
+During a busy evening,
+
+your download speed becomes:
+
+```text
+40 Mbps
+```
+
+Here:
+
+Transmission Rate:
+
+```text
+100 Mbps
+```
+
+Throughput:
+
+```text
+40 Mbps
+```
+
+---
+
+# Instantaneous Throughput
+
+Definition:
+
+> **The rate at which data is delivered at a specific instant in time.**
+
+Imagine downloading a file.
+
+Download speed may change continuously.
+
+Example:
+
+```text
+10 Mbps
+
+↓
+
+25 Mbps
+
+↓
+
+80 Mbps
+
+↓
+
+60 Mbps
+```
+
+These changing values represent:
+
+Instantaneous Throughput.
+
+---
+
+# Real-Life Analogy
+
+Imagine driving a car.
+
+Your speedometer shows:
+
+```text
+40 km/h
+
+↓
+
+60 km/h
+
+↓
+
+80 km/h
+
+↓
+
+50 km/h
+```
+
+The speed changes continuously.
+
+Similarly,
+
+Instantaneous Throughput changes continuously.
+
+---
+
+# Average Throughput
+
+Definition:
+
+> **Average Throughput is the total amount of successfully delivered data divided by the total transfer time.**
+
+Formula:
+
+```text
+Average Throughput
+
+=
+
+Total Data Delivered
+
+/
+
+Total Transfer Time
+```
+
+---
+
+# Example
+
+Suppose:
+
+You download:
+
+```text
+500 MB
+```
+
+Time taken:
+
+```text
+50 seconds
+```
+
+Average Throughput:
+
+```text
+500 MB
+
+/
+
+50 s
+
+=
+
+10 MB/s
+```
+
+Convert to bits:
+
+```text
+10 MB/s
+
+=
+
+80 Mbps
+```
+
+---
+
+# Example 2
+
+Suppose:
+
+File Size:
+
+```text
+2 GB
+```
+
+Download Time:
+
+```text
+100 seconds
+```
+
+Average Throughput:
+
+```text
+2 GB
+
+/
+
+100
+
+=
+
+20 MB/s
+```
+
+---
+
+# Throughput Depends on the Entire Path
+
+One important observation:
+
+A packet travels through many communication links.
+
+Example:
+
+```text
+Laptop
+
+↓
+
+WiFi
+
+↓
+
+Home Router
+
+↓
+
+ISP
+
+↓
+
+Backbone
+
+↓
+
+Google
+```
+
+Every communication link has its own bandwidth.
+
+The overall throughput depends on **all of them**.
+
+---
+
+# Bottleneck Link
+
+Suppose your communication path contains:
+
+```text
+100 Mbps
+
+↓
+
+50 Mbps
+
+↓
+
+10 Mbps
+
+↓
+
+200 Mbps
+```
+
+Question:
+
+What is the maximum possible throughput?
+
+Many beginners answer:
+
+```text
+200 Mbps
+```
+
+This is incorrect.
+
+The correct answer is:
+
+```text
+10 Mbps
+```
+
+---
+
+# Why?
+
+Imagine a factory.
+
+Stage 1:
+
+```text
+100 Boxes/Hour
+```
+
+Stage 2:
+
+```text
+80 Boxes/Hour
+```
+
+Stage 3:
+
+```text
+20 Boxes/Hour
+```
+
+Question:
+
+How many finished boxes leave the factory every hour?
+
+Answer:
+
+```text
+20
+```
+
+Because Stage 3 is the slowest.
+
+Networking works exactly the same way.
+
+---
+
+# Definition
+
+The slowest communication link along a path is called the:
+
+> **Bottleneck Link**
+
+Definition:
+
+> **A Bottleneck Link is the communication link with the lowest transmission capacity along an end-to-end path.**
+
+---
+
+# Visual Example
+
+```text
+Computer
+
+↓
+
+100 Mbps
+
+↓
+
+Router
+
+↓
+
+50 Mbps
+
+↓
+
+Router
+
+↓
+
+20 Mbps
+
+↓
+
+Server
+```
+
+Maximum Throughput:
+
+```text
+20 Mbps
+```
+
+---
+
+# Why Is It Called a Bottleneck?
+
+Imagine pouring water through bottles.
+
+```text
+Large Bottle
+
+↓
+
+Small Neck
+
+↓
+
+Large Bottle
+```
+
+The narrow neck limits the water flow.
+
+Similarly,
+
+the slowest communication link limits data flow.
+
+---
+
+# End-to-End Throughput
+
+Suppose a packet travels through:
+
+```text
+100 Mbps
+
+↓
+
+80 Mbps
+
+↓
+
+60 Mbps
+
+↓
+
+20 Mbps
+```
+
+Overall Throughput:
+
+```text
+20 Mbps
+```
+
+Even though other links are faster.
+
+---
+
+# Shared Links Reduce Throughput
+
+Suppose one communication link supports:
+
+```text
+100 Mbps
+```
+
+Only one user:
+
+```text
+100 Mbps
+```
+
+available.
+
+---
+
+Now suppose:
+
+Ten users share the same link.
+
+Maximum average bandwidth per user becomes approximately:
+
+```text
+10 Mbps
+```
+
+assuming fair sharing.
+
+---
+
+# Congestion Reduces Throughput
+
+During congestion,
+
+packets are:
+
+- Delayed
+- Dropped
+- Retransmitted
+
+This reduces the amount of useful data reaching the destination.
+
+Therefore,
+
+Throughput decreases.
+
+---
+
+# Packet Loss and Throughput
+
+Suppose:
+
+100 packets are transmitted.
+
+Only:
+
+```text
+90 packets
+```
+
+reach the destination.
+
+The remaining:
+
+```text
+10 packets
+```
+
+must be retransmitted.
+
+Network resources are wasted.
+
+Effective Throughput decreases.
+
+---
+
+# Throughput vs Delay
+
+Many students confuse these concepts.
+
+---
+
+## Delay
+
+Measures:
+
+```text
+Time
+```
+
+Question:
+
+How long does a packet take to arrive?
+
+---
+
+## Throughput
+
+Measures:
+
+```text
+Rate
+```
+
+Question:
+
+How much data arrives every second?
+
+---
+
+# Example
+
+Imagine a truck.
+
+Delay asks:
+
+```text
+How long until the truck arrives?
+```
+
+Throughput asks:
+
+```text
+How many boxes does the truck deliver every hour?
+```
+
+These are different questions.
+
+---
+
+# Numerical Example
+
+Suppose communication path:
+
+```text
+Link 1
+
+100 Mbps
+```
+
+↓
+
+```text
+Link 2
+
+40 Mbps
+```
+
+↓
+
+```text
+Link 3
+
+60 Mbps
+```
+
+↓
+
+Server
+
+Maximum Throughput:
+
+```text
+40 Mbps
+```
+
+Because Link 2 is the bottleneck.
+
+---
+
+# Another Example
+
+Suppose:
+
+A file size:
+
+```text
+800 MB
+```
+
+Download completes in:
+
+```text
+80 seconds
+```
+
+Average Throughput:
+
+```text
+800 MB
+
+/
+
+80
+
+=
+
+10 MB/s
+```
+
+Convert:
+
+```text
+10 MB/s
+
+=
+
+80 Mbps
+```
+
+---
+
+# Internet Speed Test
+
+When you run a speed test,
+
+the reported value is essentially measuring:
+
+> Approximate Throughput
+
+Not necessarily the maximum bandwidth supported by every communication link.
+
+---
+
+# Relationship Between Bandwidth and Throughput
+
+Higher bandwidth often allows higher throughput,
+
+but it does **not guarantee** it.
+
+Because throughput also depends on:
+
+- Congestion
+- Packet loss
+- Bottleneck links
+- Router performance
+- Protocol overhead
+
+---
+
+# Throughput in Different Applications
+
+## Web Browsing
+
+Moderate throughput is usually sufficient.
+
+---
+
+## Video Streaming
+
+High throughput is required.
+
+Higher video quality requires higher throughput.
+
+---
+
+## Cloud Backup
+
+Very high throughput reduces upload time.
+
+---
+
+## Online Gaming
+
+Games often require:
+
+- Low delay
+- Moderate throughput
+
+Delay is usually more important than extremely high throughput.
+
+---
+
+## Video Conferencing
+
+Requires:
+
+- Stable throughput
+- Low delay
+- Low packet loss
+
+---
+
+# Delay and Throughput Together
+
+Good network performance requires both.
+
+Example:
+
+High Throughput
+
++
+
+Very High Delay
+
+↓
+
+Poor gaming experience.
+
+---
+
+Low Delay
+
++
+
+Very Low Throughput
+
+↓
+
+Slow file downloads.
+
+---
+
+Ideal Network
+
+↓
+
+High Throughput
+
++
+
+Low Delay
+
++
+
+Low Packet Loss
+
+---
+
+# Complete Performance Picture
+
+A packet travels like this.
+
+```text
+Source
+
+↓
+
+Processing Delay
+
+↓
+
+Queueing Delay
+
+↓
+
+Transmission Delay
+
+↓
+
+Propagation Delay
+
+↓
+
+Router
+
+↓
+
+Repeat
+
+↓
+
+Destination
+
+↓
+
+Useful Data Delivered
+
+↓
+
+Throughput Measured
+```
+
+Delay determines:
+
+```text
+How long
+```
+
+Throughput determines:
+
+```text
+How much
+```
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> Bandwidth and Throughput are the same.
+
+Incorrect.
+
+Bandwidth is capacity.
+
+Throughput is actual achieved performance.
+
+---
+
+## Misconception 2
+
+> Fast Internet means zero delay.
+
+Incorrect.
+
+Delay always exists.
+
+---
+
+## Misconception 3
+
+> The fastest link determines throughput.
+
+Incorrect.
+
+The **slowest link (Bottleneck Link)** determines throughput.
+
+---
+
+## Misconception 4
+
+> Higher bandwidth always increases throughput.
+
+Incorrect.
+
+Congestion and packet loss may still reduce throughput.
+
+---
+
+# Section 1.4 Summary
+
+Throughout this section, we studied the major factors affecting network performance.
+
+## Delay
+
+The time required for a packet to travel through the network.
+
+It consists of:
+
+- Processing Delay
+- Queueing Delay
+- Transmission Delay
+- Propagation Delay
+
+---
+
+## Packet Loss
+
+Occurs when:
+
+- Router buffers become full.
+- Packets are discarded.
+
+Usually caused by congestion.
+
+---
+
+## Throughput
+
+Measures:
+
+The rate at which useful data is successfully delivered.
+
+Affected by:
+
+- Bandwidth
+- Congestion
+- Bottleneck Links
+- Packet Loss
+
+---
+
+# Big Picture of Network Performance
+
+```text
+Packet Created
+        │
+        ▼
+Processing Delay
+        │
+        ▼
+Queueing Delay
+        │
+        ▼
+Transmission Delay
+        │
+        ▼
+Propagation Delay
+        │
+        ▼
+Next Router
+        │
+        ▼
+Repeat Across Network
+        │
+        ▼
+Destination Receives Data
+        │
+        ▼
+Measure Throughput
+```
+
+---
+
+# Key Takeaways
+
+- Throughput measures the rate of successful data delivery.
+- Transmission Rate and Throughput are different concepts.
+- Instantaneous Throughput changes over time.
+- Average Throughput measures long-term performance.
+- The Bottleneck Link determines the maximum End-to-End Throughput.
+- Congestion and Packet Loss reduce Throughput.
+- Good network performance requires:
+  - Low Delay
+  - Low Packet Loss
+  - High Throughput
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Throughput | Rate at which useful data is successfully delivered from source to destination. |
+| Instantaneous Throughput | Data transfer rate measured at a specific moment in time. |
+| Average Throughput | Total successfully delivered data divided by the total transfer time. |
+| Transmission Rate | Maximum capacity of a communication link measured in bits per second. |
+| Bottleneck Link | Communication link with the smallest transmission capacity along an end-to-end path. |
+| End-to-End Throughput | Maximum achievable throughput across the complete communication path, limited by the bottleneck link. |
+| Network Capacity | Maximum amount of data a network can carry per unit time. |
+| Congestion | Condition where network traffic exceeds available resources, causing delays and packet loss. |
+| Packet Retransmission | Sending a packet again after it is lost or corrupted. |
+| Bandwidth | Maximum theoretical data transfer capacity of a communication link. |
+
+---
+
+# Final Summary Diagram
+
+```text
+                 Network Performance
+
+                          │
+     ┌────────────────────┼────────────────────┐
+     │                    │                    │
+     ▼                    ▼                    ▼
+  Delay               Packet Loss         Throughput
+     │                    │                    │
+     ▼                    ▼                    ▼
+Processing          Buffer Overflow     Instantaneous
+Queueing            Congestion          Average
+Transmission        Packet Drop         Bottleneck Link
+Propagation                            End-to-End Throughput
+```
+
+---
+
+# Complete Summary of Section 1.4
+
+You have now learned:
+
+- ✅ What Network Delay is
+- ✅ Nodal Delay
+- ✅ Processing Delay (`d_proc`)
+- ✅ Queueing Delay (`d_queue`)
+- ✅ Transmission Delay (`d_trans`)
+- ✅ Propagation Delay (`d_prop`)
+- ✅ Traffic Intensity (`La/R`)
+- ✅ Queueing Analysis
+- ✅ Packet Loss
+- ✅ Congestion
+- ✅ End-to-End Delay
+- ✅ Throughput
+- ✅ Instantaneous Throughput
+- ✅ Average Throughput
+- ✅ Bottleneck Link
+- ✅ Relationship Between Delay, Loss, and Throughput
+
+You now have a complete understanding of **Section 1.4**, which forms the foundation for later chapters on TCP, routing, congestion control, and network performance analysis.
+
+---
+
+## Next Section (1.5)
+
+**Protocol Layers and Their Service Models**
+
+In the next section, we will explore:
+
+- Why networking is organized into layers
+- The concept of abstraction
+- Layered architecture
+- Protocol stacks
+- The Internet Protocol Stack (5-layer model)
+- OSI 7-layer model
+- Encapsulation and Decapsulation
+- Service models
+- Advantages and disadvantages of layering
+- Real-world examples and diagrams
+
+<ArticleNav
+  prev={{ title: "1.4 Delay, Loss, and Throughput (Part 4E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4e" }}
+  next={null}
+/>
