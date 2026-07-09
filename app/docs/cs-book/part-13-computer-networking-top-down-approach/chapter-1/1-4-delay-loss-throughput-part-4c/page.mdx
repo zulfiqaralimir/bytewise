@@ -1,0 +1,894 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+# Section 1.4 Delay, Loss, and Throughput in Packet-Switched Networks (Part 4C)
+
+# Transmission Delay and Propagation Delay
+
+In the previous part, we studied:
+
+- Processing Delay (`d_proc`)
+- Queueing Delay (`d_queue`)
+
+Both of these delays occur **inside a router**.
+
+Now we will study the remaining two delays:
+
+- Transmission Delay (`d_trans`)
+- Propagation Delay (`d_prop`)
+
+These two delays occur **after the router has decided to forward the packet**.
+
+Although they sound similar, they represent **completely different concepts**. Many beginners confuse them, so understanding the difference is extremely important.
+
+---
+
+# Where Are We in the Packet Journey?
+
+Let's revisit the complete journey of a packet through a router.
+
+```text
+Packet Arrives
+        │
+        ▼
+Processing Delay
+        │
+        ▼
+Queueing Delay
+        │
+        ▼
+Transmission Delay
+        │
+        ▼
+Propagation Delay
+        │
+        ▼
+Next Router
+```
+
+The first two delays occur **inside the router**.
+
+The last two delays occur **while the packet leaves the router and travels across the communication link**.
+
+---
+
+# Understanding the Difference First
+
+Before studying each delay individually, let's understand the big picture.
+
+Imagine you are sending a train through a tunnel.
+
+There are two different questions:
+
+### Question 1
+
+> How long does it take for the **entire train to enter the tunnel?**
+
+This corresponds to:
+
+> **Transmission Delay**
+
+---
+
+### Question 2
+
+> After the train has entered the tunnel, how long does it take for the front of the train to reach the other side?
+
+This corresponds to:
+
+> **Propagation Delay**
+
+Notice:
+
+These are two different times.
+
+Networking works exactly the same way.
+
+---
+
+# Transmission Delay (`d_trans`)
+
+## What Is Transmission Delay?
+
+Definition:
+
+> **Transmission Delay is the time required to place all bits of a packet onto the communication link.**
+
+Notice the wording carefully.
+
+The router is **not waiting for the packet to reach the destination**.
+
+Instead,
+
+the router is busy **sending the bits onto the wire (or fiber).**
+
+---
+
+# Real-Life Analogy
+
+Imagine filling a water pipe.
+
+The pipe is initially empty.
+
+You begin pouring water into it.
+
+Question:
+
+> **How long does it take to pour all the water into the pipe?**
+
+This corresponds to:
+
+> **Transmission Delay**
+
+---
+
+# Another Analogy
+
+Suppose you have:
+
+```text
+100 Letters
+```
+
+You place them into a mailbox.
+
+You insert them:
+
+```text
+Letter 1
+
+Letter 2
+
+Letter 3
+
+...
+
+Letter 100
+```
+
+The time required to insert all letters is:
+
+Transmission Delay.
+
+Whether the letters have reached their destination is a different matter.
+
+---
+
+# Why Does Transmission Delay Exist?
+
+Communication links transmit data:
+
+**Bit by bit**
+
+They do **not** send an entire packet instantaneously.
+
+Suppose a packet contains:
+
+```text
+12,000 bits
+```
+
+The router must transmit:
+
+```text
+Bit 1
+
+Bit 2
+
+Bit 3
+
+...
+
+Bit 12,000
+```
+
+Naturally,
+
+this takes time.
+
+---
+
+# Mathematical Formula
+
+Kurose defines Transmission Delay as:
+
+```text
+d_trans = L / R
+```
+
+where:
+
+| Symbol | Meaning |
+|----------|----------|
+| `L` | Packet Length (bits) |
+| `R` | Transmission Rate (bits/second) |
+
+---
+
+# Understanding the Formula
+
+Suppose:
+
+Packet Size:
+
+```text
+8,000 bits
+```
+
+Transmission Rate:
+
+```text
+2,000 bits/sec
+```
+
+Then:
+
+```text
+d_trans
+
+=
+
+8000
+
+/
+
+2000
+
+=
+
+4 seconds
+```
+
+The router needs:
+
+```text
+4 seconds
+```
+
+to place all bits onto the communication link.
+
+---
+
+# Example 1
+
+Suppose:
+
+Packet Length:
+
+```text
+1,500 Bytes
+```
+
+Convert to bits:
+
+```text
+1500 × 8
+
+=
+
+12,000 bits
+```
+
+Link Speed:
+
+```text
+100 Mbps
+
+=
+
+100,000,000 bits/sec
+```
+
+Transmission Delay:
+
+```text
+12000
+
+/
+
+100000000
+
+=
+
+0.00012 seconds
+```
+
+or
+
+```text
+120 microseconds
+```
+
+---
+
+# What Affects Transmission Delay?
+
+Only two factors affect it.
+
+## Packet Length
+
+Larger packets take longer.
+
+Example:
+
+```text
+Small Packet
+
+↓
+
+Short Delay
+```
+
+```text
+Large Packet
+
+↓
+
+Long Delay
+```
+
+---
+
+## Link Speed
+
+Higher bandwidth reduces Transmission Delay.
+
+Example:
+
+```text
+10 Mbps
+
+↓
+
+Longer Delay
+```
+
+```text
+1 Gbps
+
+↓
+
+Much Shorter Delay
+```
+
+---
+
+# Important Observation
+
+Transmission Delay has **nothing to do with distance**.
+
+Whether the destination is:
+
+```text
+10 meters away
+```
+
+or
+
+```text
+10,000 kilometers away
+```
+
+Transmission Delay depends only on:
+
+- Packet size
+- Link speed
+
+---
+
+# Propagation Delay (`d_prop`)
+
+Now the packet has completely entered the communication link.
+
+Question:
+
+> **How long does the signal need to travel through the communication medium?**
+
+This is called:
+
+> **Propagation Delay**
+
+---
+
+# Definition
+
+Propagation Delay is:
+
+> **The time required for a signal to travel from the sender to the receiver through the physical communication medium.**
+
+---
+
+# Real-Life Analogy
+
+Imagine shouting across a valley.
+
+Your voice travels through the air.
+
+Even though sound is fast,
+
+it still requires time to reach another person.
+
+Similarly,
+
+network signals require time to travel.
+
+---
+
+# Another Analogy
+
+Imagine a train.
+
+After the train has completely left the station,
+
+it still must travel to the next city.
+
+Travel time corresponds to:
+
+Propagation Delay.
+
+---
+
+# Why Does Propagation Delay Exist?
+
+Signals cannot travel infinitely fast.
+
+Even light has a finite speed.
+
+In communication networks,
+
+signals travel through:
+
+- Copper cables
+- Fiber-optic cables
+- Wireless radio waves
+
+Each medium has a finite propagation speed.
+
+---
+
+# Mathematical Formula
+
+Kurose defines:
+
+```text
+d_prop
+
+=
+
+Distance
+
+/
+
+Propagation Speed
+```
+
+or
+
+```text
+d_prop
+
+=
+
+d
+
+/
+
+s
+```
+
+where:
+
+| Symbol | Meaning |
+|----------|----------|
+| `d` | Distance |
+| `s` | Propagation Speed |
+
+---
+
+# Propagation Speed
+
+Typical propagation speeds:
+
+| Medium | Approximate Speed |
+|----------|-------------------|
+| Copper Cable | ~2 × 10⁸ m/s |
+| Fiber Optic Cable | ~2 × 10⁸ m/s |
+| Vacuum | 3 × 10⁸ m/s (Speed of Light) |
+
+Notice:
+
+Signals in fiber travel at approximately:
+
+```text
+Two-thirds
+
+of
+
+the speed of light.
+```
+
+---
+
+# Example 2
+
+Suppose:
+
+Distance:
+
+```text
+1000 km
+```
+
+Convert:
+
+```text
+1000 km
+
+=
+
+1,000,000 meters
+```
+
+Propagation Speed:
+
+```text
+2 × 10⁸ m/s
+```
+
+Propagation Delay:
+
+```text
+1,000,000
+
+/
+
+200,000,000
+
+=
+
+0.005 seconds
+```
+
+or
+
+```text
+5 milliseconds
+```
+
+---
+
+# What Affects Propagation Delay?
+
+Two factors:
+
+## Distance
+
+Longer communication links increase Propagation Delay.
+
+---
+
+## Propagation Speed
+
+Different communication media have different propagation speeds.
+
+---
+
+# Important Observation
+
+Propagation Delay does **not** depend on packet size.
+
+Whether the packet contains:
+
+```text
+100 bits
+```
+
+or
+
+```text
+10 million bits
+```
+
+The **first bit** still travels at the same propagation speed.
+
+---
+
+# Transmission Delay vs Propagation Delay
+
+This is one of the most important comparisons in networking.
+
+| Feature | Transmission Delay | Propagation Delay |
+|----------|-------------------|-------------------|
+| Definition | Time to push all bits onto the link | Time for signal to travel through the link |
+| Depends On | Packet Length and Link Speed | Distance and Propagation Speed |
+| Formula | `L / R` | `d / s` |
+| Affected by Packet Size | Yes | No |
+| Affected by Distance | No | Yes |
+| Occurs | At the Sender | Along the Link |
+
+---
+
+# Visual Comparison
+
+Imagine filling a pipe with water.
+
+```text
+Bucket
+
+↓
+
+Pipe
+
+↓
+
+Tank
+```
+
+---
+
+### Transmission Delay
+
+How long does it take to pour all the water into the pipe?
+
+---
+
+### Propagation Delay
+
+How long does the water travel inside the pipe before reaching the tank?
+
+---
+
+# Numerical Example
+
+Suppose:
+
+Packet Length:
+
+```text
+16,000 bits
+```
+
+Transmission Rate:
+
+```text
+8 Mbps
+```
+
+Distance:
+
+```text
+200 km
+```
+
+Propagation Speed:
+
+```text
+2 × 10⁸ m/s
+```
+
+### Step 1
+
+Transmission Delay:
+
+```text
+16000
+
+/
+
+8000000
+
+=
+
+0.002 seconds
+
+=
+
+2 milliseconds
+```
+
+---
+
+### Step 2
+
+Convert distance:
+
+```text
+200 km
+
+=
+
+200000 meters
+```
+
+Propagation Delay:
+
+```text
+200000
+
+/
+
+200000000
+
+=
+
+0.001 seconds
+
+=
+
+1 millisecond
+```
+
+Notice:
+
+Even though the packet finishes entering the link after **2 ms**,
+
+the signal still needs **1 ms** to travel.
+
+---
+
+# Which Delay Is Larger?
+
+It depends.
+
+### Large Packet + Fast Link
+
+Transmission Delay may dominate.
+
+---
+
+### Long Fiber Link
+
+Propagation Delay may dominate.
+
+---
+
+### Modern Data Centers
+
+Propagation Delay is often very small because devices are physically close.
+
+---
+
+### Satellite Communication
+
+Propagation Delay becomes significant because signals travel enormous distances.
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> Transmission Delay and Propagation Delay are the same.
+
+Incorrect.
+
+They measure completely different events.
+
+---
+
+## Misconception 2
+
+> Faster Internet eliminates Propagation Delay.
+
+Incorrect.
+
+Increasing bandwidth reduces Transmission Delay.
+
+Distance remains unchanged.
+
+---
+
+## Misconception 3
+
+> Larger packets increase Propagation Delay.
+
+Incorrect.
+
+Larger packets only increase Transmission Delay.
+
+---
+
+# Big Picture
+
+Every packet now experiences:
+
+```text
+Packet Arrives
+
+↓
+
+Processing Delay
+
+↓
+
+Queueing Delay
+
+↓
+
+Transmission Delay
+
+↓
+
+Propagation Delay
+
+↓
+
+Next Router
+```
+
+This sequence repeats at every router.
+
+---
+
+# Key Takeaways
+
+- Transmission Delay is the time required to place all bits onto the communication link.
+- Transmission Delay depends on:
+  - Packet Length (`L`)
+  - Transmission Rate (`R`)
+- Propagation Delay is the time required for the signal to travel across the communication medium.
+- Propagation Delay depends on:
+  - Distance (`d`)
+  - Propagation Speed (`s`)
+- Transmission Delay and Propagation Delay are different concepts and should not be confused.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Transmission Delay (`d_trans`) | Time required to transmit all bits of a packet onto the communication link. |
+| Propagation Delay (`d_prop`) | Time required for a signal to travel from one end of the communication link to the other. |
+| Packet Length (`L`) | Size of a packet measured in bits. |
+| Transmission Rate (`R`) | Speed at which bits are transmitted onto the communication link (bits/sec). |
+| Distance (`d`) | Physical length of the communication medium. |
+| Propagation Speed (`s`) | Speed at which the signal travels through the communication medium. |
+| Link Bandwidth | Maximum rate at which data can be transmitted over a communication link. |
+| Fiber Optic Cable | Communication medium that transmits light signals at approximately two-thirds the speed of light. |
+
+---
+
+# Summary Diagram
+
+```text
+Packet Ready
+      │
+      ▼
+Transmit Bits onto Link
+      │
+      │  (Transmission Delay)
+      ▼
+All Bits Enter Link
+      │
+      ▼
+Signal Travels Through Cable
+      │
+      │  (Propagation Delay)
+      ▼
+Next Router Receives Packet
+```
+
+---
+
+## End of Part 4C
+
+### Next Part (4D)
+
+In the next part, we will cover one of the most practical topics in networking:
+
+- Queueing Delay in Depth
+- Traffic Intensity (`La/R`)
+- Why Queueing Delay Can Become Very Large
+- Buffer Overflow
+- Packet Loss
+- Congestion
+- Router Buffer Management
+- Numerical Examples from Kurose
+- Technical Vocabulary
+
+<ArticleNav
+  prev={{ title: "1.4 Delay, Loss, and Throughput (Part 4B)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4b" }}
+  next={null}
+/>
