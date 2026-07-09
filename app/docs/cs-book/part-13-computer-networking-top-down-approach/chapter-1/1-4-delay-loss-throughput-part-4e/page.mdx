@@ -1,0 +1,1085 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 1: Computer Networks and the Internet
+
+# Section 1.4 Delay, Loss, and Throughput in Packet-Switched Networks (Part 4E)
+
+# End-to-End Delay
+
+In the previous sections, we learned that every router introduces a **Nodal Delay** consisting of:
+
+- Processing Delay (`d_proc`)
+- Queueing Delay (`d_queue`)
+- Transmission Delay (`d_trans`)
+- Propagation Delay (`d_prop`)
+
+However, Internet communication rarely passes through only one router.
+
+A packet typically travels through:
+
+- Home Router
+- ISP Router
+- Regional Router
+- Backbone Router
+- Destination Router
+
+Each router contributes its own delay.
+
+This leads us to another important concept:
+
+> **End-to-End Delay**
+
+---
+
+# What Is End-to-End Delay?
+
+Definition:
+
+> **End-to-End Delay is the total time required for a packet to travel from the source host to the destination host across the entire network.**
+
+Unlike **Nodal Delay**, which measures delay at a single router,
+
+End-to-End Delay measures the **entire journey**.
+
+---
+
+# Real-Life Analogy
+
+Imagine traveling from your home to another city.
+
+Your journey consists of several stages.
+
+```text
+Home
+
+↓
+
+Local Road
+
+↓
+
+Highway
+
+↓
+
+City Road
+
+↓
+
+Destination
+```
+
+Each stage takes time.
+
+The **total travel time** is your:
+
+> End-to-End Delay
+
+Networking works exactly the same way.
+
+---
+
+# Packet Journey
+
+Suppose you access Google's website.
+
+The packet may travel through:
+
+```text
+Laptop
+
+↓
+
+Home Router
+
+↓
+
+ISP Router
+
+↓
+
+Regional Router
+
+↓
+
+Backbone Router
+
+↓
+
+Google Router
+
+↓
+
+Google Server
+```
+
+Every router contributes delay.
+
+The total delay is:
+
+```text
+Delay 1
+
++
+
+Delay 2
+
++
+
+Delay 3
+
++
+
+Delay 4
+
++
+
+Delay 5
+```
+
+---
+
+# Relationship Between Nodal Delay and End-to-End Delay
+
+Think of Nodal Delay as:
+
+> Delay at one stop.
+
+Think of End-to-End Delay as:
+
+> Delay across the entire trip.
+
+Example:
+
+```text
+Router A
+
+↓
+
+Router B
+
+↓
+
+Router C
+```
+
+Each router introduces:
+
+```text
+Processing
+
++
+
+Queueing
+
++
+
+Transmission
+
++
+
+Propagation
+```
+
+Adding them together gives:
+
+End-to-End Delay.
+
+---
+
+# General Formula
+
+Suppose a packet passes through:
+
+```text
+N routers
+```
+
+Then:
+
+```text
+End-to-End Delay
+
+=
+
+Sum of all Nodal Delays
+```
+
+Mathematically:
+
+```text
+d_end-end
+
+=
+
+N × (d_proc + d_queue + d_trans + d_prop)
+```
+
+This simplified equation assumes:
+
+- Every router introduces identical delays.
+- Every communication link has the same characteristics.
+
+In real networks,
+
+these values often differ.
+
+---
+
+# More General Formula
+
+A more realistic representation is:
+
+```text
+d_end-end
+
+=
+
+Σ d_proc
+
++
+
+Σ d_queue
+
++
+
+Σ d_trans
+
++
+
+Σ d_prop
+```
+
+where:
+
+```text
+Σ
+```
+
+means:
+
+> Sum over every router and communication link.
+
+This formula allows each router to have different delay values.
+
+---
+
+# Example 1
+
+Suppose a packet passes through:
+
+```text
+3 Routers
+```
+
+Each router contributes:
+
+| Delay | Value |
+|--------|------:|
+| Processing Delay | 1 ms |
+| Queueing Delay | 2 ms |
+| Transmission Delay | 3 ms |
+| Propagation Delay | 4 ms |
+
+---
+
+## Step 1
+
+Calculate Nodal Delay.
+
+```text
+1
+
++
+
+2
+
++
+
+3
+
++
+
+4
+
+=
+
+10 ms
+```
+
+---
+
+## Step 2
+
+Three routers:
+
+```text
+3 × 10
+
+=
+
+30 ms
+```
+
+Therefore:
+
+```text
+End-to-End Delay
+
+=
+
+30 milliseconds
+```
+
+---
+
+# Example 2
+
+Suppose delays differ.
+
+Router 1:
+
+| Delay | Value |
+|--------|------:|
+| Processing | 1 ms |
+| Queueing | 5 ms |
+| Transmission | 2 ms |
+| Propagation | 3 ms |
+
+Total:
+
+```text
+11 ms
+```
+
+---
+
+Router 2:
+
+| Delay | Value |
+|--------|------:|
+| Processing | 1 ms |
+| Queueing | 1 ms |
+| Transmission | 2 ms |
+| Propagation | 4 ms |
+
+Total:
+
+```text
+8 ms
+```
+
+---
+
+Router 3:
+
+| Delay | Value |
+|--------|------:|
+| Processing | 2 ms |
+| Queueing | 0 ms |
+| Transmission | 2 ms |
+| Propagation | 5 ms |
+
+Total:
+
+```text
+9 ms
+```
+
+---
+
+Total End-to-End Delay:
+
+```text
+11
+
++
+
+8
+
++
+
+9
+
+=
+
+28 milliseconds
+```
+
+---
+
+# Multi-Hop Communication
+
+Whenever a packet moves from one router to another,
+
+it completes one:
+
+> **Hop**
+
+Example:
+
+```text
+Laptop
+
+↓
+
+Router A
+
+↓
+
+Router B
+
+↓
+
+Router C
+
+↓
+
+Server
+```
+
+Number of hops:
+
+```text
+4
+```
+
+Every hop introduces additional delay.
+
+---
+
+# Why Does Delay Increase with More Hops?
+
+Every router repeats the same operations.
+
+```text
+Receive Packet
+
+↓
+
+Processing
+
+↓
+
+Queueing
+
+↓
+
+Transmission
+
+↓
+
+Propagation
+
+↓
+
+Next Router
+```
+
+More routers mean:
+
+More repetitions.
+
+Therefore:
+
+More delay.
+
+---
+
+# Example
+
+Suppose:
+
+Each router contributes:
+
+```text
+5 milliseconds
+```
+
+Communication through:
+
+```text
+2 Routers
+
+↓
+
+10 ms
+```
+
+Communication through:
+
+```text
+10 Routers
+
+↓
+
+50 ms
+```
+
+Everything else being equal,
+
+more hops increase End-to-End Delay.
+
+---
+
+# Does Every Router Introduce the Same Delay?
+
+No.
+
+Different routers may have:
+
+- Different processors
+- Different buffer sizes
+- Different traffic loads
+- Different communication links
+
+Therefore,
+
+each router may introduce different delays.
+
+---
+
+# Queueing Delay Is Usually the Most Variable
+
+Among all four delays,
+
+Queueing Delay changes the most.
+
+Example:
+
+Router A:
+
+```text
+Queueing Delay
+
+=
+
+1 ms
+```
+
+Router B:
+
+```text
+Queueing Delay
+
+=
+
+300 ms
+```
+
+Even though all other delays remain small,
+
+one congested router can significantly increase End-to-End Delay.
+
+---
+
+# End-to-End Delay in Real Networks
+
+Suppose you access a website hosted in another country.
+
+Possible route:
+
+```text
+Laptop
+
+↓
+
+Home Router
+
+↓
+
+Local ISP
+
+↓
+
+Regional ISP
+
+↓
+
+National Backbone
+
+↓
+
+Submarine Cable
+
+↓
+
+Foreign ISP
+
+↓
+
+Destination Router
+
+↓
+
+Server
+```
+
+Every device and communication link contributes delay.
+
+---
+
+# End-to-End Delay Is Not Constant
+
+One important observation:
+
+End-to-End Delay changes continuously.
+
+Reasons include:
+
+- Different routes.
+- Congestion.
+- Queueing.
+- Link failures.
+- Traffic load.
+
+Today:
+
+```text
+40 ms
+```
+
+Tomorrow:
+
+```text
+70 ms
+```
+
+Even though you access the same website.
+
+---
+
+# Delay in Different Applications
+
+Different applications tolerate different amounts of delay.
+
+---
+
+## Email
+
+Delay of:
+
+```text
+2 seconds
+```
+
+Usually acceptable.
+
+---
+
+## File Download
+
+A few extra seconds may not matter.
+
+---
+
+## Video Streaming
+
+Moderate delay is acceptable if buffering is handled properly.
+
+---
+
+## Online Gaming
+
+Even:
+
+```text
+50 ms
+```
+
+can affect gameplay.
+
+---
+
+## Video Conferencing
+
+High End-to-End Delay causes:
+
+- Awkward pauses.
+- Participants talking over each other.
+- Poor conversation quality.
+
+---
+
+# Delay vs Distance
+
+Longer distances generally increase:
+
+```text
+Propagation Delay
+```
+
+However,
+
+distance is not the only factor.
+
+Communication through:
+
+```text
+Many Routers
+```
+
+may produce more delay than a physically longer path with fewer routers.
+
+---
+
+# Delay vs Number of Hops
+
+Suppose two routes exist.
+
+Route 1:
+
+```text
+1000 km
+
+↓
+
+2 Routers
+```
+
+Route 2:
+
+```text
+500 km
+
+↓
+
+12 Routers
+```
+
+Although Route 2 is shorter,
+
+it may experience greater End-to-End Delay due to additional router processing and queueing.
+
+This illustrates that:
+
+> Physical distance alone does not determine communication delay.
+
+---
+
+# End-to-End Delay Formula Example
+
+Suppose:
+
+Four routers.
+
+Each introduces:
+
+Processing Delay:
+
+```text
+1 ms
+```
+
+Queueing Delay:
+
+```text
+3 ms
+```
+
+Transmission Delay:
+
+```text
+2 ms
+```
+
+Propagation Delay:
+
+```text
+4 ms
+```
+
+---
+
+Nodal Delay:
+
+```text
+1
+
++
+
+3
+
++
+
+2
+
++
+
+4
+
+=
+
+10 ms
+```
+
+---
+
+Four routers:
+
+```text
+4 × 10
+
+=
+
+40 ms
+```
+
+End-to-End Delay:
+
+```text
+40 milliseconds
+```
+
+---
+
+# Complete Packet Journey
+
+```text
+Source Host
+
+↓
+
+Processing
+
+↓
+
+Transmission
+
+↓
+
+Propagation
+
+↓
+
+Router 1
+
+↓
+
+Processing
+
+↓
+
+Queueing
+
+↓
+
+Transmission
+
+↓
+
+Propagation
+
+↓
+
+Router 2
+
+↓
+
+Processing
+
+↓
+
+Queueing
+
+↓
+
+Transmission
+
+↓
+
+Propagation
+
+↓
+
+Router 3
+
+↓
+
+...
+
+↓
+
+Destination Host
+```
+
+Notice that this sequence repeats at every hop.
+
+---
+
+# Factors Affecting End-to-End Delay
+
+Several factors influence the total delay.
+
+## Number of Routers
+
+More routers generally increase delay.
+
+---
+
+## Network Congestion
+
+Heavy congestion increases Queueing Delay.
+
+---
+
+## Link Speed
+
+Higher bandwidth reduces Transmission Delay.
+
+---
+
+## Distance
+
+Longer links increase Propagation Delay.
+
+---
+
+## Packet Size
+
+Larger packets increase Transmission Delay.
+
+---
+
+## Router Performance
+
+Faster routers reduce Processing Delay.
+
+---
+
+# Practical Example
+
+Imagine downloading a file from a server in another continent.
+
+Although the fiber-optic cable is extremely fast,
+
+the packet may still experience:
+
+- Processing at several routers.
+- Waiting in queues.
+- Transmission onto multiple links.
+- Propagation across thousands of kilometers.
+
+All these delays combine to produce the total End-to-End Delay.
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> End-to-End Delay depends only on distance.
+
+Incorrect.
+
+It also depends on:
+
+- Number of routers.
+- Queueing.
+- Transmission Delay.
+- Processing Delay.
+
+---
+
+## Misconception 2
+
+> Faster Internet eliminates End-to-End Delay.
+
+Incorrect.
+
+Higher bandwidth reduces Transmission Delay,
+
+but does not eliminate:
+
+- Propagation Delay.
+- Processing Delay.
+- Queueing Delay.
+
+---
+
+## Misconception 3
+
+> Every packet experiences the same End-to-End Delay.
+
+Incorrect.
+
+Network conditions change continuously.
+
+Different packets may even follow different routes.
+
+---
+
+# Key Takeaways
+
+- End-to-End Delay is the total communication delay from source to destination.
+- It is the sum of delays experienced at every router and communication link.
+- More hops generally increase delay.
+- Queueing Delay is usually the most unpredictable component.
+- Different applications have different tolerance levels for delay.
+- Network congestion can significantly increase End-to-End Delay.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| End-to-End Delay | Total time required for a packet to travel from the source host to the destination host. |
+| Nodal Delay | Total delay experienced by a packet at a single router or network node. |
+| Hop | One movement of a packet from one router to the next. |
+| Multi-Hop Communication | Communication involving multiple routers between the source and destination. |
+| Delay Accumulation | Increase in total delay as packets pass through multiple routers. |
+| Route | Sequence of routers and communication links followed by a packet. |
+| Latency | Another term commonly used to describe communication delay. |
+| Network Congestion | Condition where traffic exceeds available network resources, increasing delay and packet loss. |
+
+---
+
+# Summary Diagram
+
+```text
+Source Host
+      │
+      ▼
+Router 1
+(Processing + Queueing + Transmission + Propagation)
+      │
+      ▼
+Router 2
+(Processing + Queueing + Transmission + Propagation)
+      │
+      ▼
+Router 3
+(Processing + Queueing + Transmission + Propagation)
+      │
+      ▼
+Destination Host
+
+↓
+
+Total End-to-End Delay
+```
+
+---
+
+## End of Part 4E
+
+### Next Part (4F)
+
+In the final part of **Section 1.4**, we will study:
+
+- **Throughput**
+- Instantaneous Throughput
+- Average Throughput
+- Bottleneck Links
+- Internet Download Speed
+- Relationship Between Bandwidth and Throughput
+- Numerical Examples
+- Complete Section 1.4 Summary
+- Technical Vocabulary
+- Interview Questions
+
+<ArticleNav
+  prev={{ title: "1.4 Delay, Loss, and Throughput (Part 4D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-4-delay-loss-throughput-part-4d" }}
+  next={null}
+/>
