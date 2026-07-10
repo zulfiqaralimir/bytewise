@@ -1,0 +1,882 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 1.6 Networks Under Attack (Part 6D)
+
+# Packet Sniffing, IP Spoofing, Man-in-the-Middle (MITM), DNS Cache Poisoning, and Session Hijacking
+
+In the previous part, we studied:
+
+- Denial-of-Service (DoS)
+- Distributed Denial-of-Service (DDoS)
+- Reflection Attacks
+- Amplification Attacks
+- Botnets
+
+Those attacks mainly targeted the **Availability** of network services.
+
+Now another important question arises.
+
+> **What if an attacker does not want to make a service unavailable?**
+
+Instead,
+
+the attacker wants to:
+
+- Secretly observe communication.
+- Pretend to be another computer.
+- Modify messages.
+- Redirect users to fake websites.
+- Take control of authenticated sessions.
+
+These attacks target:
+
+- Confidentiality
+- Integrity
+- Authentication
+
+Let's study the most important ones.
+
+---
+
+# Packet Sniffing
+
+## What Is Packet Sniffing?
+
+Definition:
+
+> **Packet Sniffing is the process of capturing and examining network packets as they travel across a network.**
+
+Remember:
+
+Communication on a network occurs in the form of:
+
+```text
+Packets
+```
+
+If an attacker can capture those packets,
+
+they may read sensitive information.
+
+---
+
+# Real-Life Analogy
+
+Imagine someone secretly listening to your telephone conversation.
+
+They do not interrupt.
+
+They simply listen.
+
+Packet sniffing works the same way.
+
+---
+
+# Normal Communication
+
+```text
+Computer A
+
+↓
+
+Router
+
+↓
+
+Computer B
+```
+
+Only the sender and receiver should see the packets.
+
+---
+
+# During Packet Sniffing
+
+```text
+Computer A
+
+↓
+
+Network
+
+↓
+
+Attacker Copies Packets
+
+↓
+
+Computer B
+```
+
+The communication continues,
+
+but the attacker secretly receives a copy.
+
+---
+
+# What Can Attackers Capture?
+
+If communication is **not encrypted**,
+
+an attacker may capture:
+
+- Usernames
+- Passwords
+- Emails
+- Credit Card Numbers
+- Chat Messages
+- Cookies
+
+---
+
+# Example
+
+Suppose you log into a website using plain HTTP.
+
+Your browser sends:
+
+```text
+Username:
+
+Ali
+
+Password:
+
+123456
+```
+
+If an attacker captures these packets,
+
+they can read the credentials directly.
+
+---
+
+# Why Encryption Matters
+
+Now suppose you use:
+
+```text
+HTTPS
+```
+
+Instead of:
+
+```text
+HTTP
+```
+
+The transmitted data becomes encrypted.
+
+Even if packets are captured,
+
+the attacker sees only encrypted data,
+
+not the original message.
+
+---
+
+# Legitimate Uses of Packet Sniffers
+
+Packet sniffers are not always malicious.
+
+Network administrators use tools such as:
+
+- Wireshark
+- tcpdump
+
+for:
+
+- Troubleshooting
+- Performance Analysis
+- Protocol Debugging
+- Network Monitoring
+
+The tool itself is not harmful.
+
+Its purpose depends on how it is used.
+
+---
+
+# Packet Sniffing Summary
+
+Packet Sniffing is generally considered a:
+
+> **Passive Attack**
+
+Because the attacker observes communication without modifying it.
+
+---
+
+# IP Spoofing
+
+Now let's study another important attack.
+
+---
+
+# What Is IP Spoofing?
+
+Definition:
+
+> **IP Spoofing is the act of forging the source IP address in an IP packet to make it appear that the packet originated from another device.**
+
+---
+
+# Real-Life Analogy
+
+Imagine sending a letter.
+
+Instead of writing your own address,
+
+you write someone else's address.
+
+The receiver believes the letter came from that person.
+
+IP Spoofing works the same way.
+
+---
+
+# Normal Packet
+
+```text
+Source IP:
+
+192.168.1.10
+
+Destination IP:
+
+8.8.8.8
+```
+
+---
+
+# Spoofed Packet
+
+```text
+Source IP:
+
+203.0.113.50
+
+(Not the real sender)
+
+Destination IP:
+
+8.8.8.8
+```
+
+The packet appears to come from another computer.
+
+---
+
+# Why Do Attackers Spoof IP Addresses?
+
+Common reasons include:
+
+- Hiding their identity.
+- Bypassing simple filters.
+- Launching Reflection Attacks.
+- Making investigation more difficult.
+
+---
+
+# Important Observation
+
+Spoofing changes only:
+
+```text
+Source Address
+```
+
+It does **not** magically allow the attacker to receive replies.
+
+For two-way communication,
+
+additional techniques are usually required.
+
+---
+
+# IP Spoofing in Reflection Attacks
+
+Recall what we learned in the previous section.
+
+```text
+Attacker
+
+↓
+
+Spoofed Request
+
+↓
+
+DNS Server
+
+↓
+
+Large Response
+
+↓
+
+Victim
+```
+
+The attacker places the victim's IP address in the request.
+
+The DNS server believes the victim sent the request.
+
+The reply is sent to the victim.
+
+---
+
+# How Can Networks Reduce IP Spoofing?
+
+Internet Service Providers (ISPs) often implement:
+
+> **Ingress Filtering**
+
+Definition:
+
+Routers verify whether incoming packets have valid source IP addresses.
+
+Packets with impossible or unauthorized source addresses can be discarded.
+
+---
+
+# Man-in-the-Middle (MITM) Attack
+
+Now let's study one of the most dangerous attacks.
+
+---
+
+# What Is a Man-in-the-Middle Attack?
+
+Definition:
+
+> **A Man-in-the-Middle (MITM) attack occurs when an attacker secretly positions themselves between two communicating parties, intercepting and possibly modifying their communication.**
+
+Notice:
+
+The attacker becomes:
+
+> **The middle person**
+
+---
+
+# Real-Life Analogy
+
+Imagine two friends exchanging letters.
+
+Unknown to them,
+
+someone intercepts every letter,
+
+reads it,
+
+possibly changes it,
+
+then forwards it.
+
+Neither friend realizes someone is in the middle.
+
+---
+
+# Normal Communication
+
+```text
+Alice
+
+↓
+
+Bob
+```
+
+---
+
+# During MITM
+
+```text
+Alice
+
+↓
+
+Attacker
+
+↓
+
+Bob
+```
+
+Both Alice and Bob believe they are communicating directly.
+
+---
+
+# What Can the Attacker Do?
+
+A MITM attacker may:
+
+- Read messages.
+- Modify messages.
+- Delete messages.
+- Inject new messages.
+- Steal login credentials.
+
+---
+
+# Public Wi-Fi Example
+
+Suppose you connect to:
+
+```text
+Free Airport Wi-Fi
+```
+
+An attacker creates a fake Wi-Fi hotspot with a similar name.
+
+You connect accidentally.
+
+All your traffic now passes through the attacker.
+
+---
+
+# HTTPS and MITM
+
+HTTPS greatly reduces the risk of MITM attacks by using:
+
+- Encryption
+- Digital Certificates
+- Authentication
+
+Browsers verify the server's identity before establishing secure communication.
+
+---
+
+# DNS Cache Poisoning
+
+Now let's study another attack.
+
+---
+
+# What Is DNS?
+
+Recall from earlier chapters.
+
+DNS translates:
+
+```text
+www.google.com
+
+↓
+
+IP Address
+```
+
+Without DNS,
+
+users would need to memorize IP addresses.
+
+---
+
+# What Is DNS Cache Poisoning?
+
+Definition:
+
+> **DNS Cache Poisoning is an attack in which false DNS information is inserted into a DNS server's cache, causing users to be redirected to incorrect IP addresses.**
+
+---
+
+# Real-Life Analogy
+
+Imagine someone secretly changes the phone directory.
+
+Now,
+
+when you search for:
+
+```text
+Bank
+```
+
+you receive a criminal's phone number instead.
+
+DNS Poisoning works similarly.
+
+---
+
+# Normal DNS Resolution
+
+```text
+www.bank.com
+
+↓
+
+Correct IP Address
+
+↓
+
+Bank Website
+```
+
+---
+
+# Poisoned DNS
+
+```text
+www.bank.com
+
+↓
+
+Fake IP Address
+
+↓
+
+Attacker Website
+```
+
+The victim believes they are visiting the real website.
+
+---
+
+# Why Is DNS Poisoning Dangerous?
+
+Victims may unknowingly:
+
+- Enter passwords.
+- Enter banking information.
+- Download malware.
+- Reveal confidential data.
+
+All while believing they are on a legitimate website.
+
+---
+
+# Protection Against DNS Poisoning
+
+Common defenses include:
+
+- DNSSEC (Domain Name System Security Extensions)
+- Secure DNS servers
+- HTTPS certificate validation
+
+---
+
+# Session Hijacking
+
+Now let's study another important attack.
+
+---
+
+# What Is a Session?
+
+Recall from Section 1.5.
+
+A session is:
+
+> **An ongoing communication between a client and a server.**
+
+Example:
+
+After logging into Gmail,
+
+your browser remains authenticated.
+
+This authenticated state is called a:
+
+> **Session**
+
+---
+
+# Session Identifier
+
+Instead of repeatedly entering your password,
+
+the server gives your browser a:
+
+```text
+Session ID
+```
+
+Usually stored in a:
+
+```text
+Cookie
+```
+
+---
+
+# Normal Session
+
+```text
+Login
+
+↓
+
+Server Verifies Password
+
+↓
+
+Session ID Issued
+
+↓
+
+User Continues Browsing
+```
+
+---
+
+# What Is Session Hijacking?
+
+Definition:
+
+> **Session Hijacking is an attack in which an attacker steals or predicts a valid session identifier and uses it to impersonate a legitimate user.**
+
+---
+
+# Real-Life Analogy
+
+Imagine attending a conference.
+
+After registration,
+
+you receive an entry badge.
+
+Security guards allow entry because of the badge.
+
+Now suppose someone steals your badge.
+
+They enter pretending to be you.
+
+Session Hijacking works exactly the same way.
+
+---
+
+# Example
+
+Suppose an attacker steals your session cookie.
+
+Instead of knowing your password,
+
+they simply present the stolen cookie.
+
+The server believes:
+
+```text
+This is the legitimate user.
+```
+
+---
+
+# How Can Session IDs Be Stolen?
+
+Examples include:
+
+- Packet Sniffing
+- Malware
+- Cross-Site Scripting (XSS)
+- Physical access
+- Browser vulnerabilities
+
+---
+
+# Preventing Session Hijacking
+
+Modern websites use several protections.
+
+Examples include:
+
+- HTTPS
+- Secure Cookies
+- HttpOnly Cookies
+- Session Expiration
+- Multi-Factor Authentication (MFA)
+- Regenerating Session IDs after login
+
+---
+
+# Comparing the Attacks
+
+| Attack | Main Objective | CIA Principle Affected |
+|---------|----------------|------------------------|
+| Packet Sniffing | Observe communication | Confidentiality |
+| IP Spoofing | Fake identity | Authentication / Integrity |
+| MITM | Intercept and modify communication | Confidentiality & Integrity |
+| DNS Cache Poisoning | Redirect users | Integrity |
+| Session Hijacking | Impersonate authenticated users | Authentication & Confidentiality |
+
+---
+
+# Putting Everything Together
+
+Imagine you open:
+
+```text
+https://www.bank.com
+```
+
+Possible attacks include:
+
+Packet Sniffing
+
+↓
+
+Capture traffic
+
+---
+
+IP Spoofing
+
+↓
+
+Pretend to be another device
+
+---
+
+MITM
+
+↓
+
+Intercept communication
+
+---
+
+DNS Poisoning
+
+↓
+
+Redirect to fake website
+
+---
+
+Session Hijacking
+
+↓
+
+Steal authenticated session
+
+Each attack targets a different stage of communication.
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> Packet Sniffing always means hacking.
+
+Incorrect.
+
+Network administrators legally use packet sniffers for troubleshooting and analysis.
+
+---
+
+## Misconception 2
+
+> IP Spoofing allows attackers to fully impersonate another computer.
+
+Incorrect.
+
+Spoofing changes the source IP address, but establishing reliable two-way communication generally requires additional techniques.
+
+---
+
+## Misconception 3
+
+> HTTPS only encrypts passwords.
+
+Incorrect.
+
+HTTPS encrypts the entire communication session between the browser and the web server.
+
+---
+
+## Misconception 4
+
+> DNS always returns the correct IP address.
+
+Incorrect.
+
+Compromised or poisoned DNS caches can return incorrect information.
+
+---
+
+## Misconception 5
+
+> Stealing a password is the only way to access an account.
+
+Incorrect.
+
+If an attacker steals a valid session cookie, they may be able to impersonate the user without knowing the password.
+
+---
+
+# Key Takeaways
+
+- Packet Sniffing captures network traffic and is primarily a passive attack.
+- Encryption such as HTTPS protects data against packet sniffing.
+- IP Spoofing forges the source IP address of packets.
+- Man-in-the-Middle attacks secretly intercept communication between two parties.
+- DNS Cache Poisoning redirects users to malicious destinations by corrupting DNS information.
+- Session Hijacking steals or abuses authenticated sessions.
+- Authentication, encryption, DNSSEC, secure cookies, and HTTPS significantly reduce these risks.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Packet Sniffing | Capturing and analyzing packets traveling across a network. |
+| Packet Sniffer | Software or hardware used to capture network traffic. |
+| IP Spoofing | Forging the source IP address of an IP packet. |
+| Ingress Filtering | Router technique used to block packets with invalid or spoofed source addresses. |
+| Man-in-the-Middle (MITM) Attack | Attack in which an attacker secretly intercepts communication between two parties. |
+| DNS Cache Poisoning | Insertion of false DNS records into a DNS cache to redirect users. |
+| DNSSEC | Security extension for DNS that provides authenticity and integrity of DNS data. |
+| Session | Ongoing authenticated communication between a client and a server. |
+| Session ID | Unique identifier used to maintain an authenticated user session. |
+| Cookie | Small piece of data stored by a browser, often used to maintain session state. |
+| Session Hijacking | Unauthorized takeover of a valid user session by stealing or abusing a session identifier. |
+
+---
+
+# Summary Diagram
+
+```text
+                    Communication Attacks
+                             │
+        ┌──────────────┬──────────────┬──────────────┐
+        ▼              ▼              ▼
+ Packet Sniffing   IP Spoofing     MITM Attack
+(Read Packets)   (Fake Identity) (Intercept Traffic)
+        │              │              │
+        └──────────────┼──────────────┘
+                       ▼
+               Confidentiality &
+             Integrity Compromised
+                       │
+        ┌──────────────┴──────────────┐
+        ▼                             ▼
+ DNS Cache Poisoning         Session Hijacking
+(Redirect Users)          (Steal User Session)
+```
+
+---
+
+## End of Part 6D
+
+### Next Part (6E) — Final Part of Section 1.6
+
+In the final part, we will study:
+
+- **Firewalls**
+- **Intrusion Detection Systems (IDS)**
+- **Intrusion Prevention Systems (IPS)**
+- Authentication
+- Multi-Factor Authentication (MFA)
+- Security Best Practices
+- Complete Summary of Section 1.6
+- Technical Vocabulary
+- Common Interview Questions
+- Exam Tips
+
+<ArticleNav
+  prev={{ title: "1.6 Networks Under Attack (Part 6C)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6c" }}
+  next={{ title: "1.6 Networks Under Attack (Part 6E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6e" }}
+/>

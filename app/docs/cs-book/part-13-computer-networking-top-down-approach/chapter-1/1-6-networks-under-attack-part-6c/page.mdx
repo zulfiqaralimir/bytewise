@@ -1,0 +1,925 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 1.6 Networks Under Attack (Part 6C)
+
+# Denial-of-Service (DoS) and Distributed Denial-of-Service (DDoS) Attacks
+
+In the previous part, we learned about:
+
+- Malware
+- Viruses
+- Worms
+- Trojan Horses
+- Spyware
+- Ransomware
+- Botnets
+
+Now another important question arises.
+
+> **What if an attacker does not want to steal your data?**
+
+Instead,
+
+the attacker wants to make your service completely unavailable.
+
+For example,
+
+suppose attackers want to shut down:
+
+- Amazon
+- Google
+- Facebook
+- Netflix
+- A Bank Website
+- An Online Shopping Store
+
+without physically damaging the servers.
+
+How can they do this?
+
+The answer is:
+
+> **Denial-of-Service (DoS) Attacks**
+
+---
+
+# What Is a Denial-of-Service (DoS) Attack?
+
+Definition:
+
+> **A Denial-of-Service (DoS) attack is an attack that attempts to make a network, computer, or online service unavailable to legitimate users by overwhelming it with malicious traffic or requests.**
+
+Notice the objective.
+
+The attacker does **not** necessarily want to:
+
+- Read your files.
+- Steal passwords.
+- Modify data.
+
+Instead,
+
+the attacker wants to prevent legitimate users from accessing the service.
+
+This violates one of the CIA Triad principles:
+
+> **Availability**
+
+---
+
+# Real-Life Analogy
+
+Imagine a restaurant.
+
+Normally,
+
+customers enter,
+
+order food,
+
+and leave.
+
+Now suppose someone hires hundreds of people.
+
+These people enter the restaurant,
+
+occupy every table,
+
+but never order anything.
+
+Real customers arrive,
+
+but there are no seats available.
+
+The restaurant is technically open,
+
+yet nobody can use it.
+
+A DoS attack works in exactly the same way.
+
+---
+
+# Goal of a DoS Attack
+
+The attacker's objective is to exhaust one or more resources.
+
+Examples include:
+
+- CPU
+- Memory (RAM)
+- Network Bandwidth
+- Disk Space
+- Database Connections
+- Application Threads
+
+Once these resources are exhausted,
+
+legitimate users experience:
+
+- Slow responses.
+- Connection failures.
+- Service outages.
+
+---
+
+# How Does a DoS Attack Work?
+
+Suppose a web server normally receives:
+
+```text
+100 Requests/Second
+```
+
+The server can comfortably process them.
+
+Now an attacker sends:
+
+```text
+500,000 Requests/Second
+```
+
+The server becomes overwhelmed.
+
+Result:
+
+```text
+Legitimate Requests
+
+↓
+
+Delayed
+
+↓
+
+Rejected
+
+↓
+
+Dropped
+```
+
+---
+
+# Normal Operation
+
+```text
+Users
+
+↓
+
+Server
+
+↓
+
+Normal Responses
+```
+
+Everything works correctly.
+
+---
+
+# During a DoS Attack
+
+```text
+Attacker
+
+↓
+
+Millions of Requests
+
+↓
+
+Server
+
+↓
+
+Overloaded
+
+↓
+
+Real Users Cannot Connect
+```
+
+---
+
+# Why Is It Called "Denial of Service"?
+
+Because the attacker is denying legitimate users access to the service.
+
+The service still exists,
+
+but users cannot use it.
+
+---
+
+# Types of Resources That Can Be Exhausted
+
+A DoS attack may target different resources.
+
+---
+
+## CPU Exhaustion
+
+The attacker sends requests requiring heavy computation.
+
+Eventually,
+
+the CPU becomes fully occupied.
+
+---
+
+## Memory Exhaustion
+
+The attacker forces the server to allocate memory repeatedly.
+
+Eventually,
+
+RAM becomes unavailable.
+
+---
+
+## Bandwidth Exhaustion
+
+The attacker floods the communication link with enormous traffic.
+
+Even before packets reach the server,
+
+the network connection becomes saturated.
+
+---
+
+## Application Exhaustion
+
+The attacker repeatedly requests expensive operations.
+
+Examples:
+
+- Database queries.
+- File generation.
+- Search operations.
+
+The application becomes overloaded.
+
+---
+
+# Flooding Attacks
+
+Many DoS attacks are called:
+
+> **Flooding Attacks**
+
+Definition:
+
+> **A Flooding Attack overwhelms a target by sending an extremely large volume of traffic.**
+
+Think of a flood.
+
+Water continues entering until everything becomes overwhelmed.
+
+Networking uses the same idea.
+
+---
+
+# Example
+
+Suppose:
+
+Server Capacity:
+
+```text
+1 Gbps
+```
+
+Attacker sends:
+
+```text
+5 Gbps
+```
+
+The server cannot process all incoming traffic.
+
+Users experience delays or complete failure.
+
+---
+
+# Distributed Denial-of-Service (DDoS)
+
+Now let's study an even more dangerous attack.
+
+---
+
+# What Is a DDoS Attack?
+
+Definition:
+
+> **A Distributed Denial-of-Service (DDoS) attack uses many compromised computers to simultaneously attack a single target.**
+
+Notice the word:
+
+> **Distributed**
+
+Instead of one attacker,
+
+thousands or even millions of computers participate.
+
+---
+
+# Why Is DDoS More Dangerous?
+
+Imagine one person trying to block a highway.
+
+Difficult.
+
+Now imagine:
+
+```text
+100,000 Vehicles
+```
+
+blocking every road simultaneously.
+
+Much more effective.
+
+DDoS works exactly the same way.
+
+---
+
+# Where Do Attackers Get Thousands of Computers?
+
+Remember what we studied earlier.
+
+Attackers use:
+
+> **Botnets**
+
+---
+
+# Botnet Review
+
+A Botnet consists of:
+
+```text
+Bot
+
++
+
+Bot
+
++
+
+Bot
+
++
+
+Bot
+
++
+
+Thousands More
+```
+
+Each infected computer waits for commands.
+
+When instructed,
+
+every bot attacks the same target simultaneously.
+
+---
+
+# DDoS Architecture
+
+```text
+                 Attacker
+
+                     │
+
+             Command Server
+
+     ┌─────────┼─────────┐
+
+     ▼         ▼         ▼
+
+   Bot 1     Bot 2     Bot 3
+
+     ▼         ▼         ▼
+
+   Victim Server
+```
+
+Thousands of bots send traffic simultaneously.
+
+---
+
+# Example
+
+Suppose:
+
+Each bot sends:
+
+```text
+2 Mbps
+```
+
+Now imagine:
+
+```text
+500,000 Bots
+```
+
+Total attack traffic:
+
+```text
+2 Mbps
+
+×
+
+500,000
+
+=
+
+1,000,000 Mbps
+
+=
+
+1 Tbps
+```
+
+Even large Internet services struggle against attacks of this magnitude.
+
+---
+
+# Why Is DDoS Difficult to Stop?
+
+Because traffic comes from:
+
+- Thousands of countries.
+- Millions of IP addresses.
+- Legitimate-looking computers.
+
+Blocking one IP address has little effect.
+
+---
+
+# Reflection Attacks
+
+Attackers sometimes use another technique called:
+
+> **Reflection**
+
+---
+
+# What Is Reflection?
+
+Instead of attacking directly,
+
+the attacker tricks another server into sending traffic to the victim.
+
+The third-party server becomes an unwilling participant.
+
+---
+
+# Real-Life Analogy
+
+Imagine sending someone else's address to thousands of stores,
+
+asking them to mail free catalogs.
+
+The stores send catalogs to the innocent victim.
+
+The stores are not malicious.
+
+They were simply tricked.
+
+Reflection attacks work similarly.
+
+---
+
+# Reflection Attack Diagram
+
+```text
+Attacker
+
+↓
+
+Fake Request
+
+↓
+
+Public Server
+
+↓
+
+Large Response
+
+↓
+
+Victim
+```
+
+The public server unknowingly attacks the victim.
+
+---
+
+# IP Spoofing and Reflection
+
+Reflection attacks often rely on:
+
+> **IP Spoofing**
+
+The attacker forges the source IP address,
+
+making it appear that the victim sent the request.
+
+The public server replies to the victim instead of the attacker.
+
+We will study IP Spoofing in detail later.
+
+---
+
+# Amplification Attacks
+
+Reflection becomes even more dangerous when combined with:
+
+> **Amplification**
+
+---
+
+# What Is Amplification?
+
+Definition:
+
+> **An Amplification Attack generates a response much larger than the original request.**
+
+---
+
+# Example
+
+Suppose the attacker sends:
+
+```text
+100 Bytes
+```
+
+The server responds with:
+
+```text
+5,000 Bytes
+```
+
+Amplification Factor:
+
+```text
+5000
+
+/
+
+100
+
+=
+
+50
+```
+
+Every request becomes fifty times larger.
+
+Thousands of servers can generate enormous traffic.
+
+---
+
+# Common Amplification Services
+
+Historically,
+
+attackers have abused services such as:
+
+- DNS
+- NTP
+- Memcached
+
+These services can produce responses much larger than the original requests when improperly configured.
+
+---
+
+# Reflection + Amplification
+
+```text
+Attacker
+
+↓
+
+Small Fake Request
+
+↓
+
+Public Server
+
+↓
+
+Large Response
+
+↓
+
+Victim
+```
+
+The attacker sends very little traffic,
+
+yet the victim receives massive amounts.
+
+---
+
+# Real-World Example
+
+Imagine shouting into a cave.
+
+A small voice produces a large echo.
+
+Amplification attacks behave similarly.
+
+Small requests generate much larger responses.
+
+---
+
+# Effects of DoS and DDoS Attacks
+
+Victims may experience:
+
+- Slow websites.
+- Failed logins.
+- Dropped connections.
+- Interrupted video streaming.
+- Online gaming failures.
+- Banking service outages.
+
+Businesses may lose:
+
+- Revenue.
+- Customers.
+- Reputation.
+
+---
+
+# Famous DDoS Attack
+
+One of the most well-known attacks occurred in 2016.
+
+The **Mirai Botnet** infected hundreds of thousands of Internet of Things (IoT) devices such as:
+
+- Security Cameras
+- Routers
+- DVRs
+
+These compromised devices launched a massive DDoS attack against DNS provider Dyn.
+
+As a result,
+
+many popular websites became temporarily unavailable, including services from companies such as Twitter, Netflix, Reddit, GitHub, and Spotify.
+
+---
+
+# How Can We Defend Against DoS and DDoS?
+
+There is no single solution,
+
+but several techniques reduce risk.
+
+Examples include:
+
+- Firewalls.
+- Rate Limiting.
+- Traffic Filtering.
+- Load Balancing.
+- Content Delivery Networks (CDNs).
+- DDoS Mitigation Services.
+- Anycast Routing.
+- Intrusion Detection Systems.
+
+We will study several of these mechanisms in the next section.
+
+---
+
+# Rate Limiting
+
+One simple defense is:
+
+> **Rate Limiting**
+
+Definition:
+
+> Restricting how many requests a client may send during a given time period.
+
+Example:
+
+```text
+Maximum:
+
+100 Requests/Minute
+```
+
+Additional requests are delayed or rejected.
+
+---
+
+# Load Balancing
+
+Instead of one server,
+
+traffic is distributed among multiple servers.
+
+```text
+Users
+
+↓
+
+Load Balancer
+
+↓
+
+Server 1
+
+Server 2
+
+Server 3
+```
+
+This prevents one server from becoming overwhelmed.
+
+---
+
+# Content Delivery Networks (CDNs)
+
+A CDN stores content on servers distributed around the world.
+
+Benefits include:
+
+- Reduced latency.
+- Improved availability.
+- Better resistance against DDoS attacks by distributing traffic.
+
+---
+
+# Anycast Routing
+
+With Anycast,
+
+multiple servers share the same IP address.
+
+Traffic automatically reaches the nearest or best-performing server.
+
+During an attack,
+
+traffic is spread across many locations instead of overwhelming a single data center.
+
+---
+
+# DoS vs DDoS
+
+| DoS | DDoS |
+|------|------|
+| Single attacking source | Many attacking sources |
+| Easier to identify | Much harder to identify |
+| Smaller attack scale | Much larger attack scale |
+| Simpler to mitigate | More difficult to mitigate |
+| Usually one compromised system | Usually thousands or millions of bots |
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> A DoS attack steals confidential information.
+
+Incorrect.
+
+A DoS attack primarily targets **Availability**, not Confidentiality.
+
+---
+
+## Misconception 2
+
+> Every DDoS attack comes from hackers using their own computers.
+
+Incorrect.
+
+Most DDoS attacks originate from compromised devices within Botnets.
+
+---
+
+## Misconception 3
+
+> Bigger servers cannot be attacked.
+
+Incorrect.
+
+Even very large organizations can experience DDoS attacks if the attack volume exceeds available resources.
+
+---
+
+## Misconception 4
+
+> Blocking one IP address stops a DDoS attack.
+
+Incorrect.
+
+A DDoS attack may involve hundreds of thousands of IP addresses.
+
+---
+
+# Key Takeaways
+
+- A Denial-of-Service (DoS) attack attempts to make a service unavailable by exhausting its resources.
+- DoS attacks primarily target the **Availability** component of the CIA Triad.
+- A Distributed Denial-of-Service (DDoS) attack uses many compromised devices simultaneously.
+- Botnets are commonly used to launch DDoS attacks.
+- Reflection attacks trick third-party servers into sending traffic to the victim.
+- Amplification attacks generate responses much larger than the original requests.
+- Modern defenses include rate limiting, load balancing, CDNs, Anycast routing, and DDoS mitigation services.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Denial-of-Service (DoS) Attack | Attack that attempts to make a service unavailable by exhausting system or network resources. |
+| Distributed Denial-of-Service (DDoS) Attack | DoS attack launched simultaneously from many compromised computers. |
+| Flooding Attack | Attack that overwhelms a target by sending excessive traffic or requests. |
+| Botnet | Network of compromised computers controlled by an attacker. |
+| Reflection Attack | Attack in which third-party servers are tricked into sending traffic to the victim. |
+| Amplification Attack | Attack that generates responses much larger than the original requests, increasing attack traffic. |
+| Rate Limiting | Security mechanism that restricts the number of requests a client can make in a given time. |
+| Load Balancer | Device or software that distributes traffic across multiple servers. |
+| Content Delivery Network (CDN) | Distributed network of servers that improves content delivery and helps absorb traffic surges. |
+| Anycast Routing | Routing technique in which multiple geographically distributed servers share the same IP address to distribute incoming traffic. |
+
+---
+
+# Summary Diagram
+
+```text
+                  DoS Attack
+                      │
+         One Attacker Sends Traffic
+                      │
+                      ▼
+               Victim Server
+                      │
+              Service Unavailable
+
+══════════════════════════════════════
+
+                 DDoS Attack
+                      │
+                 Attacker
+                      │
+              Command Server
+      ┌────────┼────────┬────────┐
+      ▼        ▼        ▼        ▼
+    Bot      Bot      Bot      Bot
+      │        │        │        │
+      └────────┴────────┴────────┘
+               Massive Traffic
+                      │
+                      ▼
+               Victim Server
+                      │
+             Service Unavailable
+
+Reflection + Amplification
+
+Attacker
+    │
+Small Spoofed Request
+    │
+    ▼
+Public Server
+    │
+Large Response
+    ▼
+Victim
+```
+
+---
+
+## End of Part 6C
+
+### Next Part (6D)
+
+In the next part, we will study attacks that target communication directly rather than overwhelming services:
+
+- **Packet Sniffing**
+- **IP Spoofing**
+- **Man-in-the-Middle (MITM) Attack**
+- **DNS Cache Poisoning**
+- **Session Hijacking**
+- How these attacks work
+- Real-world examples
+- Defense mechanisms
+- Technical vocabulary
+- Common interview questions
+
+<ArticleNav
+  prev={{ title: "1.6 Networks Under Attack (Part 6B)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6b" }}
+  next={{ title: "1.6 Networks Under Attack (Part 6D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6d" }}
+/>

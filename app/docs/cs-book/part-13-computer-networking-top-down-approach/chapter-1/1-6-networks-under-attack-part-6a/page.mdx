@@ -1,0 +1,801 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 1.6 Networks Under Attack (Part 6A)
+
+# Introduction to Network Security
+
+In the previous sections, we learned:
+
+- How the Internet works.
+- How packets travel through networks.
+- The Internet Protocol Stack.
+- Delay, Packet Loss, and Throughput.
+- Protocol Layers.
+
+Until now, we have assumed something very important:
+
+> **Every device in the network behaves honestly.**
+
+But in the real world,
+
+this assumption is not true.
+
+The Internet contains:
+
+- Hackers
+- Cybercriminals
+- Malicious Software
+- Nation-State Attackers
+- Organized Crime Groups
+- Insider Threats
+
+These attackers constantly attempt to:
+
+- Steal information
+- Modify data
+- Interrupt communication
+- Gain unauthorized access
+- Damage systems
+
+Therefore,
+
+modern networking is not just about communication.
+
+It is also about:
+
+> **Security**
+
+---
+
+# Why Is Network Security Important?
+
+Imagine using online banking.
+
+When you transfer money,
+
+you expect:
+
+- Only your bank to receive the information.
+- Nobody to change the transaction.
+- The banking service to remain available.
+
+If any of these fail,
+
+serious problems occur.
+
+The same applies to:
+
+- Email
+- Social Media
+- Cloud Storage
+- Government Systems
+- Hospitals
+- Power Grids
+- Military Networks
+
+Without security,
+
+the Internet would not be trustworthy.
+
+---
+
+# Real-Life Analogy
+
+Imagine sending a confidential letter through postal mail.
+
+You expect:
+
+- Nobody opens the envelope.
+- Nobody changes the letter.
+- The letter reaches the recipient.
+
+Networking security has exactly the same goals.
+
+---
+
+# What Is Network Security?
+
+Definition:
+
+> **Network Security is the practice of protecting computer networks, devices, applications, and data from unauthorized access, attacks, misuse, modification, or destruction.**
+
+Notice that network security protects:
+
+- Data
+- Devices
+- Communication
+- Services
+
+---
+
+# The Three Fundamental Goals of Security
+
+Almost every security mechanism is designed to protect three fundamental properties.
+
+These are known as the:
+
+> **CIA Triad**
+
+The CIA Triad stands for:
+
+- Confidentiality
+- Integrity
+- Availability
+
+This is one of the most important concepts in cybersecurity.
+
+---
+
+# Visualizing the CIA Triad
+
+```text
+            Network Security
+
+                   │
+
+      ┌────────────┼────────────┐
+
+      ▼            ▼            ▼
+
+Confidentiality Integrity Availability
+```
+
+Almost every attack attempts to violate one or more of these principles.
+
+---
+
+# Confidentiality
+
+## What Is Confidentiality?
+
+Definition:
+
+> **Confidentiality ensures that information is accessible only to authorized users.**
+
+Simply put,
+
+only the intended recipient should be able to read the data.
+
+---
+
+# Real-Life Analogy
+
+Suppose you send a sealed envelope.
+
+```text
+You
+
+↓
+
+Sealed Envelope
+
+↓
+
+Friend
+```
+
+Only your friend should read the contents.
+
+If someone secretly opens the envelope,
+
+confidentiality has been violated.
+
+---
+
+# Networking Example
+
+Suppose you log into:
+
+```text
+https://www.bank.com
+```
+
+Your browser sends:
+
+- Username
+- Password
+
+If a hacker captures your password,
+
+confidentiality has been compromised.
+
+---
+
+# How Is Confidentiality Achieved?
+
+Several technologies help maintain confidentiality.
+
+Examples include:
+
+- Encryption
+- Authentication
+- Secure Communication Protocols
+- Access Control
+
+We will study these in later chapters.
+
+---
+
+# Integrity
+
+## What Is Integrity?
+
+Definition:
+
+> **Integrity ensures that data is not altered during storage or transmission without authorization.**
+
+The receiver should obtain:
+
+Exactly the same data
+
+that the sender transmitted.
+
+---
+
+# Real-Life Analogy
+
+Suppose you write:
+
+```text
+Transfer
+
+$100
+```
+
+Someone secretly changes it to:
+
+```text
+Transfer
+
+$10,000
+```
+
+The message has been modified.
+
+Integrity has been violated.
+
+---
+
+# Networking Example
+
+Suppose a hospital sends a patient's medical record.
+
+Original:
+
+```text
+Blood Group
+
+A+
+```
+
+An attacker changes it to:
+
+```text
+Blood Group
+
+O-
+```
+
+This modification could be life-threatening.
+
+Integrity protects against such unauthorized changes.
+
+---
+
+# How Is Integrity Achieved?
+
+Common techniques include:
+
+- Cryptographic Hash Functions
+- Checksums
+- Digital Signatures
+- Message Authentication Codes (MACs)
+
+---
+
+# Availability
+
+## What Is Availability?
+
+Definition:
+
+> **Availability ensures that authorized users can access systems and services whenever they are needed.**
+
+Even perfectly confidential data is useless if users cannot access it.
+
+---
+
+# Real-Life Analogy
+
+Suppose your bank is perfectly secure.
+
+But every ATM is offline.
+
+Customers cannot withdraw money.
+
+The service is unavailable.
+
+Availability has been lost.
+
+---
+
+# Networking Example
+
+Suppose a company's website crashes because millions of fake requests overload the server.
+
+Customers cannot access the website.
+
+Availability has been compromised.
+
+---
+
+# How Is Availability Achieved?
+
+Examples include:
+
+- Redundant Servers
+- Backup Systems
+- Load Balancers
+- Fault Tolerance
+- DDoS Protection
+
+---
+
+# Understanding the CIA Triad Together
+
+Suppose you send an email.
+
+```text
+Sender
+
+↓
+
+Internet
+
+↓
+
+Receiver
+```
+
+Security requires:
+
+### Confidentiality
+
+Only the receiver can read it.
+
+---
+
+### Integrity
+
+Nobody changes the email.
+
+---
+
+### Availability
+
+The email service remains operational.
+
+---
+
+# Visual Example
+
+```text
+Message
+
+↓
+
+Encryption
+
+↓
+
+Secure Network
+
+↓
+
+Integrity Verification
+
+↓
+
+Receiver
+
+↓
+
+Available Service
+```
+
+All three principles work together.
+
+---
+
+# Who Attacks Networks?
+
+Another important question arises.
+
+> **Who performs cyber attacks?**
+
+Not all attackers are the same.
+
+Different attackers have different goals.
+
+---
+
+# Types of Attackers
+
+Common categories include:
+
+- Individual Hackers
+- Cybercriminals
+- Organized Crime Groups
+- Nation-State Attackers
+- Terrorist Organizations
+- Insider Threats
+- Script Kiddies
+
+Let's study each one.
+
+---
+
+# Individual Hackers
+
+Some individuals attack systems:
+
+- For curiosity.
+- To learn.
+- For recognition.
+- To demonstrate skills.
+
+Not every hacker has malicious intentions.
+
+Some become ethical hackers or security researchers.
+
+---
+
+# Cybercriminals
+
+Cybercriminals attack for:
+
+- Financial gain.
+- Identity theft.
+- Credit card fraud.
+- Ransom payments.
+
+Their primary motivation is profit.
+
+---
+
+# Organized Crime Groups
+
+These are professional criminal organizations.
+
+They often operate internationally.
+
+Activities include:
+
+- Ransomware campaigns.
+- Banking fraud.
+- Cryptocurrency theft.
+- Data theft.
+
+---
+
+# Nation-State Attackers
+
+Some governments conduct cyber operations against other countries.
+
+Objectives may include:
+
+- Espionage.
+- Intelligence gathering.
+- Military operations.
+- Infrastructure disruption.
+
+These attackers usually possess significant technical resources.
+
+---
+
+# Insider Threats
+
+Not every attacker comes from outside the organization.
+
+Sometimes,
+
+employees themselves misuse their access.
+
+Examples include:
+
+- Stealing confidential data.
+- Deleting files.
+- Selling customer information.
+- Sabotaging systems.
+
+These are called:
+
+> **Insider Threats**
+
+---
+
+# Script Kiddies
+
+A Script Kiddie is:
+
+> **A person with limited technical knowledge who uses tools created by others to perform attacks.**
+
+They often download ready-made attack software without understanding how it works.
+
+---
+
+# Motivations of Attackers
+
+Attackers may be motivated by:
+
+- Money
+- Politics
+- Revenge
+- Curiosity
+- Competition
+- Fame
+- Ideology
+
+Understanding motivation helps security professionals design appropriate defenses.
+
+---
+
+# Passive and Active Attacks
+
+Attacks are commonly divided into two major categories.
+
+```text
+Cyber Attacks
+
+│
+
+├── Passive Attacks
+
+└── Active Attacks
+```
+
+---
+
+# Passive Attack
+
+Definition:
+
+> **A Passive Attack attempts to observe or collect information without modifying the communication.**
+
+The attacker remains hidden.
+
+They simply listen.
+
+---
+
+# Real-Life Analogy
+
+Imagine someone secretly listening to your conversation.
+
+They do not interrupt.
+
+They simply collect information.
+
+This is a passive attack.
+
+---
+
+# Networking Example
+
+Suppose an attacker captures network packets.
+
+They read:
+
+- Usernames
+- Passwords
+- Emails
+
+But they do not modify anything.
+
+This is a passive attack.
+
+---
+
+# Characteristics of Passive Attacks
+
+Passive attacks:
+
+- Observe communication.
+- Collect information.
+- Do not alter data.
+- Are difficult to detect.
+
+Victims often never realize they were monitored.
+
+---
+
+# Active Attack
+
+Definition:
+
+> **An Active Attack attempts to modify, disrupt, inject, or destroy communication or services.**
+
+Unlike passive attacks,
+
+active attacks interfere with normal network operation.
+
+---
+
+# Real-Life Analogy
+
+Imagine someone intercepts your letter,
+
+changes its contents,
+
+and sends it onward.
+
+This is an active attack.
+
+---
+
+# Networking Example
+
+Suppose an attacker:
+
+- Modifies packets.
+- Deletes packets.
+- Injects fake packets.
+- Disrupts communication.
+
+These are active attacks.
+
+---
+
+# Characteristics of Active Attacks
+
+Active attacks:
+
+- Modify communication.
+- Interrupt services.
+- Corrupt data.
+- Are usually easier to detect.
+
+---
+
+# Passive vs Active Attacks
+
+| Passive Attack | Active Attack |
+|----------------|---------------|
+| Observes communication | Modifies communication |
+| Collects information | Changes or destroys information |
+| Difficult to detect | Often easier to detect |
+| Does not affect system operation | Interrupts normal operation |
+| Example: Packet Sniffing | Example: Denial-of-Service |
+
+---
+
+# Complete Security Picture
+
+```text
+Network
+
+↓
+
+Attackers
+
+↓
+
+Passive Attacks
+(Read Data)
+
+↓
+
+Active Attacks
+(Change Data)
+
+↓
+
+Security Mechanisms
+
+↓
+
+Confidentiality
+
+Integrity
+
+Availability
+```
+
+---
+
+# Why Study Network Attacks?
+
+Understanding attacks helps us:
+
+- Build secure systems.
+- Detect suspicious behavior.
+- Design better protocols.
+- Protect sensitive information.
+
+Security professionals must understand:
+
+> **How attackers think**
+
+before they can defend against them.
+
+---
+
+# Key Takeaways
+
+- Modern networks face many different cyber threats.
+- The primary goals of network security are represented by the CIA Triad:
+  - Confidentiality
+  - Integrity
+  - Availability
+- Attackers include individuals, cybercriminals, nation-states, insiders, and organized groups.
+- Passive attacks observe communication without changing it.
+- Active attacks modify, interrupt, or destroy communication.
+- Understanding attacker behavior is essential for designing secure networks.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Network Security | Protection of networks, systems, and data from unauthorized access and attacks. |
+| CIA Triad | Security model consisting of Confidentiality, Integrity, and Availability. |
+| Confidentiality | Ensuring that information is accessible only to authorized users. |
+| Integrity | Ensuring that information is not modified without authorization. |
+| Availability | Ensuring that systems and services remain accessible to authorized users. |
+| Cybercriminal | Individual or group that conducts cyber attacks for financial or criminal gain. |
+| Nation-State Attacker | Government-sponsored attacker conducting cyber operations for political or military objectives. |
+| Insider Threat | Authorized user who intentionally or unintentionally compromises security. |
+| Passive Attack | Attack that observes or captures information without modifying it. |
+| Active Attack | Attack that modifies, disrupts, injects, or destroys communication. |
+| Script Kiddie | Inexperienced attacker who uses pre-built hacking tools created by others. |
+
+---
+
+# Summary Diagram
+
+```text
+                Network Security
+                       │
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+ Confidentiality   Integrity    Availability
+        │              │              │
+        ▼              ▼              ▼
+Protect Data     Prevent Changes   Keep Services Running
+                       │
+                       ▼
+                  Cyber Attackers
+                       │
+         ┌─────────────┴─────────────┐
+         ▼                           ▼
+   Passive Attacks             Active Attacks
+   (Observe Data)             (Modify/Disrupt Data)
+```
+
+---
+
+## End of Part 6A
+
+### Next Part (6B)
+
+In the next part, we will study one of the most important topics in cybersecurity:
+
+- **Malware**
+- Virus
+- Worm
+- Trojan Horse
+- Spyware
+- Adware
+- Ransomware
+- Rootkits
+- Botnets
+- How malware spreads
+- Real-world examples
+- Technical vocabulary
+- Common misconceptions
+
+<ArticleNav
+  prev={{ title: "1.5 Protocol Layers and Their Service Models (Part 5E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5e" }}
+  next={{ title: "1.6 Networks Under Attack (Part 6B)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6b" }}
+/>

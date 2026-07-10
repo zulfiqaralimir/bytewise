@@ -1,0 +1,901 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 1.6 Networks Under Attack (Part 6B)
+
+# Malware: Malicious Software
+
+In the previous part, we learned:
+
+- The importance of network security.
+- The CIA Triad.
+- Types of attackers.
+- Passive and Active attacks.
+
+Now another important question arises.
+
+> **How do attackers actually compromise computers?**
+
+One of the most common methods is through:
+
+> **Malware**
+
+Malware is responsible for millions of cyber attacks every year.
+
+It targets:
+
+- Personal computers
+- Smartphones
+- Cloud servers
+- Government systems
+- Banks
+- Hospitals
+- Industrial control systems
+
+Understanding malware is one of the foundations of cybersecurity.
+
+---
+
+# What Is Malware?
+
+The word **Malware** comes from:
+
+```text
+Malicious
+
++
+
+Software
+```
+
+Definition:
+
+> **Malware is software intentionally designed to damage, disrupt, spy on, or gain unauthorized access to computer systems.**
+
+Unlike normal software,
+
+malware is created with harmful intentions.
+
+---
+
+# Real-Life Analogy
+
+Imagine someone gives you a gift box.
+
+Inside the box,
+
+instead of a gift,
+
+there is something dangerous.
+
+The box appears harmless,
+
+but its contents are malicious.
+
+Malware behaves similarly.
+
+It often disguises itself as useful software.
+
+---
+
+# Goals of Malware
+
+Different malware has different objectives.
+
+Some malware wants to:
+
+- Steal passwords.
+- Delete files.
+- Encrypt data.
+- Spy on users.
+- Display advertisements.
+- Take control of computers.
+- Spread to other computers.
+
+---
+
+# Malware Categories
+
+There are many types of malware.
+
+The most important ones are:
+
+```text
+Malware
+
+│
+
+├── Virus
+
+├── Worm
+
+├── Trojan Horse
+
+├── Spyware
+
+├── Adware
+
+├── Ransomware
+
+├── Rootkit
+
+└── Bot
+```
+
+Let's study each one.
+
+---
+
+# Virus
+
+## What Is a Virus?
+
+Definition:
+
+> **A Virus is malware that attaches itself to another file or program and spreads when that infected file is executed.**
+
+Notice something important.
+
+A virus **cannot spread by itself.**
+
+It requires:
+
+- A host file
+- User action
+
+---
+
+# Real-Life Analogy
+
+Think of a biological virus.
+
+A virus needs a living host.
+
+Similarly,
+
+a computer virus needs another program to survive.
+
+---
+
+# How Does a Virus Spread?
+
+Example:
+
+```text
+Infected File
+
+↓
+
+User Opens File
+
+↓
+
+Virus Executes
+
+↓
+
+Infects Other Files
+```
+
+The virus keeps attaching itself to additional files.
+
+---
+
+# Characteristics of a Virus
+
+A virus usually:
+
+- Attaches to programs.
+- Requires user action.
+- Replicates itself.
+- Infects additional files.
+
+---
+
+# Damage Caused by Viruses
+
+Viruses may:
+
+- Delete files.
+- Corrupt documents.
+- Slow computers.
+- Display unwanted messages.
+- Disable software.
+
+---
+
+# Worm
+
+Now let's study another important malware.
+
+---
+
+# What Is a Worm?
+
+Definition:
+
+> **A Worm is malware that spreads automatically across networks without requiring user interaction.**
+
+Unlike viruses,
+
+worms do **not** need:
+
+- A host file.
+- User execution.
+
+They spread independently.
+
+---
+
+# Virus vs Worm
+
+This is one of the most common interview questions.
+
+Virus:
+
+```text
+Needs User Action
+```
+
+Worm:
+
+```text
+Spreads Automatically
+```
+
+---
+
+# Real-Life Analogy
+
+Imagine one infected person.
+
+A virus spreads only if people touch the infected person.
+
+A worm behaves more like an airborne disease.
+
+It spreads automatically.
+
+---
+
+# Worm Propagation
+
+```text
+Computer A
+
+↓
+
+Computer B
+
+↓
+
+Computer C
+
+↓
+
+Computer D
+
+↓
+
+Entire Network
+```
+
+A worm can infect thousands of computers within minutes.
+
+---
+
+# Damage Caused by Worms
+
+Worms may:
+
+- Consume bandwidth.
+- Overload networks.
+- Slow Internet traffic.
+- Install additional malware.
+
+---
+
+# Famous Example
+
+One famous example is the:
+
+```text
+WannaCry Worm
+```
+
+It spread worldwide within hours,
+
+infecting hospitals,
+
+businesses,
+
+and government organizations.
+
+---
+
+# Trojan Horse
+
+Now let's study one of the most deceptive malware types.
+
+---
+
+# What Is a Trojan Horse?
+
+Definition:
+
+> **A Trojan Horse is malware disguised as legitimate software.**
+
+Unlike viruses,
+
+Trojans do **not** replicate themselves.
+
+Instead,
+
+they trick users into installing them.
+
+---
+
+# Origin of the Name
+
+The name comes from the ancient Greek story:
+
+The **Trojan Horse**.
+
+Greek soldiers hid inside a wooden horse.
+
+The horse appeared harmless.
+
+Once inside the city,
+
+the soldiers attacked.
+
+Computer Trojans work exactly the same way.
+
+---
+
+# Example
+
+Suppose you download:
+
+```text
+Free Game.exe
+```
+
+It appears legitimate.
+
+After installation,
+
+it secretly:
+
+- Steals passwords.
+- Opens a backdoor.
+- Installs spyware.
+
+---
+
+# Characteristics of Trojans
+
+Trojans:
+
+- Disguise themselves.
+- Trick users.
+- Do not self-replicate.
+- Often install additional malware.
+
+---
+
+# Spyware
+
+Now let's study malware that secretly collects information.
+
+---
+
+# What Is Spyware?
+
+Definition:
+
+> **Spyware is malware that secretly monitors user activity and collects information without the user's knowledge.**
+
+---
+
+# Information Collected
+
+Spyware may collect:
+
+- Passwords.
+- Browsing history.
+- Credit card numbers.
+- Emails.
+- Banking information.
+- Screenshots.
+
+---
+
+# Real-Life Analogy
+
+Imagine someone secretly installing cameras inside your house.
+
+You continue your daily activities,
+
+while someone records everything.
+
+Spyware behaves similarly.
+
+---
+
+# Common Targets
+
+Spyware often targets:
+
+- Banking credentials.
+- Social media accounts.
+- Business information.
+
+---
+
+# Adware
+
+Adware is another common malware type.
+
+---
+
+# What Is Adware?
+
+Definition:
+
+> **Adware is software that automatically displays unwanted advertisements.**
+
+Some adware is merely annoying.
+
+Other adware also tracks user behavior.
+
+---
+
+# Example
+
+Suppose every few minutes,
+
+your browser opens:
+
+```text
+Win a Free Phone!
+```
+
+or
+
+```text
+Congratulations!
+
+You Are Today's Winner!
+```
+
+These advertisements may be generated by adware.
+
+---
+
+# Risks
+
+Some adware:
+
+- Slows computers.
+- Tracks browsing activity.
+- Installs additional malware.
+
+---
+
+# Ransomware
+
+One of the most dangerous malware types today is:
+
+> **Ransomware**
+
+---
+
+# What Is Ransomware?
+
+Definition:
+
+> **Ransomware encrypts a victim's files and demands payment to restore access.**
+
+---
+
+# Real-Life Analogy
+
+Imagine someone locks your house.
+
+Then says:
+
+```text
+Pay Me
+
+or
+
+You Never Enter Again.
+```
+
+Ransomware behaves the same way.
+
+---
+
+# How Ransomware Works
+
+```text
+Victim Opens File
+
+↓
+
+Malware Executes
+
+↓
+
+Files Encrypted
+
+↓
+
+Payment Demand
+```
+
+The victim can no longer access their own files.
+
+---
+
+# Common Targets
+
+Ransomware attacks:
+
+- Hospitals.
+- Banks.
+- Schools.
+- Businesses.
+- Government agencies.
+
+---
+
+# Famous Example
+
+The:
+
+```text
+WannaCry
+```
+
+attack affected more than 150 countries.
+
+Hospitals,
+
+factories,
+
+and businesses were forced to stop operations.
+
+---
+
+# Rootkit
+
+Now let's study one of the most difficult malware types to detect.
+
+---
+
+# What Is a Rootkit?
+
+Definition:
+
+> **A Rootkit is malware designed to hide itself and other malicious software from the operating system and security software.**
+
+Its purpose is stealth.
+
+---
+
+# Real-Life Analogy
+
+Imagine a burglar who not only enters your house,
+
+but also removes every trace that they were ever there.
+
+Rootkits behave similarly.
+
+---
+
+# Why Are Rootkits Dangerous?
+
+Rootkits can:
+
+- Hide malware.
+- Hide files.
+- Hide processes.
+- Hide network activity.
+
+They often allow attackers to remain inside systems for long periods.
+
+---
+
+# Bot
+
+Now let's study another important malware component.
+
+---
+
+# What Is a Bot?
+
+Definition:
+
+> **A Bot is malware that allows an attacker to remotely control an infected computer.**
+
+The infected computer becomes a:
+
+```text
+Zombie Computer
+```
+
+because it follows commands from the attacker.
+
+---
+
+# How Bots Work
+
+```text
+Attacker
+
+↓
+
+Command Server
+
+↓
+
+Bot
+
+↓
+
+Victim Computer
+```
+
+The attacker controls the infected computer remotely.
+
+---
+
+# Botnet
+
+A collection of bots is called a:
+
+> **Botnet**
+
+Definition:
+
+> **A Botnet is a network of compromised computers controlled by a single attacker.**
+
+---
+
+# Botnet Diagram
+
+```text
+             Attacker
+
+                 │
+
+        Command Server
+
+      ┌──────┼──────┐
+
+      ▼      ▼      ▼
+
+ Computer Computer Computer
+
+      ▼      ▼      ▼
+
+     Bot     Bot     Bot
+```
+
+Thousands or even millions of infected computers can participate.
+
+---
+
+# What Are Botnets Used For?
+
+Botnets are commonly used for:
+
+- DDoS attacks.
+- Spam emails.
+- Cryptocurrency mining.
+- Password attacks.
+- Malware distribution.
+
+---
+
+# How Malware Spreads
+
+Malware reaches victims in many ways.
+
+Common methods include:
+
+- Email attachments.
+- Fake software downloads.
+- Malicious websites.
+- USB drives.
+- Software vulnerabilities.
+- Fake mobile apps.
+- Social engineering.
+
+---
+
+# Social Engineering
+
+Sometimes,
+
+attackers do not attack computers first.
+
+They attack:
+
+> **People**
+
+Example:
+
+An email claims:
+
+```text
+Urgent!
+
+Reset Your Password Immediately!
+```
+
+The victim clicks the link.
+
+Malware installs automatically.
+
+---
+
+# Malware Prevention
+
+Several techniques reduce malware risk.
+
+Examples include:
+
+- Antivirus software.
+- Regular software updates.
+- Firewalls.
+- Strong passwords.
+- Multi-Factor Authentication (MFA).
+- Downloading software only from trusted sources.
+- Avoiding suspicious email attachments.
+- Regular data backups.
+
+---
+
+# Comparison of Malware Types
+
+| Malware | Self-Replicates | Requires User Action | Main Purpose |
+|----------|----------------|----------------------|--------------|
+| Virus | Yes | Yes | Infect files |
+| Worm | Yes | No | Spread across networks |
+| Trojan Horse | No | Yes | Disguise itself as legitimate software |
+| Spyware | No | Usually Yes | Monitor user activity |
+| Adware | No | Usually Yes | Display unwanted advertisements |
+| Ransomware | No | Usually Yes | Encrypt files and demand payment |
+| Rootkit | No | Often Yes | Hide malware from detection |
+| Bot | No | Usually Yes | Allow remote control of infected systems |
+
+---
+
+# Common Misconceptions
+
+## Misconception 1
+
+> Every malware is a virus.
+
+Incorrect.
+
+A virus is only one type of malware.
+
+---
+
+## Misconception 2
+
+> Worms require users to open infected files.
+
+Incorrect.
+
+Worms spread automatically across networks.
+
+---
+
+## Misconception 3
+
+> Trojans replicate like viruses.
+
+Incorrect.
+
+Trojans do not self-replicate.
+
+They rely on deception.
+
+---
+
+## Misconception 4
+
+> Antivirus software catches every malware.
+
+Incorrect.
+
+New or sophisticated malware may evade detection.
+
+Good security requires multiple layers of protection.
+
+---
+
+# Key Takeaways
+
+- Malware is software designed to harm, exploit, or gain unauthorized access to systems.
+- A Virus attaches to another program and requires user action to spread.
+- A Worm spreads automatically without user interaction.
+- A Trojan Horse disguises itself as legitimate software.
+- Spyware secretly collects user information.
+- Adware displays unwanted advertisements and may track user behavior.
+- Ransomware encrypts files and demands payment.
+- Rootkits hide malware from the operating system and security software.
+- Bots allow attackers to remotely control infected computers.
+- A Botnet is a collection of compromised computers controlled by a single attacker.
+
+---
+
+# Technical Vocabulary
+
+| Term | Definition |
+|------|------------|
+| Malware | Malicious software designed to damage, disrupt, or gain unauthorized access to computer systems. |
+| Virus | Malware that attaches itself to another file or program and spreads when the host is executed. |
+| Worm | Malware that spreads automatically across networks without user interaction. |
+| Trojan Horse | Malware disguised as legitimate software to deceive users. |
+| Spyware | Malware that secretly monitors user activity and collects sensitive information. |
+| Adware | Software that displays unwanted advertisements, sometimes while collecting user data. |
+| Ransomware | Malware that encrypts a victim's files and demands payment for decryption. |
+| Rootkit | Malware designed to hide itself and other malicious software from detection. |
+| Bot | Malware that allows remote control of an infected computer. |
+| Botnet | Network of compromised computers controlled by a single attacker. |
+| Social Engineering | Psychological manipulation used to trick people into revealing information or performing unsafe actions. |
+
+---
+
+# Summary Diagram
+
+```text
+                     Malware
+                        │
+ ┌──────────┬──────────┬──────────┬──────────┐
+ ▼          ▼          ▼          ▼
+Virus     Worm     Trojan     Spyware
+ │          │          │          │
+ ▼          ▼          ▼          ▼
+Files    Network    Disguise   Steal Data
+
+        ┌──────────┬──────────┬──────────┐
+        ▼          ▼          ▼
+   Adware   Ransomware   Rootkit
+        │          │          │
+        ▼          ▼          ▼
+     Ads      Encrypt Files  Hide Malware
+                    │
+                    ▼
+                  Bot
+                    │
+                    ▼
+                 Botnet
+```
+
+---
+
+## End of Part 6B
+
+### Next Part (6C)
+
+In the next part, we will study one of the most important network attacks covered in Kurose:
+
+- **Denial-of-Service (DoS) Attack**
+- **Distributed Denial-of-Service (DDoS) Attack**
+- Reflection Attacks
+- Amplification Attacks
+- Botnets and DDoS
+- Real-world examples
+- Defense mechanisms
+- Technical vocabulary
+- Common interview questions
+
+<ArticleNav
+  prev={{ title: "1.6 Networks Under Attack (Part 6A)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6a" }}
+  next={{ title: "1.6 Networks Under Attack (Part 6C)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6c" }}
+/>

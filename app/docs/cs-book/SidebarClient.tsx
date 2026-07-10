@@ -245,6 +245,11 @@ const chapters = [
           { title: "1.5 Protocol Layers and Their Service Models (Part 5C)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5c" },
           { title: "1.5 Protocol Layers and Their Service Models (Part 5D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5d" },
           { title: "1.5 Protocol Layers and Their Service Models (Part 5E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-5-protocol-layers-part-5e" },
+          { title: "1.6 Networks Under Attack (Part 6A)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6a" },
+          { title: "1.6 Networks Under Attack (Part 6B)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6b" },
+          { title: "1.6 Networks Under Attack (Part 6C)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6c" },
+          { title: "1.6 Networks Under Attack (Part 6D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6d" },
+          { title: "1.6 Networks Under Attack (Part 6E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6e" },
         ],
       },
       {
