@@ -2,7 +2,7 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 # Section 1.5 Protocol Layers and Their Service Models (Part 5C)
 
-# Encapsulation and Decapsulation
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Encapsulation and Decapsulation</span>
 
 In the previous part, we learned about the **five layers of the Internet Protocol Stack**.
 
@@ -10,7 +10,7 @@ We also learned that when data travels from the sender to the receiver, it passe
 
 Now another important question arises.
 
-> **How does each layer add its own information without destroying the original data?**
+> <span style={{ color: "#38bdf8", fontWeight: 700 }}>How does each layer add its own information without destroying the original data?</span>
 
 For example,
 
@@ -22,24 +22,24 @@ Hello
 
 into WhatsApp.
 
-By the time this message reaches the Physical Layer, it contains much more than just the word:
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>By the time this message reaches the Physical Layer, it contains much more than just the word:</span>
 
 ```text
 Hello
 ```
 
-It now contains:
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>It now contains:</span>
 
-- TCP information
-- IP information
-- Ethernet information
-- Error detection information
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>TCP information</span>
+- <span style={{ color: "#eab308", fontWeight: 700 }}>IP information</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Ethernet information</span>
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>Error detection information</span>
 
-How is all this information added?
+<span style={{ color: "#84cc16", fontWeight: 700 }}>How is all this information added?</span>
 
 The answer is:
 
-> **Encapsulation**
+> <span style={{ color: "#fb7185", fontWeight: 700 }}>Encapsulation</span>
 
 ---
 
@@ -47,7 +47,7 @@ The answer is:
 
 Definition:
 
-> **Encapsulation is the process of adding protocol information to data as it moves down the protocol stack from the Application Layer to the Physical Layer.**
+> <span style={{ color: "#c084fc", fontWeight: 700 }}>Encapsulation is the process of adding protocol information to data as it moves down the protocol stack from the Application Layer to the Physical Layer.</span>
 
 Notice the phrase:
 
@@ -57,7 +57,7 @@ The original application data is **not replaced**.
 
 Instead,
 
-each layer **wraps** the data with its own control information.
+each layer <span style={{ color: "#60a5fa", fontWeight: 700 }}>wraps</span> the data with its own control information.
 
 ---
 
@@ -165,17 +165,17 @@ each layer needs different information.
 
 Example:
 
-The Transport Layer needs:
+<span style={{ color: "#e879f9", fontWeight: 700 }}>The Transport Layer needs:</span>
 
-- Port Numbers
+- <span style={{ color: "#fde047", fontWeight: 700 }}>Port Numbers</span>
 
-The Network Layer needs:
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>The Network Layer needs:</span>
 
-- IP Addresses
+- <span style={{ color: "#86efac", fontWeight: 700 }}>IP Addresses</span>
 
-The Link Layer needs:
+<span style={{ color: "#fca5a5", fontWeight: 700 }}>The Link Layer needs:</span>
 
-- MAC Addresses
+- <span style={{ color: "#fdba74", fontWeight: 700 }}>MAC Addresses</span>
 
 Instead of mixing everything together,
 
@@ -191,9 +191,9 @@ The information added by a layer is called a:
 
 Definition:
 
-> **A Header is control information added to data by a protocol layer.**
+> **A Header is <span style={{ color: "#38bdf8", fontWeight: 700 }}>control information</span> added to data by a protocol layer.**
 
-Headers tell the receiving device how to process the data.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>Headers tell the receiving device how to process the data.</span>
 
 ---
 
@@ -205,7 +205,7 @@ The original data carried inside the header is called the:
 
 Definition:
 
-> **Payload is the actual data being carried by a protocol.**
+> <span style={{ color: "#f43f5e", fontWeight: 700 }}>Payload is the actual data being carried by a protocol.</span>
 
 For example,
 
@@ -267,7 +267,7 @@ No networking information has been added yet.
 
 # Step 1 — Application Layer
 
-The Application Layer creates:
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>The Application Layer creates:</span>
 
 ```text
 Message
@@ -277,7 +277,7 @@ Message
 Hello World
 ```
 
-The message is passed downward.
+<span style={{ color: "#eab308", fontWeight: 700 }}>The message is passed downward.</span>
 
 ---
 
@@ -285,10 +285,10 @@ The message is passed downward.
 
 The Transport Layer adds:
 
-- Source Port
-- Destination Port
-- Sequence Number (TCP)
-- Other transport information
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Source Port</span>
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>Destination Port</span>
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>Sequence Number (TCP)</span>
+- <span style={{ color: "#fb7185", fontWeight: 700 }}>Other transport information</span>
 
 Now the data becomes:
 
@@ -312,10 +312,10 @@ This complete unit is called a:
 
 The Network Layer adds:
 
-- Source IP Address
-- Destination IP Address
-- TTL
-- Protocol Field
+- <span style={{ color: "#c084fc", fontWeight: 700 }}>Source IP Address</span>
+- <span style={{ color: "#60a5fa", fontWeight: 700 }}>Destination IP Address</span>
+- <span style={{ color: "#e879f9", fontWeight: 700 }}>TTL</span>
+- <span style={{ color: "#fde047", fontWeight: 700 }}>Protocol Field</span>
 
 Now we have:
 
@@ -345,9 +345,9 @@ or
 
 The Link Layer adds:
 
-- Source MAC Address
-- Destination MAC Address
-- Frame Check Sequence (FCS)
+- <span style={{ color: "#93c5fd", fontWeight: 700 }}>Source MAC Address</span>
+- <span style={{ color: "#86efac", fontWeight: 700 }}>Destination MAC Address</span>
+- <span style={{ color: "#fca5a5", fontWeight: 700 }}>Frame Check Sequence (FCS)</span>
 
 Now we obtain:
 
@@ -380,17 +380,17 @@ The Link Layer usually adds:
 - Header
 - Trailer
 
-The trailer often contains error-detection information such as a Frame Check Sequence (FCS).
+<span style={{ color: "#fdba74", fontWeight: 700 }}>The trailer often contains error-detection information such as a Frame Check Sequence (FCS).</span>
 
 ---
 
 # Step 5 — Physical Layer
 
-The Physical Layer does not add another header.
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>The Physical Layer does not add another header.</span>
 
 Instead,
 
-it converts the entire frame into:
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>it converts the entire frame into:</span>
 
 ```text
 0
@@ -422,7 +422,7 @@ depending on the communication medium.
 
 ---
 
-# Complete Encapsulation Process
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Complete Encapsulation Process</span>
 
 ```text
 Application Layer
@@ -484,7 +484,7 @@ Bits
 
 Notice:
 
-Each lower layer **treats everything it receives from the layer above as its payload**.
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>Each lower layer treats everything it receives from the layer above as its payload.</span>
 
 ---
 
