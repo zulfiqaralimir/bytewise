@@ -2,7 +2,7 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 # Section 1.5 Protocol Layers and Their Service Models (Part 5D)
 
-# The OSI Reference Model and Service Models
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>The OSI Reference Model and Service Models</span>
 
 In the previous parts, we studied:
 
@@ -24,9 +24,9 @@ To answer it, we must understand the **OSI Reference Model**.
 
 OSI stands for:
 
-> **Open Systems Interconnection**
+> <span style={{ color: "#38bdf8", fontWeight: 700 }}>Open Systems Interconnection</span>
 
-It is a **reference model** developed by the **International Organization for Standardization (ISO)** to standardize how different computer systems communicate.
+It is a **reference model** developed by the <span style={{ color: "#fbbf24", fontWeight: 700 }}>International Organization for Standardization (ISO)</span> to <span style={{ color: "#f43f5e", fontWeight: 700 }}>standardize how different computer systems communicate.</span>
 
 Notice the phrase:
 
@@ -34,11 +34,11 @@ Notice the phrase:
 
 The OSI model is primarily used to:
 
-- Explain networking concepts.
-- Provide a common vocabulary.
-- Help engineers design protocols.
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Explain networking concepts.</span>
+- <span style={{ color: "#eab308", fontWeight: 700 }}>Provide a common vocabulary.</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Help engineers design protocols.</span>
 
-It is **not** the protocol stack actually used by the Internet.
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>It is not the protocol stack actually used by the Internet.</span>
 
 ---
 
@@ -126,13 +126,13 @@ and upward when receiving.
 
 ---
 
-# Overview of Each Layer
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Overview of Each Layer</span>
 
 | Layer | Main Responsibility |
 |--------|---------------------|
 | Application | Provides services to user applications. |
-| Presentation | Data representation, encryption, compression. |
-| Session | Establishes, manages, and terminates communication sessions. |
+| <span style={{ color: "#84cc16", fontWeight: 700 }}>Presentation</span> | <span style={{ color: "#84cc16", fontWeight: 700 }}>Data representation, encryption, compression.</span> |
+| <span style={{ color: "#fb7185", fontWeight: 700 }}>Session</span> | <span style={{ color: "#fb7185", fontWeight: 700 }}>Establishes, manages, and terminates communication sessions.</span> |
 | Transport | End-to-end communication between processes. |
 | Network | Routing and logical addressing. |
 | Data Link | Communication between neighboring devices. |
@@ -223,17 +223,17 @@ Main responsibility:
 
 Provide end-to-end communication between application processes.
 
-Functions:
+<span style={{ color: "#c084fc", fontWeight: 700 }}>Functions:</span>
 
-- Reliability
-- Flow Control
-- Congestion Control
-- Error Recovery
+- <span style={{ color: "#60a5fa", fontWeight: 700 }}>Reliability</span>
+- <span style={{ color: "#e879f9", fontWeight: 700 }}>Flow Control</span>
+- <span style={{ color: "#fde047", fontWeight: 700 }}>Congestion Control</span>
+- <span style={{ color: "#93c5fd", fontWeight: 700 }}>Error Recovery</span>
 
-Examples:
+<span style={{ color: "#86efac", fontWeight: 700 }}>Examples:</span>
 
-- TCP
-- UDP
+- <span style={{ color: "#fca5a5", fontWeight: 700 }}>TCP</span>
+- <span style={{ color: "#fdba74", fontWeight: 700 }}>UDP</span>
 
 Data Unit:
 
@@ -257,7 +257,7 @@ Its responsibility is:
 
 A session is:
 
-> **An ongoing exchange of information between two communicating applications.**
+> <span style={{ color: "#38bdf8", fontWeight: 700 }}>An ongoing exchange of information</span> between two communicating applications.
 
 Examples:
 
@@ -273,7 +273,7 @@ The Session Layer helps:
 
 ---
 
-# Real-Life Analogy
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Real-Life Analogy</span>
 
 Imagine a Zoom meeting.
 
@@ -293,19 +293,19 @@ The Presentation Layer prepares data so that different systems can understand it
 
 Its responsibilities include:
 
-- Data Translation
-- Encryption
-- Decryption
-- Compression
-- Decompression
+- <span style={{ color: "#fbbf24", fontWeight: 700 }}>Data Translation</span>
+- <span style={{ color: "#f43f5e", fontWeight: 700 }}>Encryption</span>
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Decryption</span>
+- <span style={{ color: "#eab308", fontWeight: 700 }}>Compression</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Decompression</span>
 
 ---
 
 # Why Is It Needed?
 
-Suppose one computer stores text using one character encoding,
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Suppose one computer stores text using one character encoding,</span>
 
-while another uses a different encoding.
+<span style={{ color: "#84cc16", fontWeight: 700 }}>while another uses a different encoding.</span>
 
 The Presentation Layer ensures both computers interpret the data correctly.
 
@@ -333,7 +333,7 @@ Large File
 Smaller File
 ```
 
-Translation:
+<span style={{ color: "#fb7185", fontWeight: 700 }}>Translation:</span>
 
 ```text
 ASCII
@@ -432,7 +432,7 @@ The OSI model has **two additional layers**:
 
 ---
 
-# Mapping Between the Models
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Mapping Between the Models</span>
 
 | Internet Protocol Stack | OSI Model |
 |--------------------------|-----------|
@@ -448,21 +448,21 @@ The Internet combines the responsibilities of the Application, Presentation, and
 
 # Why Doesn't the Internet Use the Full OSI Model?
 
-The OSI model is excellent for teaching networking concepts.
+The OSI model is <span style={{ color: "#38bdf8", fontWeight: 700 }}>excellent for teaching networking concepts.</span>
 
 However,
 
-the Internet evolved differently.
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>the Internet evolved differently.</span>
 
-Many Presentation and Session Layer functions are handled by:
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>Many Presentation and Session Layer functions are handled by:</span>
 
-- Applications themselves.
-- Application Layer protocols.
-- Libraries within operating systems.
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Applications themselves.</span>
+- <span style={{ color: "#eab308", fontWeight: 700 }}>Application Layer protocols.</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Libraries within operating systems.</span>
 
-Examples:
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Examples:</span>
 
-Encryption is often handled by:
+<span style={{ color: "#84cc16", fontWeight: 700 }}>Encryption is often handled by:</span>
 
 ```text
 TLS
@@ -470,19 +470,19 @@ TLS
 SSL
 ```
 
-Compression is often handled by:
+<span style={{ color: "#fb7185", fontWeight: 700 }}>Compression is often handled by:</span>
 
-- Web browsers.
-- File transfer applications.
-- Multimedia software.
+- <span style={{ color: "#c084fc", fontWeight: 700 }}>Web browsers.</span>
+- <span style={{ color: "#60a5fa", fontWeight: 700 }}>File transfer applications.</span>
+- <span style={{ color: "#e879f9", fontWeight: 700 }}>Multimedia software.</span>
 
 Therefore,
 
-dedicated Presentation and Session Layers are usually unnecessary in modern Internet implementations.
+<span style={{ color: "#fde047", fontWeight: 700 }}>dedicated Presentation and Session Layers are usually unnecessary in modern Internet implementations.</span>
 
 ---
 
-# Why Is the OSI Model Still Important?
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Why Is the OSI Model Still Important?</span>
 
 Even though the Internet does not fully implement the OSI model,
 
@@ -523,9 +523,9 @@ Now let's study another important concept introduced in this section.
 
 # What Is a Service?
 
-Recall what we learned earlier.
+<span style={{ color: "#86efac", fontWeight: 700 }}>Recall what we learned earlier.</span>
 
-Every layer provides services to the layer above it.
+<span style={{ color: "#fca5a5", fontWeight: 700 }}>Every layer provides services to the layer above it.</span>
 
 Example:
 
@@ -551,13 +551,13 @@ A **Service** is:
 
 > **The functionality that one protocol layer offers to the layer directly above it.**
 
-Notice:
+<span style={{ color: "#fdba74", fontWeight: 700 }}>Notice:</span>
 
-A service describes:
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>A service describes:</span>
 
-> **What a layer provides**
+> <span style={{ color: "#fbbf24", fontWeight: 700 }}>What a layer provides</span>
 
-It does **not necessarily describe how the layer implements it.**
+<span style={{ color: "#f43f5e", fontWeight: 700 }}>It does not necessarily describe how the layer implements it.</span>
 
 ---
 
@@ -627,13 +627,13 @@ Each layer can evolve independently.
 
 ## Easier Development
 
-Application developers need not understand routing or physical transmission.
+<span style={{ color: "#14b8a6", fontWeight: 700 }}>Application developers need not understand routing or physical transmission.</span>
 
 ---
 
 ## Standardization
 
-Common service definitions improve interoperability.
+<span style={{ color: "#eab308", fontWeight: 700 }}>Common service definitions improve interoperability.</span>
 
 ---
 
@@ -691,7 +691,7 @@ Physical
 Communication Medium
 ```
 
-Every layer depends upon the services of the layer below it.
+<span style={{ color: "#d946ef", fontWeight: 700 }}>Every layer depends upon the services of the layer below it.</span>
 
 ---
 
@@ -723,11 +723,11 @@ Many modern applications perform encryption themselves using protocols such as T
 
 Incorrect.
 
-Each layer communicates only with:
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Each layer communicates only with:</span>
 
-- The layer immediately above.
-- The layer immediately below.
-- Its logical peer layer on the remote host.
+- <span style={{ color: "#84cc16", fontWeight: 700 }}>The layer immediately above.</span>
+- <span style={{ color: "#fb7185", fontWeight: 700 }}>The layer immediately below.</span>
+- <span style={{ color: "#c084fc", fontWeight: 700 }}>Its logical peer layer on the remote host.</span>
 
 ---
 
@@ -737,9 +737,9 @@ Each layer communicates only with:
 
 Incorrect.
 
-A **service** describes **what** a layer offers.
+<span style={{ color: "#60a5fa", fontWeight: 700 }}>A service describes what a layer offers.</span>
 
-A **protocol** defines **how** two peer entities implement that service.
+<span style={{ color: "#e879f9", fontWeight: 700 }}>A protocol defines how two peer entities implement that service.</span>
 
 ---
 
@@ -805,7 +805,7 @@ Physical
 
 ---
 
-## End of Part 5D
+## <span style={{ color: "#a5b4fc", fontWeight: 700 }}>End of Part 5D</span>
 
 ### Next Part (5E) — Final Part of Section 1.5
 
