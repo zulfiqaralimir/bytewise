@@ -544,7 +544,7 @@ Layer independence makes networking flexible.
 
 # Decapsulation
 
-Now let's look at the receiving computer.
+<span style={{ color: "#38bdf8", fontWeight: 700 }}>Now let's look at the receiving computer.</span>
 
 The receiver gets:
 
@@ -570,7 +570,7 @@ The answer is:
 
 Definition:
 
-> **Decapsulation is the process of removing protocol headers and trailers as data moves upward through the protocol stack at the receiving device.**
+> **Decapsulation is the process of <span style={{ color: "#fbbf24", fontWeight: 700 }}>removing protocol headers and trailers</span> as data moves upward through the protocol stack at the receiving device.**
 
 Notice:
 
@@ -610,12 +610,12 @@ The frame moves upward.
 
 The Link Layer:
 
-- Checks the Frame Check Sequence.
-- Verifies the frame.
-- Removes the Ethernet Header.
-- Removes the Trailer.
+- <span style={{ color: "#f43f5e", fontWeight: 700 }}>Checks the Frame Check Sequence.</span>
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Verifies the frame.</span>
+- <span style={{ color: "#eab308", fontWeight: 700 }}>Removes the Ethernet Header.</span>
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Removes the Trailer.</span>
 
-Remaining data:
+<span style={{ color: "#fb7185", fontWeight: 700 }}>Remaining data:</span>
 
 ```text
 IP Header
@@ -637,11 +637,11 @@ The Network Layer examines:
 - TTL
 - Other IP fields
 
-After processing,
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>After processing,</span>
 
-it removes the IP Header.
+<span style={{ color: "#84cc16", fontWeight: 700 }}>it removes the IP Header.</span>
 
-Remaining data:
+<span style={{ color: "#fb7185", fontWeight: 700 }}>Remaining data:</span>
 
 ```text
 TCP Header
@@ -675,9 +675,9 @@ Hello World
 
 # Step 5 — Application Layer
 
-Finally,
+<span style={{ color: "#c084fc", fontWeight: 700 }}>Finally,</span>
 
-the original application receives:
+<span style={{ color: "#60a5fa", fontWeight: 700 }}>the original application receives:</span>
 
 ```text
 Hello World
@@ -687,7 +687,7 @@ Exactly the same message created by the sender.
 
 ---
 
-# Complete Decapsulation Process
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Complete Decapsulation Process</span>
 
 ```text
 Bits
@@ -740,7 +740,7 @@ The reverse of encapsulation.
 
 ---
 
-# Header vs Payload
+# <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Header vs Payload</span>
 
 One of the most important concepts in networking.
 
@@ -792,7 +792,7 @@ Notice:
 
 The **entire Transport Layer segment becomes the payload of the Network Layer**.
 
-Every layer treats the data received from the layer above as its payload.
+<span style={{ color: "#e879f9", fontWeight: 700 }}>Every layer treats the data received from the layer above as its payload.</span>
 
 ---
 
@@ -886,9 +886,9 @@ The original message is recovered.
 
 # Why Is Encapsulation Important?
 
-Without encapsulation,
+<span style={{ color: "#fde047", fontWeight: 700 }}>Without encapsulation,</span>
 
-every protocol would need to understand every other protocol.
+<span style={{ color: "#93c5fd", fontWeight: 700 }}>every protocol would need to understand every other protocol.</span>
 
 Instead,
 
@@ -896,10 +896,10 @@ each protocol handles only its own header.
 
 This keeps networking:
 
-- Modular
-- Organized
-- Scalable
-- Easier to maintain
+- <span style={{ color: "#86efac", fontWeight: 700 }}>Modular</span>
+- <span style={{ color: "#fca5a5", fontWeight: 700 }}>Organized</span>
+- <span style={{ color: "#fdba74", fontWeight: 700 }}>Scalable</span>
+- <span style={{ color: "#38bdf8", fontWeight: 700 }}>Easier to maintain</span>
 
 ---
 
@@ -1040,7 +1040,7 @@ RECEIVER APPLICATION
 
 ---
 
-## End of Part 5C
+## <span style={{ color: "#a5b4fc", fontWeight: 700 }}>End of Part 5C</span>
 
 ### Next Part (5D)
 
