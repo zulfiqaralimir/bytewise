@@ -78,7 +78,7 @@ export default function OgImage() {
             marginBottom: 40,
           }}
         >
-          Pakistan SAM Multiplier Analysis · Section 1.5
+          Pakistan SAM Multiplier Analysis · Section 1.3
         </div>
 
         {/* Subtitle */}

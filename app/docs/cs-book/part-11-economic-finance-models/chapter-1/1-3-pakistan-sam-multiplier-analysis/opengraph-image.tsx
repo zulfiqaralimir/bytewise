@@ -89,7 +89,7 @@ export default function OgImage() {
             marginBottom: 20,
           }}
         >
-          Section 1.5
+          Section 1.3
         </div>
 
         {/* Main title */}
