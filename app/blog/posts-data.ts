@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "sam-multiplier-analysis-pipeline",
+    title: "Building a Production-Grade SAM Multiplier Analysis Pipeline: Pakistan 2013-19",
+    description:
+      "From raw Excel files to a validated Leontief multiplier pipeline — Pyatt-Round account classification, Type I & Type II multipliers, five policy shock scenarios, and an interactive dashboard.",
+    date: "July 11, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "redis",
     title: "Redis Is Not Just a Cache: The Architecture, Patterns, and Trade-offs Every Engineer Should Know",
     description:

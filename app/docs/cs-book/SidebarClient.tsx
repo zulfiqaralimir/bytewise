@@ -155,6 +155,7 @@ const chapters = [
         items: [
           { title: "Social Accounting Matrix: A Complete Guide", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/social-accounting-matrix" },
           { title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" },
+          { title: "1.2 SAM Multiplier Analysis Pipeline", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-2-sam-multiplier-analysis-pipeline" },
         ],
       },
       {
