@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "pakistan-sam-multiplier-analysis",
+    title: "Pakistan SAM Multiplier Analysis: From Data to Policy Insights",
+    description:
+      "A complete economic analysis pipeline built in Claude Code — parsing raw SAM data, building Leontief Type I & II multipliers, simulating five policy scenarios, and visualizing results in an interactive dashboard.",
+    date: "July 11, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "sam-multiplier-analysis-pipeline",
     title: "Building a Production-Grade SAM Multiplier Analysis Pipeline: Pakistan 2013-19",
     description:
