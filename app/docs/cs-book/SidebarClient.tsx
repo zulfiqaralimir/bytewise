@@ -371,6 +371,7 @@ const chapters = [
         items: [
           { title: "Course Review", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics" },
           { title: "Chapter 0: Appetizer – Triangles and Equations", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics/chapter-0-appetizer" },
+          { title: "Section 0.1: Schur's Theorem", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics/0-1-schurs-theorem" },
         ],
       },
     ],
@@ -482,12 +483,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/73 chapters</span>
+              <span>{readCount}/74 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 73) * 100}%` }}
+                style={{ width: `${(readCount / 74) * 100}%` }}
               />
             </div>
           </div>

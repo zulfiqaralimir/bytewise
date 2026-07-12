@@ -1,0 +1,352 @@
+export const metadata = {
+  title: "Section 0.1: Schur's Theorem — ByteWise CS Book",
+  description:
+    "Schur's theorem — why no finite coloring of the positive integers can avoid a monochromatic solution to x+y=z, and how it connects to Fermat's Last Theorem.",
+  keywords: [
+    "Schur's theorem",
+    "Ramsey theory",
+    "monochromatic solution",
+    "Fermat's Last Theorem",
+    "arithmetic progressions",
+    "graph theory",
+    "additive combinatorics",
+    "MIT 18.225",
+  ],
+  openGraph: {
+    title: "Section 0.1: Schur's Theorem",
+    description:
+      "Why no finite coloring of the positive integers can avoid a monochromatic solution to x+y=z.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Section 0.1: Schur's Theorem
+
+> *"Can a simple equation like $x+y=z$ reveal something deep about colors, graphs, and even Fermat's Last Theorem?"*
+
+At first, this may sound impossible.
+
+After all, the equation
+
+$$x+y=z$$
+
+is one of the first equations we learn in school.
+
+But surprisingly, this simple equation lies at the heart of one of the most beautiful ideas in combinatorics:
+
+> **No matter how cleverly we color the positive integers, certain patterns cannot be avoided.**
+
+This idea is the starting point of **Ramsey Theory**, a branch of mathematics that studies unavoidable patterns.
+
+---
+
+## A Historical Motivation
+
+Let's begin with a question that mathematicians once hoped would help solve one of the most famous problems in history.
+
+### Fermat's Last Theorem
+
+For more than 350 years, mathematicians tried to prove the statement
+
+$$X^n+Y^n=Z^n$$
+
+has **no positive integer solutions** whenever
+
+$$n>2.$$
+
+This is known as **Fermat's Last Theorem**.
+
+One possible strategy was:
+
+> Instead of solving the equation over the integers, what if we first study it modulo a prime number?
+
+In other words, instead of asking
+
+$$X^n+Y^n=Z^n,$$
+
+we ask
+
+$$X^n+Y^n\equiv Z^n\pmod p.$$
+
+Maybe understanding the equation modulo primes could eventually help prove Fermat's Last Theorem.
+
+Unfortunately, this strategy cannot work.
+
+Why?
+
+Because mathematicians discovered something surprising.
+
+For every fixed exponent $n$,
+
+if the prime $p$ is large enough,
+
+then the congruence
+
+$$X^n+Y^n\equiv Z^n\pmod p$$
+
+**always has a nontrivial solution.**
+
+So modulo large primes, solutions always exist.
+
+That means reducing the equation modulo primes can never prove that integer solutions do not exist.
+
+---
+
+## Dickson's Result
+
+In 1909, Leonard Dickson proved that these modular solutions always exist for sufficiently large prime numbers.
+
+At first, this looked like a result from number theory.
+
+But a few years later, Issai Schur discovered something remarkable.
+
+He proved the same conclusion using an argument that had almost nothing to do with number theory.
+
+Instead, his proof relied on **colorings**.
+
+This was one of the earliest examples showing that combinatorics can solve problems that originally seem to belong to number theory.
+
+---
+
+## Schur's Theorem
+
+We are now ready to state the main result.
+
+### Theorem (Schur's Theorem)
+
+If the positive integers are colored using **finitely many colors**, then there always exist numbers
+
+$$x,\;y,\;z$$
+
+of the **same color** satisfying
+
+$$x+y=z.$$
+
+---
+
+## What Does This Mean?
+
+Let's unpack the statement carefully.
+
+Suppose you color every positive integer.
+
+For example,
+
+| Number | Color |
+|---------|--------|
+|1|Red|
+|2|Blue|
+|3|Red|
+|4|Blue|
+|5|Blue|
+|6|Red|
+
+You are allowed to choose the colors however you like.
+
+You can even use three colors,
+
+or five,
+
+or one hundred.
+
+The only restriction is that the number of colors must be **finite**.
+
+Now try to avoid having three numbers of the same color satisfying
+
+$$x+y=z.$$
+
+You might think that with a clever coloring, this should be possible.
+
+Schur's theorem says:
+
+> **It is impossible.**
+
+Eventually, somewhere among the positive integers, you'll always find three numbers of the same color with
+
+$$x+y=z.$$
+
+No coloring can avoid this forever.
+
+---
+
+## What Does "Monochromatic" Mean?
+
+You'll see this word throughout the book.
+
+**Monochromatic** simply means
+
+> **having exactly one color.**
+
+So a **monochromatic solution** means
+
+- $x$,
+- $y$,
+- and $z$
+
+all receive the same color.
+
+For example,
+
+if
+
+- 3 is red,
+- 5 is red,
+- 8 is red,
+
+then
+
+$$3+5=8$$
+
+is a monochromatic solution.
+
+---
+
+## Why Is This Theorem Surprising?
+
+Nothing in the coloring process forces you to put related numbers together.
+
+You can color completely randomly.
+
+Or use a complicated rule.
+
+Or try specifically to avoid solutions.
+
+Yet no matter what strategy you use,
+
+the equation
+
+$$x+y=z$$
+
+eventually appears inside one color.
+
+This is our first encounter with an important principle that will appear throughout this book.
+
+> **Large mathematical structures inevitably contain patterns.**
+
+---
+
+## Infinite Version vs Finite Version
+
+The theorem we just stated talks about **all positive integers**.
+
+Since there are infinitely many positive integers,
+
+this version is called the **infinitary version** of Schur's theorem.
+
+Mathematicians often like to convert infinite statements into finite ones.
+
+Doing so makes it possible to ask quantitative questions.
+
+---
+
+## Finitary Version of Schur's Theorem
+
+For every positive integer $r$,
+
+there exists some positive integer
+
+$$N=N(r)$$
+
+such that
+
+whenever the numbers
+
+$$1,2,\dots,N$$
+
+are colored using $r$ colors,
+
+there is always a monochromatic solution to
+
+$$x+y=z.$$
+
+---
+
+## What Changed?
+
+Instead of coloring **all positive integers**,
+
+we only color
+
+$$\{1,2,\ldots,N\}.$$
+
+The theorem says that if $N$ is large enough,
+
+then the desired pattern is already guaranteed.
+
+---
+
+## Why Is the Finitary Version Useful?
+
+The infinite version tells us
+
+> the pattern must exist somewhere.
+
+The finite version asks a much deeper question:
+
+> **How large does $N$ need to be?**
+
+This becomes a completely new mathematical problem.
+
+For example,
+
+if we use
+
+- two colors,
+- three colors,
+- four colors,
+
+how does the required value of $N$ change?
+
+Finding good estimates for these numbers is often extremely difficult.
+
+Many problems of this type remain unsolved today.
+
+---
+
+## Are the Two Versions Really Different?
+
+Interestingly,
+
+they are **equivalent**.
+
+This means:
+
+- If the infinitary version is true,
+  then the finitary version is also true.
+
+- If the finitary version is true,
+  then the infinitary version is automatically true.
+
+Although one statement looks infinite and the other finite,
+
+they express exactly the same mathematical fact.
+
+The proof of this equivalence uses a beautiful idea called a **diagonalization argument**, which we'll discuss next.
+
+---
+
+## Key Takeaways
+
+By the end of this section, you should understand the following ideas:
+
+- Schur's theorem studies colorings of the positive integers.
+- No finite coloring can avoid monochromatic solutions to $x+y=z$.
+- This theorem is one of the earliest results in Ramsey Theory.
+- The theorem has both an infinite (infinitary) version and a finite (finitary) version.
+- The finite version introduces an important quantitative question: **How large must $N$ be?**
+- This theorem illustrates one of the central themes of this book:
+
+> **When a mathematical structure becomes large enough, certain patterns become unavoidable.**
+
+---
+
+## What's Next?
+
+In the next part, we'll prove that the infinitary and finitary versions of Schur's theorem are actually equivalent. Along the way, we'll introduce one of the most useful proof techniques in mathematics: **diagonalization**.
+
+<ArticleNav
+  prev={{ title: "Chapter 0: Appetizer – Triangles and Equations", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics/chapter-0-appetizer" }}
+  next={null}
+/>
