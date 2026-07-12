@@ -78,7 +78,7 @@ export default function OgImage() {
             marginBottom: 40,
           }}
         >
-          Pakistan SAM Multiplier Analysis · Section 1.3
+          Pakistan SAM Multiplier Analysis
         </div>
 
         {/* Subtitle */}
@@ -92,7 +92,7 @@ export default function OgImage() {
             marginBottom: 48,
           }}
         >
-          A Complete Economic Analysis Pipeline Built in Claude Code
+          A Complete Economic Analysis Pipeline
         </div>
 
         {/* Divider */}
