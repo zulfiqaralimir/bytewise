@@ -1,0 +1,119 @@
+export const metadata = {
+  title: "Graph Theory and Additive Combinatorics — Course Review — ByteWise CS Book",
+  description:
+    "A review of MIT 18.225: Graph Theory and Additive Combinatorics (Fall 2023), taught by Yufei Zhao — how two seemingly separate fields turn out to be the same subject in disguise.",
+  keywords: [
+    "graph theory",
+    "additive combinatorics",
+    "MIT OCW",
+    "Yufei Zhao",
+    "Szemerédi regularity lemma",
+    "Roth's theorem",
+    "Green-Tao theorem",
+    "extremal graph theory",
+    "18.225",
+  ],
+  openGraph: {
+    title: "Graph Theory and Additive Combinatorics — Course Review",
+    description:
+      "A review of MIT 18.225 — how graph theory and additive combinatorics turn out to be the same subject in disguise.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Graph Theory and Additive Combinatorics — Course Review
+
+## Course at a Glance
+
+| Field | Detail |
+|---|---|
+| Course | 18.225 — Graph Theory and Additive Combinatorics (formerly 18.217) |
+| Instructor | Prof. Yufei Zhao |
+| Institution | MIT, Department of Mathematics |
+| Term | Fall 2023 |
+| Level | Graduate |
+| Prerequisites | An algebra course (18.701 or 18.703) **and** a real analysis course (18.100A/B/P/Q), or instructor permission |
+| Textbook | *Graph Theory and Additive Combinatorics: Exploring Structure and Randomness* — Yufei Zhao, Cambridge University Press, 2023 |
+| Grading | Problem sets only (85%+ for A−, 70%+ for B−, 50%+ for C−; A/A+ requires solving starred problems) |
+
+> **Download the full lecture notes (PDF):** [mit18_225_f23_lec_full.pdf](https://ocw.mit.edu/courses/18-225-graph-theory-and-additive-combinatorics-fall-2023/mit18_225_f23_lec_full.pdf)
+
+---
+
+## What This Course Is Actually About
+
+Most people meet graph theory and additive combinatorics as separate subjects.
+
+- **Graph theory** — dots and lines. How many edges can a graph have before it's forced to contain a triangle? A pentagon? Any fixed shape?
+- **Additive combinatorics** — numbers and sums. If you pick a large chunk of the integers, does it have to contain three numbers in arithmetic progression (like 3, 5, 7)?
+
+These sound like different fields. Zhao's course is built around a striking fact: **they are the same question, asked in two different languages.**
+
+- Forbidding a triangle in a graph and forbidding a 3-term arithmetic progression in a set of integers are solved with the *same machinery* — regularity, pseudorandomness, and counting arguments that were originally developed for one field and then transplanted into the other.
+- The course teaches that machinery once and then shows it firing in both directions, over and over.
+
+> **Think of it like this:** a graph is a way of encoding "which pairs are related," and a sumset is a way of encoding "which triples add up." Once you build a lens for finding hidden structure in one, the same lens works on the other.
+
+---
+
+## The Ten-Lecture Arc
+
+The 27 lectures are organized into ten movements. Here's the shape of the course:
+
+| Movement | Lectures | What Happens |
+|---|---|---|
+| Appetizer: Triangles and Equations | 1 | The opening hook — one problem from each field, side by side, to show they rhyme |
+| Forbidding a Subgraph | 2–5 | Classical extremal graph theory: how many edges force a given subgraph to appear |
+| Graph Regularity Method | 6–9 | Szemerédi's regularity lemma — the central tool of the whole course |
+| Pseudorandom Graphs | 10–12 | What it means for a graph to "look random" and why that's useful |
+| Graph Limits | 13–16 | Taking a sequence of larger and larger graphs and asking what they converge to |
+| Graph Homomorphism Inequalities | 17–18 | Counting structure-preserving maps between graphs |
+| Forbidding 3-Term Arithmetic Progressions | 19–21 | Roth's theorem — the additive-combinatorics twin of Lectures 2–5 |
+| Structure of Set Addition | 22–25 | Freiman's theorem — when a sumset is small, the underlying set is almost a structured object (like an arithmetic progression) |
+| Sum-Product Problem | 26 | Why a set can't be simultaneously additively *and* multiplicatively structured |
+| Progressions in Sparse Pseudorandom Sets | 27 | The Green-Tao theorem territory — arithmetic progressions inside the primes |
+
+Notice the pairing: Lectures 2–5 (forbidding a subgraph) and Lectures 19–21 (forbidding an arithmetic progression) are structurally the same proof, run on two different objects. That's the whole point of the course, made explicit.
+
+---
+
+## Why This Course Matters
+
+- **It's a masterclass in transferable proof technique.** Regularity and pseudorandomness aren't just graph theory tricks — they're a general strategy for finding order inside anything that looks chaotic (a set of numbers, a network, a matrix).
+- **It's where a famous result actually gets proven, not just quoted.** The Green-Tao theorem — "the primes contain arbitrarily long arithmetic progressions" — is one of the most cited results in modern number theory. This course builds up the exact tools (regularity, pseudorandomness, relative Szemerédi-type arguments) needed to understand *why* it's true, not just that it's true.
+- **It rewards anyone who has hit the ceiling of standard graph theory or number theory courses.** If extremal graph theory problems ("how many edges force a triangle") or additive number theory problems ("does this set contain an AP") felt like isolated party tricks before, this course is the unifying frame that makes them feel inevitable.
+
+---
+
+## Who Should Take This
+
+- Graduate students or advanced undergrads with real analysis and abstract algebra already under their belt
+- Anyone doing research that touches extremal combinatorics, spectral graph theory, or analytic number theory
+- Engineers curious about the theoretical backbone of pseudorandomness — the same regularity/pseudorandomness ideas show up in derandomization, expander graphs, and property testing in theoretical CS
+
+> **Simple takeaway:** if you've ever wondered why "a graph with enough edges must contain a triangle" and "a large enough set of integers must contain an arithmetic progression" feel like they should be the same theorem — this course is where you find out they are.
+
+---
+
+## My Review Notes
+
+*(Personal notes and impressions go here after working through the lecture notes.)*
+
+---
+
+### Notes — Pass 1
+
+*(First-pass notes go here.)*
+
+---
+
+### Notes — Pass 2
+
+*(Second-pass notes go here.)*
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>

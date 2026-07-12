@@ -363,6 +363,12 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 17 — Book / Course Review",
+    items: [
+      { title: "Graph Theory and Additive Combinatorics — Course Review", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics" },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
@@ -470,12 +476,12 @@ export function SidebarClient() {
           <div className="mt-4">
             <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Reading progress</span>
-              <span>{readCount}/71 chapters</span>
+              <span>{readCount}/72 chapters</span>
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all"
-                style={{ width: `${(readCount / 71) * 100}%` }}
+                style={{ width: `${(readCount / 72) * 100}%` }}
               />
             </div>
           </div>
