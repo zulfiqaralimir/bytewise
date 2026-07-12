@@ -1,0 +1,283 @@
+export const metadata = {
+  title: "Chapter 0: Appetizer – Triangles and Equations — ByteWise CS Book",
+  description:
+    "An introduction to Graph Theory and Additive Combinatorics — why these two fields, which look completely different, keep asking the same question in different languages.",
+  keywords: [
+    "graph theory",
+    "additive combinatorics",
+    "Schur's theorem",
+    "arithmetic progressions",
+    "Ramsey theory",
+    "extremal graph theory",
+    "MIT 18.225",
+  ],
+  openGraph: {
+    title: "Chapter 0: Appetizer – Triangles and Equations",
+    description:
+      "Why graph theory and additive combinatorics keep asking the same question in different languages.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Chapter 0: Appetizer – Triangles and Equations
+
+> *"Before we begin learning the main ideas of graph theory and additive combinatorics, let's first take a step back and understand what this course is really about."*
+
+---
+
+## Welcome!
+
+Welcome to this journey through **Graph Theory** and **Additive Combinatorics**.
+
+This book is different from traditional textbooks.
+
+Instead of assuming you already understand every mathematical idea, we'll build each concept slowly, carefully, and naturally. Nothing important will be skipped. Every theorem, proof, definition, and example will be explained in plain English before we dive into the mathematics.
+
+Our goal is simple:
+
+> **Understand every idea — not just memorize formulas.**
+
+---
+
+## What Is This Chapter?
+
+This opening chapter is called an **Appetizer**.
+
+Just like an appetizer gives you a taste of a meal before the main course, this chapter gives you a preview of the kinds of beautiful mathematical ideas you'll encounter throughout the book.
+
+Don't worry if everything doesn't make complete sense yet.
+
+The purpose of this chapter is to introduce the *big picture*, not to master every detail.
+
+---
+
+## Two Different Worlds
+
+This course combines two branches of mathematics.
+
+### 1. Graph Theory
+
+Graph theory studies **relationships**.
+
+A graph consists of:
+
+- vertices (also called nodes)
+- edges connecting pairs of vertices
+
+For example,
+
+- friendships in a social network
+- roads connecting cities
+- computers connected by cables
+
+can all be represented as graphs.
+
+Graph theory asks questions like:
+
+- How many connections can we have?
+- When must a triangle appear?
+- Can we color a graph using only a few colors?
+- What patterns are unavoidable?
+
+### 2. Additive Combinatorics
+
+Additive combinatorics studies **numbers and addition**.
+
+Instead of studying connections between vertices, we study relationships between numbers.
+
+Typical questions include:
+
+- Can we avoid arithmetic progressions?
+- When must certain equations have solutions?
+- How large can a set become before patterns are forced to appear?
+
+At first glance, graph theory and additive combinatorics seem completely unrelated.
+
+One studies vertices and edges.
+
+The other studies numbers.
+
+But one of the biggest surprises in modern mathematics is that these two subjects are deeply connected.
+
+Many ideas developed for graphs also help solve problems about numbers.
+
+Likewise, techniques from additive combinatorics often solve graph problems.
+
+Discovering these connections is one of the main goals of this course.
+
+---
+
+## A Common Theme
+
+Although the subjects look different, they ask remarkably similar questions.
+
+Imagine you are allowed to build a very large mathematical object.
+
+It could be
+
+- a graph,
+- a set of numbers,
+- a coloring,
+- or another mathematical structure.
+
+Naturally, you might try to avoid certain patterns.
+
+For example:
+
+- avoid triangles,
+- avoid arithmetic progressions,
+- avoid solutions to an equation,
+- avoid complete subgraphs.
+
+At first, this seems possible.
+
+But mathematics tells us something surprising.
+
+> **If the structure becomes large enough, certain patterns become impossible to avoid.**
+
+No matter how cleverly you construct your object, those patterns will eventually appear.
+
+This simple observation drives much of modern combinatorics.
+
+---
+
+## An Example from Graph Theory
+
+Suppose we keep adding edges to a graph.
+
+Initially, we may be able to avoid creating any triangles.
+
+But eventually, the graph becomes so dense that a triangle must exist.
+
+The question becomes:
+
+> **Exactly how many edges can a graph have before a triangle is unavoidable?**
+
+Questions like this form the foundation of extremal graph theory.
+
+---
+
+## An Example from Number Theory
+
+Now consider positive integers.
+
+Suppose you color every positive integer either red or blue.
+
+You may think that with enough care, you can avoid interesting relationships forever.
+
+Surprisingly, this isn't true.
+
+Certain equations must eventually have monochromatic solutions.
+
+Similarly, sufficiently large sets of integers must contain arithmetic progressions.
+
+Again we see the same phenomenon:
+
+> Large structures are forced to contain patterns.
+
+---
+
+## The Central Question of This Course
+
+As you progress through this book, you'll notice that many chapters are really asking different versions of the same question.
+
+> **When does size force structure?**
+
+Or equivalently,
+
+> **Which patterns are unavoidable?**
+
+Sometimes we'll ask this question about graphs.
+
+Sometimes about numbers.
+
+Sometimes about colorings.
+
+Sometimes about equations.
+
+But the underlying idea remains the same.
+
+---
+
+## Why Start with Triangles and Equations?
+
+Triangles are among the simplest interesting objects in graph theory.
+
+The equation
+
+$$x+y=z$$
+
+is among the simplest interesting equations in additive combinatorics.
+
+Although these examples seem unrelated,
+
+they both illustrate an important principle:
+
+> **Large mathematical objects inevitably contain structure.**
+
+Throughout this course, we'll repeatedly encounter new versions of this same idea.
+
+---
+
+## What You'll Learn in This Chapter
+
+In this chapter, we'll explore three important topics.
+
+1. Schur's Theorem
+2. Arithmetic Progressions
+3. Why these ideas matter for the rest of the course
+
+These topics will introduce many of the themes that reappear throughout graph theory and additive combinatorics.
+
+---
+
+## Don't Worry About Memorizing
+
+At this stage, don't worry about remembering every theorem.
+
+Instead, focus on developing intuition.
+
+Ask yourself questions like:
+
+- Why is this theorem interesting?
+- What problem is it trying to solve?
+- Why is this result surprising?
+
+As we move through the course, the technical details will gradually become much easier because you'll already understand the motivation behind them.
+
+---
+
+## Key Takeaways
+
+By the end of this introduction, you should understand the following ideas.
+
+- Graph theory studies relationships between objects.
+- Additive combinatorics studies patterns formed by numbers under addition.
+- Although these subjects look different, they are deeply connected.
+- One of the main goals of combinatorics is to understand which patterns are unavoidable.
+- Large mathematical structures often contain hidden order, even if we try to avoid it.
+- This chapter serves as a preview of the ideas that will be developed throughout the rest of the book.
+
+> **Simple takeaway:** graph theory and additive combinatorics are two dialects of the same question — how much size does it take before structure becomes unavoidable?
+
+---
+
+## What's Next?
+
+Now that we've seen the big picture, we're ready to begin our first real mathematical result.
+
+In the next section, we'll study **Schur's Theorem**, one of the foundational results in Ramsey Theory.
+
+We'll understand:
+
+- what the theorem says,
+- why it's surprising,
+- how the proof works,
+- and why it became one of the cornerstones of modern combinatorics.
+
+<ArticleNav
+  prev={{ title: "Course Review — Graph Theory and Additive Combinatorics", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics" }}
+  next={null}
+/>
