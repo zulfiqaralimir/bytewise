@@ -1,0 +1,89 @@
+export const metadata = {
+  title: "Lesson 7: Multi-Agent Coding with Codex Spark — ByteWise CS Book",
+  description:
+    "Habits for staying in control of a 20-30x faster coding model — orchestration, raising the quality bar, avoiding unverified code slop, and managing context.",
+  keywords: [
+    "Codex Spark",
+    "orchestration",
+    "cherry-picking",
+    "context management",
+    "AGENTS.md",
+    "coding agent habits",
+    "Cerebras",
+  ],
+  openGraph: {
+    title: "Lesson 7: Multi-Agent Coding with Codex Spark",
+    description:
+      "Habits for staying in control while coding 20-30x faster with Codex Spark.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 7: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Multi-Agent Coding with Codex Spark</span>
+
+Codex Spark, Cerebras' first coding model for Codex, streams code at about <span style={{ color: "#f43f5e", fontWeight: 700 }}>1,200 tokens/second</span>, versus 40-60 tokens/second for many typical coding models (roughly 20-30x faster).
+
+> **The central warning:** speed alone doesn't guarantee quality — careless workflows just produce bad code faster. This lesson is a set of habits for staying in control while moving fast.
+
+---
+
+## Habit 1 — Use the Right Model for the Right Job (Orchestration)
+
+- Use a larger, more capable model (e.g. GPT-5.5) for **planning and long-horizon reasoning** — deciding the shape of the work.
+- Use Codex Spark as the **fast executor**, moving quickly through the checklist one step at a time.
+- <span style={{ color: "#0ea5e9", fontWeight: 700 }}>Bonus pattern:</span> once a strong model solves a hard task well, capture that trajectory as a reusable "skill" so a smaller/faster agent can repeat it later without re-solving it from scratch.
+
+---
+
+## Habit 2 — Use the Extra Speed to Raise Your Quality Bar
+
+- Run validation (tests, linting, pre-commit hooks, diff review) **between every task** instead of saving it for the end — since it's now essentially free.
+- **Cherry-picking** — generate many variants (5, 10, 15) in the time it used to take to generate one, then pick the best — useful for UI, architecture, and research directions.
+- **Ask more questions** — since responses are fast, treat the model like a patient teacher — ask how something works or whether there's a better approach, rather than just accepting output and moving on.
+
+---
+
+## Habit 3 — Avoid Drowning in Unverified Code ("Slop")
+
+- Keep to <span style={{ color: "#84cc16", fontWeight: 700 }}>2-3 coding sessions at most</span>, splitting further only when tasks are genuinely independent (e.g. frontend vs. backend).
+- Set tight guardrails: ban dangerous operations, cap maximum diff size, require tests/type-checks before commits, constrain file creation. Faster models can cover more ground quickly, so guardrails need to be more precise, not looser.
+- Steer explicitly: "only change this," "show me the diff before continuing," "research this before implementing." Real-time correction becomes more valuable the faster the model is.
+- Refactor regularly as part of the normal loop — since cleanup is now cheap too, every line generated should still have to prove it's worth keeping.
+
+---
+
+## Habit 4 — Manage Context Carefully
+
+<span style={{ color: "#d946ef", fontWeight: 700 }}>Context</span> = the model's current working memory for the session. A model 20x faster can fill that memory in seconds instead of minutes, leading to "compaction" (lost detail) sooner than expected.
+
+> **Fix:** break large tasks into small, bounded goals, and try to stay out of the 80-100% context range.
+
+### Externalizing Memory: The Four-File System
+
+| File | Purpose |
+|---|---|
+| `AGENTS.md` | Defines the agents/roles |
+| `PLAN.md` | Holds the overall plan |
+| `PROGRESS.md` | Records what's been done and what's next |
+| `VERIFY.md` | Captures checks to run before moving on |
+
+This lets each new session start with a clean working memory but still pick up exactly where the last one left off by reading these files.
+
+---
+
+## Key Takeaways
+
+- Codex Spark's speed advantage is roughly 20-30x over typical coding models — but speed amplifies both good and bad workflows.
+- Orchestration means pairing a capable-but-slow planner with a fast-but-literal executor, not using one model for everything.
+- Cherry-picking (generating many variants and choosing the best) only becomes practical once generation is fast enough to be nearly free.
+- Guardrails need to get *tighter*, not looser, as the model gets faster — more ground can be covered per minute of inattention.
+- A four-file external memory system (`AGENTS.md`, `PLAN.md`, `PROGRESS.md`, `VERIFY.md`) lets sessions restart cleanly without losing continuity.
+
+> **Takeaway:** faster coding models shift the developer's role from "typing code" to setting boundaries, verifying constantly, and managing context — essentially project-managing a very fast, very literal collaborator.
+
+<ArticleNav
+  prev={{ title: "Lesson 6: Real-Time Multi-Tool Workflow (Capstone)", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-6-multi-tool-workflow" }}
+  next={null}
+/>

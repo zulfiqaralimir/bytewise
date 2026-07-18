@@ -374,6 +374,19 @@ const chapters = [
           { title: "Section 0.1: Schur's Theorem", href: "/docs/cs-book/part-17-book-course-review/graph-theory-additive-combinatorics/0-1-schurs-theorem" },
         ],
       },
+      {
+        chapter: "Fast LLM Inference with Cerebras",
+        items: [
+          { title: "Course Review", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras" },
+          { title: "Lesson 1: The New Era of Inference Speed", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-1-new-era-of-speed" },
+          { title: "Lesson 2: Inference Speed in Action", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-2-speed-in-action" },
+          { title: "Lesson 3: Under the Hood — WSE vs. GPU vs. TPU", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-3-wse-vs-gpu-vs-tpu" },
+          { title: "Lesson 4: Engineering Shifts", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-4-engineering-shifts" },
+          { title: "Lesson 5: Real-Time Personalization", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-5-real-time-personalization" },
+          { title: "Lesson 6: Real-Time Multi-Tool Workflow (Capstone)", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-6-multi-tool-workflow" },
+          { title: "Lesson 7: Multi-Agent Coding with Codex Spark", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-7-multi-agent-coding-codex-spark" },
+        ],
+      },
     ],
   },
 ];

@@ -1,0 +1,79 @@
+export const metadata = {
+  title: "Lesson 5: Real-Time Personalization — ByteWise CS Book",
+  description:
+    "How fast inference turns personalization from a nightly batch job into live, per-visitor content generation — using structured output to make model responses directly usable in a UI.",
+  keywords: [
+    "personalization",
+    "structured output",
+    "visitor profile",
+    "batch job",
+    "real-time generation",
+    "Cerebras",
+  ],
+  openGraph: {
+    title: "Lesson 5: Real-Time Personalization",
+    description:
+      "Fast inference turns personalization from a batch job into live, per-visitor content generation.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 5: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Real-Time Use Case — Personalization</span>
+
+---
+
+## From Batch Job to Live Generation
+
+Traditionally, personalized content had to be pre-generated ahead of time (e.g. in nightly batch jobs) and stored for later serving — meaning it could be hours old by the time a user actually saw it.
+
+> With fast inference, personalized content can be generated live, the instant a user is on the page, combining <span style={{ color: "#f43f5e", fontWeight: 700 }}>intelligence and speed</span> for the first time.
+
+---
+
+## How the Notebook Built This
+
+### Structured Output
+
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Structured output</span> was used to force the model to respond in a fixed set of fields (e.g. `hero_title`, `recommendation_name`, `best_time_to_go`, `call_to_action`, `rationale`) rather than a loose paragraph that would need manual parsing.
+
+- This lets the app drop the model's output **straight into a webpage template** — no parsing logic needed.
+
+### Visitor Profile
+
+A `VisitorProfile` captured what's known about each visitor:
+
+- Name
+- Personality traits
+- Interests
+- Referring page
+- Preferred tone
+
+A fixed `ActivityScenario` (recommending one activity in New York City) kept the scenario constant, so **only the visitor profile changed the output**.
+
+---
+
+## Three Example Visitors and Their Generated Recommendations
+
+| Visitor | Profile | Recommendation | Latency |
+|---|---|---|---|
+| **Tim** | Thoughtful, arrived from a bookshop page | Quiet literary walk / rare book reading, reflective tone | Under 400ms |
+| **Sandra** | Creative and funny, arrived from a comedy clip | Stand-up comedy club in Greenwich Village | — |
+| **Steven** | Active, busy, prefers short text | Central Park run, short/snappy copy | ~200ms |
+
+---
+
+## Key Takeaways
+
+- Personalization used to mean "precomputed and possibly stale" — fast inference makes it "live and current."
+- Structured output is what makes a fast model response immediately usable in a real UI, without a parsing layer in between.
+- Holding the scenario fixed and varying only the visitor profile isolates exactly what personalization is doing — the same activity produces meaningfully different copy per visitor.
+- Sub-500ms generation means personalization can happen **on page load**, not in advance.
+
+> **Takeaway:** fast inference turns personalization from something precomputed in a batch job into something generated live per visitor, per page load — and structured output is what makes that fast response immediately usable in a real UI.
+
+<ArticleNav
+  prev={{ title: "Lesson 4: Engineering Shifts", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-4-engineering-shifts" }}
+  next={{ title: "Lesson 6: Real-Time Multi-Tool Workflow (Capstone)", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-6-multi-tool-workflow" }}
+/>

@@ -1,0 +1,88 @@
+export const metadata = {
+  title: "Lesson 6: Real-Time Multi-Tool Workflow (Capstone) — ByteWise CS Book",
+  description:
+    "The capstone investment-signal analyzer — routing each incoming signal to the lightest sufficient processing path, from ignore to full review, all in real time.",
+  keywords: [
+    "agentic workflow",
+    "routing",
+    "structured output",
+    "investment signal analyzer",
+    "capstone",
+    "Cerebras",
+  ],
+  openGraph: {
+    title: "Lesson 6: Real-Time Multi-Tool Workflow (Capstone)",
+    description:
+      "The capstone investment-signal analyzer — routing each signal to the lightest sufficient processing path, in real time.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 6: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Real-Time Multi-Tool Workflow (Capstone)</span>
+
+This capstone combines the KPIs from Lesson 1, the hardware understanding from Lesson 3, and the synchronous/structured-output patterns from Lessons 4-5 into one agentic workflow: a **real-time investment-signal analyzer**.
+
+---
+
+## The Scenario
+
+A stream of market signals arrives (press releases, news articles, analyst updates). For each one, the system must decide in real time:
+
+- Whether it matters
+- What it means
+- Whether it should change a prior investment decision (buy, sell, or watch) for a tracked company
+
+---
+
+## The Core Design Principle: Route to the Lightest Sufficient Path
+
+Rather than running every signal through the same expensive process, the system first classifies it cheaply, then only spends deeper reasoning where it's actually needed.
+
+### The Four Processing Paths
+
+| Path | Meaning |
+|---|---|
+| **ignore** | Not relevant to any tracked company — stop immediately |
+| **quick_update** | Relevant, and it simply reinforces the current view — light touch-up |
+| **fact_refresh** | Relevant, with new information to incorporate |
+| **full_review** | Relevant and potentially decision-changing — the deepest analysis path |
+
+---
+
+## The Full Step-by-Step Workflow (for Signals That Matter)
+
+1. **Classify** — a single model call decides which tracked company this concerns, whether it's relevant, and which path/tools to use.
+2. **Load the company database** — a plain SQL lookup (not a model call) retrieving the prior decision and previously recorded facts.
+3. **Extract fresh facts** — a structured-output call pulling out the concrete event, key facts, upside signals, and risk flags.
+4. **Compare with prior decision** — a model call determining what changed, what stayed consistent, and whether confidence shifted.
+5. **Update the decision** — writes the final buy/sell/watch action, a summary, and reasoning.
+
+---
+
+## Three Test Signals and Results
+
+| Signal | Nature | Path | Outcome |
+|---|---|---|---|
+| Chipmaker cloud-deal news | Positive, relevant | `quick_update` | Prior decision was already "buy"; confirmed and stayed "buy," facts refreshed |
+| City marathon article | Irrelevant | `ignore` | Workflow stopped after a single step |
+| Automotive recall reserve increase / lower margins | Negative, relevant | `full_review` | Ran the deepest path and ended in a "sell" decision |
+
+> **Important nuance:** the system isn't only making binary buy/sell choices — deciding that no change is needed (when new facts simply reinforce the existing thesis) is itself a correct and expected outcome.
+
+---
+
+## Key Takeaways
+
+- The capstone's real innovation isn't any single model call — it's the **routing logic** that avoids running expensive analysis on signals that don't need it.
+- A cheap classification step gates access to progressively more expensive paths, so cost and latency scale with how much a signal actually matters.
+- Deterministic steps (a SQL lookup) are mixed with model calls only where judgment is actually required.
+- "No change needed" is a valid, correctly-reasoned output — not a failure to act.
+
+> **Takeaway:** every signal — whether resolved in one step or five — finished in only a couple of seconds. That's only possible because each individual model call is fast; on slower hardware, a 5-step full review would take too long to feel real-time. Fast inference enables selective, tool-driven workflows that stay responsive without forcing every input through the same extensive process.
+
+<ArticleNav
+  prev={{ title: "Lesson 5: Real-Time Personalization", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-5-real-time-personalization" }}
+  next={{ title: "Lesson 7: Multi-Agent Coding with Codex Spark", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-7-multi-agent-coding-codex-spark" }}
+/>

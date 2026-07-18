@@ -1,0 +1,169 @@
+export const metadata = {
+  title: "Fast LLM Inference with Cerebras — Course Review — ByteWise CS Book",
+  description:
+    "A review of the Cerebras short course on fast LLM inference — why token generation is bottlenecked by memory bandwidth, not compute, and how the Wafer-Scale Engine removes that wall.",
+  keywords: [
+    "Cerebras",
+    "Wafer-Scale Engine",
+    "WSE-3",
+    "LLM inference",
+    "memory bandwidth",
+    "tokens per second",
+    "time to first token",
+    "GPU vs TPU vs WSE",
+    "Codex Spark",
+  ],
+  openGraph: {
+    title: "Fast LLM Inference with Cerebras — Course Review",
+    description:
+      "Why token generation is bottlenecked by memory bandwidth, not compute — and how Cerebras' Wafer-Scale Engine removes that wall.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Fast LLM Inference with Cerebras — Course Review
+
+## Course at a Glance
+
+| Field | Detail |
+|---|---|
+| Course | Fast LLM Inference with Cerebras |
+| Instructors | Zhenwei Gao, Sebastian Duerr, Sarah Chieng (Cerebras) |
+| Format | 7 lessons, conceptual + hands-on notebooks |
+| Level | Practitioner — developers building LLM-backed applications and agents |
+| Core hardware | Cerebras Wafer-Scale Engine (WSE-3) |
+| Companion models | `gpt-oss-120b`, GLM-4.7, Codex Spark |
+
+---
+
+## The Core Idea (Read This First)
+
+When a language model generates a word (a token), most of the delay isn't the model "thinking" — it's the system moving the model's weights (its learned parameters) from memory to the compute units that do the math. This is the <span style={{ color: "#f43f5e", fontWeight: 700 }}>memory bandwidth bottleneck</span>, or the <span style={{ color: "#f43f5e", fontWeight: 700 }}>memory wall</span>, and it is the single idea the entire course is built around.
+
+> **Think of it like this:** a chef (compute) has to walk to a warehouse (memory) to fetch each ingredient before cooking. Even a lightning-fast chef is slow overall if the warehouse is far away. Speeding up the walk — not the chopping — is what makes inference fast.
+
+<span style={{ color: "#0ea5e9", fontWeight: 700 }}>Cerebras' Wafer-Scale Engine (WSE-3) solves this by keeping the model's weights on-chip, right next to compute, largely eliminating that "walk."</span> Every lesson in this course is either explaining why this matters, how it works, or what becomes possible once it's solved.
+
+---
+
+## Why This Course Matters
+
+- **It reframes "fast AI" as a hardware problem, not a prompting trick.** Most developers experience latency as something to hide (spinners, streaming) rather than something to fix at the source — this course explains the source.
+- **It's where the industry is actually heading.** <span style={{ color: "#d946ef", fontWeight: 700 }}>As models converge on similar intelligence, speed becomes the differentiator</span> — the course backs this with real cross-provider benchmarks (GLM-4.7 across 8 providers) rather than vendor claims alone.
+- **It changes how you'd architect an application.** Once inference drops under the <span style={{ color: "#fb923c", fontWeight: 700 }}>~500ms threshold</span>, whole categories of engineering machinery — job queues, polling, defensive async — become unnecessary.
+
+---
+
+## The Seven-Lesson Arc
+
+| Lesson | Title | What It Covers |
+|---|---|---|
+| 1 | The New Era of Inference Speed | Scaling laws, the intelligence race giving way to a speed race, TTFT / tokens-per-second / ITL |
+| 2 | Inference Speed in Action | Where speed comes from (optimizations, architecture, hardware), Cerebras vs. OpenAI hands-on benchmarks |
+| 3 | Under the Hood: WSE vs. GPU vs. TPU | Transistor → core → die → wafer, why GPUs/TPUs are memory-bound, how the WSE keeps weights on-chip |
+| 4 | Engineering Shifts | The 500ms threshold, enqueue/poll/fetch vs. direct synchronous calls, why streaming isn't a full substitute for speed |
+| 5 | Real-Time Use Case: Personalization | Structured output, live per-visitor content generation instead of batch precompute |
+| 6 | Real-Time Multi-Tool Workflow (Capstone) | Routing signals to the lightest sufficient processing path in an investment-signal analyzer |
+| 7 | Multi-Agent Coding with Codex Spark | Orchestration, raising the quality bar with speed, avoiding "slop," managing context |
+
+---
+
+## Independent Benchmark Highlight
+
+Artificial Analysis benchmarked the **same model** (GLM-4.7) across 8 different inference providers:
+
+| Provider | Tokens/Second | Relative to Cerebras |
+|---|---|---|
+| Cerebras (Wafer-Scale Engine) | 1,213 | 1x |
+| BaseTen (GPU) | 245 | ~5x slower |
+| Google TPU | 189 | ~6.4x slower |
+| Most remaining GPU providers | 30–110 | 11–40x slower |
+
+> **Why this matters:** this isn't a Cerebras-authored claim about Cerebras hardware — it's a third party running the identical model everywhere and measuring the gap.
+
+---
+
+## Conclusion
+
+The pattern across computing history: systems get smart first, then shortly after, they get fast — and it's the speed that unlocks genuinely new applications, not just faster versions of old ones.
+
+**Fast inference improves three things at once:**
+
+- **Less waiting** — shorter time before a response starts (TTFT).
+- **More output per second** — more tokens generated per second once it starts.
+- **New experiences become possible** — voice agents, live translation, real-time multi-agent systems that simply don't work at slower speeds.
+
+The underlying hardware story, condensed: every generated token needs access to the model's data. On GPUs/TPUs, that data must travel from memory to compute every time — the memory wall. Cerebras keeps memory physically close to compute (via the Wafer-Scale Engine), minimizing that travel and enabling dramatically faster token generation.
+
+---
+
+## Quick-Reference Glossary
+
+### Hardware & Silicon
+
+- **Memory Wall / Data-Movement Bottleneck / Memory-Bound** — the foundational constraint where performance is capped by how fast data can move between memory and compute, not by raw processing speed.
+- **HBM (High-Bandwidth Memory)** — high-capacity off-chip memory used in GPUs/TPUs; weights must be fetched from it for every token generated.
+- **SRAM (Static Random Access Memory)** — ultra-fast on-chip memory; in Wafer-Scale architectures, it holds weights directly beside compute cores.
+- **Systolic Array** — a grid of compute nodes (used in TPUs) that streams data step-by-step through a matrix of processors to maximize multiplication efficiency.
+- **Wafer / WSE (Wafer-Scale Engine)** — a wafer is the base silicon disc chips are cut from; a WSE keeps the entire disc whole as one giant processor, integrating huge pools of SRAM directly alongside compute.
+
+### Model & Runtime Optimizations
+
+- **Context Window** — the amount of text (in tokens) a model can read and retain during a single interaction.
+- **Inference Optimizations** — runtime techniques (batching, caching, quantization) that speed up generation without retraining the model.
+- **KV Cache Reuse** — reusing previously calculated attention results instead of recomputing them over long contexts.
+- **MoE (Mixture of Experts)** — a model design where a routing network activates only specialized sub-networks ("experts") per token, scaling capacity while keeping compute costs lower.
+- **RAG (Retrieval-Augmented Generation)** — pulling relevant external context (e.g. from a database) into a prompt to give the model up-to-date or private knowledge.
+
+### Latency Metrics & Engineering
+
+- **TTFT (Time to First Token)** — how long before the model's response begins.
+- **Tokens per Second** — how quickly the model generates output once it starts.
+- **ITL (Inter-Token Latency)** — the delay between each generated token — lower means smoother streaming.
+- **500ms Threshold** — the rough latency point below which applications can drop asynchronous machinery (queues, spinners) in favor of simple synchronous calls.
+- **Sync vs. Async Patterns** — synchronous code calls the model directly and waits; asynchronous code requires queues, background workers, and polling — typically needed only when inference is slow.
+- **Streaming** — returning text incrementally (token by token) to mask slower inference; becomes optional rather than necessary once inference is fast.
+- **Cherry Picking** — generating multiple variants in parallel and selecting the best, made practical by speed.
+- **Orchestration** — strategically routing tasks — using high-capability models for planning and high-speed models for execution.
+- **Agentic Workflows** — systems requiring multiple chained model/tool calls, where latency compounds across steps if inference is slow.
+
+> **Simple takeaway:** fast inference isn't just "the same app, but quicker." It removes an entire category of engineering workarounds (spinners, streaming-as-necessity, defensive async architecture) and unlocks new categories of application: live personalization, real-time multi-tool agents, and tightly-managed multi-agent coding. Every example in this course traces back to one root cause — how close the model's weights sit to the compute doing the work.
+
+---
+
+## Course Notes
+
+Working through the course lesson by lesson:
+
+- [**Lesson 1: The New Era of Inference Speed**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-1-new-era-of-speed) — the industry's shift from racing for intelligence to racing for speed
+- [**Lesson 2: Inference Speed in Action**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-2-speed-in-action) — where speed comes from, and Cerebras vs. OpenAI head-to-head benchmarks
+- [**Lesson 3: Under the Hood — WSE vs. GPU vs. TPU**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-3-wse-vs-gpu-vs-tpu) — why GPUs and TPUs are memory-bound, and how the Wafer-Scale Engine avoids it
+- [**Lesson 4: Engineering Shifts**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-4-engineering-shifts) — the 500ms threshold and the death of enqueue/poll/fetch
+- [**Lesson 5: Real-Time Personalization**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-5-real-time-personalization) — generating personalized content live instead of in nightly batch jobs
+- [**Lesson 6: Real-Time Multi-Tool Workflow (Capstone)**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-6-multi-tool-workflow) — routing signals to the lightest sufficient processing path
+- [**Lesson 7: Multi-Agent Coding with Codex Spark**](/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-7-multi-agent-coding-codex-spark) — habits for staying in control of a 20-30x faster coding model
+
+---
+
+## My Review Notes
+
+*(Personal notes and impressions go here after working through the course.)*
+
+---
+
+### Notes — Pass 1
+
+*(First-pass notes go here.)*
+
+---
+
+### Notes — Pass 2
+
+*(Second-pass notes go here.)*
+
+<ArticleNav
+  prev={null}
+  next={{ title: "Lesson 1: The New Era of Inference Speed", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-1-new-era-of-speed" }}
+/>

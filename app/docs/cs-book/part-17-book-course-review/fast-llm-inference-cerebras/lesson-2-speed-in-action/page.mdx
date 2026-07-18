@@ -1,0 +1,103 @@
+export const metadata = {
+  title: "Lesson 2: Inference Speed in Action — ByteWise CS Book",
+  description:
+    "Where inference speed actually comes from — optimizations, model architecture, and hardware — plus hands-on Cerebras vs. OpenAI benchmarks across three tests.",
+  keywords: [
+    "batching",
+    "quantization",
+    "mixture of experts",
+    "GLM-4.7",
+    "gpt-oss-120b",
+    "streaming",
+    "time to first token",
+    "Cerebras benchmark",
+  ],
+  openGraph: {
+    title: "Lesson 2: Inference Speed in Action",
+    description:
+      "Where speed comes from, and a hands-on Cerebras vs. OpenAI benchmark across three test scenarios.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 2: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Inference Speed in Action</span>
+
+---
+
+## Where Speed Comes From — Three Layers
+
+- **Inference Optimizations** — runtime software techniques like <span style={{ color: "#f43f5e", fontWeight: 700 }}>batching, caching, and quantization</span> that squeeze more performance from existing hardware.
+- **Model Architecture** — design choices (e.g. <span style={{ color: "#0ea5e9", fontWeight: 700 }}>mixture of experts, attention optimizations</span>) that reduce computation needed per token.
+- **Hardware** — the physical chip — the foundation everything else is built on, and this course's focus.
+
+---
+
+## How Much Speed Has Grown
+
+In 2023, frontier models ran at just a few dozen tokens/second. Today, typical speeds start above 100 tokens/second and can reach thousands, depending on hardware and infrastructure.
+
+### Independent Benchmark (Artificial Analysis, same model — GLM-4.7 — across 8 providers)
+
+| Provider | Tokens/Second |
+|---|---|
+| **Cerebras (Wafer-Scale Engine)** | **1,213** |
+| BaseTen (GPU), next fastest | 245 — about 5x slower than Cerebras |
+| Google TPU offering | 189 — about 6.4x slower |
+| Most remaining GPU providers | 30–110 |
+
+---
+
+## Hands-On Notebook: Cerebras vs. OpenAI, Side by Side
+
+**Setup:** Cerebras runs `gpt-oss-120b` (larger model) on its Wafer-Scale Engine; OpenAI runs `gpt-4.1-mini` (a smaller, in-principle-faster model) on a GPU. Even with this handicap in OpenAI's favor, Cerebras still won every test.
+
+### Test 1 — Simple Prompt, Basic Timer (No Streaming)
+
+| Provider | Latency | Throughput |
+|---|---|---|
+| Cerebras | 181ms internal / 618ms with network overhead | 356 tokens/second |
+| OpenAI | 3.66 seconds | ~32-33 tokens/second |
+
+### Test 2 — Streaming Test (Wikipedia History Summary)
+
+| Provider | TTFT | Total Time |
+|---|---|---|
+| Cerebras | ~430ms | ~438ms |
+| OpenAI | ~584ms | ~4.16 seconds |
+
+<span style={{ color: "#84cc16", fontWeight: 700 }}>Note the pattern:</span> OpenAI's first token arrived only somewhat later, but its total time was nearly 10x worse — meaning it starts reasonably but generates each subsequent word much more slowly. Cerebras delivers nearly the whole answer almost as fast as it starts.
+
+### Test 3 — Heavy Task: Full Playable 2-Player Pool Game in One HTML File
+
+| Provider | Total Time |
+|---|---|
+| Cerebras | ~3 seconds |
+| OpenAI | ~71 seconds — roughly 23x slower |
+
+---
+
+## Technical Notes from the Notebook
+
+- **Streaming** (receiving text token-by-token instead of all at once) is what allows measuring TTFT in addition to total time.
+- A single reusable `stream_chat()` helper function worked for both providers by handling their different parameter names (`max_completion_tokens` vs. `max_tokens`).
+
+> **Takeaway:** the speed gap gets more dramatic the more the model has to generate — which is exactly why large, code-heavy, or long-form tasks show the starkest difference.
+
+---
+
+## Key Takeaways
+
+- Speed comes from three stacked layers: inference optimizations, model architecture, and hardware — hardware is the foundation.
+- Frontier inference speed has grown roughly an order of magnitude since 2023.
+- A third-party benchmark (Artificial Analysis) shows Cerebras running the identical model 5-6x+ faster than the next-fastest providers.
+- In head-to-head notebook tests, Cerebras won even while running a *larger* model against a smaller, GPU-hosted competitor.
+- The gap widens with output length — heavy generation tasks (like full-file code generation) show the largest multiplier.
+
+> **Simple takeaway:** the bigger and longer the task, the more a memory-bandwidth advantage compounds into a visible time advantage.
+
+<ArticleNav
+  prev={{ title: "Lesson 1: The New Era of Inference Speed", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-1-new-era-of-speed" }}
+  next={{ title: "Lesson 3: Under the Hood — WSE vs. GPU vs. TPU", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-3-wse-vs-gpu-vs-tpu" }}
+/>

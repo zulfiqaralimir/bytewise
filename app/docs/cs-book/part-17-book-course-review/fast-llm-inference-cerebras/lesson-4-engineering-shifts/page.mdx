@@ -1,0 +1,98 @@
+export const metadata = {
+  title: "Lesson 4: Engineering Shifts — ByteWise CS Book",
+  description:
+    "The 500ms threshold, why fast inference deletes the enqueue/poll/fetch pattern, and why streaming isn't a full substitute for real speed in agentic workflows.",
+  keywords: [
+    "500ms threshold",
+    "polling",
+    "synchronous inference",
+    "asynchronous inference",
+    "streaming",
+    "agentic workflows",
+    "Cerebras",
+  ],
+  openGraph: {
+    title: "Lesson 4: Engineering Shifts",
+    description:
+      "The 500ms threshold, and why fast inference lets code stay direct and synchronous instead of async and queued.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 4: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Engineering Shifts</span>
+
+---
+
+## The 500ms Threshold
+
+Once an AI system responds in under roughly <span style={{ color: "#f43f5e", fontWeight: 700 }}>400-800ms (500ms is the common round number)</span>, the entire development pattern changes.
+
+- **Traditional inference (2-10+ seconds)** forces an asynchronous pattern to hide the wait.
+- **Fast inference (under ~500ms)** feels like a normal function call — for most response lengths humans can actually process anyway (a couple hundred words), you can just call it synchronously.
+
+---
+
+## The Slow Path: Enqueue, Poll, Fetch
+
+Slower inference forces this pattern:
+
+1. A request gets queued.
+2. The server processes it in the background.
+3. The UI shows a loading state.
+4. The client repeatedly checks in ("polls") every few seconds until the result is ready.
+
+<span style={{ color: "#fbbf24", fontWeight: 700 }}>This requires real engineering overhead:</span> background workers, mutable job-state tracking, timing loops, and polling logic — just to deliver one answer.
+
+---
+
+## The Fast Path: Direct Request and Answer
+
+With fast inference, there's no queue, no polling, no background worker — you call the model and get the result back directly, synchronously, like any normal function call.
+
+---
+
+## Hands-On Notebook Results
+
+### Test 1 — 800-Word Alaska History Summary
+
+| Path | Result |
+|---|---|
+| Slow async path (OpenAI, simulated with polling) | 7 polls, 14 seconds total, ~75 tokens/second |
+| Fast synchronous path (Cerebras) | Under 1 second, much higher tokens/second |
+
+### Test 2 — 4-Step Customer Support Workflow
+
+*(classify issue → summarize context → draft reply → write follow-up)*
+
+| Path | Result |
+|---|---|
+| Cerebras (synchronous, all 4 steps chained) | ~1.5 seconds total |
+| OpenAI (same 4 steps) | ~6 seconds total |
+
+> **Key insight:** users experience the full chain of calls, not each call in isolation — so latency compounds across multi-step workflows. A single slow step may be tolerable; four in a row pushes the user into a noticeable wait.
+
+---
+
+## Why Streaming Isn't Always the Full Answer
+
+<span style={{ color: "#22d3ee", fontWeight: 700 }}>Streaming</span> (showing text word-by-word) can keep users engaged during a wait, but for agentic use cases — like an agent that needs to decide which tool to call next — the agent typically needs the full response before it can act.
+
+> So **real speed**, not just the appearance of speed, is what unlocks fast agent behavior.
+
+---
+
+## Key Takeaways
+
+- Below roughly 500ms, AI calls can be treated like normal synchronous function calls.
+- Above that threshold, teams are forced to build queues, background workers, and polling loops — pure overhead that exists only to hide latency.
+- Latency compounds across multi-step workflows: a chain of 4 calls at Cerebras speed (~1.5s) still beats a single slow provider's 4-step chain (~6s).
+- Streaming masks latency for humans reading text, but agentic tool-calling code usually needs the complete response — so streaming alone doesn't solve the agent-speed problem.
+
+> **Takeaway:** this is an engineering shift, not just a performance improvement. Fast inference lets code stay direct, synchronous, and simpler — deleting machinery (queues, polling, streaming workarounds) rather than adding more of it.
+
+<ArticleNav
+  prev={{ title: "Lesson 3: Under the Hood — WSE vs. GPU vs. TPU", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-3-wse-vs-gpu-vs-tpu" }}
+  next={{ title: "Lesson 5: Real-Time Personalization", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-5-real-time-personalization" }}
+/>

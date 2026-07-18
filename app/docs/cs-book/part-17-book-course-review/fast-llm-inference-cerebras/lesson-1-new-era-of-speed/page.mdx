@@ -1,0 +1,88 @@
+export const metadata = {
+  title: "Lesson 1: The New Era of Inference Speed — ByteWise CS Book",
+  description:
+    "From the race for intelligence to the race for speed — scaling laws, TTFT, tokens per second, inter-token latency, and why speed unlocks new categories of application.",
+  keywords: [
+    "scaling laws",
+    "time to first token",
+    "tokens per second",
+    "inter-token latency",
+    "Gemini 3.1 Flash",
+    "Claude Opus 4.8",
+    "GPT-5.3-Codex-Spark",
+    "Cerebras",
+  ],
+  openGraph: {
+    title: "Lesson 1: The New Era of Inference Speed",
+    description:
+      "Scaling laws, TTFT, tokens per second, inter-token latency, and why speed — not just intelligence — is the new AI race.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 1: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>The New Era of Inference Speed</span>
+
+> *"As models converge on similar intelligence, the race shifts to who can deliver that intelligence fastest."*
+
+---
+
+## Phase 1: The Race for Intelligence
+
+For years, AI labs competed purely on making models smarter.
+
+This was driven by <span style={{ color: "#f43f5e", fontWeight: 700 }}>scaling laws</span> — a discovered pattern where increasing compute, data, and model size reliably reduced error and improved capability.
+
+- This made progress **predictable**: scale up, and performance improves.
+- At the same time, <span style={{ color: "#0ea5e9", fontWeight: 700 }}>context windows</span> (how much text a model can process at once) grew from thousands of tokens to millions.
+- As benchmark scores climbed industry-wide, the intelligence gap between closed-source and open-source models narrowed significantly — <span style={{ color: "#84cc16", fontWeight: 700 }}>intelligence began to converge across the industry.</span>
+
+---
+
+## Phase 2: The Race for Speed
+
+As models become similarly capable, intelligence alone stops being a differentiator.
+
+> **A new race has begun: delivering that intelligence faster.**
+
+### Three Key Latency Metrics
+
+| Metric | What It Measures |
+|---|---|
+| **Time to First Token (TTFT)** | How long before the model begins responding at all |
+| **Tokens per Second** | How quickly the model generates output once it starts |
+| **Inter-Token Latency (ITL)** | The delay between each generated token — lower means smoother, more natural streaming |
+
+### Industry Proof Points
+
+- <span style={{ color: "#fbbf24", fontWeight: 700 }}>Google's Gemini 3.1 Flash</span> — built for agentic coding, ~3x faster than Gemini 3 Pro
+- <span style={{ color: "#d946ef", fontWeight: 700 }}>Anthropic's Claude Opus 4.8 fast mode</span> — same intelligence, up to 2.5x faster
+- <span style={{ color: "#fb923c", fontWeight: 700 }}>OpenAI's Cerebras-powered GPT-5.3-Codex-Spark</span> — 1,000+ tokens/sec, OpenAI's fastest model to date
+
+---
+
+## Why Speed Matters More Now
+
+- Capable models reason in multiple steps before answering.
+- Agentic and multi-agent workflows chain dozens of model and tool calls together.
+- <span style={{ color: "#22d3ee", fontWeight: 700 }}>Latency compounds across the workflow</span> even if any single call seems fast.
+
+> **Analogy from the lesson:** like cellular networks moving from 1G to 5G, faster speed doesn't just make old things faster — it enables entirely new categories of application (video streaming, ride-sharing) that weren't previously practical. The same shift is expected in AI: voice agents, live translation, and real-time multi-agent coordination all depend on speed, not just intelligence.
+
+---
+
+## Key Takeaways
+
+- The industry spent years racing for **intelligence**, driven by predictable scaling laws.
+- As intelligence converges across labs, **speed** becomes the new differentiator.
+- Three metrics define speed: **TTFT**, **tokens per second**, and **ITL**.
+- Latency **compounds** across multi-step, agentic workflows — a fast single call doesn't guarantee a fast overall experience.
+- History suggests speed doesn't just accelerate existing use cases — it unlocks entirely new ones.
+
+> **Simple takeaway:** once models are smart enough, being fast is what turns "impressive demo" into "usable product."
+
+<ArticleNav
+  prev={{ title: "Course Review — Fast LLM Inference with Cerebras", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras" }}
+  next={{ title: "Lesson 2: Inference Speed in Action", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-2-speed-in-action" }}
+/>

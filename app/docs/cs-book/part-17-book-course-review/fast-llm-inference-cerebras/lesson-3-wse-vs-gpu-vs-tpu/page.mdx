@@ -1,0 +1,116 @@
+export const metadata = {
+  title: "Lesson 3: Under the Hood — WSE vs. GPU vs. TPU — ByteWise CS Book",
+  description:
+    "Transistor to wafer, why GPUs and TPUs are memory-bound during inference, and how Cerebras' Wafer-Scale Engine keeps weights permanently on-chip beside compute.",
+  keywords: [
+    "GPU",
+    "TPU",
+    "Wafer-Scale Engine",
+    "WSE-3",
+    "systolic array",
+    "HBM",
+    "SRAM",
+    "memory bandwidth",
+    "Cerebras",
+  ],
+  openGraph: {
+    title: "Lesson 3: Under the Hood — WSE vs. GPU vs. TPU",
+    description:
+      "Why GPUs and TPUs are memory-bound during inference, and how the Wafer-Scale Engine keeps weights permanently beside compute.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lesson 3: <span style={{ color: "#a5b4fc", fontWeight: 700 }}>Under the Hood — WSE vs. GPU vs. TPU</span>
+
+---
+
+## How Any Chip Is Built (Smallest to Biggest)
+
+- **Transistor** — a tiny electronic on/off switch representing a 1 or 0.
+- **Core** — millions of transistors wired together to do math, plus a small pocket of fast local memory called <span style={{ color: "#0ea5e9", fontWeight: 700 }}>SRAM</span>.
+- **Die** — many cores grouped together — one actual processor.
+- **Wafer** — the large round silicon sheet many dies are printed onto, then normally cut apart (discarding defective pieces).
+
+---
+
+## GPUs (Graphics Processing Units)
+
+Originally built for rendering game graphics (millions of pixels processed in parallel), later adapted for AI.
+
+- Contains thousands of small cores: <span style={{ color: "#f43f5e", fontWeight: 700 }}>CUDA cores</span> (general-purpose parallel math) and <span style={{ color: "#f43f5e", fontWeight: 700 }}>Tensor cores</span> (specialized for the matrix multiplication AI needs).
+- On-chip SRAM is tiny, so model weights live in separate off-chip memory called <span style={{ color: "#fbbf24", fontWeight: 700 }}>HBM (High Bandwidth Memory)</span>.
+- Every token requires shipping weights from HBM to the cores before math can happen — this data movement is the bottleneck.
+
+GPUs excel at **training** (highly parallel, cores stay busy), but inference is different: it's one token at a time, so cores frequently sit idle waiting for data.
+
+---
+
+## TPUs (Tensor Processing Units)
+
+Built by Google specifically for machine learning from the start.
+
+- Centered on a <span style={{ color: "#84cc16", fontWeight: 700 }}>systolic array</span> — a large grid (e.g. 256x256) of small compute units that pass data directly from one to the next in a step-by-step flow, reusing values instead of re-fetching them constantly.
+- Excellent for training with huge data batches.
+- However, for **inference**, TPUs hit the same wall as GPUs: weights still live off-chip in HBM and must travel to compute for every token.
+
+---
+
+## The Shared GPU/TPU Problem: Memory-Bound, Not Compute-Bound
+
+On both GPUs and TPUs, weights are too large for the tiny on-chip SRAM, so they sit in off-chip HBM and must stream to cores for every token, every layer.
+
+> **The bottleneck isn't how fast the chip can multiply — it's how fast it can feed the multiplier with data.** That's set by memory bandwidth.
+
+---
+
+## Cerebras' Wafer-Scale Engine (WSE) — Don't Cut the Wafer at All
+
+Cerebras asked: what if the entire wafer became one single processor?
+
+Normally, a single defect anywhere would ruin an uncut wafer — which is exactly why the industry cuts wafers into small dies (so only the bad pieces get discarded). <span style={{ color: "#d946ef", fontWeight: 700 }}>Cerebras' answer: design the communication fabric to route around any defective cores</span>, so the wafer stays whole and the good cores keep working.
+
+### WSE-3 Key Numbers
+
+| Spec | Value |
+|---|---|
+| AI-optimized cores | 900,000 |
+| On-wafer SRAM | 44 gigabytes (vs. megabytes of on-chip SRAM on a GPU/TPU — thousands of times smaller) |
+| Memory bandwidth | 21 petabytes per second |
+| Physical size | 58x larger than a single GPU chip — roughly the size of a large dining plate |
+| Inference speed | Up to 15x faster than GPU providers |
+
+---
+
+## How the WSE Actually Processes Tokens
+
+Because there's enough on-chip memory to hold the whole model, each layer's weights are loaded into a specific physical region of the wafer and left in place — <span style={{ color: "#22d3ee", fontWeight: 700 }}>the weights don't move. Instead, the token moves</span>: as it's generated, it flows from the region holding Layer 1, to the region holding Layer 2, and onward across the wafer — like a pipeline. Because neighboring layers are physically adjacent, communication between them happens with extremely low latency.
+
+If a model exceeds 44GB (one wafer's capacity), Cerebras splits it at layer boundaries across multiple wafer systems (e.g., a 20B-parameter model fits on one wafer, a 70B-parameter model needs as few as four). Only small intermediate results (activations) — not the full weights — travel between wafers, so the on-chip advantage holds even across multiple wafers.
+
+---
+
+## Serving Many Users at Once
+
+On a GPU, serving more users means batching requests together — but bigger batches can make each individual user wait longer.
+
+On the WSE, one user's token only uses a fraction of the wafer's enormous bandwidth, so multiple users' tokens can move through the pipeline simultaneously, staggered one stage apart — every region of the wafer stays busy, each working on a different user's token.
+
+---
+
+## Key Takeaways
+
+- Chips are built up from transistor → core → die → wafer; the industry norm is to cut the wafer into dies and discard defective ones.
+- GPUs and TPUs both keep weights in off-chip HBM — every token requires a round trip from memory to compute.
+- This makes inference **memory-bound**, not compute-bound: the ceiling is bandwidth, not raw multiply-add throughput.
+- Cerebras keeps the wafer whole, routing around defects, so 44GB of SRAM sits directly beside 900,000 cores.
+- Tokens — not weights — move across the wafer, turning inference into a physical pipeline instead of a repeated fetch-and-compute cycle.
+
+> **Core takeaway:** LLM inference is limited not by how fast a chip can do math, but by how fast it can move weights to where the math happens. GPUs/TPUs are forced to keep weights off-chip because of how wafers are cut. Cerebras keeps the wafer whole, keeps weights permanently next to compute, and moves only the token — hence the dramatic speed gain.
+
+<ArticleNav
+  prev={{ title: "Lesson 2: Inference Speed in Action", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-2-speed-in-action" }}
+  next={{ title: "Lesson 4: Engineering Shifts", href: "/docs/cs-book/part-17-book-course-review/fast-llm-inference-cerebras/lesson-4-engineering-shifts" }}
+/>
