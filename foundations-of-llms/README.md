@@ -28,13 +28,13 @@ foundations-of-llms/
 
 ## Parts
 
-| Part | Title | Status |
-|------|-------|--------|
-| I | Foundations | In progress |
-| II | Pretraining | Not started |
-| III | Fine-Tuning | Not started |
-| IV | Alignment | Not started |
-| V | Deployment | Not started |
+| Part | Title | Status | Claude.ai Session |
+|------|-------|--------|--------------------|
+| I | Foundations | In progress | https://claude.ai/chat/4fc69947-67e8-4a51-9d79-f0e663f35824 |
+| II | Pretraining | Not started | |
+| III | Fine-Tuning | Not started | |
+| IV | Alignment | Not started | |
+| V | Deployment | Not started | |
 
 ## Progress Tracker
 
