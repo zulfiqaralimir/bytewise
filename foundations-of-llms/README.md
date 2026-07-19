@@ -30,7 +30,7 @@ foundations-of-llms/
 
 | Part | Title | Status | Claude.ai Session |
 |------|-------|--------|--------------------|
-| I | Foundations | In progress | https://claude.ai/chat/4fc69947-67e8-4a51-9d79-f0e663f35824 |
+| I | Foundations | In progress | https://claude.ai/chat/4fc69947-67e8-4a51-9d79-f0e663f35824 · https://bytewise-one.vercel.app/docs/cs-book/part-18-foundations-of-llms/part-1-foundations/01-what-is-a-language-model |
 | II | Pretraining | Not started | |
 | III | Fine-Tuning | Not started | |
 | IV | Alignment | Not started | |
