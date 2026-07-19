@@ -389,6 +389,33 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 18 — Foundations of LLMs",
+    chapters: [
+      {
+        chapter: "Part I — Foundations",
+        items: [
+          { title: "1. What Is a Language Model?", href: "/docs/cs-book/part-18-foundations-of-llms/part-1-foundations/01-what-is-a-language-model" },
+        ],
+      },
+      {
+        chapter: "Part II — Pretraining",
+        items: [],
+      },
+      {
+        chapter: "Part III — Fine-Tuning",
+        items: [],
+      },
+      {
+        chapter: "Part IV — Alignment",
+        items: [],
+      },
+      {
+        chapter: "Part V — Deployment",
+        items: [],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
