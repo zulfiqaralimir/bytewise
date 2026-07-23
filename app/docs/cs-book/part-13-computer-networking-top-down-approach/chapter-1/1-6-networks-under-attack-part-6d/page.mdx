@@ -534,7 +534,7 @@ The victim believes they are visiting the real website.
 
 ---
 
-# Why Is DNS Poisoning Dangerous?
+# <span style={{ color: "#ef4444", fontWeight: 700 }}>Why Is DNS Poisoning Dangerous?</span>
 
 Victims may unknowingly:
 
@@ -547,7 +547,7 @@ All while believing they are on a legitimate website.
 
 ---
 
-# Protection Against DNS Poisoning
+# <span style={{ color: "#22c55e", fontWeight: 700 }}>Protection Against DNS Poisoning</span>
 
 Common defenses include:
 
@@ -569,21 +569,21 @@ Recall from Section 1.5.
 
 A session is:
 
-> **An ongoing communication between a client and a server.**
+> <span style={{ color: "#f97316", fontWeight: 700 }}>An ongoing communication between a client and a server.</span>
 
 Example:
 
-After logging into Gmail,
+<span style={{ color: "#a78bfa", fontWeight: 700 }}>After logging into Gmail,</span>
 
-your browser remains authenticated.
+<span style={{ color: "#a78bfa", fontWeight: 700 }}>your browser remains authenticated.</span>
 
-This authenticated state is called a:
+<span style={{ color: "#a78bfa", fontWeight: 700 }}>This authenticated state is called a:</span>
 
-> **Session**
+> <span style={{ color: "#a78bfa", fontWeight: 700 }}>Session</span>
 
 ---
 
-# Session Identifier
+# <span style={{ color: "#06b6d4", fontWeight: 700 }}>Session Identifier</span>
 
 Instead of repeatedly entering your password,
 
@@ -601,7 +601,7 @@ Cookie
 
 ---
 
-# Normal Session
+# <span style={{ color: "#6366f1", fontWeight: 700 }}>Normal Session</span>
 
 ```text
 Login
@@ -625,7 +625,7 @@ User Continues Browsing
 
 Definition:
 
-> **Session Hijacking is an attack in which an attacker steals or predicts a valid session identifier and uses it to impersonate a legitimate user.**
+> <span style={{ color: "#f97316", fontWeight: 700 }}>Session Hijacking is an attack in which an attacker steals or predicts a valid session identifier and uses it to impersonate a legitimate user.</span>
 
 ---
 
@@ -637,9 +637,9 @@ After registration,
 
 you receive an entry badge.
 
-Security guards allow entry because of the badge.
+<span style={{ color: "#ef4444", fontWeight: 700 }}>Security guards allow entry because of the badge.</span>
 
-Now suppose someone steals your badge.
+<span style={{ color: "#ef4444", fontWeight: 700 }}>Now suppose someone steals your badge.</span>
 
 They enter pretending to be you.
 
@@ -649,7 +649,7 @@ Session Hijacking works exactly the same way.
 
 # Example
 
-Suppose an attacker steals your session cookie.
+<span style={{ color: "#ef4444", fontWeight: 700 }}>Suppose an attacker steals your session cookie.</span>
 
 Instead of knowing your password,
 
@@ -663,36 +663,36 @@ This is the legitimate user.
 
 ---
 
-# How Can Session IDs Be Stolen?
+# <span style={{ color: "#ec4899", fontWeight: 700 }}>How Can Session IDs Be Stolen?</span>
 
 Examples include:
 
 - Packet Sniffing
 - Malware
-- Cross-Site Scripting (XSS)
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Cross-Site Scripting (XSS)</span>
 - Physical access
-- Browser vulnerabilities
+- <span style={{ color: "#14b8a6", fontWeight: 700 }}>Browser vulnerabilities</span>
 
 ---
 
-# Preventing Session Hijacking
+# <span style={{ color: "#22c55e", fontWeight: 700 }}>Preventing Session Hijacking</span>
 
-Modern websites use several protections.
+<span style={{ color: "#22c55e", fontWeight: 700 }}>Modern websites use several protections.</span>
 
 Examples include:
 
 - HTTPS
-- Secure Cookies
-- HttpOnly Cookies
+- <span style={{ color: "#22c55e", fontWeight: 700 }}>Secure Cookies</span>
+- <span style={{ color: "#22c55e", fontWeight: 700 }}>HttpOnly Cookies</span>
 - Session Expiration
 - Multi-Factor Authentication (MFA)
 - Regenerating Session IDs after login
 
 ---
 
-# Comparing the Attacks
+# <span style={{ color: "#3b82f6", fontWeight: 700 }}>Comparing the Attacks</span>
 
-| Attack | Main Objective | CIA Principle Affected |
+| Attack | Main Objective | <span style={{ color: "#ec4899", fontWeight: 700 }}>CIA Principle Affected</span> |
 |---------|----------------|------------------------|
 | Packet Sniffing | Observe communication | Confidentiality |
 | IP Spoofing | Fake identity | Authentication / Integrity |
@@ -702,7 +702,7 @@ Examples include:
 
 ---
 
-# Putting Everything Together
+# <span style={{ color: "#a78bfa", fontWeight: 700 }}>Putting Everything Together</span>
 
 Imagine you open:
 
@@ -796,7 +796,7 @@ Compromised or poisoned DNS caches can return incorrect information.
 
 ---
 
-## Misconception 5
+## <span style={{ color: "#f59e0b", fontWeight: 700 }}>Misconception 5</span>
 
 > Stealing a password is the only way to access an account.
 
@@ -836,7 +836,7 @@ If an attacker steals a valid session cookie, they may be able to impersonate th
 
 ---
 
-# Summary Diagram
+# <span style={{ color: "#06b6d4", fontWeight: 700 }}>Summary Diagram</span>
 
 ```text
                     Communication Attacks
@@ -859,7 +859,7 @@ If an attacker steals a valid session cookie, they may be able to impersonate th
 
 ---
 
-## End of Part 6D
+## <span style={{ color: "#6366f1", fontWeight: 700 }}>End of Part 6D</span>
 
 ### Next Part (6E) — Final Part of Section 1.6
 
