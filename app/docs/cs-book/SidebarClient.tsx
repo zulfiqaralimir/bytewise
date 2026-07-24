@@ -252,6 +252,7 @@ const chapters = [
           { title: "1.6 Networks Under Attack (Part 6C)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6c" },
           { title: "1.6 Networks Under Attack (Part 6D)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6d" },
           { title: "1.6 Networks Under Attack (Part 6E)", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-6-networks-under-attack-part-6e" },
+          { title: "1.7 History of Computer Networking and the Internet", href: "/docs/cs-book/part-13-computer-networking-top-down-approach/chapter-1/1-7-history-of-computer-networking-and-the-internet" },
         ],
       },
       {
