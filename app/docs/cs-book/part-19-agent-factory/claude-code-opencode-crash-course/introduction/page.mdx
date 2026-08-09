@@ -26,32 +26,33 @@ import { Figure } from "@/app/components/Figure";
 
 ## Summary
 
-- **What this is:** A crash course on Claude Code and OpenCode — AI tools that work directly inside your files and terminal, not just in a chat window.
-- **Purpose:** Teach the 15 concepts that cover 80% of real day-to-day use, so you move from "AI gives advice" to "AI does the work, correctly, while you watch."
-- **Application:** Any workflow built on files, spreadsheets, scripts, or repetitive computer tasks — this isn't limited to software engineers.
-- **Why it matters for Investment work:**
-  - Automate the repetitive parts of the job — data cleanup, model updates, report formatting — instead of doing them by hand every time.
-  - Point an agent at a valuation model, tracker, or dataset and have it pull data, run the numbers, and update the file directly.
-  - Build small internal tools — screeners, dashboards, one-off analysis scripts — without waiting on a dedicated engineer.
-  - The core skill here, **context engineering**, is what keeps AI-run financial work accurate instead of hallucinated — feeding it exactly the right numbers and rules, nothing more, nothing less.
+- **Think of this as:** a crash course on two tools, Claude Code and OpenCode, that don't just chat about your files — they open them, edit them, and save the result while you watch.
+- **The point of it:** by the end, you'll have moved from "AI gives me advice" to "AI does the work correctly" — and you'll know exactly how much to trust it.
+- **Where it applies:** anywhere your work lives in files — spreadsheets, scripts, reports, repetitive computer tasks. You don't need to be an engineer for this to be useful.
+- **Why this matters if you're in Investment work:**
+  - The boring, repetitive stuff stops being something you do by hand every single time. Example: a quarterly DCF model needs the latest earnings numbers dropped in and every downstream cell recalculated — the agent opens the model, updates the assumptions tab, and flags anything that moved more than 10%, instead of you doing it line by line.
+  - Point an agent at a valuation model or a tracker, and it can pull the data, run the numbers, and update the file directly, right there. Example: reconciling a broker statement against your internal position ledger — the agent reads both files, matches trades, and lists only the mismatches instead of you eyeballing two spreadsheets.
+  - You can build small internal tools — screeners, dashboards, one-off analysis scripts — without waiting on an engineer to have time for you. Example: "screen this list of 200 tickers for P/E under 15, revenue growth over 10%, and debt-to-equity under 1" — the agent writes and runs the script, hands you the filtered list.
+  - Turning a raw spreadsheet into a formatted investor memo or IC (investment committee) note — the agent restructures the numbers into prose and tables, you review the judgment calls.
+  - The core skill you're about to learn, **context engineering**, is exactly what keeps AI-run financial work accurate instead of made up. Feed it the right numbers and rules, nothing more, nothing less, and it stays honest.
 
 ## What These Tools Actually Do
 
-- Say you have an essay draft — grammar's rough, paragraphs are out of order.
+- Picture this: you've got an essay draft. The grammar's rough, the paragraphs are in the wrong order.
 - You tell your computer: fix the grammar, reorder the paragraphs so the argument flows, save the new version.
-- It doesn't reply with advice. It opens the file, makes the edits, and saves the result while you watch.
-- That's what Claude Code and OpenCode do — AI tools that work directly on your computer. You describe what you want, they do the work, you review the result.
+- Here's the difference — it doesn't hand you a list of suggestions. It opens the file, makes the edits, and saves the result, right in front of you.
+- That's the whole idea behind Claude Code and OpenCode. You describe what you want, they actually do it, and you review the result.
 
 ## What This Crash Course Covers
 
-- 15 concepts that cover about 80% of what you'll actually use day to day.
-- By the end: what each tool can do, when to use which feature, and how to avoid the common mistakes.
+- Fifteen concepts. That's it. But those fifteen cover about 80% of what you'll reach for day to day.
+- By the time you're through: you'll know what each tool can do, when to reach for which feature, and — just as important — the common mistakes to steer clear of.
 
 ## The One Idea Behind Everything
 
-- Almost every "advanced" technique in these tools comes down to the same move: **giving the AI the right information at the right time, and keeping irrelevant information out.**
-- Every section in this course connects back to that idea.
-- That idea has a name in the industry: **context engineering** — deciding on purpose what the model sees.
+- Here's the key insight: almost every "advanced" trick in these tools boils down to one move — **giving the AI the right information at the right time, and keeping the irrelevant stuff out.**
+- Every section in this course loops back to that same idea, one way or another.
+- The industry has a name for it: **context engineering** — deliberately deciding what the model gets to see.
 
 <Figure
   src="/images/cs-book/part-19-agent-factory/claude-code-opencode-crash-course/introduction/four-layers-taught-here.png"
@@ -63,41 +64,42 @@ import { Figure } from "@/app/components/Figure";
 
 ## How This Book Is Organized
 
-- There's no separate context-engineering course in this book — **this is it.**
-- Parts 2, 3, and 4 of this course are the full treatment of the discipline:
+- One note on the structure: there's no separate context-engineering course anywhere else in this book — **this is it.**
+- Parts 2, 3, and 4 of this course are the full treatment of the discipline, broken down like this:
   - **Part 2** — the context window and its budget
   - **Part 3** — the rules file
   - **Part 4** — skills, subagents, and the placement question
-- Every later course in the sequence — Spec-Driven Development, Loop Engineering, Harness Engineering, Trusting the Checker — assumes the habits you build here, and several point back to this page by name.
+- Every course that comes after this one — Spec-Driven Development, Loop Engineering, Harness Engineering, Trusting the Checker — assumes you've already built the habits taught here. Several of them will point straight back to this page by name.
 
 ## Prerequisite
 
-- **AI Prompting in 2026** — that course taught you how to talk to AI: giving context, asking clearly, checking its work.
-- This course teaches what happens once AI can actually touch your files and run commands on your computer.
+- **AI Prompting in 2026** — that course taught you how to talk to AI: giving it context, asking clearly, checking its work.
+- This course picks up where that one left off: what changes once AI can actually touch your files and run commands on your computer.
 
 ## Three Things to Believe Before You Touch the Tools
 
-- Before any command or setting, three ideas about the AI itself — from Andrej Karpathy (OpenAI co-founder, coined "vibe coding"). Everything in this course rests on them.
+- Before we get into any command or setting, let's talk about the AI itself. Three ideas, all from Andrej Karpathy (OpenAI co-founder, the person who coined "vibe coding") — and honestly, everything in this course rests on them.
 
 **1. It's a ghost, not a person.**
-- Keep the "brief it like a colleague" habit from AI Prompting in 2026 — but drop the personhood.
-- No ego, no motivation, no memory of yesterday. It won't get offended, get tired, or take initiative you didn't ask for.
-- You manage it. It does not manage itself. The rules file, plan mode, hooks — all of it is just ways of managing it.
+- Keep the "brief it like a colleague" habit from AI Prompting in 2026 — that part still holds. But drop the personhood.
+- Think of it like this: no ego, no motivation, no memory of yesterday. It won't get offended, won't get tired, and won't take initiative you didn't ask for.
+- You manage it. It doesn't manage itself. The rules file, plan mode, hooks — all of that is just different ways of managing it.
 
 **2. Its intelligence is jagged.**
-- Different models are good at different things (AI Prompting Concept 12) — but a single model is jagged within itself too: superhuman at one task, surprisingly weak at the next, sometimes in the same minute.
-- Never assume that because it nailed something hard, it'll nail something easy. Check the easy things too.
+- You've already seen a version of this in AI Prompting Concept 12: different models are good at different things. Karpathy's point pushes further.
+- Even one single model is jagged within itself — superhuman at one task, surprisingly weak at the next, sometimes in the same minute.
+- Simple takeaway: never assume that because it nailed something hard, it'll automatically nail something easy. Check the easy things too.
 
 **3. Trust it exactly as far as the output can be checked.**
-- The closer a task is to checkable — tests pass, the file exists, the numbers add up — the more you can safely hand over.
-- Where the output can't be checked, the judgment stays with you.
+- The closer a task is to checkable — the tests pass, the file exists, the numbers add up — the more comfortable you can be handing it over.
+- Where the output can't be checked, the judgment call stays with you. No shortcut around that.
 
-- Remember #3 especially — it grows into the most important pattern in this course (the verification loop, Concept 10), and from there into two full courses: **Spec-Driven Development** (write the check) and **Loop Engineering** (run it without you).
+- Hold onto that third one especially. It grows into the single most important pattern in this course — the verification loop, Concept 10 — and from there into two entire courses of their own: **Spec-Driven Development** teaches you to write the check, and **Loop Engineering** teaches you to run it without you standing over it.
 
 ## Two Tools, One Set of Skills
 
-- This course covers two tools side by side: **Claude Code** (Anthropic) and **OpenCode** (open-source, works with any model).
-- Why both: if a technique works in both tools, it's a real skill — not a tool-specific trick. What you learn here transfers between them.
+- This course walks through two tools side by side: **Claude Code** (built by Anthropic) and **OpenCode** (open-source, works with any AI model).
+- Why bother with both? Because if a technique works in both tools, it's a real skill, not a tool-specific trick. What you learn here carries over from one to the other.
 
 | | Claude Code | OpenCode |
 |---|---|---|
@@ -106,13 +108,13 @@ import { Figure } from "@/app/components/Figure";
 | Best for | Best Claude performance out of the box | Flexibility, cost control, free models |
 | Price | Subscription or API | Free models available, or bring your own API key |
 
-- Pick whichever fits your situation — everything in this course works in both.
-- **Current as of July 2026.** Both tools update frequently — run `claude update` or `opencode upgrade` before any session. Installation is covered in Section 1 below.
+- Pick whichever fits your situation — everything in this course works the same way in both.
+- One heads-up: this is **current as of July 2026**, and both tools update often. Before any session, run `claude update` or `opencode upgrade` to make sure you're not working off a stale version. If you haven't installed either one yet, that's covered in Section 1 below.
 
 ## Pick Your Tool, the Page Follows
 
-- Sections that differ between Claude Code and OpenCode have a switcher throughout this page.
-- Pick one, and every switcher on the page follows your choice.
+- Wherever Claude Code and OpenCode differ, you'll see a switcher on the page.
+- Pick one, and every switcher on the page follows your choice from there on.
 
 <ArticleNav
   prev={null}
