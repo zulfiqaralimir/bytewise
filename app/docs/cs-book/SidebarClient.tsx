@@ -417,6 +417,17 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 19 — Agent Factory",
+    chapters: [
+      {
+        chapter: "Claude Code and OpenCode: A Crash Course",
+        items: [
+          { title: "Introduction — 15 Concepts · 80% of Real Use", href: "/docs/cs-book/part-19-agent-factory/claude-code-opencode-crash-course/introduction" },
+        ],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>

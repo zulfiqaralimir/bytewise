@@ -1,0 +1,70 @@
+export const metadata = {
+  title: "Claude Code and OpenCode: A Crash Course — Agent Factory — ByteWise CS Book",
+  description:
+    "15 concepts that cover 80% of real day-to-day use of Claude Code and OpenCode — AI tools that work directly on your files and computer.",
+  keywords: [
+    "Claude Code",
+    "OpenCode",
+    "AI agents",
+    "context engineering",
+    "agent factory",
+    "coding agents",
+  ],
+  openGraph: {
+    title: "Claude Code and OpenCode: A Crash Course — Agent Factory — ByteWise CS Book",
+    description:
+      "15 concepts that cover 80% of real day-to-day use of Claude Code and OpenCode.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# Claude Code and OpenCode: A Crash Course
+
+*15 Concepts · 80% of Real Use*
+
+## What These Tools Actually Do
+
+- Say you have an essay draft — grammar's rough, paragraphs are out of order.
+- You tell your computer: fix the grammar, reorder the paragraphs so the argument flows, save the new version.
+- It doesn't reply with advice. It opens the file, makes the edits, and saves the result while you watch.
+- That's what Claude Code and OpenCode do — AI tools that work directly on your computer. You describe what you want, they do the work, you review the result.
+
+## What This Crash Course Covers
+
+- 15 concepts that cover about 80% of what you'll actually use day to day.
+- By the end: what each tool can do, when to use which feature, and how to avoid the common mistakes.
+
+## The One Idea Behind Everything
+
+- Almost every "advanced" technique in these tools comes down to the same move: **giving the AI the right information at the right time, and keeping irrelevant information out.**
+- Every section in this course connects back to that idea.
+- That idea has a name in the industry: **context engineering** — deciding on purpose what the model sees.
+
+<Figure
+  src="/images/cs-book/part-19-agent-factory/claude-code-opencode-crash-course/introduction/four-layers-taught-here.png"
+  alt="Four layers of AI-assisted development: The Prompt, The Context, The Harness, The Loop — with a checker on the side asking Did it work?"
+  width={1672}
+  height={941}
+  caption="This course lives in Layer 2 — The Context: what the model sees."
+/>
+
+## How This Book Is Organized
+
+- There's no separate context-engineering course in this book — **this is it.**
+- Parts 2, 3, and 4 of this course are the full treatment of the discipline:
+  - **Part 2** — the context window and its budget
+  - **Part 3** — the rules file
+  - **Part 4** — skills, subagents, and the placement question
+- Every later course in the sequence — Spec-Driven Development, Loop Engineering, Harness Engineering, Trusting the Checker — assumes the habits you build here, and several point back to this page by name.
+
+## Prerequisite
+
+- **AI Prompting in 2026** — that course taught you how to talk to AI: giving context, asking clearly, checking its work.
+- This course teaches what happens once AI can actually touch your files and run commands on your computer.
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>

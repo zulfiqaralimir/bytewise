@@ -3,6 +3,43 @@
 
 # ByteWise Project Context
 
+## Diagrams & Images in Chapters (all tracks, going forward)
+
+Add visuals where they clarify a concept faster than prose — not on every page. Three tools, pick per case:
+
+| Need | Tool | Import |
+|------|------|--------|
+| Flowchart, sequence diagram, tree, state machine, ER diagram | `<MermaidDiagram>` | `import { MermaidDiagram } from "@/app/components/MermaidDiagram";` |
+| Custom vector illustration (memory layout, pointer diagram, anything Mermaid can't shape) | `<Figure>` wrapping inline `<svg>` | `import { Figure } from "@/app/components/Figure";` |
+| Photo / screenshot | `<Figure src=... />` | `import { Figure } from "@/app/components/Figure";` |
+
+**Mermaid** — see `app/docs/cs-book/part-7-ai-and-llms/openclaw-production-design/page.mdx` for real examples (architecture, sequence, ER diagrams). Usage:
+```mdx
+<MermaidDiagram title="Message Flow" chart={`
+sequenceDiagram
+  participant A
+  participant B
+  A->>B: request
+`} />
+```
+
+**Figure (SVG)**:
+```mdx
+<Figure title="Array Memory Layout" caption="Contiguous allocation — index i lives at base + i*size">
+  <svg width="480" height="120">...</svg>
+</Figure>
+```
+
+**Figure (photo/screenshot)** — store files under `public/images/cs-book/<part-slug>/<chapter-slug>/name.png`, reference by absolute path:
+```mdx
+<Figure src="/images/cs-book/part-10-introduction-to-algorithms/chapter-2/insertion-sort-trace.png" alt="Insertion sort trace" width={800} height={450} caption="..." />
+```
+
+Notes:
+- No dark mode on this site — style SVGs for a light background only (matches `MermaidDiagram`'s white body / gray-100 header bar).
+- This is a going-forward convention only — do not retrofit already-published pages unless separately asked.
+- Diagrams inside triple-backtick ` ```text ` fences cannot get colored `<span>` highlighting or interactive components — JSX doesn't render inside code fences.
+
 ## Blockchain Developer Learning Track (Black Iron Quantum AI)
 
 Content lives in two places — CS Book (with sidebar/ArticleNav) and Blog (cross-post):
