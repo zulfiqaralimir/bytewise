@@ -1,10 +1,10 @@
 export const metadata = {
   title: "1.4 Types of Equations in SAM & CGE Modeling — ByteWise CS Book",
-  description: "The seven core equation types behind SAM and CGE models — production, demand, factor income, trade, government, household, and equilibrium — and why their structure differs so sharply across sectors, illustrated with Pakistan's agriculture vs. energy multipliers.",
+  description: "The seven core equation types behind SAM and CGE models — production, demand, factor income, trade, government, household, and equilibrium — explained conversationally with Pakistan examples, not academic notation.",
   keywords: ["SAM equations", "CGE modeling", "production function", "Armington elasticity", "CET function", "Leontief production function", "CES production function", "Pakistan SAM 2013-19", "multiplier analysis"],
   openGraph: {
     title: "1.4 Types of Equations in SAM & CGE Modeling",
-    description: "The seven core equation types behind SAM and CGE models, and why their structure differs so sharply across sectors — illustrated with Pakistan's agriculture vs. energy multipliers.",
+    description: "The seven core equation types behind SAM and CGE models, explained conversationally with Pakistan examples — production, demand, trade, and equilibrium.",
     type: "article",
   },
 };
@@ -24,20 +24,25 @@ import { DownloadPdfButton } from "@/app/components/DownloadPdfButton";
 
 ## Introduction: Why Equation Structure Matters
 
-Social Accounting Matrix (SAM) and Computable General Equilibrium (CGE) models are the workhorses of policy impact analysis in developing economies. From international development banks to central banks, these tools inform decisions worth billions of dollars. Yet their power doesn't lie in individual equations — it lies in **how these equations interact** across sectors, markets, and economic agents.
+Here's the thing about SAM and CGE models: they look like a wall of Greek letters, but every single equation in them is really just someone's ordinary behavior written down in symbols. A farmer deciding how many workers to hire. A household deciding how much rice to buy versus save. A government collecting sales tax. A market where prices rise until supply and demand agree with each other again.
 
-### The Core Question
+**Simple takeaway:** if you can explain an equation as a story about a person or a market first, the symbols stop being scary — they're just shorthand for the story.
 
-**How many distinct equation types appear across different sectors in SAM/CGE frameworks, and why do these differences matter?**
+This section walks through the seven equation types that show up in every SAM/CGE model, one story at a time — using Pakistan's agriculture and energy sectors as the running example, the same two sectors from [Section 1.3](/docs/cs-book/part-11-economic-finance-models/chapter-1/1-3-pakistan-sam-multiplier-analysis).
 
-This section answers this question through:
+> **Note on the numbers below:** elasticities and shares used in the examples are illustrative — chosen to show *how* equation structure changes the size of a multiplier, not final published estimates. Section 1.3's 2.4x and 1.5x multipliers come from the actual Leontief calculation on the Naqvi SAM; this section explains *why* those numbers come out the way they do, pending Dr. Naqvi's review.
 
-- **Mathematical rigor** — formal specification of 7 core equation types
-- **Sectoral heterogeneity** — why agriculture differs from energy from manufacturing
-- **Pakistan application** — illustrative figures from the 179-account Naqvi SAM (2013-19), introduced in [Section 1.1](/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam) and [Section 1.3](/docs/cs-book/part-11-economic-finance-models/chapter-1/1-3-pakistan-sam-multiplier-analysis)
-- **Policy insights** — how equation architecture drives multiplier effects
+---
 
-> **Note on the numbers below:** elasticities, wage levels, and tax shares in this section are illustrative — chosen to show *how* equation structure changes the size of a multiplier, not final published estimates. Section 1.3's 2.4x and 1.5x multipliers come from the actual Leontief calculation on the Naqvi SAM; the sub-elasticities here are a plausible decomposition of *why* those numbers come out the way they do, pending Dr. Naqvi's review.
+## Three Flavors of Equation (Learn This First)
+
+Before we look at any specific equation, here's a shortcut that makes every equation below easier to classify. Almost everything in a SAM/CGE model is one of three types:
+
+- **Behavioral equation** — describes a *choice* someone makes. A firm choosing how much labor vs. capital to use. A household choosing how much to consume vs. save. If you can ask "what would make this person change their mind?", it's behavioral.
+- **Identity equation** — just an accounting fact, no choice involved. "Your disposable income equals your wages plus your profits, minus tax, plus any transfers." Nobody *decides* this — it's just how the arithmetic has to add up.
+- **Equilibrium condition** — a statement that two things *must* balance, and prices are what move to make sure they do. Supply must equal demand. If they don't, the price hasn't found its resting point yet.
+
+**Memory aid:** behavioral = a decision, identity = a sum, equilibrium = a balance. Every equation in this section gets one of those three labels.
 
 ---
 
@@ -55,217 +60,169 @@ All SAM/CGE models contain seven core equation categories:
 | **Household** | Income allocation & saving | High | Rural (low saving) vs. urban-rich (high saving) |
 | **Equilibrium** | Market clearing | Universal | Supply = demand across every market in the SAM |
 
-Each equation type varies **substantially** across sectors based on:
-
-- **Technology** — is production labor-intensive or capital-intensive?
-- **Market structure** — are firms competitive or monopolistic?
-- **Institutional factors** — do regulations or subsidies constrain behavior?
-- **International position** — do sectors trade heavily or not?
-
 ---
 
-## Production Equations: The Supply Side
+## Production Equations: The Recipe a Sector Follows
 
-### Conceptual Foundation
+### Start With the Story, Not the Symbols
 
-Production equations map how sectors transform primary factors (labor, capital) and intermediate inputs into final output. In a SAM/CGE framework, production typically follows **nested production functions** that reflect technological constraints and possibilities.
+Imagine two cooks. The first is a strict traditionalist making biryani exactly the way his grandmother taught him: a fixed amount of rice, a fixed amount of meat, a fixed amount of spice — no substitutions, ever. If he runs out of meat, it doesn't matter how much extra rice he has; he simply can't make more biryani. The second cook is more flexible: if meat gets expensive, she'll quietly increase the rice-to-meat ratio and nobody complains too much.
 
-### Why Production Structure Varies Across Sectors
+Those two cooks are the two production functions economists use in SAM/CGE models. **This is a behavioral equation** — it describes how a sector *chooses* to turn inputs into output.
 
-Different sectors use factors of production in fundamentally different ways:
+### The Strict Cook: Leontief Production
 
-- **Agriculture** — labor-intensive, land-dependent, seasonal
-- **Manufacturing** — capital-intensive, technologically advanced, year-round
-- **Services** — mixed intensity, often labor-intensive with high skill requirements
-- **Energy** — highly capital-intensive, import-dependent, inflexible supply
-
-### Mathematical Formulation
-
-**Leontief production function (rigid):**
+The first cook's rule, written as an equation:
 
 $$X_a = \min\left(\frac{L_a}{a_L},\ \frac{K_a}{a_K},\ \frac{M_a}{a_M}\right)$$
 
-Where:
-- $X_a$ = output of activity $a$
-- $L_a$ = labor input; $a_L$ = labor coefficient
-- $K_a$ = capital input; $a_K$ = capital coefficient
-- $M_a$ = intermediate materials; $a_M$ = materials coefficient
+Read it exactly like the biryani rule. In plain words:
 
-This assumes **fixed input-output coefficients** — you cannot substitute workers for machines.
+- $X_a$ — how much a sector actually produces
+- $L_a$ — how many workers it has, $a_L$ — how many workers it *needs* per unit of output
+- $K_a$ — how much machinery it has, $a_K$ — how much machinery it *needs* per unit
+- $M_a$ — how many raw materials it has, $a_M$ — how many materials it *needs* per unit
 
-**Nested CES production function (flexible):**
+The `min()` is the whole point: **output is capped by whichever ingredient runs out first.** You can't cook more biryani by having extra rice if you're out of meat — and a factory can't produce more output by hiring extra workers if it's out of machines to put them on.
+
+**Memory aid:** Leontief = the strict grandmother's recipe. Fixed ratios, no swapping, whatever runs out first sets the limit.
+
+### The Flexible Cook: CES Production
+
+The second cook's rule — a bit more math, same idea, just with room to adjust:
 
 $$X_a = A_a \left[\alpha_L L_a^{-\rho} + \alpha_K K_a^{-\rho} + \alpha_M M_a^{-\rho}\right]^{-1/\rho}$$
 
-Where:
-- $A_a$ = total factor productivity
-- $\alpha_L, \alpha_K, \alpha_M$ = factor share parameters
-- $\rho$ = substitution elasticity parameter
+- $A_a$ — how good the sector is at converting inputs into output overall (its "skill level")
+- $\alpha_L, \alpha_K, \alpha_M$ — how much weight labor, capital, and materials each carry in the recipe
+- $\rho$ — the "how flexible is this cook" dial
 
-This allows **factor substitution** — as wages rise, firms substitute capital for labor if the elasticity implied by $\rho$ is high.
+That last one, $\rho$, is the entire personality of the equation. When $\rho$ is close to zero, the sector barely swaps anything — it behaves almost like the strict cook. When the substitution elasticity is high, the sector happily trades labor for machines (or the reverse) as wages and rents change.
 
-### Illustrative Sectoral Production Structure
+**Why this matters for Pakistan:** agriculture behaves close to the strict cook — you genuinely cannot swap a tractor for a rice-transplanting worker at scale overnight, so a 10% wage rise barely changes how many farm workers get hired. Energy behaves even more like the strict cook — power plants are built around specific machinery, and there's almost no room to substitute labor in. Both sectors are rigid, but agriculture's rigidity keeps people employed, while energy's rigidity keeps capital employed instead.
 
-**Agriculture:**
-- Labor share ≈ 0.40, capital/land share ≈ 0.35, materials ≈ 0.25
-- Low substitution elasticity — hard to replace farm labor with machines at scale
-- A 10% wage increase translates into only a small labor reduction
-
-**Manufacturing:**
-- Labor share ≈ 0.25, capital share ≈ 0.35, materials ≈ 0.40
-- Moderate substitution elasticity
-- A 10% wage increase drives noticeably more automation than in agriculture
-
-**Services:**
-- Labor share ≈ 0.45 (highest of the four), capital ≈ 0.30, materials ≈ 0.25
-- Close to unit elasticity (Cobb-Douglas-like)
-- Creates the most employment per unit of output among the four sectors
-
-**Energy:**
-- Labor share ≈ 0.10 (lowest), capital share ≈ 0.50, materials ≈ 0.40 (mostly imported equipment and fuel)
-- Very low substitution elasticity — production is technologically rigid
-- A wage change barely moves employment in this sector
-
-**Production equations drive multipliers:** a shock to a high-labor-share sector like agriculture converts more directly into employment, which is exactly why [Section 1.3](/docs/cs-book/part-11-economic-finance-models/chapter-1/1-3-pakistan-sam-multiplier-analysis) finds agriculture's Type II multiplier (2.4x) well above energy's (1.5x).
+> **Key insight:** production equations decide *who gets hired* when a sector expands. A rigid, labor-heavy recipe (agriculture) converts a shock straight into jobs. A rigid, capital-heavy recipe (energy) converts the same shock into machine purchases — which is a big part of why [Section 1.3](/docs/cs-book/part-11-economic-finance-models/chapter-1/1-3-pakistan-sam-multiplier-analysis) finds agriculture's multiplier (2.4x) well above energy's (1.5x).
 
 ---
 
-## Demand Equations: The Consumption Side
+## Demand Equations: What People Actually Buy
 
-### Conceptual Foundation
+### The Story
 
-While production determines how much firms **can** supply, demand equations determine how much consumers **want** to consume given their income and prices. These behavioral equations matter because they determine whether a shock propagates through the economy (multiplier effect) or dampens.
+Picture Ahmed, a shopkeeper in Lahore, getting a 10% raise this month. What does he do with it? He probably doesn't buy 10% more wheat flour — he was already buying as much flour as his family eats. But he might finally get that phone upgrade he'd been putting off. **This is a behavioral equation** too: it describes how Ahmed *chooses* to split extra money across different goods.
 
-### Price and Income Elasticities
+Economists capture this "what changes when price or income changes" behavior with two numbers:
 
-**Price elasticity** (how quantity demanded changes when prices rise):
-- Inelastic (e.g. -0.5): a 10% price increase leads to roughly a 5% quantity decrease
-- Elastic (e.g. -1.5): a 10% price increase leads to roughly a 15% quantity decrease
+- **Price elasticity** — if the price of a good rises 10%, how much less do people buy? Wheat barely moves (inelastic); a new phone model moves a lot (elastic).
+- **Income elasticity** — if income rises 10%, how much more do people buy? Necessities barely move; luxuries move a lot.
 
-**Income elasticity** (how quantity demanded changes when income rises):
-- Inelastic (e.g. 0.5): a 10% income increase leads to roughly a 5% quantity increase — a necessity
-- Elastic (e.g. 1.5): a 10% income increase leads to roughly a 15% quantity increase — a luxury
+**Memory aid:** think of elasticity as a rubber band. A stiff rubber band (inelastic, like wheat) barely stretches no matter how hard you pull. A loose one (elastic, like a luxury good) stretches a lot with the same pull.
 
-### Illustrative Sectoral Demand Structure
+### Why This Splits Pakistan's Sectors So Sharply
 
-**Agriculture (food & raw materials)** — price-inelastic, income-inelastic. Staples like wheat and rice barely respond to price changes, which is exactly why government price controls on staples matter so much: demand won't self-correct the way it would for a luxury good.
+- **Agriculture / food** — stiff rubber band on both counts. People don't eat dramatically more rice when they get richer, and they don't stop eating it when it gets pricier. This is exactly why government price controls on staples matter so much — demand won't self-correct the way it would for a luxury good.
+- **Manufacturing** — closer to unit elasticity for basics like textiles; genuinely stretchy for machinery, which tracks investment cycles.
+- **Services** — stretchy with income (people spend a lot more on transport, healthcare, and education as they get richer) but stiff on price (you don't price-shop your hospital visit).
+- **Energy** — stiff rubber band on both counts, just like food. Electricity is a background necessity, not a discretionary purchase — people don't dramatically cut usage when prices rise, and they don't dramatically increase it when income rises either.
 
-**Manufacturing (consumer goods)** — textiles and chemicals sit near unit elasticity; machinery is price- and income-elastic, tracking industrial investment cycles.
-
-**Services** — transportation, finance, healthcare, and education are collectively income-elastic (rising with the middle class) but price-inelastic (people don't shop around much on price for a hospital visit).
-
-**Energy** — electricity, gas, and petrol are all price- and income-inelastic. People don't cut electricity use much when prices rise, and they don't dramatically increase consumption when income rises either — it's a background necessity, not a discretionary purchase.
-
-### How Demand Structure Drives Multipliers
-
-**Agricultural subsidy scenario (illustrative, 100 billion PKR):**
-1. Farmers' income increases
-2. Agricultural consumption rises modestly (low income elasticity)
-3. But because farm households are numerous and spend domestically, manufacturing and services consumption rise substantially as the extra income circulates
-4. This spending creates further income — a second round of demand
-
-**The total impact compounds well beyond the initial 100 billion PKR — this is the mechanical source of Section 1.3's multiplier.**
+> **Key insight:** when a subsidy raises rural incomes, that money doesn't stay in agriculture — because the food rubber band is stiff, the extra money stretches out into manufacturing and services purchases instead. That "spillover" into other sectors' demand equations is a big part of *why* a shock multiplies rather than staying put — the mechanical engine behind Section 1.3's multiplier.
 
 ---
 
-## Factor Income Distribution
+## Factor Income Distribution: Splitting the Rupee
 
-### Conceptual Foundation
+### The Story
 
-Factors of production — labor and capital — receive returns (wages and capital income) based on their **marginal productivity**. These income-distribution equations determine **who captures the benefits** of an economic shock.
-
-### Perfect Competition vs. Reality
-
-**Textbook perfect competition:**
+A rice mill earns 100 rupees selling processed rice. How much of that goes to the workers who ran the machines, and how much goes to the owner who bought the machines? In a textbook competitive market, the split isn't arbitrary — it follows the **equilibrium condition** that each factor gets paid exactly what the *next* unit of it is worth:
 
 $$w_l = P_a \cdot \frac{\partial X_a}{\partial L_l} \qquad \text{(wage = marginal revenue product of labor)}$$
 
 $$r_k = P_a \cdot \frac{\partial X_a}{\partial K_k} \qquad \text{(rental rate = marginal revenue product of capital)}$$
 
-**Reality: institutional constraints matter.**
+In plain words: if hiring one more worker adds 5 kg of extra rice to output, and rice sells for a known price, that's what determines the wage this theory predicts — worth exactly what the worker adds at the margin, nothing more, nothing less. Same story for the capital owner and the machines.
 
-Labor markets are segmented — unskilled rural wages, unskilled urban wages, skilled technical wages, and skilled professional wages all sit on different rungs, shaped as much by wage floors, urban labor supply, and licensing barriers as by pure productivity. Capital ownership is also concentrated: a small share of households controls a disproportionate share of productive capital.
+**Reality check:** Pakistan's labor market doesn't run on this textbook rule alone. Wage floors, urban-vs-rural labor supply, and licensing requirements for skilled trades all push wages away from pure "marginal product" pricing. And capital ownership is concentrated, so a small share of households collects most of the return to capital.
 
-**Implication:** a capital-intensive shock (energy) disproportionately benefits capital owners. A labor-intensive shock (agriculture) disproportionately benefits wage earners. **The same size shock can have opposite distributional consequences depending on which factor it flows through.**
+**Memory aid:** think of splitting a tip between the waiter and the restaurant owner. In theory, each gets paid what they contributed to the customer's experience. In practice, minimum-wage law and who owns the restaurant matter just as much as who did the work.
+
+> **Key insight:** a capital-intensive shock (energy) mostly pays capital owners. A labor-intensive shock (agriculture) mostly pays wage earners. Same size shock, opposite winners — this is where the *distributional* story lives, separate from the multiplier-size story above.
 
 ---
 
-## Trade Equations: Import & Export Behavior
+## Trade Equations: The Imported-vs-Local Rice Aisle
 
-### Conceptual Foundation
+### The Story
 
-Pakistan is an open economy, with agriculture skewed heavily toward exports (rice, cotton) and energy skewed heavily toward imports. Trade equations determine how sectors:
-
-1. **Substitute between domestic and imported goods** (Armington)
-2. **Allocate production between domestic sales and exports** (CET)
-
-### Armington Import Demand (CES)
+You're at a Karachi grocery store, standing in front of imported Thai rice and local Basmati. Do you switch to the imported bag if it's on sale? That depends on how similar you think the two rices really are — that "how willing am I to switch" instinct is exactly what economists call the **Armington elasticity**, and it's a behavioral equation:
 
 $$\frac{M_c}{D_c} = \left(\frac{1-\delta}{\delta}\right)\left(\frac{P_{D_c}}{P_{M_c}}\right)^{\sigma}$$
 
-Where $\sigma$ is the elasticity of substitution between domestic and imported varieties. Agricultural goods tend to have moderate substitution elasticity; energy has very low substitution elasticity — you cannot easily swap imported fuel for a domestic alternative on short notice, so import dependency is rigid.
+- $M_c$ — how much of this good is imported, $D_c$ — how much is bought domestically
+- $\delta$ — a preference weight (how much people lean toward local by default)
+- $P_{D_c}, P_{M_c}$ — domestic and imported prices
+- $\sigma$ — the "how willing am I to switch" number
 
-### CET (Constant Elasticity of Transformation) for Exports
+High $\sigma$ means shoppers barely care whether it's local or imported — a price difference sends them switching fast. Low $\sigma$ means there's no real substitute in their mind. Energy sits at the low end: you can't swap imported furnace oil for "local furnace oil" on short notice if there isn't enough domestic supply — the switch just isn't available, no matter the price.
+
+Now flip the story around to the seller's side. A rice mill decides how much of its output to sell at home versus ship abroad — the mirror-image behavioral equation, called **CET** (constant elasticity of transformation):
 
 $$\frac{X_c^{export}}{D_c} = \left(\frac{1-\psi}{\psi}\right)\left(\frac{P_{X_c}}{P_{D_c}}\right)^{\tau}$$
 
-Rice and cotton have historically been export-oriented (high export shares), while wheat is kept largely domestic for food-security reasons, and energy is essentially non-exportable given domestic supply constraints.
+Same shape, opposite direction: instead of a shopper choosing between two rice bags, it's a producer choosing between two customers — the export market and the home market.
 
-### The Trade Multiplier Trap
+**Memory aid:** Armington is the *buyer's* switching decision (import vs. local). CET is the *seller's* switching decision (export vs. local). Same "how willing to switch" math, different side of the counter.
 
-**Agricultural subsidy:** a large share of the extra output is exported (foreign-exchange benefit), and the domestic share still creates a multiplier through local supply chains.
+### Why This Creates a "Leakage" Trap for Energy
 
-**Energy subsidy:** the sector is 100% domestic (you cannot export electricity out of a supply-constrained grid), but because Armington substitution elasticity is low, extra demand still pulls in imports rather than domestic production — creating "leakage."
+Rice and cotton have historically leaned export-heavy — a subsidy to agriculture partly leaves the country as exports, but the domestic share still ripples through local supply chains. Energy can't be exported at all (you can't ship electricity out of a grid that's already short of supply), but because its Armington elasticity is so low, extra energy demand pulls in imports rather than boosting domestic production. The money spent doesn't circulate locally — it leaks straight out to foreign suppliers.
 
-**Key insight:** open economies with high import elasticities experience leakage, where shocks result in import substitution rather than additional domestic consumption — one more structural reason energy's multiplier trails agriculture's.
+> **Key insight:** open economies with low switching resistance on imports (like Pakistan's energy sector) lose a chunk of every rupee spent to leakage abroad. That's one more structural reason energy's multiplier trails agriculture's — not bad luck, just the shape of the trade equation.
 
 ---
 
-## Government Equations: Taxes, Transfers & Spending
+## Government Equations: The Till at the End of the Day
 
-### Tax Collection Equations
+### The Story
+
+Think of government revenue like a tea-stall owner counting the till at closing time — a bit of tax from wages, a bit from company profits, a bit from every rupee spent on goods that carry a sales tax. Nothing here is a *choice* the government economy makes in the moment; it's just adding up what already flowed in. **This is an identity equation:**
 
 $$T_{total} = \sum_l \tau_l (W_l \cdot LS_l) + \tau_k (r_k \cdot K) + \sum_c \tau_c (P_c \cdot C_c)$$
 
-Pakistan's tax base is heavily commodity-tax dependent — sales tax, excise, and customs duties collectively dwarf direct labor and corporate income tax revenue. Combined with a large informal sector that sits outside the direct-tax net, the effective system is regressive: poorer households pay a higher share of income in tax than the headline rates suggest.
+In words: total tax revenue is labor-income tax, plus capital-income tax, plus sales tax on every commodity people buy, all added together.
 
-### Government Spending Allocation
+**Why the mix matters:** Pakistan's till leans heavily on the sales-tax and customs terms in that sum, rather than the labor- and capital-income terms — partly because a large informal sector sits outside the direct-tax net. That mix is regressive in effect: sales tax is the same rate whether you're rich or poor, so poorer households end up paying a higher *share* of their income in tax than the headline income-tax rates would suggest.
 
-Government budgets split across defense, debt servicing, public-sector salaries, subsidies (agriculture, energy), education, healthcare, social protection, and infrastructure — and each spending line maps to a different sector in the SAM, which is why "the government spent X" is never a single-equation event; it's a vector of shocks across dozens of accounts simultaneously.
+On the spending side, the same logic runs in reverse — government spending (defense, salaries, subsidies, education, infrastructure) is just a vector of shocks landing on different accounts in the SAM at once, not a single number.
+
+> **Key insight:** because government revenue is an identity, not a choice, you can't change *how much* tax comes in without changing one of the ingredients — the rates, the wages, the profits, or the spending that generates sales tax in the first place.
 
 ---
 
-## Household Consumption & Saving Equations
+## Household Consumption & Saving Equations: Ahmed's Paycheck
 
-### Household Heterogeneity
+### The Story
 
-SAM models typically split households into a small number of representative types — for Pakistan's SAM, roughly: rural agricultural households, urban working households, and urban high-income households. Each behaves differently:
-
-- **Rural agricultural households** save very little and spend most additional income locally on food and basic goods — nearly all of a rupee given to this group recirculates domestically, producing a high local multiplier.
-- **Urban working households** save a moderate share and split spending between food, energy, and other goods — a middling multiplier.
-- **Urban high-income households** save a large share of any additional income, and of what they do spend, a meaningful portion goes toward imported goods — both effects reduce the domestic multiplier sharply.
-
-### Household Income Distribution
+Ahmed gets his monthly paycheck: his wage, plus a little rental income from a family plot, minus whatever tax comes out, plus any government support he receives. What's left is what he actually gets to spend or save. There's no decision in this particular equation — it's just arithmetic. **This is an identity equation:**
 
 $$Y_h^{disposable} = Y_h^{labor} + Y_h^{capital} - TX_h + TR_h$$
 
-Where $Y_h^{labor}$ is wage income, $Y_h^{capital}$ is capital income, $TX_h$ is taxes paid, and $TR_h$ is government transfers received.
+The *behavioral* equation comes next — what Ahmed does with that disposable income, how much he spends versus saves — and that's exactly where household type matters enormously:
 
-**This heterogeneity matters hugely for multiplier analysis:** a subsidy that reaches rural households (agriculture) produces a much higher multiplier than one that reaches a broad, richer household mix (energy) — not because agriculture is "better," but because the money stays local instead of being saved or spent on imports.
+- **Rural agricultural households** save very little of any extra rupee and spend almost all of it locally on food and basic goods. Give this household 100 rupees and nearly all 100 recirculate through the local economy.
+- **Urban working households** save a moderate share and split spending between food, energy, and other goods.
+- **Urban high-income households** save a large share of extra income — and of what they do spend, a meaningful part goes toward imported goods. Both effects mean a much smaller share of that 100 rupees stays in the local economy.
+
+**Memory aid:** think of each household type as a bucket with a different-sized hole in the bottom. Rural households have almost no hole — money stays and circulates. Rich urban households have a big hole — savings and imports drain money out before it can multiply.
+
+> **Key insight:** a subsidy that reaches Ahmed (agriculture) produces a much bigger multiplier than one reaching a richer, more import-leaning household mix (energy) — not because agriculture is "better," but because the bucket has a smaller hole.
 
 ---
 
-## Equilibrium Conditions: Market Clearing
+## Equilibrium Conditions: The Bathtub That Always Balances
 
-### Conceptual Foundation
+### The Story
 
-A SAM/CGE model is a **system** where all markets must clear simultaneously:
-
-- **Commodity markets** — supply = demand
-- **Factor markets** — labor supply = labor demand; capital supply = capital demand
-- **Macro markets** — investment = saving + foreign borrowing
-
-### Commodity Market Equilibrium
+Think of every market in the SAM as a bathtub. Water flows in from the tap (supply) and drains out through the plughole (demand). If more water is coming in than draining out, the water level (price) rises until people stop adding more or start draining faster — and vice versa. **This is the equilibrium condition**, and it's not a choice anyone makes; it's a statement that has to be true once every behavioral and identity equation has already played out:
 
 $$S_c = D_c$$
 
@@ -273,35 +230,35 @@ $$S_c = X_c^{domestic} + M_c$$
 
 $$D_c = \sum_a (IC_{a,c} \cdot X_a) + \sum_h C_{h,c} + G_c + I_c$$
 
-If demand exceeds supply, prices rise, consumption falls, and imports rise until equilibrium is restored. In a rice market, for example, that means: domestic production plus imports must ultimately balance intermediate use (rice mills), household consumption, government procurement, seed investment, and exports — if it doesn't balance, the price is the variable that adjusts until it does.
+In plain words: total supply of a good (domestic production plus imports) has to equal total demand for it (what factories use as inputs, what households buy, what government procures, what gets invested). Take Pakistan's rice market as a concrete version of the bathtub: domestic production plus imports (the tap) must eventually balance rice-mill demand, household consumption, government procurement, seed investment, and exports (the drains). If it doesn't balance, the price is the water level that moves until it does.
+
+> **Key insight:** every other equation in this section — production, demand, factor income, trade, government, household — feeds into this bathtub. The equilibrium condition doesn't add new behavior; it's the referee that forces all the other equations to agree with each other.
 
 ---
 
 ## Synthesis: Why Equation Types Matter
 
-### The Complete Picture
+### Putting Agriculture's Story Together
 
-**Why does agriculture produce a higher multiplier than energy in Section 1.3's results?**
+**Why does agriculture produce a higher multiplier than energy in Section 1.3's results?** Walk the whole chain, sector by sector:
 
-**Agriculture's complete equation architecture:**
+1. **Production** — agriculture's recipe is labor-heavy, so a shock converts directly into jobs (the strict-cook story)
+2. **Factor income** — those jobs pay rural workers, a low-income household group
+3. **Household saving** — rural households have a small "hole in the bucket," so the extra income gets spent almost immediately
+4. **Demand** — that spending stretches into food, manufactured goods, and services (the rubber-band story)
+5. **Trade** — a meaningful share of the extra output stays domestic, reinforcing local supply chains
+6. **Equilibrium** — every bathtub in the economy settles at a higher level: more income, more employment, more consumption
 
-1. **Production** — labor-intensive → a shock translates directly into employment
-2. **Factor income** — wages flow to rural workers, a low-income household group
-3. **Household consumption** — low savings rate → income increase becomes consumption almost immediately
-4. **Demand structure** — rural income gets spent across food, manufactured goods, and services
-5. **Trade** — a meaningful share of extra output stays domestic, reinforcing local supply chains
-6. **Equilibrium** — markets clear at higher income, employment, and consumption throughout the economy
+**Energy runs the same six steps and lands somewhere very different:**
 
-**Energy's complete equation architecture:**
+1. **Production** — energy's recipe is capital-heavy, so the same size shock buys machines, not jobs
+2. **Factor income** — the returns flow mostly to capital owners and corporations
+3. **Household saving** — a bigger "hole in the bucket" — more of the benefit gets saved, not spent
+4. **Demand** — energy demand is a stiff rubber band, so extra income doesn't loop back into more energy purchases
+5. **Trade** — energy stays domestic but leaks abroad through imports, thanks to a low Armington elasticity
+6. **Equilibrium** — the bathtubs settle with more imports but comparatively muted domestic employment
 
-1. **Production** — capital-intensive → a shock creates comparatively little employment
-2. **Factor income** — returns flow mostly to capital owners and corporations
-3. **Household consumption** — a meaningful share of the benefit is saved, not spent
-4. **Demand structure** — energy demand is inelastic, so the income increase doesn't loop back into more energy consumption
-5. **Trade** — energy stays domestic but is import-dependent upstream, so extra spending leaks into imports
-6. **Equilibrium** — markets clear with higher imports but comparatively muted domestic employment
-
-**Policy lesson:** the same size shock produces very different multipliers because of different equation architectures across all seven equation types — not because one sector is arbitrarily "worth more."
+**Policy lesson:** the same size shock produces very different multipliers because of different equation architectures across all seven types — not because one sector is arbitrarily "worth more."
 
 ---
 
@@ -309,31 +266,32 @@ If demand exceeds supply, prices rise, consumption falls, and imports rise until
 
 ### Investment Prioritization Framework
 
-Given limited fiscal resources, multiplier analysis can rank candidate investments:
+Given limited fiscal resources, multiplier analysis can rank candidate investments with a simple scoring idea:
 
 $$\text{Ranking Score} = \frac{\text{Multiplier} \times \text{Pro-poorness} \times \text{Employment elasticity}}{\text{Cost}}$$
 
-Sectors with high multipliers, strong pro-poor incidence, and high employment elasticity per rupee spent — typically agriculture and labor-intensive infrastructure — rank above capital-intensive, import-dependent sectors like energy on a pure growth-and-equity basis, even though energy investment may still be necessary for other reasons (reliability, industrial competitiveness).
+Sectors with high multipliers, strong pro-poor incidence, and high employment per rupee spent — typically agriculture and labor-intensive infrastructure — score above capital-intensive, import-dependent sectors like energy on a pure growth-and-equity basis, even though energy investment may still be necessary for other reasons (reliability, industrial competitiveness).
 
 ### Poverty Targeting Using Multipliers
 
-Because household consumption behavior varies so much by income group, targeting matters as much as sector choice:
+Because household saving behavior varies so much by income group, *who* receives a subsidy matters as much as *which sector* it lands in:
 
 1. **Geographic targeting** — subsidize regions where poor households are concentrated
 2. **Factor targeting** — subsidize labor-intensive sectors where the poor are employed
-3. **Household targeting** — direct transfers via cash-transfer programs, paired with complementary sector policy
+3. **Household targeting** — direct cash transfers, paired with complementary sector policy
 
 ---
 
 ## The Big Picture
 
 - SAM/CGE models are built on **seven core equation types**: production, demand, factor income, trade, government, household, and equilibrium
-- Each equation type varies **dramatically** across sectors — labor-intensive agriculture behaves nothing like capital-intensive energy in any of the seven categories
-- **No single equation explains a multiplier** — it emerges from how all seven interact: production creates employment, employment creates household income, households spend or save that income, spending circulates (or leaks abroad) through trade, and equilibrium conditions close the loop
+- Every single one of those seven boils down to one of **three flavors**: a behavioral choice, an accounting identity, or an equilibrium balance
+- Each equation type varies **dramatically** across sectors — labor-heavy agriculture behaves nothing like capital-heavy energy in any of the seven categories
+- **No single equation explains a multiplier** — it emerges from the whole chain: production creates jobs, jobs create household income, households spend or save that income, spending circulates (or leaks abroad) through trade, and the equilibrium bathtub settles at a new level
 - The **same shock size can produce very different outcomes** depending on which equation architecture it flows through — this is why Section 1.3's agriculture multiplier (2.4x) beats its energy multiplier (1.5x)
-- Understanding equation structure — not just running the model — is what lets a policymaker or analyst explain *why* one investment outperforms another, not just *that* it does
+- Understanding equation structure — not just running the model — is what lets a policymaker explain *why* one investment outperforms another, not just *that* it does
 
-> **Simple takeaway:** A multiplier isn't a single number you look up — it's the output of seven interacting equation types, and the sector with the most labor-intensive, domestically-circulating architecture across all seven will almost always win.
+> **Simple takeaway:** a multiplier isn't a single number you look up — it's the ending of seven small stories (a farmer's recipe, a shopkeeper's spending, a mill splitting its rupee, a shopper choosing rice, a tea stall's till, Ahmed's paycheck, and a bathtub finding its level) that all happen to agree with each other at once.
 
 ---
 
