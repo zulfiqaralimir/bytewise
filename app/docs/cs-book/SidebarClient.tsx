@@ -157,6 +157,7 @@ const chapters = [
           { title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" },
           { title: "1.2 SAM Multiplier Analysis Pipeline", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-2-sam-multiplier-analysis-pipeline" },
           { title: "1.3 SAM Multiplier Analysis: Data to Policy Insights", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-3-pakistan-sam-multiplier-analysis" },
+          { title: "1.4 Types of Equations in SAM & CGE Modeling", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-4-types-of-equations-sam-cge-modeling" },
         ],
       },
       {
@@ -494,12 +495,12 @@ export function SidebarClient() {
     <>
       {/* Reading progress bar */}
       <div
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-violet-500 z-50 transition-all duration-150"
+        className="no-print fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-violet-500 z-50 transition-all duration-150"
         style={{ width: `${progress}%` }}
       />
 
       {/* Mobile header */}
-      <header className="md:hidden fixed top-1 left-0 right-0 z-40 bg-white border-b border-gray-200 flex items-center justify-between px-4 py-3">
+      <header className="no-print md:hidden fixed top-1 left-0 right-0 z-40 bg-white border-b border-gray-200 flex items-center justify-between px-4 py-3">
         <Link href="/docs/cs-book" className="font-black text-lg text-gray-900">
           Byte<span className="text-blue-500">Wise</span>
         </Link>
@@ -522,7 +523,7 @@ export function SidebarClient() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 w-72 bg-white text-gray-900 border-r border-gray-200 z-40 flex flex-col transition-transform duration-300
+        className={`no-print fixed top-0 left-0 bottom-0 w-72 bg-white text-gray-900 border-r border-gray-200 z-40 flex flex-col transition-transform duration-300
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         {/* Brand */}

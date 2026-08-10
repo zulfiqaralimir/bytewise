@@ -105,3 +105,21 @@ html { scroll-behavior: smooth; }
 /* Revision highlights — for key terms in networking articles */
 .rev-key { color: #ff4444 !important; font-weight: bold; }
 .rev-concept { color: #f59e0b !important; font-weight: bold; }
+
+/* Print styles — used by the DownloadPdfButton "Save as PDF" flow */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  .prose pre {
+    background: #f3f4f6;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+  }
+  .prose a {
+    color: #1f2937;
+  }
+}
