@@ -83,30 +83,26 @@ Different sectors use factors of production in fundamentally different ways:
 
 **Leontief production function (rigid):**
 
-```text
-X_a = min(L_a/a_L, K_a/a_K, M_a/a_M)
-```
+$$X_a = \min\left(\frac{L_a}{a_L},\ \frac{K_a}{a_K},\ \frac{M_a}{a_M}\right)$$
 
 Where:
-- X_a = output of activity a
-- L_a = labor input; a_L = labor coefficient
-- K_a = capital input; a_K = capital coefficient
-- M_a = intermediate materials; a_M = materials coefficient
+- $X_a$ = output of activity $a$
+- $L_a$ = labor input; $a_L$ = labor coefficient
+- $K_a$ = capital input; $a_K$ = capital coefficient
+- $M_a$ = intermediate materials; $a_M$ = materials coefficient
 
 This assumes **fixed input-output coefficients** — you cannot substitute workers for machines.
 
 **Nested CES production function (flexible):**
 
-```text
-X_a = A_a × [α_L·L_a^(-ρ) + α_K·K_a^(-ρ) + α_M·M_a^(-ρ)]^(-1/ρ)
-```
+$$X_a = A_a \left[\alpha_L L_a^{-\rho} + \alpha_K K_a^{-\rho} + \alpha_M M_a^{-\rho}\right]^{-1/\rho}$$
 
 Where:
-- A_a = total factor productivity
-- α_L, α_K, α_M = factor share parameters
-- ρ = substitution elasticity parameter
+- $A_a$ = total factor productivity
+- $\alpha_L, \alpha_K, \alpha_M$ = factor share parameters
+- $\rho$ = substitution elasticity parameter
 
-This allows **factor substitution** — as wages rise, firms substitute capital for labor if the elasticity implied by ρ is high.
+This allows **factor substitution** — as wages rise, firms substitute capital for labor if the elasticity implied by $\rho$ is high.
 
 ### Illustrative Sectoral Production Structure
 
@@ -182,10 +178,9 @@ Factors of production — labor and capital — receive returns (wages and capit
 
 **Textbook perfect competition:**
 
-```text
-w_l = P_a × (∂X_a / ∂L_l)     [wage = marginal revenue product of labor]
-r_k = P_a × (∂X_a / ∂K_k)     [rental rate = marginal revenue product of capital]
-```
+$$w_l = P_a \cdot \frac{\partial X_a}{\partial L_l} \qquad \text{(wage = marginal revenue product of labor)}$$
+
+$$r_k = P_a \cdot \frac{\partial X_a}{\partial K_k} \qquad \text{(rental rate = marginal revenue product of capital)}$$
 
 **Reality: institutional constraints matter.**
 
@@ -206,17 +201,13 @@ Pakistan is an open economy, with agriculture skewed heavily toward exports (ric
 
 ### Armington Import Demand (CES)
 
-```text
-M_c / D_c = [(1-δ) / δ] × (P_D_c / P_M_c)^σ
-```
+$$\frac{M_c}{D_c} = \left(\frac{1-\delta}{\delta}\right)\left(\frac{P_{D_c}}{P_{M_c}}\right)^{\sigma}$$
 
-Where σ is the elasticity of substitution between domestic and imported varieties. Agricultural goods tend to have moderate substitution elasticity; energy has very low substitution elasticity — you cannot easily swap imported fuel for a domestic alternative on short notice, so import dependency is rigid.
+Where $\sigma$ is the elasticity of substitution between domestic and imported varieties. Agricultural goods tend to have moderate substitution elasticity; energy has very low substitution elasticity — you cannot easily swap imported fuel for a domestic alternative on short notice, so import dependency is rigid.
 
 ### CET (Constant Elasticity of Transformation) for Exports
 
-```text
-X_c^export / D_c = [(1-ψ) / ψ] × (P_X_c / P_D_c)^τ
-```
+$$\frac{X_c^{export}}{D_c} = \left(\frac{1-\psi}{\psi}\right)\left(\frac{P_{X_c}}{P_{D_c}}\right)^{\tau}$$
 
 Rice and cotton have historically been export-oriented (high export shares), while wheat is kept largely domestic for food-security reasons, and energy is essentially non-exportable given domestic supply constraints.
 
@@ -234,9 +225,7 @@ Rice and cotton have historically been export-oriented (high export shares), whi
 
 ### Tax Collection Equations
 
-```text
-T_total = Σ_l τ_l·(W_l × LS_l) + τ_k·(r_k × K) + Σ_c τ_c·(P_c × C_c)
-```
+$$T_{total} = \sum_l \tau_l (W_l \cdot LS_l) + \tau_k (r_k \cdot K) + \sum_c \tau_c (P_c \cdot C_c)$$
 
 Pakistan's tax base is heavily commodity-tax dependent — sales tax, excise, and customs duties collectively dwarf direct labor and corporate income tax revenue. Combined with a large informal sector that sits outside the direct-tax net, the effective system is regressive: poorer households pay a higher share of income in tax than the headline rates suggest.
 
@@ -258,11 +247,9 @@ SAM models typically split households into a small number of representative type
 
 ### Household Income Distribution
 
-```text
-Y_h^disposable = Y_h^labor + Y_h^capital - TX_h + TR_h
-```
+$$Y_h^{disposable} = Y_h^{labor} + Y_h^{capital} - TX_h + TR_h$$
 
-Where Y_h^labor is wage income, Y_h^capital is capital income, TX_h is taxes paid, and TR_h is government transfers received.
+Where $Y_h^{labor}$ is wage income, $Y_h^{capital}$ is capital income, $TX_h$ is taxes paid, and $TR_h$ is government transfers received.
 
 **This heterogeneity matters hugely for multiplier analysis:** a subsidy that reaches rural households (agriculture) produces a much higher multiplier than one that reaches a broad, richer household mix (energy) — not because agriculture is "better," but because the money stays local instead of being saved or spent on imports.
 
@@ -280,12 +267,11 @@ A SAM/CGE model is a **system** where all markets must clear simultaneously:
 
 ### Commodity Market Equilibrium
 
-```text
-S_c = D_c
+$$S_c = D_c$$
 
-S_c = X_c^domestic + M_c
-D_c = Σ_a (IC_a,c × X_a) + Σ_h (C_h,c) + G_c + I_c
-```
+$$S_c = X_c^{domestic} + M_c$$
+
+$$D_c = \sum_a (IC_{a,c} \cdot X_a) + \sum_h C_{h,c} + G_c + I_c$$
 
 If demand exceeds supply, prices rise, consumption falls, and imports rise until equilibrium is restored. In a rice market, for example, that means: domestic production plus imports must ultimately balance intermediate use (rice mills), household consumption, government procurement, seed investment, and exports — if it doesn't balance, the price is the variable that adjusts until it does.
 
@@ -325,9 +311,7 @@ If demand exceeds supply, prices rise, consumption falls, and imports rise until
 
 Given limited fiscal resources, multiplier analysis can rank candidate investments:
 
-```text
-Ranking Score = Multiplier × Pro-poorness × Employment elasticity / Cost
-```
+$$\text{Ranking Score} = \frac{\text{Multiplier} \times \text{Pro-poorness} \times \text{Employment elasticity}}{\text{Cost}}$$
 
 Sectors with high multipliers, strong pro-poor incidence, and high employment elasticity per rupee spent — typically agriculture and labor-intensive infrastructure — rank above capital-intensive, import-dependent sectors like energy on a pure growth-and-equity basis, even though energy investment may still be necessary for other reasons (reliability, industrial competitiveness).
 
