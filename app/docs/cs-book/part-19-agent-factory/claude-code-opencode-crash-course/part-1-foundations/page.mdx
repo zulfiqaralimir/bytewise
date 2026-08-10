@@ -1,0 +1,159 @@
+export const metadata = {
+  title: "Part 1 — Foundations: What These Tools Are, Plan Mode, Permissions, Model Matching — Agent Factory — ByteWise CS Book",
+  description:
+    "Concepts 1-4 of the Claude Code and OpenCode crash course: the mindset shift to instructions, plan mode, permissions discipline, and matching the model to the task.",
+  keywords: [
+    "Claude Code",
+    "OpenCode",
+    "plan mode",
+    "permissions",
+    "AI agents",
+    "agent factory",
+  ],
+  openGraph: {
+    title: "Part 1 — Foundations — Agent Factory — ByteWise CS Book",
+    description:
+      "Concepts 1-4: the mindset shift to instructions, plan mode, permissions discipline, and matching the model to the task.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# Part 1 — Foundations
+
+*Concepts 1–4 · What These Tools Are · Plan Mode · Permissions Discipline · Matching Model to Task*
+
+## Summary
+
+- **Concept 1:** stop asking questions, start giving instructions — these tools act, they don't just answer.
+- **Concept 2:** plan mode lets the AI think out loud before it touches anything, so you can correct the plan instead of correcting finished work.
+- **Concept 3:** every risky action asks permission first — you decide, early on, which of those requests are safe to stop reviewing.
+- **Concept 4:** not every task needs the smartest, most expensive model — match the model to what the task actually requires.
+- **The thread connecting all four:** each one is a different point of control over the same loop — what you tell it to do, what it's allowed to do before you sign off, what it's allowed to do without asking again, and how much it costs to do it.
+
+## Concept 1 — What These Tools Actually Are
+
+- **Think of it like this:** a research assistant who only ever hands you a memo is fundamentally different from one who walks into the file room, refiles the documents, and shows you the result.
+- Claude Code and OpenCode are the second kind. They read files, edit them, run commands on your computer, and keep working until the task is actually done — not until they've described how you might do it.
+- **The mindset shift this requires:** you stop asking questions and start giving instructions.
+
+| Weak — a question | Strong — an instruction |
+|---|---|
+| "How should I organize my notes?" | "Read every file in `notes/`. Create `weekly-summary.md` listing action items grouped by person. Skip anything marked `[private]`." |
+| "What's wrong with this spreadsheet?" | "Open `q3-tracker.xlsx`. Find every row where the formula references a deleted sheet, list the row numbers, and fix the reference to point at `Q3_Data`." |
+
+- A question gets you advice. An instruction gets you a finished file, with a result you can open and check.
+
+### Getting Set Up
+
+| | Claude Code | OpenCode |
+|---|---|---|
+| Install | `curl -fsSL https://claude.ai/install.sh \| bash` (macOS/Linux/WSL), or `npm install -g @anthropic-ai/claude-code` | `curl -fsSL https://opencode.ai/install \| bash` |
+| Check your active model | `/status` | `/models` |
+| Keep it current | `claude update` | `opencode upgrade` |
+
+<Callout type="tip" title="Why this matters if you're in Investment work">
+The instruction habit is the whole ballgame here. "Check this model for errors" gets you a vague opinion. "Open `dcf-model.xlsx`, recalculate every cell downstream of the growth-rate assumption on the Inputs tab, and list any output that moved more than 10%" gets you an actual, checkable answer. Vague asks get vague, unchecked work — and unchecked work is exactly what you can't afford in a financial model.
+</Callout>
+
+## Concept 2 — Plan Mode (The Most Underused Feature)
+
+- **Think of it like this:** an architect who sketches the blueprint and walks it past you before a single wall goes up, instead of building first and asking if you like it after.
+- Plan mode puts the tool into a **read-only** state — it can look at your files and think through the task, but it can't edit anything or run a command. Once it has a plan, it shows you that plan and waits.
+- You review, push back, adjust — and only once you approve does it actually touch anything.
+
+**How to turn it on:**
+- **Claude Code:** press `Shift+Tab` to cycle through permission modes until you're in plan mode.
+- **OpenCode:** press `Tab` to toggle between Build mode and Plan mode.
+
+**A plan-mode round trip:**
+1. You ask, in plan mode: "Write a short poem about my mother and save it as `for-mom.md`."
+2. It proposes a plan — say, a formal four-stanza sonnet.
+3. You push back: "Keep it short and warm. Four lines."
+4. It revises the plan to match.
+5. You approve. Only now does it write the file.
+
+- **Why this beats catching mistakes after the fact:** revising a plan costs you one message. Revising a finished file means the AI has to re-read what it wrote, figure out what you actually meant, and redo the work — slower, and more likely to drift further from what you wanted.
+- **Simple takeaway:** if a task is going to take the AI more than about ten minutes, start it in plan mode. Anything quicker, just let it run.
+
+<Callout type="tip" title="Why this matters if you're in Investment work">
+Before an agent touches a live valuation model or a position ledger, you want the blueprint, not the finished edit. Plan mode is where you catch "it's about to overwrite the Q2 actuals instead of appending Q3" — a mistake that's a one-line correction in a plan, and a much bigger cleanup once it's already in the file.
+</Callout>
+
+## Concept 3 — Permissions Discipline
+
+- **Think of it like this:** a new employee's first week, when you look over their shoulder for every action, versus their first year, when you've learned exactly which parts of the job they can be trusted to do unsupervised.
+- Both tools ask permission before anything that changes state — editing a file, running a command. Early on, approve each request one at a time. That's not overcaution, that's how you learn what the tool actually tends to do.
+- Once a pattern of requests has proven safe again and again — running the test suite, checking `git status` — you can pre-approve it, so it stops interrupting you for that specific, predictable thing.
+- **The action that never gets pre-approved:** anything destructive or irreversible. Those stay on a blocklist, explicitly denied, no matter how much trust you've built up elsewhere.
+
+**Claude Code** (`.claude/settings.json`):
+```json
+{
+  "permissions": {
+    "allow": ["Read", "Edit", "Write", "Bash(npm test)", "Bash(git status)"],
+    "deny": ["Bash(rm -rf *)", "Bash(npm publish *)"]
+  }
+}
+```
+
+**OpenCode** (`opencode.json`):
+```json
+{
+  "permission": {
+    "*": "ask",
+    "read": "allow",
+    "bash": {
+      "*": "ask",
+      "npm test": "allow",
+      "rm -rf*": "deny"
+    }
+  }
+}
+```
+
+- **The trust curve most people follow:** review every request → start auto-approving the specific, repeatable, safe ones → keep full scrutiny on anything that deletes, publishes, or spends money, forever.
+
+<Callout type="tip" title="Why this matters if you're in Investment work">
+Auto-approve reading a ledger and writing a summary. Never auto-approve anything that overwrites source data or sends something external — a filed report, a submitted trade, an emailed statement. The blocklist is where "the agent moved fast and broke something client-facing" gets stopped before it happens.
+</Callout>
+
+## Concept 4 — Match the Model to the Task
+
+- **Think of it like this:** you don't call in a senior partner to photocopy a document, and you don't hand a first-year associate the client negotiation. Different work, different level of firepower — and different cost.
+- Frontier models — the most capable, most expensive ones — earn their cost on planning, architecture, and debugging problems where the path forward isn't obvious.
+- Cheaper (sometimes free) models are plenty for execution once the plan is already clear: applying edits, formatting, running tests someone already designed.
+
+| Kind of work | Model to reach for |
+|---|---|
+| Planning, architecture, debugging something unclear | Most capable model available (frontier) |
+| Executing an approved plan: edits, formatting, tests | Cheaper / free model |
+| A quick question or a one-line fix | Whatever's already loaded — don't bother switching |
+
+**Switching models:**
+- **Claude Code:** `/model` opens a menu of available models.
+- **OpenCode:** `/models` lists every connected provider — Claude, GPT, Gemini, DeepSeek, and local models among them.
+
+- **The pattern that captures most of the savings:** use the expensive model to produce a written plan, then hand that plan to a cheap model to execute it. You paid frontier prices for the thinking, economy prices for the typing.
+- **One caution:** cheap models improvise badly. They need the instruction to be precise — under-specify a task for a budget model and it'll guess wrong more often than a frontier model would.
+
+<Callout type="tip" title="Why this matters if you're in Investment work">
+Plan the restructuring of an investor memo with your best model, then let a cheap model do the mechanical pass — reformatting tables, applying the house style, filling in a template — across twenty portfolio companies. Same quality where it matters, a fraction of the token spend on the repetitive part.
+</Callout>
+
+## The Big Picture
+
+- These four concepts are all forms of the same question: **how much do you hand over, and when?**
+- Concept 1 sets the mode — instructions, not questions.
+- Concept 2 controls the timing — review the plan before the work happens, not after.
+- Concept 3 controls which actions need your eyes at all, going forward.
+- Concept 4 controls what that work costs you.
+- Get comfortable with all four together, and you've covered the habits that carry through everything else in this course.
+
+> **Simple takeaway:** instruct clearly, plan before you execute, approve deliberately, and spend only as much model as the task actually needs.
+
+<ArticleNav
+  prev={{ title: "Introduction — 15 Concepts · 80% of Real Use", href: "/docs/cs-book/part-19-agent-factory/claude-code-opencode-crash-course/introduction" }}
+  next={null}
+/>

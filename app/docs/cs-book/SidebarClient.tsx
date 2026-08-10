@@ -424,6 +424,7 @@ const chapters = [
         chapter: "Claude Code and OpenCode: A Crash Course",
         items: [
           { title: "Introduction — 15 Concepts · 80% of Real Use", href: "/docs/cs-book/part-19-agent-factory/claude-code-opencode-crash-course/introduction" },
+          { title: "Part 1 — Foundations (Concepts 1-4)", href: "/docs/cs-book/part-19-agent-factory/claude-code-opencode-crash-course/part-1-foundations" },
         ],
       },
     ],
