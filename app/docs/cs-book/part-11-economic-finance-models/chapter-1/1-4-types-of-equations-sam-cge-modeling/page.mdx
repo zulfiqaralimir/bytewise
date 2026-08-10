@@ -74,7 +74,13 @@ Those two cooks are the two production functions economists use in SAM/CGE model
 
 The first cook's rule, written as an equation:
 
-$$X_a = \min\left(\frac{L_a}{a_L},\ \frac{K_a}{a_K},\ \frac{M_a}{a_M}\right)$$
+$$
+X_a = \min\left(\frac{L_a}{a_L},\ \frac{K_a}{a_K},\ \frac{M_a}{a_M}\right)
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> output = whichever ingredient (labor, machines, or materials) runs out first, once you account for how much of each a unit of output needs.
+</div>
 
 Read it exactly like the biryani rule. In plain words:
 
@@ -91,7 +97,13 @@ The `min()` is the whole point: **output is capped by whichever ingredient runs 
 
 The second cook's rule — a bit more math, same idea, just with room to adjust:
 
-$$X_a = A_a \left[\alpha_L L_a^{-\rho} + \alpha_K K_a^{-\rho} + \alpha_M M_a^{-\rho}\right]^{-1/\rho}$$
+$$
+X_a = A_a \left[\alpha_L L_a^{-\rho} + \alpha_K K_a^{-\rho} + \alpha_M M_a^{-\rho}\right]^{-1/\rho}
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> output = productivity × a weighted, flexible blend of labor, capital, and materials — how flexible the blend is depends entirely on the dial ρ.
+</div>
 
 - $A_a$ — how good the sector is at converting inputs into output overall (its "skill level")
 - $\alpha_L, \alpha_K, \alpha_M$ — how much weight labor, capital, and materials each carry in the recipe
@@ -135,9 +147,17 @@ Economists capture this "what changes when price or income changes" behavior wit
 
 A rice mill earns 100 rupees selling processed rice. How much of that goes to the workers who ran the machines, and how much goes to the owner who bought the machines? In a textbook competitive market, the split isn't arbitrary — it follows the **equilibrium condition** that each factor gets paid exactly what the *next* unit of it is worth:
 
-$$w_l = P_a \cdot \frac{\partial X_a}{\partial L_l} \qquad \text{(wage = marginal revenue product of labor)}$$
+$$
+w_l = P_a \cdot \frac{\partial X_a}{\partial L_l}
+$$
 
-$$r_k = P_a \cdot \frac{\partial X_a}{\partial K_k} \qquad \text{(rental rate = marginal revenue product of capital)}$$
+$$
+r_k = P_a \cdot \frac{\partial X_a}{\partial K_k}
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> the wage equals what one more worker adds to output, valued at the market price. The rental rate on capital works the same way, just for machines instead of workers.
+</div>
 
 In plain words: if hiring one more worker adds 5 kg of extra rice to output, and rice sells for a known price, that's what determines the wage this theory predicts — worth exactly what the worker adds at the margin, nothing more, nothing less. Same story for the capital owner and the machines.
 
@@ -155,7 +175,13 @@ In plain words: if hiring one more worker adds 5 kg of extra rice to output, and
 
 You're at a Karachi grocery store, standing in front of imported Thai rice and local Basmati. Do you switch to the imported bag if it's on sale? That depends on how similar you think the two rices really are — that "how willing am I to switch" instinct is exactly what economists call the **Armington elasticity**, and it's a behavioral equation:
 
-$$\frac{M_c}{D_c} = \left(\frac{1-\delta}{\delta}\right)\left(\frac{P_{D_c}}{P_{M_c}}\right)^{\sigma}$$
+$$
+\frac{M_c}{D_c} = \left(\frac{1-\delta}{\delta}\right)\left(\frac{P_{D_c}}{P_{M_c}}\right)^{\sigma}
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> the imported share of what people buy rises when imports get relatively cheaper — and how sharply it rises depends on σ, the "how willing am I to switch" number.
+</div>
 
 - $M_c$ — how much of this good is imported, $D_c$ — how much is bought domestically
 - $\delta$ — a preference weight (how much people lean toward local by default)
@@ -166,7 +192,13 @@ High $\sigma$ means shoppers barely care whether it's local or imported — a pr
 
 Now flip the story around to the seller's side. A rice mill decides how much of its output to sell at home versus ship abroad — the mirror-image behavioral equation, called **CET** (constant elasticity of transformation):
 
-$$\frac{X_c^{export}}{D_c} = \left(\frac{1-\psi}{\psi}\right)\left(\frac{P_{X_c}}{P_{D_c}}\right)^{\tau}$$
+$$
+\frac{X_c^{export}}{D_c} = \left(\frac{1-\psi}{\psi}\right)\left(\frac{P_{X_c}}{P_{D_c}}\right)^{\tau}
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> the exported share of what a producer makes rises when export prices are relatively better than domestic prices — same idea as Armington, mirrored for the seller's side.
+</div>
 
 Same shape, opposite direction: instead of a shopper choosing between two rice bags, it's a producer choosing between two customers — the export market and the home market.
 
@@ -186,7 +218,13 @@ Rice and cotton have historically leaned export-heavy — a subsidy to agricultu
 
 Think of government revenue like a tea-stall owner counting the till at closing time — a bit of tax from wages, a bit from company profits, a bit from every rupee spent on goods that carry a sales tax. Nothing here is a *choice* the government economy makes in the moment; it's just adding up what already flowed in. **This is an identity equation:**
 
-$$T_{total} = \sum_l \tau_l (W_l \cdot LS_l) + \tau_k (r_k \cdot K) + \sum_c \tau_c (P_c \cdot C_c)$$
+$$
+T_{total} = \sum_l \tau_l (W_l \cdot LS_l) + \tau_k (r_k \cdot K) + \sum_c \tau_c (P_c \cdot C_c)
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> total tax revenue = tax on every worker's wage, plus tax on capital income, plus sales tax on everything people buy — all added up.
+</div>
 
 In words: total tax revenue is labor-income tax, plus capital-income tax, plus sales tax on every commodity people buy, all added together.
 
@@ -204,7 +242,13 @@ On the spending side, the same logic runs in reverse — government spending (de
 
 Ahmed gets his monthly paycheck: his wage, plus a little rental income from a family plot, minus whatever tax comes out, plus any government support he receives. What's left is what he actually gets to spend or save. There's no decision in this particular equation — it's just arithmetic. **This is an identity equation:**
 
-$$Y_h^{disposable} = Y_h^{labor} + Y_h^{capital} - TX_h + TR_h$$
+$$
+Y_h^{disposable} = Y_h^{labor} + Y_h^{capital} - TX_h + TR_h
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> what's left to spend = wages + capital income − tax + any government support. Simple addition, no decision involved.
+</div>
 
 The *behavioral* equation comes next — what Ahmed does with that disposable income, how much he spends versus saves — and that's exactly where household type matters enormously:
 
@@ -224,11 +268,21 @@ The *behavioral* equation comes next — what Ahmed does with that disposable in
 
 Think of every market in the SAM as a bathtub. Water flows in from the tap (supply) and drains out through the plughole (demand). If more water is coming in than draining out, the water level (price) rises until people stop adding more or start draining faster — and vice versa. **This is the equilibrium condition**, and it's not a choice anyone makes; it's a statement that has to be true once every behavioral and identity equation has already played out:
 
-$$S_c = D_c$$
+$$
+S_c = D_c
+$$
 
-$$S_c = X_c^{domestic} + M_c$$
+$$
+S_c = X_c^{domestic} + M_c
+$$
 
-$$D_c = \sum_a (IC_{a,c} \cdot X_a) + \sum_h C_{h,c} + G_c + I_c$$
+$$
+D_c = \sum_a (IC_{a,c} \cdot X_a) + \sum_h C_{h,c} + G_c + I_c
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> supply (local production + imports) has to equal demand (what factories, households, government, and investment all use) — and the price is what moves until that's true.
+</div>
 
 In plain words: total supply of a good (domestic production plus imports) has to equal total demand for it (what factories use as inputs, what households buy, what government procures, what gets invested). Take Pakistan's rice market as a concrete version of the bathtub: domestic production plus imports (the tap) must eventually balance rice-mill demand, household consumption, government procurement, seed investment, and exports (the drains). If it doesn't balance, the price is the water level that moves until it does.
 
@@ -268,7 +322,13 @@ In plain words: total supply of a good (domestic production plus imports) has to
 
 Given limited fiscal resources, multiplier analysis can rank candidate investments with a simple scoring idea:
 
-$$\text{Ranking Score} = \frac{\text{Multiplier} \times \text{Pro-poorness} \times \text{Employment elasticity}}{\text{Cost}}$$
+$$
+\text{Ranking Score} = \frac{\text{Multiplier} \times \text{Pro-poorness} \times \text{Employment elasticity}}{\text{Cost}}
+$$
+
+<div className="callout-tip">
+<strong>Plain version:</strong> the best investment is the one that multiplies the most, reaches the poor the most, creates the most jobs — per rupee it costs.
+</div>
 
 Sectors with high multipliers, strong pro-poor incidence, and high employment per rupee spent — typically agriculture and labor-intensive infrastructure — score above capital-intensive, import-dependent sectors like energy on a pure growth-and-equity basis, even though energy investment may still be necessary for other reasons (reliability, industrial competitiveness).
 
