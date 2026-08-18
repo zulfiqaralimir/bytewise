@@ -446,7 +446,6 @@ const chapters = [
           { title: "1.1 GRE Verbal Reasoning Decoded", href: "/docs/cs-book/part-20-gre/chapter-1/1-1-verbal-reasoning-decoded" },
           { title: "1.2 Vocabulary List & Memorization Strategies", href: "/docs/cs-book/part-20-gre/chapter-1/1-2-vocabulary-list-and-strategies" },
           { title: "1.3 Reading Comprehension Decoded", href: "/docs/cs-book/part-20-gre/chapter-1/1-3-reading-comprehension-decoded" },
-          { title: "1.4 Analytical Writing — The Issue Task", href: "/docs/cs-book/part-20-gre/chapter-1/1-4-issue-essay-structure" },
         ],
       },
       {
@@ -455,7 +454,10 @@ const chapters = [
       },
       {
         chapter: "Chapter 3: Analytical Writing (AWA)",
-        items: [],
+        items: [
+          { title: "3.1 Analytical Writing — The Issue Task", href: "/docs/cs-book/part-20-gre/chapter-3/3-1-issue-essay-structure" },
+          { title: "3.2 Grammar & Mechanics Checklist", href: "/docs/cs-book/part-20-gre/chapter-3/3-2-grammar-mechanics-checklist" },
+        ],
       },
     ],
   },
