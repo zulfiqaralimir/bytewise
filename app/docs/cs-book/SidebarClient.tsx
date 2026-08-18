@@ -431,6 +431,29 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 20 — GRE",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-20-gre/overview" },
+        ],
+      },
+      {
+        chapter: "Chapter 1: Verbal Reasoning",
+        items: [],
+      },
+      {
+        chapter: "Chapter 2: Quantitative Reasoning",
+        items: [],
+      },
+      {
+        chapter: "Chapter 3: Analytical Writing (AWA)",
+        items: [],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
