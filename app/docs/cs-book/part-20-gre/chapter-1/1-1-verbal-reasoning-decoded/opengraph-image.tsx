@@ -1,14 +1,8 @@
 import { ImageResponse } from "next/og";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-
-const logoDataUri = `data:image/png;base64,${readFileSync(
-  join(process.cwd(), "public/images/cs-book/gre-logo-transparent.png")
-).toString("base64")}`;
 
 export default function OgImage() {
   return new ImageResponse(
@@ -95,7 +89,7 @@ export default function OgImage() {
               textTransform: "uppercase",
             }}
           >
-            ByteWise · Part 20 · Overview
+            ByteWise · Part 20 · Chapter 1
           </span>
         </div>
 
@@ -110,22 +104,22 @@ export default function OgImage() {
             marginBottom: 16,
           }}
         >
-          Part 20
+          Chapter 1 · Lesson 1.1
         </div>
 
-        {/* Main title — official ETS GRE logo */}
+        {/* Main title */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#ffffff",
-            borderRadius: 24,
-            padding: "28px 48px",
+            fontSize: 68,
+            fontWeight: 900,
+            color: "#ecfdf5",
+            textAlign: "center",
+            lineHeight: 1.1,
+            letterSpacing: "-1.5px",
             marginBottom: 24,
           }}
         >
-          <img src={logoDataUri} width={560} height={162} alt="GRE" />
+          Verbal Reasoning Decoded
         </div>
 
         {/* Subtitle */}
@@ -139,7 +133,7 @@ export default function OgImage() {
             letterSpacing: "0.02em",
           }}
         >
-          Verbal Reasoning · Quantitative Reasoning · Analytical Writing
+          Vocabulary · Logical Inference · Text Completion · Sentence Equivalence
         </div>
 
         {/* Accent divider */}
@@ -183,7 +177,7 @@ export default function OgImage() {
             marginBottom: 44,
           }}
         >
-          {["Verbal", "Quant", "AWA", "Strategy"].map((tag) => (
+          {["Vocabulary", "Logic Signals", "Sentence Equivalence", "Diagnostic"].map((tag) => (
             <div
               key={tag}
               style={{

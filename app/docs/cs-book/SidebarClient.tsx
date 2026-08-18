@@ -442,7 +442,9 @@ const chapters = [
       },
       {
         chapter: "Chapter 1: Verbal Reasoning",
-        items: [],
+        items: [
+          { title: "1.1 GRE Verbal Reasoning Decoded", href: "/docs/cs-book/part-20-gre/chapter-1/1-1-verbal-reasoning-decoded" },
+        ],
       },
       {
         chapter: "Chapter 2: Quantitative Reasoning",
