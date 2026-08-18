@@ -1,0 +1,158 @@
+export const metadata = {
+  title: "HashMaps in Data Structures & Algorithms — NeetCode 150 — ByteWise",
+  description:
+    "A deep dive on HashMaps — how hashing works, why HashMaps give O(1) lookup, the trade-offs against arrays and trees, and when to reach for HashMap vs LinkedHashMap vs TreeMap.",
+  keywords: [
+    "HashMap",
+    "hash table",
+    "dictionary",
+    "HashSet",
+    "LinkedHashMap",
+    "TreeMap",
+    "hash collisions",
+    "arrays and hashing",
+    "NeetCode 150",
+    "coding interview patterns",
+  ],
+  openGraph: {
+    title: "HashMaps in Data Structures & Algorithms",
+    description:
+      "How hashing turns search into O(1) lookup — and the memory, ordering, and collision trade-offs that come with it.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# HashMaps in Data Structures & Algorithms
+
+*Topic 1: Arrays & Hashing · Deep Dive*
+
+---
+
+## Introduction
+
+A **HashMap** (also called a hash table or dictionary, depending on the language) is one of the most important data structures in computer science. It stores data as **key-value pairs** and is designed to give near-instant access to values based on their keys.
+
+If arrays let you access data by *position*, HashMaps let you access data by *meaning* — you look something up by a name, an ID, a word, or any other identifier, rather than by counting index positions.
+
+---
+
+## Why HashMaps Matter
+
+### 1. Speed
+
+Without a HashMap, checking whether a value exists in a collection typically requires scanning through it — an O(n) operation. A HashMap uses a **hash function** to convert a key directly into an array index, giving average-case **O(1)** time for lookup, insertion, and deletion.
+
+### 2. Fast Existence Checks
+
+Many algorithmic problems boil down to the question: *"Have I seen this before?"* HashMaps answer that instantly, which is why they're the go-to tool for:
+
+- Detecting duplicates
+- Two Sum–style pair-finding problems
+- Checking membership in a set of values
+
+### 3. Grouping and Counting
+
+HashMaps are naturally suited to tasks like:
+
+- Counting the frequency of elements (word counts, character counts)
+- Grouping items by a shared property (e.g., grouping anagrams)
+- Caching or memoizing results in dynamic programming
+
+### 4. Foundation for Other Structures
+
+Many other data structures and techniques are built on top of hashing:
+
+- **Sets** are essentially HashMaps with no stored value, just keys
+- **Caches** (like LRU caches) use HashMaps for O(1) access combined with another structure for eviction order
+- **Graphs** often use HashMaps for adjacency lists
+- Many "optimize the brute force" interview tricks rely on trading nested loops for a single pass with a HashMap
+
+---
+
+## How It Works (Briefly)
+
+1. A **hash function** takes a key and converts it into a numeric hash code.
+2. That hash code is mapped to an index in an underlying array (the "bucket").
+3. The value is stored at that bucket.
+4. On lookup, the same hash function recomputes the index, so the value can be retrieved directly — no scanning required.
+
+When two different keys hash to the same bucket, this is called a **collision**, and it's handled internally (commonly via chaining or open addressing).
+
+---
+
+## The Trade-Offs
+
+HashMaps aren't free — their speed comes at a cost.
+
+| You Gain | You Pay |
+|---|---|
+| Near O(1) lookup, insert, delete | Extra memory overhead (hash table structure, unused buckets) |
+| Fast existence/membership checks | Risk of O(n) worst-case performance under heavy hash collisions |
+| Simple grouping/counting logic | No guaranteed ordering of keys |
+
+**In short: you trade memory and ordering for speed.**
+
+### On Collisions
+
+If many keys hash to the same bucket, performance can degrade from O(1) toward O(n), since the implementation has to search through the colliding entries. Good hash functions and load-factor management keep this rare in practice, but it's a real worst-case risk to be aware of.
+
+### On Ordering
+
+This is one of the most commonly misunderstood trade-offs.
+
+- **Plain HashMap**: Iterating over the map does **not** guarantee insertion order or sorted order. If you insert keys `A`, `B`, `C`, iterating might give you `C, B, A` or any other order — it depends on internal hash values, not the sequence you added them in.
+- **LinkedHashMap**: Maintains a secondary linked list alongside the hash table, preserving **insertion order** during iteration. Same average O(1) performance, with a small memory and bookkeeping overhead.
+- **TreeMap**: Built on a balanced binary search tree (typically a Red-Black tree) instead of a hash table. It keeps keys in **sorted order**, but lookup drops to **O(log n)** — you lose pure hashing speed in exchange for order.
+
+**Why this matters practically**: if an algorithm depends on processing elements in the order they were inserted, or needs sorted keys (e.g., building a leaderboard, range queries), a plain HashMap can silently produce inconsistent or incorrect results. In these cases, `LinkedHashMap` or `TreeMap` (or their equivalents in other languages) are the correct choice — accepting a small performance cost for predictable ordering.
+
+---
+
+## When to Reach for a HashMap
+
+As a rule of thumb: whenever a problem requires fast lookups, or you find yourself writing nested loops just to check "does this exist," a HashMap is usually the first optimization to consider.
+
+**Common signals that a HashMap fits:**
+- You need to check membership repeatedly
+- You need to count or group elements
+- You want to trade memory for speed
+- You're avoiding an O(n²) brute-force approach
+
+**Common signals a HashMap is the *wrong* choice:**
+- You need sorted order → use a `TreeMap`
+- You need guaranteed insertion order → use a `LinkedHashMap`
+- You need range-based queries → use a balanced BST or sorted structure
+
+---
+
+## Summary
+
+HashMaps are a cornerstone of efficient algorithm design. They convert the "search" problem into a near-instant "compute the address" problem, at the cost of memory and any guarantee of order. Understanding *when* that trade-off is worth making — and which variant (`HashMap`, `LinkedHashMap`, `TreeMap`) fits the problem — is a key skill in mastering data structures and algorithms.
+
+---
+
+## Where HashMaps Show Up — LeetCode Problems
+
+| # | Problem | Difficulty | LeetCode | Why It Fits |
+|---|---------|------------|----------|--------------|
+| 1 | Contains Duplicate | 🟢 Easy | #217 | Classic "have I seen this?" membership check using a `set` |
+| 2 | Valid Anagram | 🟢 Easy | #242 | Frequency counting with a `dict`/`Counter` |
+| 3 | Two Sum | 🟢 Easy | #1 | O(1) complement lookup instead of nested loops |
+| 4 | Group Anagrams | 🟡 Medium | #49 | Grouping by a computed key with `defaultdict(list)` |
+| 5 | Top K Frequent Elements | 🟡 Medium | #347 | Frequency map built with a `Counter`, then bucketed |
+| 6 | Longest Consecutive Sequence | 🟡 Medium | #128 | `set` membership check to find sequence starts in O(n) |
+| 7 | Ransom Note | 🟢 Easy | #383 | Frequency comparison between two strings |
+| 8 | Subarray Sum Equals K | 🟡 Medium | #560 | Running prefix-sum counts stored in a `dict` |
+| 9 | Design HashMap | 🟡 Medium | #706 | Building the data structure itself — hashing, buckets, collisions |
+| 10 | LRU Cache | 🟠 Medium/Hard | #146 | HashMap + doubly linked list — the exact HashMap vs `LinkedHashMap` ordering trade-off in practice |
+
+> **How to use this table:** if a problem statement says "duplicate," "frequency," "group by," "have I seen," or "count occurrences" — a HashMap (or HashSet) is almost always the first tool to reach for.
+
+---
+
+<ArticleNav
+  prev={{ title: "Topic 1: Arrays & Hashing", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/topic-1-arrays-and-hashing" }}
+  next={{ title: "Topic 1: Problem 1 — Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-1-contains-duplicate" }}
+/>
