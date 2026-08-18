@@ -104,23 +104,23 @@ If many keys hash to the same bucket, performance can degrade from O(1) toward O
 
 - **Plain HashMap**: Iterating over the map does **not** guarantee insertion order or sorted order. If you insert keys `A`, `B`, `C`, iterating might give you `C, B, A` or any other order — it depends on internal hash values, not the sequence you added them in.
 - **LinkedHashMap**: Maintains a secondary linked list alongside the hash table, preserving **insertion order** during iteration. Same average O(1) performance, with a small memory and <span style={{ color: "#6366f1", fontWeight: 700 }}>bookkeeping</span> overhead.
-- **TreeMap**: Built on a balanced binary search tree (typically a Red-Black tree) instead of a hash table. It keeps keys in **sorted order**, but lookup drops to **O(log n)** — you lose pure hashing speed in exchange for order.
+- **TreeMap**: <span style={{ color: "#6366f1", fontWeight: 700 }}>Built on a balanced binary search tree (typically a Red-Black tree) instead of a hash table. It keeps keys in **sorted order**, but lookup drops to **O(log n)**</span> — you lose pure hashing speed in exchange for order.
 
-**Why this matters practically**: if an algorithm depends on processing elements in the order they were inserted, or needs sorted keys (e.g., building a leaderboard, range queries), a plain HashMap can silently produce inconsistent or incorrect results. In these cases, `LinkedHashMap` or `TreeMap` (or their equivalents in other languages) are the correct choice — accepting a small performance cost for predictable ordering.
+**Why this matters practically**: if an algorithm depends on processing elements in the order they were inserted, or needs sorted keys (e.g., building a leaderboard, range queries), a plain HashMap can silently produce inconsistent or incorrect results. In these cases, <span style={{ color: "#6366f1", fontWeight: 700 }}>`LinkedHashMap` or `TreeMap` (or their equivalents in other languages) are the correct choice — accepting a small performance cost for predictable ordering.</span>
 
 ---
 
 ## When to Reach for a HashMap
 
-As a rule of thumb: whenever a problem requires fast lookups, or you find yourself writing nested loops just to check "does this exist," a HashMap is usually the first optimization to consider.
+As a rule of thumb: whenever a problem <span style={{ color: "#65a30d", fontWeight: 700 }}>requires fast lookups</span>, or you find yourself <span style={{ color: "#65a30d", fontWeight: 700 }}>writing nested loops just to check "does this exist,"</span> a HashMap is usually the first optimization to consider.
 
-**Common signals that a HashMap fits:**
+**<span style={{ color: "#16a34a", fontWeight: 700 }}>Common signals that a HashMap fits:</span>**
 - You need to check membership repeatedly
 - You need to count or group elements
 - You want to trade memory for speed
 - You're avoiding an O(n²) brute-force approach
 
-**Common signals a HashMap is the *wrong* choice:**
+**<span style={{ color: "#dc2626", fontWeight: 700 }}>Common signals a HashMap is the *wrong* choice:</span>**
 - You need sorted order → use a `TreeMap`
 - You need guaranteed insertion order → use a `LinkedHashMap`
 - You need range-based queries → use a balanced BST or sorted structure
