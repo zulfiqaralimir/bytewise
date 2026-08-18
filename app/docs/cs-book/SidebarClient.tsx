@@ -454,7 +454,9 @@ const chapters = [
       },
       {
         chapter: "Chapter 3: Analytical Writing (AWA)",
-        items: [],
+        items: [
+          { title: "3.1 Analytical Writing — The Issue Task", href: "/docs/cs-book/part-20-gre/chapter-3/3-1-issue-essay-structure" },
+        ],
       },
     ],
   },
