@@ -127,9 +127,9 @@ As a rule of thumb: whenever a problem <span style={{ color: "#65a30d", fontWeig
 
 ---
 
-## Summary
+## <span style={{ color: "#be185d", fontWeight: 700 }}>Summary</span>
 
-HashMaps are a cornerstone of efficient algorithm design. They convert the "search" problem into a near-instant "compute the address" problem, at the cost of memory and any guarantee of order. Understanding *when* that trade-off is worth making — and which variant (`HashMap`, `LinkedHashMap`, `TreeMap`) fits the problem — is a key skill in mastering data structures and algorithms.
+HashMaps are a <span style={{ color: "#be185d", fontWeight: 700 }}>cornerstone of efficient algorithm design.</span> They convert the <span style={{ color: "#be185d", fontWeight: 700 }}>"search" problem</span> into a near-instant "compute the address" problem, at the cost of memory and any guarantee of order. Understanding *when* that trade-off is worth making — and which variant (`HashMap`, `LinkedHashMap`, `TreeMap`) fits the problem — is a key skill in mastering data structures and algorithms.
 
 ---
 
@@ -137,18 +137,18 @@ HashMaps are a cornerstone of efficient algorithm design. They convert the "sear
 
 | # | Problem | Difficulty | LeetCode | Why It Fits |
 |---|---------|------------|----------|--------------|
-| 1 | Contains Duplicate | 🟢 Easy | #217 | Classic "have I seen this?" membership check using a `set` |
-| 2 | Valid Anagram | 🟢 Easy | #242 | Frequency counting with a `dict`/`Counter` |
-| 3 | Two Sum | 🟢 Easy | #1 | O(1) complement lookup instead of nested loops |
-| 4 | Group Anagrams | 🟡 Medium | #49 | Grouping by a computed key with `defaultdict(list)` |
-| 5 | Top K Frequent Elements | 🟡 Medium | #347 | Frequency map built with a `Counter`, then bucketed |
+| 1 | Contains Duplicate | 🟢 Easy | #217 | <span style={{ color: "#7c3aed", fontWeight: 700 }}>Classic "have I seen this?"</span> membership check using a `set` |
+| 2 | Valid Anagram | 🟢 Easy | #242 | <span style={{ color: "#7c3aed", fontWeight: 700 }}>Frequency counting</span> with a `dict`/`Counter` |
+| 3 | Two Sum | 🟢 Easy | #1 | O(1) <span style={{ color: "#7c3aed", fontWeight: 700 }}>complement lookup instead of nested loops</span> |
+| 4 | Group Anagrams | 🟡 Medium | #49 | Grouping by a computed key with <span style={{ color: "#7c3aed", fontWeight: 700 }}>`defaultdict(list)`</span> |
+| 5 | Top K Frequent Elements | 🟡 Medium | #347 | <span style={{ color: "#7c3aed", fontWeight: 700 }}>Frequency map</span> built with a `Counter`, then bucketed |
 | 6 | Longest Consecutive Sequence | 🟡 Medium | #128 | `set` membership check to find sequence starts in O(n) |
-| 7 | Ransom Note | 🟢 Easy | #383 | Frequency comparison between two strings |
+| 7 | Ransom Note | 🟢 Easy | #383 | <span style={{ color: "#7c3aed", fontWeight: 700 }}>Frequency comparison</span> between two strings |
 | 8 | Subarray Sum Equals K | 🟡 Medium | #560 | Running prefix-sum counts stored in a `dict` |
-| 9 | Design HashMap | 🟡 Medium | #706 | Building the data structure itself — hashing, buckets, collisions |
-| 10 | LRU Cache | 🟠 Medium/Hard | #146 | HashMap + doubly linked list — the exact HashMap vs `LinkedHashMap` ordering trade-off in practice |
+| 9 | Design HashMap | 🟡 Medium | #706 | <span style={{ color: "#7c3aed", fontWeight: 700 }}>Building the data structure itself</span> — hashing, buckets, collisions |
+| 10 | LRU Cache | 🟠 Medium/Hard | #146 | <span style={{ color: "#7c3aed", fontWeight: 700 }}>HashMap + doubly linked list</span> — the exact HashMap vs `LinkedHashMap` ordering trade-off in practice |
 
-> **How to use this table:** if a problem statement says "duplicate," "frequency," "group by," "have I seen," or "count occurrences" — a HashMap (or HashSet) is almost always the first tool to reach for.
+> **How to use this table:** if a problem statement says <span style={{ color: "#7c3aed", fontWeight: 700 }}>"duplicate," "frequency," "group by," "have I seen," or "count occurrences"</span> — <span style={{ color: "#7c3aed", fontWeight: 700 }}>a HashMap (or HashSet)</span> is almost always the first tool to reach for.
 
 ---
 
