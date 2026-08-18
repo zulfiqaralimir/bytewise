@@ -32,9 +32,9 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 
 ## Introduction
 
-A **HashMap** (also called a hash table or dictionary, depending on the language) is one of the most important data structures in computer science. It stores data as **key-value pairs** and is designed to give near-instant access to values based on their keys.
+A **HashMap** (also called a hash table or dictionary, depending on the language) is one of the most important data structures in computer science. It stores data as **key-value pairs** and is designed to <span style={{ color: "#2563eb", fontWeight: 700 }}>give near-instant access to values based on their keys</span>.
 
-If arrays let you access data by *position*, HashMaps let you access data by *meaning* — you look something up by a name, an ID, a word, or any other identifier, rather than by counting index positions.
+<span style={{ color: "#2563eb", fontWeight: 700 }}>If arrays let you access data by *position*, HashMaps let you access data by *meaning* — you look something up by a name, an ID, a word, or any other identifier, rather than by counting index positions.</span>
 
 ---
 
@@ -42,41 +42,41 @@ If arrays let you access data by *position*, HashMaps let you access data by *me
 
 ### 1. Speed
 
-Without a HashMap, checking whether a value exists in a collection typically requires scanning through it — an O(n) operation. A HashMap uses a **hash function** to convert a key directly into an array index, giving average-case **O(1)** time for lookup, insertion, and deletion.
+Without a HashMap, checking whether a value exists in a collection typically requires scanning through it — an O(n) operation. <span style={{ color: "#16a34a", fontWeight: 700 }}>A HashMap uses a **hash function** to convert a key directly into an array index, giving average-case **O(1)** time for lookup, insertion, and deletion.</span>
 
 ### 2. Fast Existence Checks
 
-Many algorithmic problems boil down to the question: *"Have I seen this before?"* HashMaps answer that instantly, which is why they're the go-to tool for:
+Many algorithmic problems boil down to the question: <span style={{ color: "#ea580c", fontWeight: 700 }}>*"Have I seen this before?"*</span> HashMaps answer that instantly, which is why <span style={{ color: "#ea580c", fontWeight: 700 }}>they're the go-to tool for:</span>
 
-- Detecting duplicates
-- Two Sum–style pair-finding problems
-- Checking membership in a set of values
+- <span style={{ color: "#ea580c", fontWeight: 700 }}>Detecting duplicates</span>
+- <span style={{ color: "#ea580c", fontWeight: 700 }}>Two Sum–style pair-finding problems</span>
+- <span style={{ color: "#ea580c", fontWeight: 700 }}>Checking membership in a set of values</span>
 
 ### 3. Grouping and Counting
 
 HashMaps are naturally suited to tasks like:
 
-- Counting the frequency of elements (word counts, character counts)
-- Grouping items by a shared property (e.g., grouping anagrams)
-- Caching or memoizing results in dynamic programming
+- <span style={{ color: "#9333ea", fontWeight: 700 }}>Counting the frequency of elements (word counts, character counts)</span>
+- <span style={{ color: "#9333ea", fontWeight: 700 }}>Grouping items by a shared property (e.g., grouping anagrams)</span>
+- <span style={{ color: "#9333ea", fontWeight: 700 }}>Caching or memoizing results in dynamic programming</span>
 
 ### 4. Foundation for Other Structures
 
-Many other data structures and techniques are built on top of hashing:
+<span style={{ color: "#db2777", fontWeight: 700 }}>Many other data structures and techniques are built on top of hashing:</span>
 
-- **Sets** are essentially HashMaps with no stored value, just keys
-- **Caches** (like LRU caches) use HashMaps for O(1) access combined with another structure for eviction order
-- **Graphs** often use HashMaps for adjacency lists
-- Many "optimize the brute force" interview tricks rely on trading nested loops for a single pass with a HashMap
+- **Sets** are essentially <span style={{ color: "#db2777", fontWeight: 700 }}>HashMaps with no stored value, just keys</span>
+- **Caches** (like <span style={{ color: "#db2777", fontWeight: 700 }}>LRU caches</span>) use HashMaps for O(1) access <span style={{ color: "#db2777", fontWeight: 700 }}>combined with another structure for eviction order</span>
+- **Graphs** often <span style={{ color: "#db2777", fontWeight: 700 }}>use HashMaps for adjacency lists</span>
+- <span style={{ color: "#db2777", fontWeight: 700 }}>Many "optimize the brute force" interview tricks rely on trading nested loops for a single pass with a HashMap</span>
 
 ---
 
 ## How It Works (Briefly)
 
 1. A **hash function** takes a key and converts it into a numeric hash code.
-2. That hash code is mapped to an index in an underlying array (the "bucket").
-3. The value is stored at that bucket.
-4. On lookup, the same hash function recomputes the index, so the value can be retrieved directly — no scanning required.
+2. <span style={{ color: "#0891b2", fontWeight: 700 }}>That hash code is mapped to an index in an underlying array (the "bucket").</span>
+3. <span style={{ color: "#0891b2", fontWeight: 700 }}>The value is stored at that bucket.</span>
+4. <span style={{ color: "#0891b2", fontWeight: 700 }}>On lookup, the same hash function recomputes the index, so the value can be retrieved directly — no scanning required.</span>
 
 When two different keys hash to the same bucket, this is called a **collision**, and it's handled internally (commonly via chaining or open addressing).
 
