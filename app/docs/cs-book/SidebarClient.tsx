@@ -444,6 +444,7 @@ const chapters = [
         chapter: "Chapter 1: Verbal Reasoning",
         items: [
           { title: "1.1 GRE Verbal Reasoning Decoded", href: "/docs/cs-book/part-20-gre/chapter-1/1-1-verbal-reasoning-decoded" },
+          { title: "1.2 Vocabulary List & Memorization Strategies", href: "/docs/cs-book/part-20-gre/chapter-1/1-2-vocabulary-list-and-strategies" },
         ],
       },
       {
