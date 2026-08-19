@@ -96,7 +96,7 @@ def hasDuplicate(nums):
     return False
 ```
 
-**Pythonic one-liner:**
+**<span style={{ color: "#9333ea", fontWeight: 700 }}>Pythonic one-liner:</span>**
 
 ```python
 def hasDuplicate(nums):
@@ -112,7 +112,7 @@ def hasDuplicate(nums):
 | | Complexity | Reason |
 |---|---|---|
 | **Time** | O(n) | Single pass through the array |
-| **Space** | O(n) | Worst case: all elements unique, all stored in set |
+| **Space** | O(n) | <span style={{ color: "#dc2626", fontWeight: 700 }}>Worst case: all elements unique, all stored in set</span> |
 
 ---
 
@@ -120,23 +120,23 @@ def hasDuplicate(nums):
 
 | Input | Expected Output | Reason |
 |---|---|---|
-| `[1]` | `false` | Single element — no pair possible |
-| `[1, 1]` | `true` | Smallest possible duplicate |
-| `[]` | `false` | Empty array — no elements to compare |
-| `[1, 2, 3, 4, 5]` | `false` | All unique elements |
-| `[-1, -1]` | `true` | Works with negative numbers too |
+| `[1]` | `false` | <span style={{ color: "#2563eb", fontWeight: 700 }}>Single element — no pair possible</span> |
+| `[1, 1]` | `true` | <span style={{ color: "#16a34a", fontWeight: 700 }}>Smallest possible duplicate</span> |
+| `[]` | `false` | <span style={{ color: "#9333ea", fontWeight: 700 }}>Empty array — no elements to compare</span> |
+| `[1, 2, 3, 4, 5]` | `false` | <span style={{ color: "#0891b2", fontWeight: 700 }}>All unique elements</span> |
+| `[-1, -1]` | `true` | <span style={{ color: "#dc2626", fontWeight: 700 }}>Works with negative numbers too</span> |
 
 ---
 
 ### Key Takeaway
 
-> **"Have I seen this before?"** → always reach for a `set`.
+> <span style={{ color: "#dc2626", fontWeight: 700 }}>**"Have I seen this before?"**</span> → <span style={{ color: "#2563eb", fontWeight: 700 }}>always reach for a `set`.</span>
 
 ---
 
 ### Real-World Application
 
-Database deduplication — detect repeated records before inserting into a table, preventing primary key violations.
+Database deduplication — detect repeated records before inserting into a table, <span style={{ color: "#ea580c", fontWeight: 700 }}>preventing primary key violations</span>.
 
 ---
 
