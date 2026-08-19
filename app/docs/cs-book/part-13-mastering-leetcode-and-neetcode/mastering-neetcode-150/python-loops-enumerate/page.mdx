@@ -1,0 +1,989 @@
+export const metadata = {
+  title: "Python Loops: Index, Value & enumerate() — NeetCode 150 — ByteWise",
+  description:
+    "A deep dive on Python loops — the difference between for n in nums, for i in range(len(nums)), and for i, n in enumerate(nums), and when to reach for each.",
+  keywords: [
+    "Python loops",
+    "enumerate",
+    "range len",
+    "index value",
+    "unpacking",
+    "arrays and hashing",
+    "NeetCode 150",
+    "coding interview patterns",
+  ],
+  openGraph: {
+    title: "Python Loops: Index, Value & enumerate()",
+    description:
+      "Index tells you WHERE, value tells you WHAT — and enumerate() is how Python gives you both at once.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Python Loops: Index, Value & enumerate()
+
+*Topic 1: Arrays & Hashing · Deep Dive*
+
+---
+
+## Introduction
+
+One of the most common sources of confusion when learning Python loops is understanding the difference between:
+
+```python
+for i in range(len(nums)):
+```
+
+and:
+
+```python
+for i, n in enumerate(nums):
+```
+
+At first, both can appear to do the same thing. For example, both can produce:
+
+```text
+0 10
+1 20
+2 30
+```
+
+So the natural question is:
+
+> **Why do we need `enumerate()` if `range(len(nums))` already works?**
+
+The answer becomes simple once we clearly separate three concepts:
+
+1. <span style={{ color: "#2563eb", fontWeight: 700 }}>**Index**</span>
+2. <span style={{ color: "#16a34a", fontWeight: 700 }}>**Value**</span>
+3. <span style={{ color: "#9333ea", fontWeight: 700 }}>**Iteration**</span>
+
+---
+
+## 1. What Is an Index?
+
+Consider this list:
+
+```python
+nums = [10, 20, 30]
+```
+
+Python assigns a position, called an **index**, to every element.
+
+```text
+Value:     10    20    30
+Index:      0     1     2
+```
+
+Notice that Python starts counting from **0**, not 1.
+
+Therefore:
+
+```python
+nums[0]   # 10
+nums[1]   # 20
+nums[2]   # 30
+```
+
+So:
+
+> <span style={{ color: "#2563eb", fontWeight: 700 }}>**Index tells us WHERE the value is.**</span>
+
+And:
+
+> <span style={{ color: "#16a34a", fontWeight: 700 }}>**Value tells us WHAT is stored there.**</span>
+
+---
+
+## 2. Looping Directly Through Values
+
+The simplest way to loop through a list is:
+
+```python
+nums = [10, 20, 30]
+
+for n in nums:
+    print(n)
+```
+
+Output:
+
+```text
+10
+20
+30
+```
+
+Here, `n` represents the **value**.
+
+On each iteration:
+
+```text
+n = 10
+n = 20
+n = 30
+```
+
+We don't have the index.
+
+So if we ask:
+
+> Where is `20`?
+
+This loop doesn't directly give us the answer.
+
+---
+
+## 3. Looping Through Indexes with `range(len())`
+
+Now consider:
+
+```python
+nums = [10, 20, 30]
+
+for i in range(len(nums)):
+    print(i)
+```
+
+`len(nums)` gives:
+
+```text
+3
+```
+
+Therefore:
+
+```python
+range(3)
+```
+
+produces:
+
+```text
+0
+1
+2
+```
+
+So:
+
+```python
+for i in range(len(nums)):
+```
+
+means:
+
+> Loop through the indexes of the list.
+
+We can then use the index to access the value:
+
+```python
+nums = [10, 20, 30]
+
+for i in range(len(nums)):
+    print(i, nums[i])
+```
+
+Output:
+
+```text
+0 10
+1 20
+2 30
+```
+
+Let's understand exactly what happens.
+
+### First iteration
+
+```python
+i = 0
+```
+
+Then:
+
+```python
+nums[i]
+```
+
+becomes:
+
+```python
+nums[0]
+```
+
+which is:
+
+```text
+10
+```
+
+### Second iteration
+
+```python
+i = 1
+```
+
+Therefore:
+
+```python
+nums[i]
+```
+
+becomes:
+
+```python
+nums[1]
+```
+
+which is:
+
+```text
+20
+```
+
+### Third iteration
+
+```python
+i = 2
+```
+
+Therefore:
+
+```python
+nums[i]
+```
+
+becomes:
+
+```python
+nums[2]
+```
+
+which is:
+
+```text
+30
+```
+
+---
+
+## 4. The Important Difference
+
+Compare these two loops.
+
+### Loop A
+
+```python
+for i in range(len(nums)):
+```
+
+This gives you the:
+
+```text
+INDEX
+```
+
+You then have to get the value yourself:
+
+```python
+nums[i]
+```
+
+So conceptually:
+
+```text
+i → index
+nums[i] → value
+```
+
+---
+
+### Loop B
+
+```python
+for i, n in enumerate(nums):
+```
+
+This gives you both:
+
+```text
+i → index
+n → value
+```
+
+You don't have to write:
+
+```python
+nums[i]
+```
+
+---
+
+## 5. What Does `enumerate()` Actually Do?
+
+This is <span style={{ color: "#dc2626", fontWeight: 700 }}>the most important concept</span>.
+
+When you write:
+
+```python
+enumerate(nums)
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>Python creates an iterator that produces **pairs** of:</span>
+
+```text
+(index, value)
+```
+
+For:
+
+```python
+nums = [10, 20, 30]
+```
+
+conceptually, `enumerate(nums)` produces:
+
+```text
+(0, 10)
+(1, 20)
+(2, 30)
+```
+
+These are pairs.
+
+Then Python allows us to unpack each pair:
+
+```python
+for i, n in enumerate(nums):
+```
+
+The first pair:
+
+```text
+(0, 10)
+```
+
+becomes:
+
+```text
+i = 0
+n = 10
+```
+
+The second pair:
+
+```text
+(1, 20)
+```
+
+becomes:
+
+```text
+i = 1
+n = 20
+```
+
+The third pair:
+
+```text
+(2, 30)
+```
+
+becomes:
+
+```text
+i = 2
+n = 30
+```
+
+This is called <span style={{ color: "#dc2626", fontWeight: 700 }}>**unpacking**</span>.
+
+---
+
+## 6. Why Do We Write `print(i, n)`?
+
+This is where a lot of beginners get confused.
+
+You might see:
+
+```python
+for i, n in enumerate(nums):
+    print(i, n)
+```
+
+and think:
+
+> Is `print(i, n)` part of `enumerate()`?
+
+**No.**
+
+They are completely separate.
+
+`enumerate()` gives you:
+
+```text
+index + value
+```
+
+The `print()` simply displays them.
+
+For example:
+
+```python
+for i, n in enumerate(nums):
+    print(i, n)
+```
+
+means:
+
+```text
+enumerate → give me index and value
+print → display them
+```
+
+You could instead do:
+
+```python
+for i, n in enumerate(nums):
+    if n > 15:
+        print("Found:", n)
+```
+
+Here we don't print the index and value together.
+
+We use them for a condition.
+
+Output:
+
+```text
+Found: 20
+Found: 30
+```
+
+So:
+
+> **`enumerate()` is not for printing. It is for obtaining the index and value together.**
+
+---
+
+## 7. `enumerate()` Without `print()`
+
+There is nothing special about `print()`.
+
+For example:
+
+```python
+nums = [10, 20, 30]
+
+for i, n in enumerate(nums):
+    if n == 20:
+        position = i
+```
+
+After the loop:
+
+```python
+print(position)
+```
+
+Output:
+
+```text
+1
+```
+
+Here, `enumerate()` helped us find the position of `20`.
+
+We didn't need:
+
+```python
+print(i, n)
+```
+
+---
+
+## 8. Comparing the Two Methods
+
+Suppose:
+
+```python
+nums = [10, 20, 30]
+```
+
+### Method 1: `range(len())`
+
+```python
+for i in range(len(nums)):
+    n = nums[i]
+    print(i, n)
+```
+
+We manually obtain the value:
+
+```python
+n = nums[i]
+```
+
+So the flow is:
+
+```text
+i → index
+nums[i] → value
+```
+
+---
+
+### Method 2: `enumerate()`
+
+```python
+for i, n in enumerate(nums):
+    print(i, n)
+```
+
+Python gives us both directly:
+
+```text
+i → index
+n → value
+```
+
+Therefore, the second version is generally cleaner when we need both.
+
+---
+
+## 9. Why Is `enumerate()` More Pythonic?
+
+Python encourages code that is:
+
+* readable
+* simple
+* expressive
+* less repetitive
+
+Compare:
+
+```python
+for i in range(len(nums)):
+    print(i, nums[i])
+```
+
+with:
+
+```python
+for i, n in enumerate(nums):
+    print(i, n)
+```
+
+The second version communicates the intention more clearly:
+
+> "For every item, give me its index and its value."
+
+Instead of:
+
+> "Give me a range of numbers from 0 to the length of the list, and I'll use each number to access the list."
+
+That's why `enumerate()` is generally considered more <span style={{ color: "#0891b2", fontWeight: 700 }}>**Pythonic**</span>.
+
+---
+
+## 10. When Should You Use `for n in nums`?
+
+If you only need the values:
+
+```python
+nums = [10, 20, 30]
+
+for n in nums:
+    print(n)
+```
+
+Use this.
+
+There is no reason to use `enumerate()` if you don't need the index.
+
+### Example
+
+```python
+for n in nums:
+    if n > 15:
+        print(n)
+```
+
+Output:
+
+```text
+20
+30
+```
+
+You don't care where the numbers are located.
+
+Therefore:
+
+```python
+for n in nums:
+```
+
+is the appropriate choice.
+
+---
+
+## 11. When Should You Use `enumerate()`?
+
+Use:
+
+```python
+for i, n in enumerate(nums):
+```
+
+when you need:
+
+* the index
+* the value
+* or both
+
+### Example: Find a position
+
+```python
+nums = [10, 20, 30]
+
+for i, n in enumerate(nums):
+    if n == 20:
+        print("20 is at index", i)
+```
+
+Output:
+
+```text
+20 is at index 1
+```
+
+---
+
+## 12. When Should You Use `range(len())`?
+
+`range(len())` is still useful.
+
+It becomes particularly useful when you specifically need to manipulate list elements through their indexes.
+
+For example:
+
+```python
+nums = [10, 20, 30]
+
+for i in range(len(nums)):
+    nums[i] = nums[i] * 2
+
+print(nums)
+```
+
+Output:
+
+```text
+[20, 40, 60]
+```
+
+Here, we need `i` because we are changing the list using:
+
+```python
+nums[i] = ...
+```
+
+---
+
+## 13. A Very Important Example
+
+Consider:
+
+```python
+nums = [10, 20, 30]
+```
+
+### If you only need the value:
+
+```python
+for n in nums:
+```
+
+Think:
+
+```text
+VALUE
+```
+
+---
+
+### If you need the index:
+
+```python
+for i in range(len(nums)):
+```
+
+Think:
+
+```text
+INDEX
+```
+
+and get the value with:
+
+```python
+nums[i]
+```
+
+---
+
+### If you need both:
+
+```python
+for i, n in enumerate(nums):
+```
+
+Think:
+
+```text
+INDEX + VALUE
+```
+
+This is the easiest mental model.
+
+---
+
+## 14. A Visual Comparison
+
+For:
+
+```python
+nums = [10, 20, 30]
+```
+
+### Direct iteration
+
+```python
+for n in nums:
+```
+
+You get:
+
+```text
+        VALUE
+          ↓
+        10
+        20
+        30
+```
+
+---
+
+### `range(len())`
+
+```python
+for i in range(len(nums)):
+```
+
+You get:
+
+```text
+        INDEX
+          ↓
+         0
+         1
+         2
+```
+
+Then you access:
+
+```python
+nums[i]
+```
+
+to obtain the value.
+
+---
+
+### `enumerate()`
+
+```python
+for i, n in enumerate(nums):
+```
+
+You get:
+
+```text
+       INDEX     VALUE
+         ↓         ↓
+         0        10
+         1        20
+         2        30
+```
+
+This is the major advantage of `enumerate()`.
+
+---
+
+## 15. A Common Beginner Mistake
+
+Some beginners write:
+
+```python
+for i, n in nums:
+```
+
+This is incorrect for a normal list like:
+
+```python
+nums = [10, 20, 30]
+```
+
+Why?
+
+Because Python expects each element to contain **two values** to unpack into:
+
+```python
+i, n
+```
+
+But the first element is only:
+
+```text
+10
+```
+
+There aren't two values.
+
+That's why we use:
+
+```python
+for i, n in enumerate(nums):
+```
+
+`enumerate()` creates the pairs for us:
+
+```text
+(0, 10)
+(1, 20)
+(2, 30)
+```
+
+---
+
+## 16. The Most Important Mental Model
+
+Whenever you see:
+
+```python
+for n in nums:
+```
+
+say to yourself:
+
+> <span style={{ color: "#16a34a", fontWeight: 700 }}>**"Give me each VALUE."**</span>
+
+Whenever you see:
+
+```python
+for i in range(len(nums)):
+```
+
+say:
+
+> <span style={{ color: "#2563eb", fontWeight: 700 }}>**"Give me each INDEX."**</span>
+
+Whenever you see:
+
+```python
+for i, n in enumerate(nums):
+```
+
+say:
+
+> <span style={{ color: "#dc2626", fontWeight: 700 }}>**"Give me each INDEX and VALUE."**</span>
+
+That mental translation will remove most of the confusion.
+
+---
+
+## 17. Quick Reference
+
+| Code                          | What do I get? | Typical use                   |
+| ----------------------------- | -------------- | ----------------------------- |
+| `for n in nums`               | Value          | I only need the values        |
+| `for i in range(len(nums))`   | Index          | I need to work with positions |
+| `for i, n in enumerate(nums)` | Index + Value  | I need both                   |
+
+---
+
+## 18. Final Example
+
+Given:
+
+```python
+nums = [10, 20, 30]
+```
+
+### Only values
+
+```python
+for n in nums:
+    print(n)
+```
+
+Result:
+
+```text
+10
+20
+30
+```
+
+### Index + value using `range()`
+
+```python
+for i in range(len(nums)):
+    print(i, nums[i])
+```
+
+Result:
+
+```text
+0 10
+1 20
+2 30
+```
+
+### Index + value using `enumerate()`
+
+```python
+for i, n in enumerate(nums):
+    print(i, n)
+```
+
+Result:
+
+```text
+0 10
+1 20
+2 30
+```
+
+The **output is the same**, but the way the information is obtained is different.
+
+---
+
+## The One Sentence to Remember
+
+> **`for n in nums` gives you the value, `for i in range(len(nums))` gives you the index, and `for i, n in enumerate(nums)` gives you both the index and value together.**
+
+And one final clarification:
+
+> **`print(i, n)` has nothing to do with why we use `enumerate()`. `print()` only displays the index and value; `enumerate()` is what provides them.**
+
+---
+
+<ArticleNav
+  prev={{ title: "HashMaps in Data Structures & Algorithms", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/hashmaps-deep-dive" }}
+  next={{ title: "Topic 1: Problem 1 — Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-1-contains-duplicate" }}
+/>
