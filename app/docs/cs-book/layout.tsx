@@ -11,7 +11,7 @@ export default function BookLayout({ children }: LayoutProps) {
   return (
     <div className="bg-white">
       <SidebarClient />
-      <main className="md:ml-72 h-screen overflow-y-auto pt-14 md:pt-0 print:ml-0 print:h-auto print:overflow-visible print:pt-0">
+      <main className="md:ml-[var(--bw-sidebar-w,18rem)] transition-[margin-left] duration-300 h-screen overflow-y-auto pt-14 md:pt-0 print:ml-0 print:h-auto print:overflow-visible print:pt-0">
         <div className="max-w-4xl mx-auto px-6 py-12">
           <div className="prose">
             <ReadingTime />

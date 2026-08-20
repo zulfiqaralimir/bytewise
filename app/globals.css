@@ -54,7 +54,7 @@ body {
 .prose strong { font-weight: 700; color: #111827; }
 .prose em { font-style: italic; }
 .prose code { background: #f3f4f6; color: #dc2626; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.875em; font-family: 'Courier New', monospace; }
-.prose pre { background: #374151; color: #cdd6f4; padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1.5rem; }
+.prose pre { background: #f7f7f8; color: #111827; padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1.5rem; border: 1px solid #e5e5e5; }
 .prose pre code { background: none; color: inherit; padding: 0; font-size: 0.875rem; }
 .prose blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; margin: 1.5rem 0; color: #6b7280; font-style: italic; }
 .prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
@@ -71,25 +71,25 @@ body {
 .callout-warning { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
 .callout-danger  { background: #fff1f2; border-left: 4px solid #ef4444; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
 
-/* Syntax highlighting (VS Code dark theme style) */
-.hljs { background: #374151; color: #cdd6f4; }
-.hljs-keyword { color: #cba6f7; }
-.hljs-string { color: #a6e3a1; }
-.hljs-number { color: #fab387; }
-.hljs-comment { color: #6c7086; font-style: italic; }
-.hljs-function { color: #89b4fa; }
-.hljs-variable { color: #cdd6f4; }
-.hljs-operator { color: #89dceb; }
-.hljs-built_in { color: #f38ba8; }
-.hljs-type { color: #f9e2af; }
-.hljs-attr { color: #89b4fa; }
-.hljs-title { color: #89b4fa; }
-.hljs-params { color: #fab387; }
+/* Syntax highlighting (ChatGPT-style light theme) */
+.hljs { background: #f7f7f8; color: #111827; }
+.hljs-keyword { color: #cf222e; }
+.hljs-string { color: #0a3069; }
+.hljs-number { color: #0550ae; }
+.hljs-comment { color: #6e7781; font-style: italic; }
+.hljs-function { color: #8250df; }
+.hljs-variable { color: #111827; }
+.hljs-operator { color: #24292f; }
+.hljs-built_in { color: #0550ae; }
+.hljs-type { color: #953800; }
+.hljs-attr { color: #0550ae; }
+.hljs-title { color: #8250df; }
+.hljs-params { color: #24292f; }
 
 /* Diagram box */
 .diagram-box {
-  background: #374151;
-  color: #cdd6f4;
+  background: #f7f7f8;
+  color: #111827;
   font-family: 'Courier New', monospace;
   padding: 1.5rem;
   border-radius: 0.5rem;
@@ -98,6 +98,7 @@ body {
   white-space: pre;
   font-size: 0.875rem;
   line-height: 1.6;
+  border: 1px solid #e5e5e5;
 }
 
 html { scroll-behavior: smooth; }

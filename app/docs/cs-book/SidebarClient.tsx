@@ -30,14 +30,7 @@ const chapters = [
   },
   {
     part: "Part 2 — Design Patterns (LLD)",
-    items: [
-      { title: "SOLID Principles", href: "/docs/cs-book/part-2-design-patterns/solid-principles" },
-      { title: "OOP Fundamentals", href: "/docs/cs-book/part-2-design-patterns/oop-fundamentals" },
-      { title: "Encapsulation vs Abstraction", href: "/docs/cs-book/part-2-design-patterns/encapsulation-vs-abstraction" },
-      { title: "Creational Patterns", href: "/docs/cs-book/part-2-design-patterns/creational-patterns" },
-      { title: "Structural Patterns", href: "/docs/cs-book/part-2-design-patterns/structural-patterns" },
-      { title: "Behavioral Patterns", href: "/docs/cs-book/part-2-design-patterns/behavioral-patterns" },
-    ],
+    items: [],
   },
   {
     part: "Part 3 — Algorithms",
@@ -473,11 +466,29 @@ const allHrefs = chapters.flatMap((c) =>
 export function SidebarClient() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState(true);
+  const [sidebarHydrated, setSidebarHydrated] = useState(false);
   const [progress, setProgress] = useState(0);
   const [readCount, setReadCount] = useState(0);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(chapters.map((c) => [c.part, true]))
   );
+
+  // Restore sidebar open/closed state from the last visit
+  useEffect(() => {
+    const stored = localStorage.getItem("bw-sidebar-open");
+    if (stored !== null) setDesktopOpen(stored === "1");
+    setSidebarHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!sidebarHydrated) return;
+    localStorage.setItem("bw-sidebar-open", desktopOpen ? "1" : "0");
+  }, [desktopOpen, sidebarHydrated]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--bw-sidebar-w", desktopOpen ? "18rem" : "0rem");
+  }, [desktopOpen]);
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("bw-read") ?? "[]") as string[];
@@ -553,10 +564,22 @@ export function SidebarClient() {
         />
       )}
 
+      {/* Desktop sidebar toggle */}
+      <button
+        onClick={() => setDesktopOpen((v) => !v)}
+        aria-label={desktopOpen ? "Hide sidebar" : "Show sidebar"}
+        title={desktopOpen ? "Hide sidebar" : "Show sidebar"}
+        className={`no-print hidden md:flex fixed top-4 z-50 items-center justify-center w-7 h-7 rounded-full border border-gray-200 bg-white text-gray-500 hover:text-gray-900 hover:border-gray-300 shadow-sm transition-all duration-300 ${
+          desktopOpen ? "md:left-[17.25rem]" : "md:left-3"
+        }`}
+      >
+        {desktopOpen ? "‹" : "›"}
+      </button>
+
       {/* Sidebar */}
       <aside
         className={`no-print fixed top-0 left-0 bottom-0 w-72 bg-white text-gray-900 border-r border-gray-200 z-40 flex flex-col transition-transform duration-300
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"} ${desktopOpen ? "md:translate-x-0" : "md:-translate-x-full"}`}
       >
         {/* Brand */}
         <div className="p-6 border-b border-gray-200">
