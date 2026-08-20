@@ -286,6 +286,18 @@ If you want to hide any formula or calculation from the outside, put that logic 
 
 **Payoff (ties back to why LLD cares about this at all):** if the brokerage fee formula changes tomorrow, you change it in one place (`calculate_profit`), and every caller anywhere in the codebase automatically gets the new, correct behavior — without changing their own code.
 
+### Does Type 2 (Interface) Abstraction Require the Implementation to Stay Constant?
+
+**Technical:** No. An interface fixes only the *contract* — the method names, their inputs, and their outputs (e.g., `execute()` on `Order`). It says nothing about how that method is implemented internally, and it doesn't need to. Each implementing class can have its own logic, and that logic can change freely over time, without breaking the contract or affecting any other class. The interface guarantees callers only ever depend on the contract, never on how any specific class fulfills it.
+
+<Callout type="tip" title="🗣️ Conversational">
+Think of `MarketOrder`, `LimitOrder`, and `StopLossOrder` as all promising "I can `execute()` myself" — that's the fixed part. But *how* each one executes is entirely up to that class, and can be rewritten however many times it needs to be. Change `LimitOrder`'s internal logic tomorrow, and `MarketOrder` doesn't even notice — because nothing outside `LimitOrder` was ever relying on its internals, only on the fact that it has an `execute()` method.
+</Callout>
+
+<Callout type="info" title="Rule">
+The contract (interface) is what stays stable — the implementation behind each class fulfilling that contract is free to evolve independently.
+</Callout>
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation", title: "Section 2: Encapsulation" }}
   next={null}
