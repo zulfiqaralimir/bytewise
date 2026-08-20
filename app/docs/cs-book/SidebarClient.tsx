@@ -39,6 +39,7 @@ const chapters = [
           { title: "Section 2: Encapsulation", href: "/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation" },
           { title: "Section 3: Abstraction", href: "/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction" },
           { title: "Section 4: Inheritance", href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance" },
+          { title: "Section 5: Polymorphism", href: "/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism" },
         ],
       },
     ],

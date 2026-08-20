@@ -1,0 +1,216 @@
+export const metadata = {
+  title: "Polymorphism — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 5 of LLD From First Principles — polymorphism explained through a trading dashboard's Execute button, with an Order hierarchy and an Account hierarchy in Python and C++, plus overriding vs overloading.",
+  keywords: [
+    "polymorphism",
+    "low level design",
+    "LLD",
+    "method overriding",
+    "method overloading",
+    "virtual dispatch",
+    "object oriented programming",
+    "python classes",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "Polymorphism — ByteWise CS Book",
+    description:
+      "Treat different objects through the same shared interface, and let each one respond in its own correct way.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+## Section 5: Polymorphism
+
+### Start With an Everyday Picture: the "Execute" Button at a Trading Firm
+
+Imagine a trading dashboard with one big **"Execute"** button. When a trader clicks it, the system doesn't ask "wait, is this a Market Order, a Limit Order, or a Stop-Loss Order? Let me run different code depending on which one." It just says: *whatever this order is, call `execute()` on it* — and each order type quietly does its own correct thing.
+
+The dashboard code doesn't need an if/else chain checking the type. It just treats every order **the same way** (as "an Order that can execute itself"), and the right specific behavior happens automatically depending on what it actually is underneath.
+
+That's polymorphism: **treating different objects through the same shared interface, and having each one respond in its own correct way — without the calling code needing to know or check which exact type it's dealing with.**
+
+<Callout type="tip" title="🗣️ Conversational">
+Polymorphism means: "I can call the same method name on different objects, and each one does its own version of the right thing — I don't need to know or care which exact type I'm holding."
+</Callout>
+
+**Technical:** Polymorphism is the ability to treat objects of different classes uniformly through a common interface (a shared base class or interface), where the specific method implementation that actually runs is determined by the object's real (runtime) type, not by the type of the reference/variable used to call it.
+
+### Why This Needs Inheritance/Interfaces First (and Why It's Last in Our Order)
+
+This is why we did Encapsulation → Abstraction → Inheritance → Polymorphism in that order: polymorphism is **impossible without a shared contract already existing**. You can't say "treat these different objects the same way" unless they already share something — a common base class or interface — that guarantees they all understand the same method call. That shared contract is exactly what [Inheritance](/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance) and Type 2 [Abstraction](/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction) (interfaces) gave us in the last two sections.
+
+### Why Bother — What Breaks Without It?
+
+Without polymorphism, code that processes orders would look like this:
+
+```python
+def process_order(order):
+    if isinstance(order, MarketOrder):
+        order.execute_market()
+    elif isinstance(order, LimitOrder):
+        order.execute_limit()
+    elif isinstance(order, StopLossOrder):
+        order.execute_stoploss()
+    # ... and this keeps growing forever
+```
+
+**The problem:** every time you add a new order type (say, `TrailingStopOrder`), you must go back and **edit this if/else chain** — which is exactly the "reopening old, tested code" problem from Section 0. This function will never be "done"; it grows forever and risks breaking every time you touch it.
+
+**With polymorphism:**
+```python
+def process_order(order):
+    order.execute()   # done. Works for EVERY order type, forever.
+```
+
+<Callout type="tip" title="🔗 Ties Back to Section 0">
+This function **never needs to change again**, no matter how many new order types you add later. That's Open/Closed in its purest form — new order types are added by writing new classes, and this function is never touched.
+</Callout>
+
+### The Code — Seeing Polymorphism in Action
+
+**Python:**
+```python
+class Order:
+    def __init__(self, ticker, quantity):
+        self.ticker = ticker
+        self.quantity = quantity
+
+    def validate(self):
+        if self.quantity <= 0:
+            raise ValueError("Quantity must be positive")
+
+    def execute(self):
+        print("Generic order executed")
+
+
+class MarketOrder(Order):
+    def execute(self):
+        self.validate()
+        print(f"Market order executed for {self.quantity} shares of {self.ticker}")
+
+
+class LimitOrder(Order):
+    def __init__(self, ticker, quantity, limit_price):
+        super().__init__(ticker, quantity)
+        self.limit_price = limit_price
+
+    def execute(self):
+        self.validate()
+        print(f"Limit order executed for {self.quantity} shares of {self.ticker} at {self.limit_price}")
+
+
+class StopLossOrder(Order):
+    def __init__(self, ticker, quantity, stop_price):
+        super().__init__(ticker, quantity)
+        self.stop_price = stop_price
+
+    def execute(self):
+        self.validate()
+        print(f"Stop-loss order executed for {self.quantity} shares of {self.ticker} at {self.stop_price}")
+
+
+# THIS is polymorphism:
+orders = [
+    MarketOrder("AAPL", 10),
+    LimitOrder("TSLA", 5, 250.0),
+    StopLossOrder("GOOG", 8, 140.0),
+]
+
+for order in orders:
+    order.execute()   # same line of code — three completely different behaviors happen
+```
+
+**Output:**
+```
+Market order executed for 10 shares of AAPL
+Limit order executed for 5 shares of TSLA at 250.0
+Stop-loss order executed for 8 shares of GOOG at 140.0
+```
+
+<Callout type="info" title="🗣️ What Just Happened">
+The `for` loop has **no idea** what specific type each `order` is. It just calls `.execute()` and trusts that whatever object it's holding knows how to handle that call correctly. Three different classes, one uniform line of code.
+</Callout>
+
+**C++:**
+```cpp
+#include <vector>
+#include <memory>
+
+std::vector<std::unique_ptr<Order>> orders;
+orders.push_back(std::make_unique<MarketOrder>("AAPL", 10));
+orders.push_back(std::make_unique<LimitOrder>("TSLA", 5, 250.0));
+orders.push_back(std::make_unique<StopLossOrder>("GOOG", 8, 140.0));
+
+for (auto& order : orders) {
+    order->execute();   // same call, three different real behaviors
+}
+```
+
+<Callout type="tip" title="🗣️ Why C++ Needs std::unique_ptr Here (a Genuinely New Idea, Worth Pausing On)">
+In C++, if you just wrote `std::vector<Order> orders;`, you'd hit something called **object slicing** — each `MarketOrder`/`LimitOrder` would get "cut down" to fit into a plain `Order`-sized box, losing everything that made it special. To store different *actual* subclasses in one collection and keep their real identity, C++ requires you to store **pointers** to them (`unique_ptr<Order>` is a modern, safe pointer) rather than the objects directly. Python doesn't have this problem — variables in Python are always references under the hood, so this issue simply doesn't come up.
+</Callout>
+
+### Second Example — Bank Account Example
+
+**Python:**
+```python
+class Account:
+    def __init__(self, balance=0):
+        self._balance = balance
+
+    def apply_monthly_fee(self):
+        print("No fee for generic account")
+
+
+class SavingsAccount(Account):
+    def apply_monthly_fee(self):
+        print("No fee — savings accounts are fee-free")
+
+
+class CurrentAccount(Account):
+    def apply_monthly_fee(self):
+        self._balance -= 10
+        print(f"$10 fee applied. New balance: {self._balance}")
+
+
+accounts = [SavingsAccount(1000), CurrentAccount(1000)]
+for acc in accounts:
+    acc.apply_monthly_fee()   # each account type handles its own fee logic
+```
+
+### Two Things People Confuse With "True" Polymorphism (Worth Naming Precisely)
+
+**Technical — Method Overriding (what we just did) vs. Method Overloading (a different, unrelated idea despite the similar name):**
+- **Overriding** (this section): a subclass provides its own version of a method the parent already declared — resolved at **runtime**, based on the object's real type. This is what "polymorphism" means in the LLD/OOP sense.
+- **Overloading**: defining multiple methods with the *same name* but *different parameters* in the *same* class (e.g., `execute()` and `execute(urgent=True)`). This is resolved at **compile time**, not runtime, and doesn't require inheritance at all.
+
+<Callout type="tip" title="🗣️ Conversational">
+Overriding is "different classes, same method name, different behavior chosen automatically based on what the object really is." Overloading is "same class, same method name, but different input shapes — you're really just picking which version to call based on what you pass in." They sound similar because of the word "different," but they solve completely different problems. In LLD interviews, when people say "polymorphism," they almost always mean **overriding** — the interview problems in your PDF (Chess, Parking Lot, Payment Gateway) all lean on this kind.
+</Callout>
+
+**Line-by-line syntax differences:**
+
+| What | Python | C++ | Why different |
+|---|---|---|---|
+| Enabling polymorphism at all | Automatic — Python always resolves methods at runtime by default | Requires the `virtual` keyword on the base class method | In C++, if you forget `virtual` on `execute()` in `Order`, calling `execute()` through an `Order*` pointer will **always** run `Order`'s version, even if the object is really a `MarketOrder` — silently wrong behavior. Python has no such trap; it always checks the real object type. |
+| Storing mixed subclass objects in one collection | `orders = [MarketOrder(...), LimitOrder(...)]` — just works | Needs pointers: `std::vector<std::unique_ptr<Order>>` | C++ needs pointers to avoid "object slicing" (cutting subclass objects down to base-class size). Python references don't have this problem. |
+| Calling the polymorphic method | `order.execute()` | `order->execute()` (via pointer) | Same underlying mechanism (a "virtual dispatch table" behind the scenes) — different call syntax because C++ is going through a pointer. |
+
+<Callout type="info" title="This Completes the Four Pillars of OOP">
+Encapsulation → Abstraction → Inheritance → Polymorphism. Everything from here (SOLID, then design patterns) is built directly on top of these four ideas — every pattern is really just a clever combination of them applied to a specific recurring problem.
+</Callout>
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+In your own words — what's the difference between overriding and overloading, and why did the `process_order` if/else chain violate Open/Closed?
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance", title: "Section 4: Inheritance" }}
+  next={null}
+/>
