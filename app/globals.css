@@ -65,6 +65,13 @@ body {
 .prose a:hover { color: #2563eb; }
 .prose hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
 
+/* Part 2 — Design Patterns (LLD): serif headings (Times New Roman-style) */
+.prose .lld-serif h1,
+.prose .lld-serif h2,
+.prose .lld-serif h3 {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+}
+
 /* Callout boxes */
 .callout-info    { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
 .callout-tip     { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
