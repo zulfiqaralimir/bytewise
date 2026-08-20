@@ -44,6 +44,24 @@ Abstraction means designing a class so that it exposes a simple, clear way to *u
 
 **Technical:** Abstraction is the process of exposing only the essential features and behavior of an object through a well-defined interface, while hiding the implementation details of how that behavior is actually carried out.
 
+### The Two Forms of Abstraction
+
+**Technical:** Abstraction has two distinct mechanisms in practice, both serving the same goal (hide complexity, expose only what's needed), but operating at different levels:
+
+1. **Abstraction within a class** — hiding *how* a method does its work, while exposing a simple method signature to call it.
+2. **Abstraction across classes** — defining a *contract* (interface / abstract class) that says "any class of this kind must provide these behaviors," without saying how each one does it.
+
+<Callout type="tip" title="🗣️ Conversational">
+Think of it as two different questions:
+
+- **Type 1 asks:** "How do I hide the messy *inside* of one method, so the person calling it doesn't need to know the details?" That's what `calculate_profit()` does below — the caller doesn't see the brokerage fee formula.
+- **Type 2 asks:** "How do I make sure *different* classes all promise to support the same basic actions, even though each does it differently?" That's what `Order` / `execute()` does below — a `MarketOrder` and a `LimitOrder` both promise "I can execute myself," but *how* they execute is completely different.
+</Callout>
+
+**The car analogy actually maps to Type 2 more precisely than the opening let on:** every car — manual, automatic, electric — has the same interface (key/button, pedal, wheel), even though what happens under the hood is completely different between a gas engine and an electric motor. That's the interface/contract idea. Type 1 (hiding one method's internals) is more like: you don't need to know *how* the accelerator pedal translates your foot pressure into fuel injection timing — that's just one hidden mechanism inside one control.
+
+**Why both count as "Abstraction" and not two separate pillars:** both are answering the same underlying question — *"what does the outside world need to know, versus what can I hide from them?"* Type 1 hides it inside one class's method. Type 2 hides it behind a shared contract that many classes fulfill differently. Same principle, applied at two different scopes.
+
 ### How This Is Different From Encapsulation (People Mix These Up Constantly)
 
 This trips almost everyone up at first, so let's be precise:
@@ -55,6 +73,8 @@ This trips almost everyone up at first, so let's be precise:
 Encapsulation is the *lock on the door*. Abstraction is *deciding what's on the other side of the door that people even need to know about*. You can have a method be "public" (not encapsulated away) but still be an abstraction — because the person calling it doesn't see or care *how* it's implemented, only *what* it does.
 </Callout>
 
+This is also why the two get confused in practice: Type 1 abstraction (hiding a method's internal logic) often sits right next to encapsulation (hiding a field's data) in the same class — same class, same method, easy to blur together. They're still not the same thing: encapsulation is specifically about *data protection*, abstraction is about *hiding complexity/detail* — of which a hidden data field is just one example.
+
 ### Why Bother — What Breaks Without It?
 
 Imagine your `withdraw()` method from [Section 2](/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation) didn't just check "amount > balance" — imagine it also had to: check with three different banking partner APIs, apply currency conversion, calculate interest accrued since midnight, log the transaction to five systems, and update a fraud-detection score.
@@ -65,7 +85,7 @@ If none of that were hidden — if the *caller* of `withdraw()` had to know and 
 Abstraction says: the caller just calls `withdraw(amount)`. Everything else is Account's problem, not theirs.
 </Callout>
 
-### Now, the Code
+### Type 1 — Abstraction Within a Class
 
 Let's make the Stock example do something more realistic: calculating whether a trade is profitable — a genuinely complicated calculation the caller shouldn't need to know the internals of.
 
@@ -138,9 +158,9 @@ Stock appleStock("AAPL", 200.0);
 double profit = appleStock.calculateProfit(190.0, 10);   // same simplicity
 ```
 
-### A Second, Sharper Tool for Abstraction: the Interface / Abstract Class
+### Type 2 — Abstraction Across Classes (via Interfaces)
 
-Everything above was abstraction *within* one class. But there's a more powerful form: defining a **contract** that says "any class of this type must provide these behaviors" — without saying *how*. This is what SOLID (🎯 Asked at Microsoft) and later design patterns actually lean on heavily, so it's worth introducing now.
+Everything above was Type 1 — abstraction *within* one class. This is the second form: defining a **contract** that says "any class of this type must provide these behaviors" — without saying *how*. This is what SOLID (🎯 Asked at Microsoft) and later design patterns actually lean on heavily, so it's worth introducing now.
 
 <Callout type="tip" title="🗣️ Conversational">
 Imagine you're designing a Trading System, and you know there will be multiple *kinds* of orders — Market Order, Limit Order, Stop-Loss Order. Instead of writing one giant method with if/else for every order type, you say: *"every order type must know how to execute() itself — I don't care how, just that it can."* That contract is called an interface (or abstract class).
@@ -206,7 +226,7 @@ If tomorrow you need to add `StopLossOrder`, you just create a new class that im
 | Marking a method as fulfilling the contract | No special keyword needed (just define `execute`) | `override` keyword (optional but strongly recommended) | `override` in C++ tells the compiler "I intend to fulfill a parent's virtual method" — if you misspell the method name, the compiler catches it. Python has no such safety net. |
 
 <Callout type="warning" title="🧠 Check Yourself Before Moving On">
-In your own words — what's the difference between Encapsulation and Abstraction? Try explaining it using the car analogy plus one line from the Order/execute() example.
+In your own words — what's the difference between Type 1 and Type 2 abstraction? Then explain how Abstraction differs from Encapsulation, using the car analogy plus one line from the Order/execute() example.
 </Callout>
 
 <ArticleNav
