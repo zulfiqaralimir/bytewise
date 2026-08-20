@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "What Problem Is LLD Even Solving? — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 0 of LLD From First Principles — why unstructured code works today and breaks the moment requirements change, and how the Open/Closed Principle fixes that.",
+  keywords: [
+    "low level design",
+    "LLD",
+    "open closed principle",
+    "software design first principles",
+    "object oriented design",
+  ],
+  openGraph: {
+    title: "What Problem Is LLD Even Solving? — ByteWise CS Book",
+    description:
+      "Why LLD exists: making change cheap, one first principle at a time.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+This chapter builds Low-Level Design up from scratch — not as a list of patterns to memorize, but as a set of first principles that explain *why* those patterns exist in the first place. Each section pairs a precise, technical statement with a plain-English translation, then grounds it in two running examples: a parking lot system and a stock market order system.
+
+## Section 0: What Problem Is LLD Even Solving?
+
+**Technical:** Code written without regard to structure typically has no separation between "things likely to change" and "things that should stay fixed." New requirements then force you to reopen and edit existing, already-tested code — risking breakage of what already worked. Well-designed code follows the **Open/Closed Principle**: a class should be open for extension, but closed for modification — meaning you should be able to add new behavior without editing existing, tested code.
+
+<Callout type="tip" title="🗣️ In Plain English">
+If you don't think about design, your code works fine today. But the moment someone says "also add this," you end up ripping open stuff that already worked — and might break it. The Open/Closed Principle is just a fancy way of saying: "you should be able to add new features by writing new code, not by cutting open old code." Think of it like adding a new room to a house by building an extension — vs. knocking down a load-bearing wall to fit it in. One is safe, the other risks the whole house.
+</Callout>
+
+*(This is one of the 5 SOLID principles — we'll come back to it with its own full section, alongside the other 4, when we reach SOLID later in the course. For now, just hold onto the plain idea above.)*
+
+### Examples
+
+**Parking lot:** Built for "cars only" → now add motorcycles + different EV pricing.
+- Bad design → rewrite half the codebase.
+- Good design → add new classes, leave old ones alone. *(Open/Closed in action.)*
+
+**Stock market:** Order system handles only "Buy/Sell market orders" → now add Limit Orders, Stop-Loss, short-selling.
+- Bad design → `if/else` chains multiplying.
+- Good design → each order type is its own class, added independently. *(Open/Closed again.)*
+
+<Callout type="info" title="First Principle">
+LLD exists to make change cheap. Every concept from here — encapsulation, patterns, SOLID — serves this one goal, and I'll tie things back to it as we go.
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/recursion", title: "Recursion" }}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/1-what-is-a-class-what-is-an-object", title: "Section 1: What Is a Class? What Is an Object?" }}
+/>

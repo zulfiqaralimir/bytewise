@@ -104,13 +104,13 @@ export default function OgImage() {
             marginBottom: 16,
           }}
         >
-          Chapter 1
+          Chapter 1 · Section 1
         </div>
 
         {/* Main title */}
         <div
           style={{
-            fontSize: 68,
+            fontSize: 60,
             fontWeight: 900,
             color: "#f8fafc",
             textAlign: "center",
@@ -119,7 +119,7 @@ export default function OgImage() {
             marginBottom: 24,
           }}
         >
-          LLD From First Principles
+          What Is a Class? What Is an Object?
         </div>
 
         {/* Subtitle */}
@@ -133,7 +133,7 @@ export default function OgImage() {
             letterSpacing: "0.02em",
           }}
         >
-          Open/Closed Principle · Change Cost · Design Thinking
+          Classes · Objects · Python vs C++
         </div>
 
         {/* Accent divider */}
@@ -159,7 +159,7 @@ export default function OgImage() {
 
         {/* Tags row */}
         <div style={{ display: "flex", gap: 12, marginBottom: 44 }}>
-          {["Low-Level Design", "SOLID", "Extensibility", "Order Systems"].map((tag) => (
+          {["Classes", "Objects", "Python", "C++"].map((tag) => (
             <div
               key={tag}
               style={{

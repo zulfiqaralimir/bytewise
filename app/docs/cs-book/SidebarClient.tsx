@@ -34,7 +34,8 @@ const chapters = [
       {
         chapter: "Chapter 1: LLD From First Principles",
         items: [
-          { title: "LLD From First Principles", href: "/docs/cs-book/part-2-design-patterns/lld-from-first-principles" },
+          { title: "Section 0: What Problem Is LLD Even Solving?", href: "/docs/cs-book/part-2-design-patterns/chapter-1/0-what-problem-does-lld-solve" },
+          { title: "Section 1: What Is a Class? What Is an Object?", href: "/docs/cs-book/part-2-design-patterns/chapter-1/1-what-is-a-class-what-is-an-object" },
         ],
       },
     ],
