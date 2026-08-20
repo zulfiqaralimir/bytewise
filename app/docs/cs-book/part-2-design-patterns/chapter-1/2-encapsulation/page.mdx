@@ -1,0 +1,134 @@
+export const metadata = {
+  title: "Encapsulation — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 2 of LLD From First Principles — encapsulation explained through an ATM analogy, with a Python and C++ Account class that enforces its own withdrawal rules.",
+  keywords: [
+    "encapsulation",
+    "low level design",
+    "LLD",
+    "private fields",
+    "object oriented programming",
+    "python classes",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "Encapsulation — ByteWise CS Book",
+    description:
+      "An object keeps its own data to itself — the only way in is through its own methods.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+## Section 2: Encapsulation
+
+### Start With an Everyday Picture: the ATM
+
+Think about withdrawing cash from an ATM. You put in your card, type your PIN, enter an amount, press "withdraw." The machine checks: *do you have enough money? Is the amount valid?* Then it gives you cash — or refuses.
+
+Notice what you **can't** do: you can't crack open the ATM and directly rewrite the number that says how much money is in your account. That number is off-limits to you. The *only* way to change it is through the ATM's controlled process — the withdraw button, which checks the rules before touching your balance.
+
+That's the entire idea behind encapsulation. Nothing more.
+
+### Turning the Analogy Into the Definition
+
+<Callout type="tip" title="🗣️ Conversational">
+Encapsulation means an object keeps its own data to itself, and the only way to change that data is by going through the object's own methods — never by reaching in and editing the data directly. The methods act like the ATM's buttons: they check the rules before anything changes.
+</Callout>
+
+**Technical:** Encapsulation is the bundling of an object's data (fields) together with the methods that operate on that data, combined with restricting direct external access to that data — so all interaction happens through a controlled interface (methods), not by reading or writing fields directly.
+
+Same idea, said twice. The ATM *is* the object. Your balance *is* the private field. The withdraw button *is* the method that controls access to it.
+
+### Why Bother — What Breaks Without It?
+
+Imagine the ATM had no buttons, no screen, no rules — it just let anyone open a panel and type in any number for their balance.
+
+- Someone types in $1,000,000 for themselves. No check stops them.
+- Someone types in -$500 for someone else. No check stops that either.
+
+The bank would need to hope every single piece of code that ever touches "balance" remembers to check "is this amount valid?" — every time, everywhere. Miss it once, anywhere in the system, and the rule is broken.
+
+<Callout type="info" title="🔗 Ties Back to Section 0">
+With encapsulation, the rule lives in exactly one place — inside the withdraw method. Every attempt to change the balance is forced through that one checkpoint. If the rule ever changes (say, "no overdrafts above $50 buffer"), you update it in that one method — done. That's what makes future changes cheap, tying back to Section 0's whole point.
+</Callout>
+
+### Now, the Code — One Line at a Time
+
+**Step 1 — give the object its own private data (the ATM's internal balance number):**
+
+```python
+class Account:
+    def __init__(self, balance=0):
+        self.__balance = balance
+```
+
+This says: *every Account object gets its own number called balance, and the double-underscore marks it as "don't touch this from outside."*
+
+**Step 2 — add the controlled "withdraw button":**
+
+```python
+class Account:
+    def __init__(self, balance=0):
+        self.__balance = balance
+
+    def withdraw(self, amount):
+        if amount > self.__balance:
+            raise ValueError("Insufficient funds")
+        self.__balance -= amount
+```
+
+This is the withdraw button. Before it lets `self.__balance` change, it checks the rule — same as the ATM checking your balance before dispensing cash.
+
+**Step 3 — a way to just check your balance without changing it (the ATM's screen showing your balance):**
+
+```python
+    def get_balance(self):
+        return self.__balance
+```
+
+This just *shows* you the number — it doesn't let you change it. Like the ATM's "check balance" screen.
+
+**Putting it together, and testing it:**
+
+```python
+a1 = Account(1000)
+a1.withdraw(1500)   # ValueError: Insufficient funds — the rule caught it
+```
+
+The rule fired. Not because we remembered to check it somewhere — but because there's only *one* door in, and that door always checks.
+
+### Same Idea, in C++ (Compiler-Enforced Instead of Convention-Based)
+
+```cpp
+class Account {
+private:
+    double balance;   // truly locked — code outside this class cannot touch it, period
+
+public:
+    Account(double b = 0) : balance(b) {}
+
+    void withdraw(double amount) {
+        if (amount > balance) {
+            throw std::invalid_argument("Insufficient funds");
+        }
+        balance -= amount;
+    }
+
+    double getBalance() const {
+        return balance;
+    }
+};
+```
+
+<Callout type="tip" title="🗣️ The One Real Difference Between the Two Languages">
+In Python, `self.__balance` is like a door with a "please don't enter" sign — technically you *could* still barge in if you really tried (`a1._Account__balance = -500` actually works, ugly as it is). In C++, `private:` is a locked door with no handle on the outside — the compiler physically refuses to let outside code touch it. Same *idea*, different *strictness*.
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/1-what-is-a-class-what-is-an-object", title: "Section 1: What Is a Class? What Is an Object?" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/binary-search", title: "Binary Search" }}
+/>
