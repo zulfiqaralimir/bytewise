@@ -37,6 +37,7 @@ const chapters = [
           { title: "Section 0: What Problem Is LLD Even Solving?", href: "/docs/cs-book/part-2-design-patterns/chapter-1/0-what-problem-does-lld-solve" },
           { title: "Section 1: What Is a Class? What Is an Object?", href: "/docs/cs-book/part-2-design-patterns/chapter-1/1-what-is-a-class-what-is-an-object" },
           { title: "Section 2: Encapsulation", href: "/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation" },
+          { title: "Section 3: Abstraction", href: "/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction" },
         ],
       },
     ],

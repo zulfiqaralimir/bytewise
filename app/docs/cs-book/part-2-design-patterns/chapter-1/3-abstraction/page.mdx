@@ -1,0 +1,215 @@
+export const metadata = {
+  title: "Abstraction — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 3 of LLD From First Principles — abstraction explained through a driving-a-car analogy, with a Stock class, an Order interface, and a Python vs C++ comparison.",
+  keywords: [
+    "abstraction",
+    "low level design",
+    "LLD",
+    "interfaces",
+    "abstract classes",
+    "object oriented programming",
+    "python classes",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "Abstraction — ByteWise CS Book",
+    description:
+      "Show only what's necessary to use something, and hide the complicated machinery behind it.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+## Section 3: Abstraction
+
+### Start With an Everyday Picture: Driving a Car
+
+When you drive a car, you turn the key (or push a button), press the accelerator, turn the steering wheel. That's it — that's everything you need to know to drive.
+
+You have **no idea** how the engine actually combusts fuel, how the transmission shifts gears, how the power steering pump works. And you don't need to. The car **hides** all of that complexity behind a simple set of controls: key, pedal, wheel.
+
+If you had to understand the entire engine to drive to the grocery store, nobody would ever drive.
+
+That's abstraction: **showing only what's necessary to use something, and hiding the complicated machinery behind it.**
+
+### Turning the Analogy Into the Definition
+
+<Callout type="tip" title="🗣️ Conversational">
+Abstraction means designing a class so that it exposes a simple, clear way to *use* it — while hiding all the messy internal detail of *how* it actually works. The user of your class shouldn't need to know or care what's happening inside, only what they can *do* with it.
+</Callout>
+
+**Technical:** Abstraction is the process of exposing only the essential features and behavior of an object through a well-defined interface, while hiding the implementation details of how that behavior is actually carried out.
+
+### How This Is Different From Encapsulation (People Mix These Up Constantly)
+
+This trips almost everyone up at first, so let's be precise:
+
+- **Encapsulation** is about *protecting data* — stopping outside code from directly touching a field, forcing it through a method.
+- **Abstraction** is about *hiding complexity* — deciding what a method's user needs to see (its name, what it takes in, what it gives back) versus what they don't need to see (the actual logic inside).
+
+<Callout type="info" title="🗣️ Conversational Tie-Together">
+Encapsulation is the *lock on the door*. Abstraction is *deciding what's on the other side of the door that people even need to know about*. You can have a method be "public" (not encapsulated away) but still be an abstraction — because the person calling it doesn't see or care *how* it's implemented, only *what* it does.
+</Callout>
+
+### Why Bother — What Breaks Without It?
+
+Imagine your `withdraw()` method from [Section 2](/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation) didn't just check "amount > balance" — imagine it also had to: check with three different banking partner APIs, apply currency conversion, calculate interest accrued since midnight, log the transaction to five systems, and update a fraud-detection score.
+
+If none of that were hidden — if the *caller* of `withdraw()` had to know and orchestrate all five of those steps themselves every time they wanted to take money out — every single place in your code that withdraws money would need to duplicate all that logic. One bug in currency conversion, and you're now fixing it in fifty different places.
+
+<Callout type="tip" title="🔗 Ties Back to Section 0">
+Abstraction says: the caller just calls `withdraw(amount)`. Everything else is Account's problem, not theirs.
+</Callout>
+
+### Now, the Code
+
+Let's make the Stock example do something more realistic: calculating whether a trade is profitable — a genuinely complicated calculation the caller shouldn't need to know the internals of.
+
+**Python:**
+```python
+class Stock:
+    def __init__(self, ticker, price):
+        self.ticker = ticker
+        self.__price = price
+
+    def update_price(self, new_price):
+        if new_price <= 0:
+            raise ValueError("Price can't be zero or negative")
+        self.__price = new_price
+
+    def get_price(self):
+        return self.__price
+
+    def calculate_profit(self, buy_price, quantity):
+        # complicated internals hidden from the caller:
+        # - brokerage fee
+        # - tax on capital gains
+        # - currency conversion if foreign stock
+        brokerage_fee = self.__price * quantity * 0.001
+        gross_profit = (self.__price - buy_price) * quantity
+        net_profit = gross_profit - brokerage_fee
+        return net_profit
+```
+
+**Using it — this is the whole point of abstraction:**
+```python
+apple_stock = Stock("AAPL", 200.0)
+profit = apple_stock.calculate_profit(buy_price=190.0, quantity=10)
+print(profit)   # caller has NO idea brokerage fees were even calculated
+```
+
+The caller just says "tell me my profit" — one line. They never see the brokerage fee formula, and if tomorrow the fee structure changes, or you add tax calculation, **you change it in one place, and every caller automatically benefits without changing their code at all.**
+
+**C++:**
+```cpp
+class Stock {
+private:
+    std::string ticker;
+    double price;
+
+public:
+    Stock(std::string t, double p) : ticker(t), price(p) {}
+
+    void updatePrice(double newPrice) {
+        if (newPrice <= 0) {
+            throw std::invalid_argument("Price can't be zero or negative");
+        }
+        price = newPrice;
+    }
+
+    double getPrice() const {
+        return price;
+    }
+
+    double calculateProfit(double buyPrice, int quantity) const {
+        double brokerageFee = price * quantity * 0.001;
+        double grossProfit = (price - buyPrice) * quantity;
+        return grossProfit - brokerageFee;
+    }
+};
+```
+
+```cpp
+Stock appleStock("AAPL", 200.0);
+double profit = appleStock.calculateProfit(190.0, 10);   // same simplicity
+```
+
+### A Second, Sharper Tool for Abstraction: the Interface / Abstract Class
+
+Everything above was abstraction *within* one class. But there's a more powerful form: defining a **contract** that says "any class of this type must provide these behaviors" — without saying *how*. This is what SOLID (🎯 Asked at Microsoft) and later design patterns actually lean on heavily, so it's worth introducing now.
+
+<Callout type="tip" title="🗣️ Conversational">
+Imagine you're designing a Trading System, and you know there will be multiple *kinds* of orders — Market Order, Limit Order, Stop-Loss Order. Instead of writing one giant method with if/else for every order type, you say: *"every order type must know how to execute() itself — I don't care how, just that it can."* That contract is called an interface (or abstract class).
+</Callout>
+
+**Python (using `ABC` — Abstract Base Class):**
+```python
+from abc import ABC, abstractmethod
+
+class Order(ABC):
+    @abstractmethod
+    def execute(self):
+        pass   # no implementation here — just the contract
+
+class MarketOrder(Order):
+    def execute(self):
+        print("Executing market order at current price")
+
+class LimitOrder(Order):
+    def __init__(self, limit_price):
+        self.limit_price = limit_price
+
+    def execute(self):
+        print(f"Executing limit order at {self.limit_price}")
+```
+
+**C++ (using a pure virtual function):**
+```cpp
+class Order {
+public:
+    virtual void execute() = 0;   // "= 0" means pure virtual — no implementation, it's a contract
+    virtual ~Order() {}
+};
+
+class MarketOrder : public Order {
+public:
+    void execute() override {
+        std::cout << "Executing market order at current price" << std::endl;
+    }
+};
+
+class LimitOrder : public Order {
+private:
+    double limitPrice;
+public:
+    LimitOrder(double lp) : limitPrice(lp) {}
+    void execute() override {
+        std::cout << "Executing limit order at " << limitPrice << std::endl;
+    }
+};
+```
+
+<Callout type="info" title="🗣️ Why This Matters for Change-Cheapness (Section 0 Again)">
+If tomorrow you need to add `StopLossOrder`, you just create a new class that implements `execute()`. You never touch `MarketOrder` or `LimitOrder`. This is Abstraction directly enabling that Open/Closed idea from Section 0 — new behavior via new code, not edited code.
+</Callout>
+
+**Line-by-line syntax differences (new items only):**
+
+| What | Python | C++ | Why different |
+|---|---|---|---|
+| Declaring "this must be implemented, no default" | `@abstractmethod` decorator + inherits from `ABC` | `virtual void execute() = 0;` — the `= 0` marks it "pure virtual" | Python needs the `abc` module bolted on since it's not a native language feature. C++ has this built directly into the language via `virtual` and `= 0`. |
+| A class implementing the contract | `class MarketOrder(Order):` | `class MarketOrder : public Order {` | Both express "MarketOrder IS-A Order" — syntax differs but the relationship (inheritance, which we'll cover fully next) is the same idea. |
+| Marking a method as fulfilling the contract | No special keyword needed (just define `execute`) | `override` keyword (optional but strongly recommended) | `override` in C++ tells the compiler "I intend to fulfill a parent's virtual method" — if you misspell the method name, the compiler catches it. Python has no such safety net. |
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+In your own words — what's the difference between Encapsulation and Abstraction? Try explaining it using the car analogy plus one line from the Order/execute() example.
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation", title: "Section 2: Encapsulation" }}
+  next={null}
+/>
