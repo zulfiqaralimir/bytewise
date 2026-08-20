@@ -30,7 +30,14 @@ const chapters = [
   },
   {
     part: "Part 2 — Design Patterns (LLD)",
-    items: [],
+    chapters: [
+      {
+        chapter: "Chapter 1: LLD From First Principles",
+        items: [
+          { title: "Section 0: What Problem Is LLD Even Solving?", href: "/docs/cs-book/part-2-design-patterns/lld-from-first-principles" },
+        ],
+      },
+    ],
   },
   {
     part: "Part 3 — Algorithms",

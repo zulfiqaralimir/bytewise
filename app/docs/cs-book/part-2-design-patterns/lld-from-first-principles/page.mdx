@@ -1,0 +1,50 @@
+export const metadata = {
+  title: "LLD From First Principles — ByteWise CS Book",
+  description:
+    "What Low-Level Design is actually solving, from first principles — why unstructured code works today and breaks the moment requirements change.",
+  keywords: [
+    "low level design",
+    "LLD",
+    "design patterns",
+    "open closed principle",
+    "software design first principles",
+    "object oriented design",
+  ],
+  openGraph: {
+    title: "LLD From First Principles — ByteWise CS Book",
+    description:
+      "Why LLD exists: making change cheap, one first principle at a time.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+This chapter builds Low-Level Design up from scratch — not as a list of patterns to memorize, but as a set of first principles that explain *why* those patterns exist in the first place. Each section pairs a precise, technical statement with a plain-English translation, then grounds it in two running examples: a parking lot system and a stock market order system.
+
+## Section 0: What Problem Is LLD Even Solving?
+
+**Technical:** Code that satisfies today's requirements without regard to structure tends to violate the Open/Closed Principle implicitly — it's closed to extension, so new requirements force modification of existing, tested code, increasing regression risk.
+
+<Callout type="tip" title="🗣️ In Plain English">
+Basically — if you don't think about design, your code works fine today. But the moment someone says "hey, also add this," you end up ripping open stuff that already worked, and now you might break it. Good design = you can bolt new stuff on without touching the old stuff.
+</Callout>
+
+**Parking lot example:** Built for "cars only" → now add motorcycles + different EV pricing.
+- Bad design → rewrite half the codebase.
+- Good design → add new classes, leave old ones alone.
+
+**Stock market example:** Order system handles only "Buy/Sell market orders" → now add Limit Orders, Stop-Loss, short-selling.
+- Bad design → `if/else` chains multiplying everywhere.
+- Good design → each order type is its own class, added independently.
+
+<Callout type="info" title="First Principle #1">
+LLD exists to make change cheap.
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/recursion", title: "Recursion" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/binary-search", title: "Binary Search" }}
+/>
