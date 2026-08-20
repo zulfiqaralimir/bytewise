@@ -229,6 +229,63 @@ If tomorrow you need to add `StopLossOrder`, you just create a new class that im
 In your own words — what's the difference between Type 1 and Type 2 abstraction? Then explain how Abstraction differs from Encapsulation, using the car analogy plus one line from the Order/execute() example.
 </Callout>
 
+---
+
+## Note: The Two Forms of Abstraction — Clarified
+
+**Technical:** Abstraction has two distinct mechanisms, both serving the same goal (hide complexity, expose only what's needed), but at different levels:
+
+1. **Abstraction within a class (Type 1)** — hiding *how* a method does its work, exposing only a simple method signature.
+2. **Abstraction across classes (Type 2)** — defining a *contract* (interface / abstract class) that says "any class of this kind must provide these behaviors," without saying how each one does it.
+
+<Callout type="tip" title="🗣️ Conversational">
+- **Type 1 asks:** "How do I hide the messy *inside* of one method, so the caller doesn't need to know the details?"
+- **Type 2 asks:** "How do I make sure *different* classes all promise to support the same basic actions, even though each does it differently?"
+</Callout>
+
+### Type 1 — How Does the Computer "Know" This Is Abstraction?
+
+**It doesn't.** There's no keyword, no compiler check, no symbol for Type 1. Nothing stops you from writing the internal logic directly in the caller's code instead of inside a method — it would run identically. Type 1 abstraction is purely a **discipline the programmer follows**, not a language feature.
+
+If you want to hide a formula or calculation from the outside world, you put that logic inside a function/method, and only the **result** is returned. The formula and intermediate steps stay hidden inside the function; the caller only ever sees: inputs in, answer out.
+
+The test: could someone else use the method correctly without ever reading what's inside it? If yes — it's abstracted well.
+
+**Example (Stock — `calculate_profit`):**
+```python
+def calculate_profit(self, buy_price, quantity):
+    brokerage_fee = self.__price * quantity * 0.001
+    gross_profit = (self.__price - buy_price) * quantity
+    return gross_profit - brokerage_fee
+```
+
+```python
+apple_stock = Stock("AAPL", 200.0)
+profit = apple_stock.calculate_profit(buy_price=190.0, quantity=10)
+# caller has NO idea brokerage fees were even calculated
+```
+
+### Why `self.__price` but Not `self.__buy_price`?
+
+This is a separate question from abstraction — it's about **where each piece of data comes from**, which is really Encapsulation showing up inside the method:
+
+- **`self.__price`** — belongs to the `Stock` object itself. It's the object's own private data, set when the object was created and stored permanently inside it. Accessed via `self.` because it lives *inside* the object.
+- **`buy_price`** — not stored in the object at all. It's a value the *caller* hands in just for this one calculation — a **parameter**, not the object's data. It only exists for the duration of this one method call, which is why it has no `self.`.
+
+<Callout type="tip" title="🗣️ Analogy">
+`self.__price` is like the stock's permanent price tag that lives with it. `buy_price` is like a receipt *you* brought with you — it's your information, not the stock's, just shown to the method for this one calculation.
+</Callout>
+
+### Where the Actual Abstraction Is Happening
+
+Not in `self.__price` vs `buy_price` (that's encapsulation) — it's in the fact that the **entire formula is wrapped in a method with a clear name**, so the caller never has to write the formula themselves.
+
+<Callout type="info" title="Rule of Thumb">
+If you want to hide any formula or calculation from the outside, put that logic inside a function's body, and only return the value/answer to the public. The formulas and intermediate calculations remain hidden — the caller only ever interacts with the method's name, inputs, and returned result.
+</Callout>
+
+**Payoff (ties back to why LLD cares about this at all):** if the brokerage fee formula changes tomorrow, you change it in one place (`calculate_profit`), and every caller anywhere in the codebase automatically gets the new, correct behavior — without changing their own code.
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation", title: "Section 2: Encapsulation" }}
   next={null}
