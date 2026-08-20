@@ -34,7 +34,7 @@ const chapters = [
       {
         chapter: "Chapter 1: LLD From First Principles",
         items: [
-          { title: "Section 0: What Problem Is LLD Even Solving?", href: "/docs/cs-book/part-2-design-patterns/lld-from-first-principles" },
+          { title: "LLD From First Principles", href: "/docs/cs-book/part-2-design-patterns/lld-from-first-principles" },
         ],
       },
     ],

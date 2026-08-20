@@ -48,6 +48,70 @@ If you don't think about design, your code works fine today. But the moment some
 LLD exists to make change cheap. Every concept from here — encapsulation, patterns, SOLID — serves this one goal, and I'll tie things back to it as we go.
 </Callout>
 
+## Section 1: What Is a Class? What Is an Object?
+
+**Technical:** A class is a blueprint — it declares the structure (fields/attributes) and behavior (methods) that any object built from it will have, but it doesn't exist as a real, usable entity in memory on its own. An object is a concrete instance created from that blueprint, allocated its own memory at runtime, holding its own independent copy of the instance's data.
+
+<Callout type="tip" title="🗣️ In Plain English">
+A class is just a *plan* for a thing — it's not real yet, it's just the idea of what the thing should look like. An object is what you get when you actually *build* one from that plan. "Account" the class is just the concept of what an account looks like — no real money, no real owner. `a1 = Account()` is an actual account that now exists, with its own balance, completely separate from any other account you make.
+</Callout>
+
+### Example 1 — Bank Account
+
+**Python:**
+```python
+class Account:
+    pass
+
+a1 = Account()   # object 1 — a real, independent account
+a2 = Account()   # object 2 — a separate account, unrelated to a1
+```
+
+**C++:**
+```cpp
+class Account {
+};
+
+Account a1;   // object 1
+Account a2;   // object 2
+```
+
+### Example 2 — Stock (Trading System)
+
+**Python:**
+```python
+class Stock:
+    pass
+
+apple_stock = Stock()    # represents AAPL
+tesla_stock = Stock()    # represents TSLA — a totally separate object
+```
+
+**C++:**
+```cpp
+class Stock {
+};
+
+Stock appleStock;
+Stock teslaStock;
+```
+
+<Callout type="tip" title="🗣️ Tying It Together">
+Right now `Account` and `Stock` look identical — both are just empty boxes, because we haven't put anything inside yet. That's fine — the point of this section isn't *what's inside* the class, it's just: **one class = one "kind of thing."** Every object made from it shares the same shape, but has its own separate data. If `apple_stock`'s price goes up tomorrow, `tesla_stock` doesn't even notice — they're two independent objects, even though both came from the `Stock` blueprint.
+</Callout>
+
+**Line-by-line syntax differences:**
+
+| What | Python | C++ | Why different |
+|---|---|---|---|
+| Class definition ends | Just stop indenting | `};` — brace **and** semicolon required | C++ is compiled; the semicolon tells the compiler "this statement is complete." Forgetting it is a classic C++ beginner mistake — Python has no such requirement. |
+| Creating an object | `Stock()` — parentheses "call" the class like a function | `Stock appleStock;` — no parentheses needed for a default object | C++ has several ways to construct objects (default, with arguments, on the heap via `new`) — we'll run into this distinction again soon, once we cover constructors properly. |
+| Naming convention | `apple_stock` (snake_case) | `appleStock` (camelCase) | Not a language rule — just the convention each language's community follows, so your code "reads" naturally to others in that language. |
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+In your own words — what's the difference between a class and an object? Use either the Account or Stock example.
+</Callout>
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-1-foundations/recursion", title: "Recursion" }}
   next={{ href: "/docs/cs-book/part-2-algorithms/binary-search", title: "Binary Search" }}
