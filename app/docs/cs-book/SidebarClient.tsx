@@ -40,6 +40,7 @@ const chapters = [
           { title: "Section 3: Abstraction", href: "/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction" },
           { title: "Section 4: Inheritance", href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance" },
           { title: "Section 5: Polymorphism", href: "/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism" },
+          { title: "Section 6: Keypoints of C++", href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp" },
         ],
       },
     ],

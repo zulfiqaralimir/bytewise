@@ -1,0 +1,165 @@
+export const metadata = {
+  title: "Keypoints of C++ — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 6 of LLD From First Principles — a consolidated C++ quick-reference pulling together every C++-specific keyword and syntax rule introduced across the four pillars: access specifiers, constructors, const-correctness, virtual/override, pure virtual functions, virtual destructors, and object slicing.",
+  keywords: [
+    "cpp keypoints",
+    "C++ cheat sheet",
+    "low level design",
+    "LLD",
+    "virtual keyword",
+    "override keyword",
+    "pure virtual function",
+    "virtual destructor",
+    "object slicing",
+    "const correctness",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "Keypoints of C++ — ByteWise CS Book",
+    description:
+      "Every C++-specific keyword and syntax rule from the four pillars, pulled together into one reference page.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+## Section 6: Keypoints of C++
+
+### Why This Section Exists
+
+Every section so far paired Python code with C++ code, and every C++ block quietly introduced a piece of syntax that Python simply doesn't have — a semicolon rule, an access specifier, a `virtual` keyword. None of those were wrong to skim past in the moment, since the *concept* (encapsulation, abstraction, inheritance, polymorphism) was always the point, not the syntax.
+
+But before moving on to SOLID and design patterns, it's worth stopping and collecting every one of those C++-specific pieces in one place — a single page to come back to whenever a C++ line looks unfamiliar.
+
+<Callout type="tip" title="🗣️ Conversational">
+Think of this section as the "glossary of C++ keywords" for everything you've already learned. Nothing new conceptually happens here — it's just gathering the syntax you've already seen, scattered across five sections, into one page.
+</Callout>
+
+### The Full Quick-Reference Table
+
+| C++ Feature | Syntax | First Seen In |
+|---|---|---|
+| Class body must end with a semicolon | `};` | [Section 1](/docs/cs-book/part-2-design-patterns/chapter-1/1-what-is-a-class-what-is-an-object) |
+| Access specifiers (compiler-enforced) | `private:` / `protected:` / `public:` | [Section 2](/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation), [Section 4](/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance) |
+| Constructor with an initializer list | `Account(double b = 0) : balance(b) {}` | [Section 2](/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation) |
+| const-correctness on methods | `double getBalance() const` | [Section 3](/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction) |
+| Pure virtual function (interface contract) | `virtual void execute() = 0;` | [Section 3](/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction) |
+| `override` keyword | `void execute() override` | [Section 3](/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction), [Section 4](/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance) |
+| Declaring inheritance | `class MarketOrder : public Order` | [Section 4](/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance) |
+| Calling the parent's constructor | `Order(t, q)` inside the child's initializer list | [Section 4](/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance) |
+| `virtual` keyword (enables runtime dispatch) | `virtual void execute()` | [Section 5](/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism) |
+| Virtual destructor | `virtual ~Order() {}` | [Section 3](/docs/cs-book/part-2-design-patterns/chapter-1/3-abstraction) (used, not yet explained) |
+| Storing mixed subclasses safely | `std::vector<std::unique_ptr<Order>>` | [Section 5](/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism) |
+
+The rest of this page walks through the entries that deserve more than one table row.
+
+### 1. Access Specifiers — Compiler-Enforced, Not Just a Convention
+
+```cpp
+class Account {
+private:
+    double balance;   // only Account's own methods can touch this
+
+protected:
+    // accessible inside Account AND any class that inherits from it
+
+public:
+    // accessible from anywhere
+};
+```
+
+<Callout type="tip" title="🗣️ Recap">
+Python's `self.__balance` is a "please don't touch" sign — you technically still can. C++'s `private:` is a locked door with no handle on the outside; the compiler physically refuses to compile code that breaks it. `protected:` sits in between: open to the class and its subclasses, closed to everyone else.
+</Callout>
+
+### 2. Constructors and the Initializer List
+
+```cpp
+Account(double b = 0) : balance(b) {}
+//       ^parameter    ^initializer list   ^empty body
+```
+
+- Everything after the `:` and before `{` is the **initializer list** — it sets each field's *starting* value directly, before the constructor's body even runs.
+- `LimitOrder(std::string t, int q, double lp) : Order(t, q), limitPrice(lp) {}` does two things at once: calls the **parent's** constructor (`Order(t, q)`) and initializes its **own** new field (`limitPrice(lp)`).
+- Python has no equivalent syntax — `super().__init__(...)` and `self.x = ...` both happen as plain statements inside `__init__`'s body.
+
+### 3. const-Correctness
+
+```cpp
+double getPrice() const {
+    return price;
+}
+```
+
+**Technical:** the trailing `const` is a promise to the compiler — "calling this method will not modify any field of the object." If the method body tries to assign to `price` (or call any non-`const` method), the compiler rejects it.
+
+<Callout type="tip" title="🗣️ Conversational">
+Think of `const` on a method as a label that says "read-only, guaranteed." Any getter — `getBalance()`, `getPrice()` — should almost always be `const`, because a getter's entire job is to look, not touch. Python has no equivalent; there's no way to mark a Python method as "promises not to mutate `self`."
+</Callout>
+
+### 4. The Big Three Dispatch Keywords: `virtual`, `override`, `= 0`
+
+These three keywords work together but mean three different things — easy to blur, worth separating cleanly:
+
+| Keyword | Goes On | Meaning |
+|---|---|---|
+| `virtual` | The **base class** method | "Subclasses are allowed to override this — resolve the call at runtime based on the object's real type, not the pointer's declared type." |
+| `override` | A **subclass** method | "I intend to override a virtual method from my parent." The compiler checks this claim is true — a typo'd method name fails to compile instead of silently creating a new, unrelated method. |
+| `= 0` | A **base class** method, added after `virtual` | "This method has no implementation at all — every concrete subclass *must* provide one, or that subclass can't be instantiated either." This is what makes a class an interface. |
+
+<Callout type="warning" title="🧠 The Trap `virtual` Prevents">
+If you forget `virtual` on `Order::execute()`, calling `execute()` through an `Order*` pointer will **always** run `Order`'s version — even if the object underneath is really a `MarketOrder`. No error, no warning — just silently wrong behavior. Python never has this trap because it always looks up the real object's type, every time, automatically.
+</Callout>
+
+### 5. Virtual Destructors — Why `virtual ~Order() {}` Was There All Along
+
+You've seen `virtual ~Order() {}` sitting quietly in the base classes since Section 3, without an explanation. Here's the reason it matters:
+
+**The problem it solves:** if you `delete` an object through a *base-class* pointer (e.g., `Order* o = new MarketOrder(...); delete o;`), and the destructor **isn't** `virtual`, C++ only runs `Order`'s destructor — not `MarketOrder`'s. Any cleanup `MarketOrder` needed (releasing memory, closing a file) never happens. That's a real, silent resource leak.
+
+**The fix:** marking the base class destructor `virtual` makes `delete` look up the object's *real* type first — same runtime-dispatch idea as `virtual` on any other method, just applied to destruction.
+
+<Callout type="info" title="Rule of Thumb">
+Any class meant to be used as a base class for polymorphism (i.e., any class with at least one other `virtual` method) should give its destructor `virtual` too — even if the destructor's body is empty. It costs nothing and prevents a subtle, hard-to-spot leak.
+</Callout>
+
+### 6. Object Slicing and Why Section 5 Needed `std::unique_ptr`
+
+Recap from [Section 5](/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism): writing `std::vector<Order> orders;` and pushing `MarketOrder`/`LimitOrder` objects into it **slices** each one down to a plain `Order`-sized box, discarding everything that made it a `MarketOrder`. Polymorphism then silently breaks — every `execute()` call runs `Order`'s generic version.
+
+```cpp
+std::vector<std::unique_ptr<Order>> orders;   // pointers — no slicing, real type preserved
+orders.push_back(std::make_unique<MarketOrder>("AAPL", 10));
+```
+
+<Callout type="tip" title="🗣️ Conversational">
+Python never runs into slicing because Python variables are always references under the hood — there's no equivalent of "copying an object down to a smaller box." C++ requires pointers (`unique_ptr` being the modern, safe choice) specifically to sidestep this.
+</Callout>
+
+### Side-by-Side: Every Keyword, One More Time
+
+| Python Has No Equivalent For... | Because... |
+|---|---|
+| `private:` / `protected:` (compiler-enforced) | Python relies on naming convention (`_x`, `__x`), never true enforcement |
+| `const` on a method | Python has no way to promise a method won't mutate `self` |
+| `virtual` | Python always resolves methods at runtime — there's nothing to opt into |
+| `override` | Python has no compile step to check the claim against |
+| `= 0` (pure virtual) | Python's `@abstractmethod` from the `abc` module does the same job, just as a library feature instead of a language keyword |
+| Virtual destructors / object slicing | Python has no manual `delete`, no value-type copying of objects — references make both non-issues |
+
+<Callout type="info" title="This Wraps Up the C++ Side of the Four Pillars">
+Everything from here — SOLID, then the design patterns themselves — will keep using this same C++ vocabulary: `virtual`, `override`, `private`/`protected`, initializer lists, smart pointers. Nothing new syntactically will show up without being introduced properly, but this page is the one to return to if a line ever looks unfamiliar.
+</Callout>
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+In your own words — what's the difference between `virtual`, `override`, and `= 0`? And why does a base class need a `virtual` destructor if it already has other `virtual` methods?
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism", title: "Section 5: Polymorphism" }}
+  next={null}
+/>
