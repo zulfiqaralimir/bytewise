@@ -72,6 +72,20 @@ body {
   font-family: 'Times New Roman', Times, Georgia, serif;
 }
 
+/* Blog: Eugene Fama & David Booth — serif (Times New Roman) headings, colored by level */
+.prose .fama-booth-serif h1,
+.prose .fama-booth-serif h2,
+.prose .fama-booth-serif h3 {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+}
+.prose .fama-booth-serif h1 {
+  color: #1e3a5f;
+}
+.prose .fama-booth-serif h2,
+.prose .fama-booth-serif h3 {
+  color: #b91c1c;
+}
+
 /* Callout boxes */
 .callout-info    { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
 .callout-tip     { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }

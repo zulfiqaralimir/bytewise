@@ -1,5 +1,14 @@
 export const posts = [
   {
+    slug: "eugene-fama-david-booth",
+    title:
+      "Eugene Fama and David Booth: The Fifty-Year Partnership That Changed How the World Invests",
+    description:
+      "Why beating the market is a losing game — the Efficient Market Hypothesis, Dimensional Fund Advisors, the zero-sum arithmetic of active management, and Fama's rebuttal to behavioral finance.",
+    date: "August 21, 2026",
+    tag: "Finance",
+  },
+  {
     slug: "pakistan-sam-multiplier-analysis",
     title: "Pakistan SAM Multiplier Analysis: From Data to Policy Insights",
     description:
