@@ -210,6 +210,59 @@ Encapsulation → Abstraction → Inheritance → Polymorphism. Everything from 
 In your own words — what's the difference between overriding and overloading, and why did the `process_order` if/else chain violate Open/Closed?
 </Callout>
 
+---
+
+## Addendum: Clarifying Confusion — if/else vs. Class-based Polymorphism
+
+**The confusion:** why does using classes with a shared method name actually work differently from just using if/else to check a type?
+
+### Same Task, Two Approaches — "Make a Dog and a Cat Speak"
+
+**Approach 1: if/else (one function decides everything)**
+```python
+def make_sound(animal_type):
+    if animal_type == "dog":
+        print("Woof")
+    elif animal_type == "cat":
+        print("Meow")
+
+make_sound("dog")   # you pass in a STRING, "dog"
+make_sound("cat")   # you pass in a STRING, "cat"
+```
+
+**What's really happening:** there is no Dog object, no Cat object — just plain text (`"dog"`, `"cat"`). One single function holds all the knowledge of what every animal sounds like, and every time you call it, it must **re-check** "which animal is this?" using an if/else, before it can decide what to print.
+
+**Approach 2: Classes + polymorphism (each object decides for itself)**
+```python
+class Dog:
+    def make_sound(self):
+        print("Woof")
+
+class Cat:
+    def make_sound(self):
+        print("Meow")
+
+d = Dog()   # an actual Dog OBJECT — not a string
+c = Cat()   # an actual Cat OBJECT — not a string
+
+d.make_sound()   # no if/else anywhere — Dog just knows it says Woof
+c.make_sound()   # no if/else anywhere — Cat just knows it says Meow
+```
+
+**What's really happening:** `d` and `c` are real objects, each built from its own class. The knowledge "Dog says Woof" lives inside the Dog class itself, not in some outside function. Calling `d.make_sound()` involves no checking, no if/else, no lookup — it directly runs Dog's own version of `make_sound()`, because that's the only version Dog has.
+
+### The Actual Difference
+
+| | if/else approach | Class/polymorphism approach |
+|---|---|---|
+| Who holds the knowledge? | One central function, holding all the logic for every type | Each class holds only its own knowledge |
+| How is the sound decided? | By **checking** — `if animal_type == "dog"` | By **not needing to check at all** — the object already knows |
+| Adding a new animal (e.g. Duck)? | Must open the function and add another `elif` | Just write a new `Duck` class — nothing existing is touched |
+
+<Callout type="info" title="The One Sentence That Matters Most">
+In the if/else version, the *outside code* is responsible for figuring out what to do. In the class/polymorphism version, *each object* is responsible for knowing what to do about itself. That shift — from "outside code checks and decides" to "the object itself already knows" — **is** polymorphism.
+</Callout>
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance", title: "Section 4: Inheritance" }}
   next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
