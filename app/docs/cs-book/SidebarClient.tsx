@@ -466,6 +466,12 @@ const chapters = [
           { title: "3.2 Grammar & Mechanics Checklist", href: "/docs/cs-book/part-20-gre/chapter-3/3-2-grammar-mechanics-checklist" },
         ],
       },
+      {
+        chapter: "Chapter 4: Reading Vocabulary",
+        items: [
+          { title: "4.1 GRE Reading Vocabulary — Word Bank", href: "/docs/cs-book/part-20-gre/chapter-4/4-1-reading-vocabulary" },
+        ],
+      },
     ],
   },
 ];

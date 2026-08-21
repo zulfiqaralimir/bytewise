@@ -7,6 +7,12 @@ Three chapters, mirroring the official GRE test sections:
 - **Chapter 2:** Quantitative Reasoning
 - **Chapter 3:** Analytical Writing (AWA)
 
+Plus a **Last Chapter — Reading Vocabulary**, currently Chapter 4. This chapter must
+always be the final chapter in Part 20, no matter what other chapters get added later.
+If a new chapter is ever inserted, add it *before* Reading Vocabulary in both the
+sidebar and the folder numbering, and renumber Reading Vocabulary's `chapter-{N}`
+folder and sidebar label so its number stays the highest in the part.
+
 ## File Path Pattern
 
 ```
