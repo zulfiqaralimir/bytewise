@@ -468,9 +468,15 @@ const chapters = [
         ],
       },
       {
-        chapter: "Chapter 4: Reading Vocabulary",
+        chapter: "Chapter 4: Practice Tests",
         items: [
-          { title: "4.1 GRE Reading Vocabulary — Word Bank", href: "/docs/cs-book/part-20-gre/chapter-4/4-1-reading-vocabulary" },
+          { title: "4.1 Reading Comprehension Practice Set", href: "/docs/cs-book/part-20-gre/chapter-4/4-1-reading-comprehension-practice-set" },
+        ],
+      },
+      {
+        chapter: "Chapter 5: Reading Vocabulary",
+        items: [
+          { title: "5.1 GRE Reading Vocabulary — Word Bank", href: "/docs/cs-book/part-20-gre/chapter-5/5-1-reading-vocabulary" },
         ],
       },
     ],

@@ -89,7 +89,7 @@ export default function OgImage() {
               textTransform: "uppercase",
             }}
           >
-            ByteWise · Part 20 · Chapter 4
+            ByteWise · Part 20 · Chapter 5
           </span>
         </div>
 
@@ -104,7 +104,7 @@ export default function OgImage() {
             marginBottom: 16,
           }}
         >
-          Chapter 4 · Lesson 4.1
+          Chapter 5 · Lesson 5.1
         </div>
 
         {/* Main title */}

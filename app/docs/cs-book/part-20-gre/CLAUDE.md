@@ -2,16 +2,19 @@
 
 ## Structure
 
-Three chapters, mirroring the official GRE test sections:
+Chapters, mirroring the official GRE test sections plus supporting material:
 - **Chapter 1:** Verbal Reasoning
 - **Chapter 2:** Quantitative Reasoning
 - **Chapter 3:** Analytical Writing (AWA)
+- **Chapter 4:** Practice Tests
 
-Plus a **Last Chapter — Reading Vocabulary**, currently Chapter 4. This chapter must
+Plus a **Last Chapter — Reading Vocabulary**, currently Chapter 5. This chapter must
 always be the final chapter in Part 20, no matter what other chapters get added later.
 If a new chapter is ever inserted, add it *before* Reading Vocabulary in both the
 sidebar and the folder numbering, and renumber Reading Vocabulary's `chapter-{N}`
-folder and sidebar label so its number stays the highest in the part.
+folder and sidebar label so its number stays the highest in the part. (This already
+happened once: Reading Vocabulary was Chapter 4 until Practice Tests was inserted
+before it on 2026-08-21, pushing Reading Vocabulary to Chapter 5.)
 
 ## File Path Pattern
 
