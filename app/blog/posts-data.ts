@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "what-is-meta-analysis",
+    title: "What Is Meta-Analysis? A Practical Guide to Combining Research Findings",
+    description:
+      "Meta-analysis transforms scattered, sometimes conflicting research findings into a single, statistically rigorous conclusion — how it works, how it differs from a literature review, and why it matters.",
+    date: "August 22, 2026",
+    tag: "Research Methods",
+  },
+  {
     slug: "eugene-fama-david-booth",
     title:
       "Eugene Fama and David Booth: The Fifty-Year Partnership That Changed How the World Invests",

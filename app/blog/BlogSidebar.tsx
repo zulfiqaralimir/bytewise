@@ -12,6 +12,7 @@ const tagColors: Record<string, string> = {
   "Developer Productivity": "bg-orange-50 text-orange-700",
   "System Design": "bg-cyan-50 text-cyan-700",
   "AI System Design": "bg-indigo-50 text-indigo-700",
+  "Research Methods": "bg-rose-50 text-rose-700",
 };
 
 export default function BlogSidebar() {

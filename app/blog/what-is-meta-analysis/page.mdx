@@ -1,0 +1,90 @@
+export const metadata = {
+  title: "What Is Meta-Analysis? A Practical Guide to Combining Research Findings — ByteWise",
+  description:
+    "Meta-analysis transforms scattered, sometimes conflicting research findings into a single, statistically rigorous conclusion. How it works, how it differs from a literature review, and why it sits at the top of the evidence hierarchy.",
+  keywords: [
+    "meta-analysis",
+    "research synthesis",
+    "effect size",
+    "fixed-effect model",
+    "random-effects model",
+    "heterogeneity",
+    "I-squared statistic",
+    "publication bias",
+    "funnel plot",
+    "systematic review",
+    "evidence-based medicine",
+  ],
+  openGraph: {
+    title: "What Is Meta-Analysis? A Practical Guide to Combining Research Findings",
+    description:
+      "Meta-analysis transforms scattered, sometimes conflicting research findings into a single, statistically rigorous conclusion — one of the most powerful tools for evaluating evidence across multiple studies.",
+    type: "article",
+  },
+};
+
+# What Is Meta-Analysis? A Practical Guide to Combining Research Findings
+
+## Understanding Meta-Analysis as a Research Synthesis Method
+
+**Thesis:** Meta-analysis transforms scattered, sometimes conflicting research findings into a single, statistically rigorous conclusion — making it one of the most powerful tools available for evaluating evidence across multiple studies.
+
+Imagine ten different studies all trying to answer the same question — say, whether a new drug lowers blood pressure. One study finds a strong effect. Another finds a small effect. A third finds almost no effect at all. Who do you believe?
+
+This is exactly the problem meta-analysis was built to solve.
+
+## The Core Idea
+
+Meta-analysis is a statistical technique that combines the results of multiple independent studies addressing the same research question into a single, unified estimate. Rather than reading each study in isolation and forming a subjective impression, meta-analysis pools the actual data — effect sizes, sample sizes, and variances — using formal statistical methods to produce one overall conclusion.
+
+The logic is simple: a single study, no matter how well designed, is limited by its sample size and its particular context. It might be affected by random noise, a quirky sample population, or measurement error. But when the same effect shows up consistently across many studies conducted by different researchers, in different settings, with different samples, that consistency is powerful evidence. Meta-analysis formalizes this intuition into a rigorous quantitative process.
+
+## How It Differs From a Literature Review
+
+It's worth distinguishing meta-analysis from an ordinary literature review, because people often conflate the two.
+
+A traditional literature review is a narrative summary — a researcher reads through existing studies and describes, in prose, what the body of research seems to suggest. It's valuable, but it's also subjective. Two reviewers reading the same ten papers might reach somewhat different conclusions depending on which studies they weight more heavily in their own minds.
+
+A meta-analysis, by contrast, is quantitative. It assigns a numerical weight to each study — typically based on precision, with larger, more reliable studies counting for more — and calculates a pooled effect size along with a confidence interval. The output isn't an impression; it's a number, with a defined statistical uncertainty around it.
+
+## The Basic Process
+
+While the technical execution can get sophisticated, the conceptual steps of a meta-analysis generally follow this sequence:
+
+**1. Define the research question precisely.** What exact effect or relationship is being studied, and across what population?
+
+**2. Conduct a systematic literature search.** This is not a casual Google search — it typically involves searching multiple academic databases with predefined search terms to find every relevant study, published and unpublished.
+
+**3. Apply inclusion and exclusion criteria.** Not every study that turns up is usable. Researchers set clear criteria — for example, only randomized controlled trials, or only studies with a minimum sample size — and screen out anything that doesn't meet the bar.
+
+**4. Extract the data.** From each qualifying study, researchers pull out the relevant statistics: effect size, sample size, standard deviation, and so on.
+
+**5. Choose a statistical model.** Two common approaches are the **fixed-effect model**, which assumes all studies are estimating the exact same true effect and differences between them are due only to random sampling error, and the **random-effects model**, which assumes the true effect itself varies somewhat from study to study (due to differences in populations, methods, or contexts) and accounts for that additional layer of variability.
+
+**6. Calculate the pooled effect and test for heterogeneity.** The individual study results are combined into a single weighted average, and statisticians check how much the studies actually agree with each other (a measure often reported as the I² statistic).
+
+**7. Assess for bias.** A well-conducted meta-analysis checks for publication bias — the tendency for studies with "positive" or striking results to get published more often than null results, which can skew the pooled estimate. A funnel plot is a common visual tool for this.
+
+## Why Meta-Analysis Matters
+
+The value of meta-analysis comes down to three things:
+
+- **Increased statistical power.** Combining data from multiple studies effectively increases the total sample size, which allows researchers to detect real but small effects that any single study might have been too underpowered to find.
+- **Greater generalizability.** Because the pooled data typically comes from different populations, settings, and time periods, the conclusions tend to hold up better across contexts than the findings of any one study.
+- **Resolution of conflicting evidence.** When individual studies disagree — as they often do — meta-analysis provides a structured, transparent way to reconcile those differences rather than leaving readers to guess which study to trust.
+
+This is why meta-analyses sit near the top of the "hierarchy of evidence" in fields like medicine, economics, and psychology. A single clinical trial showing a treatment works is useful. A meta-analysis of thirty clinical trials showing the same thing, with the statistical machinery to back it up, is a different order of evidence entirely.
+
+## A Real-World Example
+
+Consider the debate over whether a particular class of medication reduces heart attack risk. Suppose fifteen separate trials have been run over the years, at different hospitals, with different patient populations and sample sizes ranging from 200 to 5,000 participants. Some trials found a meaningful risk reduction; a few found essentially no effect; one even suggested a slightly elevated risk.
+
+A meta-analysis would pool all fifteen datasets, weight each by its precision (larger, more rigorous trials count more), and produce a single combined risk-reduction estimate with a confidence interval. If that interval doesn't cross zero, researchers can say with much greater confidence that the treatment has a genuine protective effect — a conclusion no individual trial could support on its own.
+
+## Limitations to Keep in Mind
+
+Meta-analysis is powerful, but it isn't magic. It inherits the weaknesses of the underlying studies — a phenomenon sometimes summarized as "garbage in, garbage out." If the original studies are poorly designed or biased, combining them doesn't fix that; it can amplify it. Similarly, if the included studies are too different from one another in design or population (high heterogeneity), forcing them into a single pooled number can be misleading rather than illuminating. This is why heterogeneity testing and careful inclusion criteria are essential parts of the process, not optional extras.
+
+## The Bottom Line
+
+Meta-analysis takes the messy, often contradictory landscape of individual research findings and distills it into a single, statistically defensible answer. It doesn't replace good judgment or careful reading of the underlying research — but it gives that judgment a rigorous quantitative foundation to stand on. In a world overflowing with studies that seem to contradict one another, that's an invaluable tool.
