@@ -1,0 +1,340 @@
+export const metadata = {
+  title: "Stack vs Heap — ByteWise CS Book",
+  description:
+    "Understand how the stack and the heap actually work: direct vs indirect access, compile-time vs runtime sizing, activation records, malloc/free, and the bugs each one produces.",
+  keywords: [
+    "stack vs heap",
+    "memory management",
+    "activation record",
+    "stack frame",
+    "malloc",
+    "pointers",
+    "stack overflow",
+    "memory leak",
+  ],
+  openGraph: {
+    title: "Stack vs Heap — ByteWise CS Book",
+    description:
+      "The stack is directly accessible with a size fixed at compile time. The heap is only reachable through a pointer, with a size decided at runtime. Here's why that distinction matters.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+# Stack vs Heap: Understanding Memory Management in Programs
+
+## The Thesis
+
+Both the stack and the heap are regions of a computer's main memory used to store data while a program runs. They differ fundamentally in **how** they are accessed and **when** their size gets decided:
+
+- The **stack** is directly accessible, and its size is fixed at **compile time**.
+- The **heap** is only indirectly accessible — through a pointer — and its size is decided **dynamically at runtime**.
+
+Everything else about the stack and the heap — why one is fast and predictable, why the other is flexible but fragile, why "stack overflow" and "memory leak" are different failure modes entirely — falls out of that one distinction.
+
+## Concept Explanation
+
+### The Three Sections of Program Memory
+
+A running program's memory is broadly divided into three sections:
+
+| Section | Stores |
+|---|---|
+| **Code Section** | The compiled machine code of the program |
+| **Stack** | Memory for the program's declared variables |
+| **Heap** | Memory requested dynamically while the program runs |
+
+Before any of this exists, the program is source code — written in a language like C. It's **compiled** into **machine code**, and that machine code is **loaded** into the code section, the same way you'd load a disc into a player before it can run. Once loaded, the CPU executes it one instruction at a time — and as it does, the stack and heap sections start filling up.
+
+<MermaidDiagram title="Program Memory Layout" chart={`
+flowchart TB
+  subgraph MEM["Process Address Space"]
+    direction TB
+    CODE["Code Section — compiled machine instructions"]
+    STACK["Stack — grows downward — activation records for each function call"]
+    HEAP["Heap — grows upward — memory requested via malloc/new"]
+  end
+  CODE --> STACK
+  STACK -->|"stack pointer P holds heap address"| HEAP
+`} />
+
+### The Stack
+
+When a program declares variables — say `A`, `B`, `C` inside `main` — memory for them comes from the stack, and this happens automatically the moment execution begins.
+
+**Size is static, allocation is dynamic.** The *amount* of memory those variables need is decided at **compile time** — the compiler already knows an `int` needs 4 bytes and a `char` needs 1, so it knows exactly how much space a function's variables require before the program ever runs. That's what "static size" means. But the actual *allocation* — reserving that memory in RAM — only happens when the program executes, which is what makes the allocation itself dynamic.
+
+Every stack location has an address (`1000`, `1004`, `1008`, ...), and the program reaches these directly — no indirection required. The block of stack memory reserved for one function call (its parameters, local variables, and return address) is called an **activation record**, also known as a **stack frame**.
+
+- ✅ Stack memory is **directly accessible** by the program.
+- ✅ The **size** of stack memory is **static** — known to the compiler before the program runs.
+
+### The Heap
+
+Sometimes a program needs more memory than what it declared — and it often can't know how much until it's actually running. A program reading a file doesn't know the file's size at compile time; a web server doesn't know how many requests it'll need to buffer. That need has to be met at runtime, from the **heap**.
+
+Unlike the stack, a program **cannot directly access** heap memory. It has to go through a **pointer**. The pointer itself lives on the stack (it's just a variable), but the memory it *points to* lives on the heap.
+
+A call like `P = malloc(10)` asks the heap for 10 bytes. The heap allocator finds a free block, returns its address (say `5000`), and that address gets stored in `P`. From then on, the program reaches that memory **indirectly** — first read `P`, then follow it to `5000`.
+
+- ✅ Heap memory is **indirectly accessible** — only through a pointer.
+- ✅ The **size** of heap memory is **dynamic** — decided at **runtime**, not compile time.
+- ✅ A pointer is **compulsory** to reach heap memory at all.
+
+### Stack vs Heap at a Glance
+
+| Aspect | Stack | Heap |
+|---|---|---|
+| **Access** | Direct (via variable addresses) | Indirect (via pointers) |
+| **Size** | Static — decided at compile time | Dynamic — decided at runtime |
+| **Allocated for** | Declared variables | Memory requested with `malloc`/`new` |
+| **Allocation timing** | At the start of execution (per function call) | Whenever explicitly requested |
+| **Deallocation** | Automatic — when the function returns | Manual (`free`) or garbage-collected |
+| **Speed** | Fast — just moving a pointer | Slower — allocator has to find/track free blocks |
+| **Typical size limit** | Small (often 1–8 MB per thread) | Large (limited mainly by available RAM) |
+| **Failure mode** | Stack overflow | Out-of-memory / fragmentation / leaks |
+
+## Mathematical Foundation
+
+**Stack frame addressing.** A stack frame's variables sit at fixed offsets from a base pointer. If the stack pointer is $SP$ and a function's frame needs $f$ bytes, calling the function is just:
+
+$$SP_{\text{new}} = SP_{\text{old}} - f$$
+
+and returning is the mirror operation, $SP_{\text{old}} = SP_{\text{new}} + f$. No searching, no bookkeeping — this is why stack allocation is effectively $O(1)$.
+
+**Recursion depth vs. stack size.** For a recursive function with per-call frame size $f$ and a stack limit of $S$ bytes, the maximum safe recursion depth $d$ is:
+
+$$d = \left\lfloor \frac{S}{f} \right\rfloor$$
+
+A typical thread stack is 1–8 MB. A frame with a handful of `int` locals might be 64 bytes — enough for over 100,000 recursive calls before overflow. A frame holding a large local array could exhaust the stack in a few hundred calls.
+
+**Heap allocation cost.** A general-purpose allocator (like `malloc`) tracks free blocks in a free list. Best case — a suitably sized free block is at the head of the list — allocation is $O(1)$. Worst case, with a fragmented heap, the allocator has to search:
+
+$$T_{\text{malloc}} = O(k) \quad \text{where } k = \text{number of free blocks scanned}$$
+
+This is the mathematical root of why heap allocation is slower and less predictable than stack allocation — the cost depends on the *state* of memory, not just the size of the request.
+
+## Algorithm / Logic
+
+**Stack allocation (on function call):**
+
+```
+CALL_FUNCTION(f, args):
+  frame_size = compute_at_compile_time(f)   // static — known ahead of time
+  SP = SP - frame_size                      // push activation record
+  store return_address, args into frame
+  jump to f's first instruction
+
+RETURN_FROM_FUNCTION():
+  retrieve return_address from current frame
+  SP = SP + frame_size                      // pop activation record
+  jump to return_address
+```
+
+**Heap allocation (`malloc` / `free`) using a free list:**
+
+```
+MALLOC(n):
+  for block in free_list:
+    if block.size >= n:
+      remove block from free_list
+      if block.size > n:
+        split block, return remainder to free_list
+      return block.address              // indirect: caller stores this in a pointer
+  request more memory from OS (if free_list has nothing big enough)
+
+FREE(pointer):
+  block = block_header_at(pointer)
+  insert block into free_list
+  merge with adjacent free blocks if possible   // reduces fragmentation
+```
+
+The asymmetry is the whole point: `CALL_FUNCTION` never searches for space — it just moves a pointer, because the compiler already did the sizing work. `MALLOC` has to search, because nothing was known about the request until the moment it was made.
+
+## Programming Implementation
+
+**C — the language where this distinction is explicit:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void stack_demo(void) {
+    int a = 1, b = 2, c = 3;          // stack: size known at compile time
+    printf("stack addresses: %p %p %p\n", (void*)&a, (void*)&b, (void*)&c);
+    // a, b, c vanish automatically when this function returns — no cleanup needed
+}
+
+void heap_demo(void) {
+    int *p = malloc(sizeof(int));     // heap: size requested at runtime
+    if (p == NULL) return;            // always check — the OS can refuse the request
+    *p = 42;                          // access is indirect: through p, to the heap
+    printf("heap address: %p, value: %d\n", (void*)p, *p);
+    free(p);                          // manual deallocation — nothing does this for you
+    p = NULL;                         // avoid a dangling pointer to freed memory
+}
+
+// Classic bug #1: returning a pointer to a stack variable
+int *dangerous(void) {
+    int local = 10;
+    return &local;                    // 'local' is destroyed when the function returns —
+}                                      // the caller gets a dangling pointer
+
+// Classic bug #2: forgetting to free — a leak
+void leaky(void) {
+    int *p = malloc(1000 * sizeof(int));
+    // ... no matching free(p) — this memory is unreachable and unrecoverable
+    // until the process exits. Call this in a loop and watch RSS climb.
+}
+
+int main(void) {
+    stack_demo();
+    heap_demo();
+    return 0;
+}
+```
+
+**Python — the stack/heap split still exists, it's just hidden:**
+
+```python
+import sys
+
+# Every Python object — ints, strings, lists, custom classes — lives on the heap.
+# CPython allocates PyObject structs from the heap and reference-counts them.
+x = [1, 2, 3]
+print(sys.getsizeof(x))   # heap size of the object x points to
+print(id(x))              # the "pointer" — x's value is really a heap address
+
+# The stack only holds frame objects: local variable *references* (pointers),
+# not the objects themselves. This is why Python has a recursion limit —
+# it's a stack limit, not a heap limit.
+def recurse(n):
+    return recurse(n + 1)   # each call pushes a new stack frame
+
+print(sys.getrecursionlimit())  # default 1000 — protects the real OS stack
+
+try:
+    recurse(0)
+except RecursionError:
+    print("Stack overflow, Python-style — this is the stack limit, not memory exhaustion")
+
+# You never call free() in Python — the garbage collector reclaims heap objects
+# once their reference count hits zero (plus a cycle collector for reference loops).
+import gc
+gc.collect()
+```
+
+The core lesson carries across languages even where `malloc`/`free` are invisible: **local variables and function-call bookkeeping live on the stack; everything with a lifetime longer than "until this function returns" lives on the heap, reached through a reference.**
+
+## System Design Perspective
+
+The stack/heap split shows up directly in how real systems are built:
+
+```
+[Thread 1]  — own stack (fixed size, e.g. 1 MB) ─┐
+[Thread 2]  — own stack (fixed size, e.g. 1 MB) ─┼──▶ [Shared Heap] — one per process
+[Thread 3]  — own stack (fixed size, e.g. 1 MB) ─┘         │
+                                                              ▼
+                                              [Garbage Collector / Allocator]
+                                              tracks, compacts, frees heap memory
+```
+
+- **Every thread gets its own stack**, sized when the thread is created — this is why thread pools have a memory ceiling (`num_threads × stack_size`) that architects size deliberately.
+- **All threads in a process share one heap** — which is exactly why heap access needs synchronization (locks, atomics) in multithreaded code, while each thread's own stack never needs it.
+- **Go's goroutines** start with a tiny 2 KB stack that grows on demand, instead of a fixed 1 MB OS thread stack — this is the core reason goroutines are cheap enough to spawn by the tens of thousands, a deliberate design choice for highly concurrent servers.
+- **JVM and V8 heaps** are generational (young/old generation) precisely because most heap objects die young — a garbage collector optimized around that observation avoids scanning the whole heap on every collection cycle.
+- **Database and cache engines** (Redis, PostgreSQL) often replace the general-purpose allocator with something like `jemalloc` specifically to fight the fragmentation described in the Mathematical Foundation section above.
+
+## Real-World Examples
+
+**Parsers under attack — the stack overflow as a denial-of-service vector.** A recursive-descent JSON or XML parser that recurses once per nesting level can be crashed by a payload with thousands of nested brackets — each level pushes another stack frame until the thread's stack is exhausted. This is a well-known enough attack class that production parsers (Python's `json`, Jackson in Java, `libxml2`) enforce explicit nesting-depth limits rather than trusting the OS stack size as a safety net.
+
+**Go's goroutine stacks.** Go's runtime deliberately starts goroutine stacks at 2 KB and grows them by copying to a larger heap-allocated segment as needed. This single design decision is a large part of why systems like Docker and Kubernetes — both written in Go — can comfortably run tens of thousands of concurrent goroutines per process, something that would be impractical with traditional 1 MB-per-thread OS stacks.
+
+**Chrome DevTools heap snapshots.** Because JavaScript objects live on V8's heap and get reached indirectly through references, memory leaks in long-running Node.js services (detached DOM nodes, forgotten event listener closures, growing caches with no eviction) are diagnosed by taking heap snapshots and comparing retained-object graphs over time — the stack is never the suspect in a leak investigation, because stack memory is reclaimed automatically the instant a function returns.
+
+> **Why this distinction matters here:** every one of these real incidents traces back to the same root fact — stack memory cleans itself up when a function returns, and heap memory does not clean itself up until something explicitly (or automatically, via GC) says it can.
+
+## Common Mistakes
+
+**Mistake 1: Unbounded or excessively deep recursion.** Each recursive call adds a stack frame. Without a base case that's reached quickly enough, or with a large per-call frame (big local arrays), you exhaust the stack — a **stack overflow**, distinct from running out of heap memory. Convert deep recursion to iteration with an explicit heap-allocated stack (a `list`/`Vec`/`ArrayList`) when depth is unbounded or attacker-controlled.
+
+**Mistake 2: Returning a pointer/reference to a local (stack) variable.** In C, `return &local_var` hands the caller an address that becomes invalid the instant the function returns — the stack frame it pointed into gets reused by the next call. This is a **dangling pointer** bug, and reading through it is undefined behavior that can silently "work" in testing and crash in production.
+
+**Mistake 3: Forgetting to `free` heap memory.** In manually managed languages, every `malloc` needs a matching `free`. Miss one in a hot path (a request handler, a loop) and resident memory climbs steadily until the process is killed — a classic **memory leak**. In garbage-collected languages the equivalent bug is a reference you forgot to drop (a growing cache, a subscriber list that never unsubscribes) — no manual `free`, but the same symptom.
+
+**Mistake 4: Use-after-free.** Calling `free(p)` and then still dereferencing `p` reads (or writes) memory the allocator may have already handed to something else. This is one of the most exploited bug classes in C/C++ codebases (see: most historical browser and OS kernel CVEs) — always set the pointer to `NULL` after freeing it so a subsequent use crashes loudly instead of corrupting silently.
+
+**Mistake 5: Stack buffer overflow as a security hole.** Writing past the end of a fixed-size stack array (`char buf[64]` with unchecked input) can overwrite adjacent stack data — including the saved return address — letting an attacker redirect execution. This is "stack smashing," the textbook memory-corruption exploit, and the reason functions like `gets()` are considered unsafe and compilers ship stack canaries by default.
+
+## Interview Angle
+
+**Q: Why does deep recursion cause a "stack overflow" specifically, rather than a generic out-of-memory error?**
+
+A: The stack has a fixed, comparatively small size (often 1–8 MB per thread) that's reserved up front — it isn't allowed to grow into arbitrary heap space. Each recursive call consumes a fixed-size activation record from that reserved region. Once the reserved region is exhausted, the program crashes with a stack-specific error (`StackOverflowError` in Java, `RecursionError` in Python, a segfault in C) — even though the heap, and system RAM generally, might still have gigabytes free. It's a boundary problem, not a capacity problem.
+
+**Q: If a language has garbage collection, can you still leak memory? How?**
+
+A: Yes — garbage collectors reclaim objects that are *unreachable*, not objects that are merely *unused*. If code keeps a reference alive longer than intended — an ever-growing cache with no eviction policy, a listener registered but never unregistered, a closure capturing more than it needs — the GC correctly leaves that memory alone, because something can still reach it. The leak isn't a failure of garbage collection; it's a design bug in what the program considers "still needed." This is why heap profiling (retained-size analysis, not just allocation counts) is the standard debugging tool for leaks in Java, Node.js, and Go.
+
+## Summary
+
+- The stack is **directly accessible**; the heap is only reachable **indirectly, through a pointer**.
+- Stack memory **size is static** — known at compile time. Heap memory **size is dynamic** — decided at runtime.
+- Stack allocation is a pointer move ($O(1)$, no search); heap allocation searches a free list and can fragment over time.
+- The stack cleans itself up automatically when a function returns. The heap does not — it needs an explicit `free` or a garbage collector.
+- Recursion depth is bounded by **stack size**, not by total available memory — that's why deep recursion fails differently than a genuine out-of-memory condition.
+- Classic stack bugs: overflow from deep recursion, returning a pointer to a local variable, stack-smashing buffer overflows.
+- Classic heap bugs: memory leaks (forgotten `free` or a lingering reference), use-after-free, dangling pointers, fragmentation.
+- Every thread gets its own stack; every thread in a process shares one heap — which is exactly where multithreading needs synchronization.
+
+> **Simple takeaway:** if you can point to *where* a value's lifetime ends by just looking at the code (a function returning), it's on the stack; if its lifetime depends on runtime conditions you can't predict by reading the source, it's on the heap.
+
+## Practice — LeetCode Problems
+
+| # | Problem | Difficulty | Why It Fits |
+|---|---|---|---|
+| 20 | [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | 🟢 Easy | Uses an explicit heap-allocated stack (a list) to do what the call stack does implicitly during matched-bracket recursion |
+| 104 | [Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/) | 🟢 Easy | Recursion depth *is* stack depth — trace how many activation records exist at the deepest point |
+| 155 | [Min Stack](https://leetcode.com/problems/min-stack/) | 🟡 Medium | Building a stack ADT from scratch makes the push/pop-as-pointer-move mental model concrete |
+| 22 | [Generate Parentheses](https://leetcode.com/problems/generate-parentheses/) | 🟡 Medium | Backtracking recursion — watch how call-stack depth tracks directly with the recursion tree, not with input size |
+| 94 | [Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/) | 🟡 Medium | Solve recursively, then convert to an iterative version with an explicit stack — the exact stack-to-heap conversion this chapter describes |
+| 200 | [Number of Islands](https://leetcode.com/problems/number-of-islands/) | 🟡 Medium | Recursive DFS can stack-overflow on a large enough grid — a real reason to convert to iterative DFS with an explicit stack |
+
+**How to use these:** for each one, solve it recursively first and ask "how deep can the call stack get, and what's the largest input that would overflow it?" — then rewrite the same solution iteratively with an explicit stack and notice that the memory didn't disappear, it just moved from the (small, fixed) call stack to the (large, flexible) heap.
+
+> **Simple takeaway:** recursion isn't free — it's spending stack space you can't see, which is exactly why "just convert it to iterative with an explicit stack" is a real, load-bearing technique and not just a style preference.
+
+## Addendum: Is This the Same "Heap" as the Heap Data Structure?
+
+No — they're two completely different things that just happen to share a name. It's one of the most common naming collisions in CS, and worth clearing up explicitly.
+
+**Heap (memory) — what this article covers:**
+- A region of a program's memory used for dynamic allocation (`malloc`, `new`, etc.)
+- Just a pool of memory — has no inherent structure or ordering
+- Reached via pointers
+- Relevant to how a program manages RAM at runtime
+
+**Heap (data structure) — the one from [Data Structures](/docs/cs-book/part-1-foundations/data-structures):**
+- A specialized **tree-based data structure**, usually a complete binary tree
+- Satisfies the **heap property**: in a min-heap, every parent is smaller than its children; in a max-heap, every parent is larger
+- Used to implement priority queues, heap sort, and algorithms like Dijkstra's shortest path
+- A logical/abstract structure — and, in a neat twist, the heap *data structure* itself has to physically live somewhere in memory. If it's array-based with a fixed size, that array can live on the **stack**; if it's dynamically sized, its backing array lives in the **heap memory region** described above.
+
+| | Memory Heap | Heap Data Structure |
+|---|---|---|
+| What it is | A region of RAM | A tree-based structure with ordering rules |
+| Purpose | Dynamic memory allocation | Efficient min/max retrieval, priority queues |
+| Example use | `malloc(10)` in C | `heapq` in Python, `priority_queue` in C++ STL |
+
+> **Simple rule:** if someone says "allocate on the heap," they mean memory. If someone says "push onto the heap" or "heapify," they mean the data structure. The word is shared; the concept is not.
+
+## Reference
+
+- [Stack vs Heap — video walkthrough](https://www.youtube.com/watch?v=PdvGEI-P3-M)
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-1-foundations/big-o-notation", title: "Big O Notation" }}
+  next={{ href: "/docs/cs-book/part-1-foundations/data-structures", title: "Data Structures" }}
+/>
