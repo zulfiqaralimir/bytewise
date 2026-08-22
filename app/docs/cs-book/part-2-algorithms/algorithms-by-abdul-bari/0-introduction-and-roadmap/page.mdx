@@ -1,0 +1,84 @@
+export const metadata = {
+  title: "Section 0: Course Overview & Roadmap — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Kicking off a new chapter that follows Abdul Bari's legendary Algorithms YouTube playlist — asymptotic analysis, recursion, divide and conquer, greedy, DP, backtracking, and graph algorithms, taught from first principles.",
+  keywords: [
+    "Abdul Bari algorithms",
+    "Abdul Bari playlist",
+    "algorithms course",
+    "asymptotic analysis",
+    "divide and conquer",
+    "greedy algorithms",
+    "dynamic programming",
+    "backtracking",
+    "graph algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — Section 0: Course Overview & Roadmap",
+    description:
+      "A new chapter built on Abdul Bari's Algorithms playlist — the full syllabus, from asymptotic notation to graph algorithms.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Algorithms by Abdul Bari
+
+## Section 0: Course Overview & Roadmap
+
+---
+
+## The Source
+
+This chapter follows **Abdul Bari's Algorithms playlist** — one of the most watched algorithms courses on YouTube, and for good reason. Abdul Bari teaches algorithm design and analysis the way it should be taught: worked examples on a whiteboard first, formal notation second, and no step skipped in between.
+
+**Watch the playlist here:** [Abdul Bari — Algorithms](https://youtu.be/0IAPZzGSbME?si=yLoAVtKfYvm_5b8K)
+
+Each section in this chapter pairs a video from that playlist with a written ByteWise page — the same worked examples, traced out in text, with the connections to system design, LeetCode, and real production code that the video alone doesn't cover.
+
+> **How to use this chapter:** Watch the corresponding video first for the visual, whiteboard-driven walkthrough, then read the ByteWise page for the write-up, the code, and the "where you'll actually use this" context.
+
+---
+
+## Why Add This Chapter
+
+Part 3 already has four standalone algorithm essays — Binary Search, Sorting, Graph Traversal, Dynamic Programming. Those are deep dives into individual topics. What's been missing is the **connective tissue**: the systematic, ground-up progression that a real algorithms course gives you — starting from "how do we even measure an algorithm's speed" and building up to the algorithm design paradigms (greedy, divide and conquer, DP, backtracking) that those individual topics are instances of.
+
+That's what this chapter is for.
+
+---
+
+## Roadmap
+
+The playlist — and this chapter — moves through algorithm design and analysis in this order:
+
+| Stage | Topic | What You'll Learn |
+|---|---|---|
+| 1 | Asymptotic Analysis | Big-O, Big-Ω, Big-Θ; best/worst/average case; analyzing loops and recursive calls |
+| 2 | Recursion & Recurrences | Recursion trees, substitution method, the Master Theorem |
+| 3 | Divide and Conquer | Merge sort, quick sort, binary search, and the D&C pattern in general |
+| 4 | Greedy Algorithms | Activity selection, Huffman coding, fractional knapsack, and when "locally optimal" actually gives you the global answer |
+| 5 | Dynamic Programming | Overlapping subproblems, optimal substructure, memoization vs. tabulation, classic DP problems |
+| 6 | Backtracking & Branch and Bound | N-Queens, subset sum, and pruning search spaces intelligently |
+| 7 | Graph Algorithms | BFS/DFS, shortest paths (Dijkstra, Bellman-Ford, Floyd-Warshall), minimum spanning trees (Prim's, Kruskal's) |
+| 8 | String Matching & NP-Completeness | Pattern matching algorithms and an intuition for what "NP-hard" actually means |
+
+This list will grow into individual sections — Section 1, Section 2, and so on — as each one is written, mirroring the order above.
+
+---
+
+## Who This Is For
+
+- Anyone who wants algorithm design taught as a **sequence of reusable paradigms**, not a grab-bag of unrelated tricks
+- Readers who've done the individual Part 3 essays (Binary Search, Sorting, etc.) and want the underlying design principles connecting them
+- Interview prep — greedy vs. DP vs. backtracking is one of the most common "why did you choose this approach" questions in technical interviews
+
+No prior background beyond basic programming is assumed. Every technical term gets explained the first time it shows up, same as the rest of this book.
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/dynamic-programming", title: "Dynamic Programming" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/1-introduction-to-algorithms", title: "Section 1: Introduction to Algorithms" }}
+/>

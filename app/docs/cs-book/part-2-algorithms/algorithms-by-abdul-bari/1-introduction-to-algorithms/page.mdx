@@ -1,0 +1,115 @@
+export const metadata = {
+  title: "Section 1: Introduction to Algorithms — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "What actually separates an algorithm from a program? Design phase vs. implementation phase, who should write an algorithm, and why algorithms are analyzed while programs are tested.",
+  keywords: [
+    "what is an algorithm",
+    "algorithm vs program",
+    "algorithm design",
+    "pseudocode",
+    "Abdul Bari algorithms",
+    "computational problem solving",
+    "software design phase",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — Section 1: Introduction to Algorithms",
+    description:
+      "Algorithm vs. program: design time vs. implementation time, domain knowledge vs. syntax, analysis vs. testing.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Algorithms by Abdul Bari
+
+## Section 1: Introduction to Algorithms
+
+*Based on [Abdul Bari's Algorithms playlist](https://youtu.be/0IAPZzGSbME?si=yLoAVtKfYvm_5b8K).*
+
+---
+
+## Why This Subject Matters
+
+**Algorithms** is a core subject in every computer science curriculum — and, honestly, one of the toughest for most students. That difficulty is exactly why it's worth taking seriously:
+
+- **Competitive programming** contests draw the overwhelming majority of their questions from this subject.
+- **Job interviews** — at nearly every software company — test algorithmic problem-solving directly.
+- **Entrance and competitive exams** (GATE and similar) lean heavily on algorithm-based questions.
+
+But the real payoff isn't any of those. The actual skill this subject builds is **logic development** — the ability to devise a strategy for solving a problem you've never seen before, rather than memorizing a fixed set of solutions. That skill transfers to every corner of engineering, not just the algorithms you'll study in this chapter.
+
+> **A note on structure:** this chapter's lectures are numbered by *topic*, not strictly by upload order — large topics get broken into smaller sections. Follow the section numbers, not the sequence you happened to watch them in.
+
+---
+
+## What Is an Algorithm?
+
+> **Definition:** An algorithm is a **step-by-step procedure for solving a computational problem.**
+
+At first glance, a **program** looks like the same thing — also "a procedure for solving a problem." So what actually separates the two? Answering that precisely is the fastest way to understand what an algorithm really is.
+
+---
+
+## Algorithm vs. Program
+
+### Two Phases of Software Development
+
+Every engineered product — software included — goes through two major phases:
+
+1. **Design phase** — plan and think through the solution thoroughly before building anything.
+2. **Implementation phase** — actually build/construct it.
+
+Unlike physical construction, where a mistake means demolishing and rebuilding, software is forgiving: a programmer can edit or delete code and start over almost for free. But that doesn't mean design should be skipped. Professional development still **designs first, then implements** — skipping straight to code is how you end up trial-and-error coding your way to a solution that's slow, wrong on edge cases, or both.
+
+The algorithm is the artifact of the design phase. The program is the artifact of the implementation phase.
+
+### The Core Distinction
+
+| Aspect | Algorithm | Program |
+|---|---|---|
+| **Written at** | Design time | Implementation time |
+| **Written in** | Plain English-like statements or math notation — no strict syntax | A specific programming language (C, C++, Java, Python, ...) with strict syntax |
+| **Hardware/OS dependency** | **Independent** — no concern for machine or operating system | **Dependent** — must target specific hardware and OS (e.g. Linux vs. Windows) |
+| **Written by** | Someone with strong **domain knowledge** of the problem — may or may not be a programmer | A **programmer** |
+| **Verified by** | **Analysis** — studying it for correctness and efficiency (time and space) | **Testing** — running it and checking outputs |
+
+**Think of it like** an architect's blueprint versus the finished building. The blueprint (algorithm) is language-agnostic — it doesn't care whether the contractor uses metric or imperial tools. The building (program) is very much tied to the specific materials and methods used to construct it. You verify a blueprint by *analyzing* it — does the load-bearing math work out? You verify a building by *testing* it — does it actually stand?
+
+### Who Writes an Algorithm?
+
+Ideally, the person with the **domain knowledge** of the problem area — not necessarily the person who will eventually write the code.
+
+- An **accountant** understands accounting workflows better than most programmers ever will.
+- **Hospital staff and doctors** understand clinical workflows better than the engineer building the hospital's scheduling system.
+
+A programmer *can* also be the algorithm designer, if they have sufficient domain knowledge of the problem — the same person can act as both **designer** and **programmer**. But the two roles are conceptually distinct, and on large systems they're often literally different people: a domain expert designs the logic, and an engineer implements it.
+
+---
+
+## What Language Is Used to Write an Algorithm?
+
+Any language works — plain **English**, or **mathematical notation**. The only hard requirement: it must be **understandable to everyone who needs to use it**. If a domain expert writes the algorithm, the programmer who eventually implements it has to be able to read it.
+
+**In practice**, since most computer science students learn C early in their education, algorithms are commonly written using **C-style pseudocode**. This sidesteps the confusion of introducing an unfamiliar notation, and it's understandable across the widest possible audience — C-style syntax (`if`, `for`, `while`, `=`, `==`) is close enough to universal that most programmers can read it regardless of which language they actually work in.
+
+> This chapter will express algorithms using **C-style pseudocode**, for exactly that reason: it's the convention most widely understood across students and working engineers alike.
+
+---
+
+## The Big Picture
+
+- An **algorithm** is a step-by-step solution written at **design time** — language- and platform-independent.
+- A **program** is the implementation of that algorithm in a specific programming language, tied to specific hardware and OS.
+- Algorithms are **analyzed** for correctness and efficiency (time and space complexity); programs are **tested** by running them.
+- Algorithms should ideally be written by whoever best understands the **problem domain** — that person may or may not be the programmer.
+- This chapter expresses algorithms in **C-style pseudocode**, since it's the notation most widely understood across audiences.
+
+> **Simple takeaway:** an algorithm is the *thinking*, written down and made language-independent; a program is that thinking, translated into a specific language and *tested* rather than merely analyzed.
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/0-introduction-and-roadmap", title: "Section 0: Course Overview & Roadmap" }}
+  next={null}
+/>

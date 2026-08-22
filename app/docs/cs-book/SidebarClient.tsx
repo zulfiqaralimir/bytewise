@@ -49,11 +49,23 @@ const chapters = [
   },
   {
     part: "Part 3 — Algorithms",
-    items: [
-      { title: "Binary Search", href: "/docs/cs-book/part-2-algorithms/binary-search" },
-      { title: "Sorting Algorithms", href: "/docs/cs-book/part-2-algorithms/sorting-algorithms" },
-      { title: "Graph Traversal", href: "/docs/cs-book/part-2-algorithms/graph-traversal" },
-      { title: "Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/dynamic-programming" },
+    chapters: [
+      {
+        chapter: "General Algorithms",
+        items: [
+          { title: "Binary Search", href: "/docs/cs-book/part-2-algorithms/binary-search" },
+          { title: "Sorting Algorithms", href: "/docs/cs-book/part-2-algorithms/sorting-algorithms" },
+          { title: "Graph Traversal", href: "/docs/cs-book/part-2-algorithms/graph-traversal" },
+          { title: "Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/dynamic-programming" },
+        ],
+      },
+      {
+        chapter: "Algorithms by Abdul Bari",
+        items: [
+          { title: "Section 0: Course Overview & Roadmap", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/0-introduction-and-roadmap" },
+          { title: "Section 1: Introduction to Algorithms", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/1-introduction-to-algorithms" },
+        ],
+      },
     ],
   },
   {
