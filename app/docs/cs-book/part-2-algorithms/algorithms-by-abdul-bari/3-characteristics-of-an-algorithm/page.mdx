@@ -1,0 +1,118 @@
+export const metadata = {
+  title: "Section 3: Characteristics of an Algorithm — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "The five defining characteristics every algorithm must satisfy: input, output, definiteness, finiteness, and effectiveness — with real-world analogies for each.",
+  keywords: [
+    "characteristics of an algorithm",
+    "definiteness",
+    "finiteness",
+    "effectiveness",
+    "algorithm input output",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — Section 3: Characteristics of an Algorithm",
+    description:
+      "Input, output, definiteness, finiteness, effectiveness — the five-point checklist for a valid algorithm.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Algorithms by Abdul Bari
+
+## Section 3: Characteristics of an Algorithm
+
+*Based on [Abdul Bari's Algorithms playlist](https://youtu.be/0IAPZzGSbME?si=yLoAVtKfYvm_5b8K).*
+
+---
+
+## Overview
+
+Every valid algorithm must satisfy **five defining characteristics**. Think of them as a checklist — if a procedure fails even one, it doesn't qualify as a proper algorithm, no matter how sensible it looks on paper:
+
+1. **Input**
+2. **Output**
+3. **Definiteness**
+4. **Finiteness**
+5. **Effectiveness**
+
+---
+
+## Input
+
+> **Rule:** An algorithm can take **zero or more inputs.**
+
+An algorithm is **not required** to take any input at all. This mirrors a function in C: a function can take no parameters and still be a completely valid function. `srand(time(NULL))` doesn't take a meaningful argument, but it's still doing real work.
+
+---
+
+## Output
+
+> **Rule:** An algorithm must produce **at least one output.**
+
+Unlike input, output is **mandatory** — an algorithm that produces nothing serves no purpose. Analogy: a C function can return `void` (no return value), but it must still *do* something observable — modify a global, print something, mutate a data structure passed by reference. An algorithm with zero effect isn't an algorithm; it's a no-op.
+
+---
+
+## Definiteness
+
+> **Rule:** Every statement in the algorithm must be **unambiguous** and have a **single, exact meaning.**
+
+You can't write a step that can't be clearly resolved. If a **human** can't resolve a statement, a **computer** certainly can't be asked to execute it.
+
+**Example:** a step referencing $\sqrt{-1}$ — undefined within the real numbers — is not definite. It has no single, real-number meaning, so it can't appear as a well-formed step in an algorithm restricted to real-number arithmetic. Every step has to resolve to exactly one unambiguous outcome.
+
+---
+
+## Finiteness
+
+> **Rule:** An algorithm must **terminate** after a finite number of steps.
+
+Like a function, an algorithm has a bounded set of steps — it might be 10 statements or 10,000, but the count must be **finite**, and execution must eventually **stop** and produce a result.
+
+**Contrast:** some real-world programs run continuously until manually stopped — a **database server**, a **web server**. These are *services*, not algorithms, precisely because they lack finiteness. An algorithm is a **procedure**, and a procedure must, by definition, come to an end.
+
+---
+
+## Effectiveness
+
+> **Rule:** Every statement in the algorithm must be **necessary** and serve a clear purpose.
+
+Don't include steps that don't contribute to the result. Effectiveness is about eliminating waste — every operation should move the algorithm measurably closer to its output.
+
+---
+
+## Connecting It to Everyday Procedures
+
+An algorithm is essentially a **procedure**, and these five characteristics map naturally onto familiar real-world procedures — a lab experiment or a cooking recipe:
+
+| Characteristic | Chemistry / Physics Experiment | Cooking a Recipe |
+|---|---|---|
+| **Input** | Chemicals, apparatus, instruments | Ingredients |
+| **Output** | At least one result/solution must be obtained | A finished dish must be produced |
+| **Definiteness** | Every step performed is a **known** step — nothing "magical" or undefined | Every step performed is a **known**, clearly specified step |
+| **Finiteness** | The experiment stops at some point, with a result ready | Cooking stops at some point, with the dish ready |
+| **Effectiveness** | No chemical is measured out and left unused | No ingredient is prepared and left out of the dish |
+
+**Think of it like** a recipe card: it lists ingredients (input, possibly none — some recipes need nothing but technique and existing pantry items), it guarantees a dish at the end (output), every instruction is precise enough that two different cooks produce the same result (definiteness), it has a last step (finiteness), and nothing on the card is there by accident (effectiveness).
+
+---
+
+## The Big Picture
+
+- An algorithm must satisfy all five characteristics: **input** (zero or more), **output** (at least one), **definiteness**, **finiteness**, and **effectiveness**.
+- **Definiteness** means every statement is clear and resolvable — no ambiguity, no undefined operations.
+- **Finiteness** is what separates an algorithm from a continuously running service like a server — an algorithm must always terminate.
+- **Effectiveness** means no wasted or purposeless steps — every statement earns its place.
+- These properties generalize beyond programming — any well-defined procedure (an experiment, a recipe) satisfies the same five-point structure.
+
+> **Simple takeaway:** if you can't point to the input (or its absence), the guaranteed output, the unambiguous steps, the stopping point, and the purpose of every line — it isn't an algorithm yet, it's a sketch of one.
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/2-priori-vs-posteriori-analysis", title: "Section 2: Priori vs. Posteriori Analysis" }}
+  next={null}
+/>
