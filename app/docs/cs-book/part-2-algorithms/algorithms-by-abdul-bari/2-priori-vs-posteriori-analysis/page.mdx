@@ -1,0 +1,109 @@
+export const metadata = {
+  title: "Section 2: Priori vs. Posteriori Analysis — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Priori analysis is performed on the algorithm and produces time/space functions; posteriori testing is performed on the program and produces measured seconds and bytes. Why the distinction matters.",
+  keywords: [
+    "priori analysis",
+    "posteriori testing",
+    "algorithm analysis",
+    "time complexity function",
+    "space complexity function",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — Section 2: Priori vs. Posteriori Analysis",
+    description:
+      "Priori analysis (on the algorithm, produces functions) vs. posteriori testing (on the program, produces measured values).",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Algorithms by Abdul Bari
+
+## Section 2: Priori vs. Posteriori Analysis
+
+*Based on [Abdul Bari's Algorithms playlist](https://youtu.be/0IAPZzGSbME?si=yLoAVtKfYvm_5b8K).*
+
+---
+
+## Two Terms, Two Targets
+
+[Section 1](/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/1-introduction-to-algorithms) drew a line between an **algorithm** (design-time, language-independent) and a **program** (implementation-time, language- and hardware-specific). Evaluating each side of that line uses a different method — and different vocabulary:
+
+- **Priori analysis** — performed on the **algorithm**.
+- **Posteriori testing** — performed on the **program**.
+
+Same underlying idea as before: the algorithm gets *analyzed*, the program gets *tested*. This section makes that distinction concrete enough to actually use.
+
+---
+
+## Priori Analysis (on the Algorithm)
+
+> **Definition:** Priori analysis means studying an algorithm in detail — understanding exactly how it works — in order to determine the **time** and **space** it will consume.
+
+- It's done **before** any code is run — purely by studying the algorithm's logic on paper (or a whiteboard).
+- Because it works on the **algorithm**, not a program in a specific language, it is:
+  - **Language-independent** — not tied to any particular programming language.
+  - **Hardware-independent** — not tied to any particular machine.
+- The **result** is expressed as **functions**, not fixed numbers:
+  - A **time function** — how the running time grows as input size grows.
+  - A **space function** — how memory usage grows as input size grows.
+
+**Think of it like** estimating how long a road trip will take by looking at the map and the distance — before you've bought gas or started the car. You get a *function* of distance and speed, not a stopwatch reading.
+
+---
+
+## Posteriori Testing (on the Program)
+
+> **Definition:** Posteriori testing means running and executing the actual **program** to check its real-world performance.
+
+- It's done **after** the algorithm has been implemented as a program.
+- Because it works on the **program** — compiled and run in a specific language, on specific hardware — it is:
+  - **Language-specific** — tied to the programming language used.
+  - **Hardware-specific** — tied to the machine it runs on.
+  - **Operating-system / environment-specific.**
+- The **result** is expressed as **concrete measurements**, not functions:
+  - **Time taken** — measured in seconds or milliseconds.
+  - **Space consumed** — measured in bytes.
+
+**Think of it like** the road trip's actual drive: you now have a stopwatch reading and an odometer reading — real numbers, but numbers that depend on the specific car, the specific driver, and the specific traffic that day. Run the same trip in a different car, and the numbers change even though the route (the algorithm) didn't.
+
+---
+
+## Side-by-Side Comparison
+
+| Aspect | Priori Analysis | Posteriori Testing |
+|---|---|---|
+| **Performed on** | Algorithm | Program |
+| **Method** | Studying the logic in detail | Running / executing the program |
+| **Language dependency** | Independent of language | Specific to the language used |
+| **Hardware dependency** | Independent of hardware | Specific to the hardware, OS, and environment |
+| **Result format** | **Functions** for time and space | **Actual values** — seconds/milliseconds and bytes |
+
+---
+
+## Why This Distinction Matters
+
+If you only ever run posteriori tests — benchmarking a program on your laptop — you learn how *that program* behaves on *that machine*, for *those inputs*. Swap the language, the hardware, or scale the input up by 100x, and the numbers you measured tell you very little.
+
+Priori analysis is what generalizes. A time function like $O(n^2)$ tells you something true regardless of whether the algorithm gets implemented in C or Python, run on a laptop or a server. That's why the rest of this chapter — and most of the algorithms field — spends its time on priori analysis: deriving time and space **functions** directly from an algorithm's structure, which is exactly the subject of the next few sections (asymptotic notation).
+
+---
+
+## The Big Picture
+
+- **Priori analysis** is done on the algorithm, is independent of language and hardware, and produces **time and space functions**.
+- **Posteriori testing** is done on the program, depends on language/hardware/OS, and produces **actual measured time and space values**.
+- This mirrors the algorithm-vs-program distinction from Section 1: analysis belongs to the design-time algorithm, testing belongs to the implementation-time program.
+- Priori analysis is what generalizes across languages and machines — which is why algorithm design leans on it so heavily.
+
+> **Simple takeaway:** priori analysis asks "how will this *scale*, in principle?"; posteriori testing asks "how fast did this *specific run* actually go?" — you need both, but only one of them generalizes.
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/1-introduction-to-algorithms", title: "Section 1: Introduction to Algorithms" }}
+  next={null}
+/>
