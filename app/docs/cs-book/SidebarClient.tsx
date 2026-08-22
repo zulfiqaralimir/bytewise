@@ -22,6 +22,7 @@ const chapters = [
   {
     part: "Part 1 — Foundations",
     items: [
+      { title: "DSA Learning Framework", href: "/docs/cs-book/part-1-foundations/dsa-learning-framework" },
       { title: "Big O Notation", href: "/docs/cs-book/part-1-foundations/big-o-notation" },
       { title: "Data Structures", href: "/docs/cs-book/part-1-foundations/data-structures" },
       { title: "Hash Tables", href: "/docs/cs-book/part-1-foundations/hash-tables" },

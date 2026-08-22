@@ -1,0 +1,256 @@
+export const metadata = {
+  title: "DSA Learning Framework — ByteWise CS Book",
+  description:
+    "The learning order for Data Structures and Algorithms used throughout ByteWise: arrays through advanced DP, built as one connected chain instead of a disconnected topic list.",
+  keywords: [
+    "dsa roadmap",
+    "learning order",
+    "recursion",
+    "dfs",
+    "bfs",
+    "backtracking",
+    "memoization",
+    "dynamic programming",
+    "graph algorithms",
+  ],
+  openGraph: {
+    title: "DSA Learning Framework — ByteWise CS Book",
+    description:
+      "Why arrays lead to recursion, recursion leads to DFS, DFS leads to backtracking, backtracking leads to memoization, and memoization leads to dynamic programming.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+# DSA Learning Framework
+
+> **As discussed with Sir Ameer Hamza Khethran:** BFS and DFS matter because DP depends on them — dynamic programming is, at its core, the optimization of graph traversal and recursion. Before DP can make sense, recursion (and tracing it by hand), DFS, BFS, and backtracking have to be solid first. Then comes memoization, which is really just recursion with caching bolted on — the direct bridge into DP. Advanced problem-solving beyond that, like the Project Euler series, is closer to pure mathematics than to DP, and should be treated as its own category. The starting point for all of it is Array → Linked List → Stack → Queue → Trees, then Recursion.
+
+## Why the Order Matters
+
+Most DSA material teaches algorithms as a bag of unrelated tricks: here's binary search, here's Dijkstra, here's knapsack — memorize each one separately. That approach produces someone who can recognize a problem they've seen before, and gets stuck the moment a problem doesn't match a memorized pattern.
+
+The alternative is to teach DSA as one continuous chain, where every topic is a direct consequence of the one before it:
+
+<MermaidDiagram title="The DSA Learning Chain" chart={`
+flowchart LR
+  A[Array] --> B[Linked List] --> C[Stack] --> D[Queue] --> E[Tree]
+  E --> F[Recursion]
+  F --> G[Recursion Tracing]
+  G --> H[DFS]
+  H --> I[BFS]
+  I --> J[Backtracking]
+  J --> K[Memoisation]
+  K --> L[Dynamic Programming]
+  L --> M[Graph Algorithms]
+  M --> N[Advanced DP]
+  N --> O[Mathematical / Optimization Problems]
+`} />
+
+Skipping links in this chain is what produces the classic "I understand DP examples but can't solve a new DP problem" experience — the gap almost always traces back to shaky recursion tracing, DFS, or backtracking underneath it, not to DP itself.
+
+## 1. Fundamental Data Structures
+
+Start here, and don't move on until each one is conceptually solid — not just "I can name it," but "I know what it costs and when to reach for it":
+
+- **Array**
+- **Linked List**
+- **Stack**
+- **Queue**
+- **Tree**
+- **Graph**
+
+For every one of these, the questions to answer are the same:
+
+- What it is and how it's represented in memory
+- Core operations: insertion, deletion, searching, traversal
+- Time complexity and space complexity of each operation
+- When and why you'd reach for it over the alternatives
+- How it sets up the algorithms that come later
+
+ByteWise covers arrays, linked lists, stacks, queues, trees, and heaps in [Data Structures](/docs/cs-book/part-1-foundations/data-structures), and hash-based lookup in [Hash Tables](/docs/cs-book/part-1-foundations/hash-tables).
+
+## 2. Recursion
+
+Recursion is not a minor programming trick — it's a major foundation, and everything from DFS through advanced DP is built directly on top of it. The core pieces:
+
+- Base case and recursive case
+- Recursive calls and the call stack
+- Returning from a call and unwinding the stack
+- Recursive decomposition — breaking a problem into a smaller version of itself
+- Recursion trees
+- Time and space complexity of recursive algorithms
+
+**The single most important skill here is tracing recursion by hand, step by step:**
+
+$$\text{Function Call} \rightarrow \text{Recursive Call} \rightarrow \text{Deeper Call} \rightarrow \text{Base Case} \rightarrow \text{Return} \rightarrow \text{Unwinding}$$
+
+If you can't trace a recursive function on paper — call by call, frame by frame — you don't yet have the foundation the rest of this chain depends on. See [Recursion](/docs/cs-book/part-1-foundations/recursion) for the full treatment, including call-stack diagrams and memoized Fibonacci.
+
+## 3. DFS — Depth-First Search
+
+DFS is recursion applied to trees and graphs. The connection to hold onto:
+
+$$\text{Recursion} \leftrightarrow \text{Stack} \leftrightarrow \text{DFS}$$
+
+Learn both forms:
+
+- **Recursive DFS** — the call stack does the bookkeeping implicitly
+- **Iterative DFS** — an explicit stack does the same job
+
+And understand:
+
+- How DFS explores a structure — go deep before going wide
+- The role of a `visited` set/array in graphs (trees don't need one; graphs do, to avoid cycles)
+- How backtracking shows up naturally during DFS
+- DFS on trees vs. DFS on graphs
+- Typical applications: path finding, cycle detection, topological ordering, connected components
+
+## 4. BFS — Breadth-First Search
+
+BFS pairs with the Queue the same way DFS pairs with the Stack:
+
+$$\text{Queue} \rightarrow \text{BFS} \rightarrow \text{Level-by-Level Exploration}$$
+
+Cover:
+
+- The BFS algorithm and queue mechanics
+- Tree traversal (level order) and graph traversal
+- Shortest path in an **unweighted** graph — BFS guarantees this; DFS does not
+- Minimum-step problems ("fewest moves to reach X")
+- Connected components
+
+| | DFS | BFS |
+|---|---|---|
+| Order of exploration | Depth first — commits to a path until it dead-ends | Breadth first — explores level by level |
+| Data structure | Stack (explicit or the call stack) | Queue |
+| Shortest path (unweighted) | Not guaranteed | Guaranteed |
+| Typical use | Cycle detection, topological sort, backtracking | Shortest path, level-order, minimum steps |
+
+## 5. Backtracking
+
+Backtracking is DFS with the explicit discipline of undoing a choice that didn't work out. The pattern to internalize:
+
+$$\text{Choose} \rightarrow \text{Explore} \rightarrow \text{Recurse} \rightarrow \text{Undo} \rightarrow \text{Try Another Choice}$$
+
+Classic problems to build this on: permutations, combinations, subsets, N-Queens, Sudoku, maze problems. In every case, the goal is to see the **decision tree** underneath the problem — not to memorize the code that walks it.
+
+## 6. Memoisation
+
+Memoisation is the bridge from recursion to Dynamic Programming — nothing more mysterious than that.
+
+$$\text{Repeated Subproblem} \rightarrow \text{Redundant Computation} \rightarrow \text{Store Result} \rightarrow \text{Reuse Result}$$
+
+> **Memoisation = Recursion + Caching**
+
+What to understand:
+
+- What a "subproblem" actually is
+- How overlapping subproblems arise (naive Fibonacci is the canonical example — see the $O(2^n)$ call tree in [Recursion](/docs/cs-book/part-1-foundations/recursion))
+- How a memo/cache is built and checked
+- Top-down computation with caching
+- How complexity changes before and after adding a memo — Fibonacci goes from $O(2^n)$ to $O(n)$
+
+## 7. Dynamic Programming
+
+Only after recursion tracing, DFS, BFS, backtracking, and memoisation are solid does DP itself belong on the table.
+
+> Dynamic Programming is not simply "optimizing graphs" or "optimizing recursion." It's a general problem-solving technique built on two properties: **overlapping subproblems** and **optimal substructure**.
+
+Two approaches, both doing the same underlying work:
+
+| Approach | Direction | Mechanism |
+|---|---|---|
+| **Top-Down DP** | Start from the full problem, recurse down | Recursion + Memoisation |
+| **Bottom-Up DP** | Start from the smallest subproblem, build up | Tabulation + Iteration |
+
+The progression that makes DP click:
+
+$$\text{Recursion} \rightarrow \text{Repeated Subproblems} \rightarrow \text{Memoisation} \rightarrow \text{DP}$$
+
+The goal is to understand *why* DP works on a given problem, not to memorize a catalog of DP "patterns."
+
+## 8. Graph Algorithms
+
+With DP fundamentals in place, go deeper on graphs:
+
+- DFS, BFS (revisited with graph-specific applications)
+- Shortest-path algorithms — **Dijkstra**, **Bellman-Ford**
+- **Minimum Spanning Tree**
+- **Topological Sort**
+- **Union-Find / Disjoint Set**
+- **Graph DP**
+
+**Graph Algorithms ≠ Dynamic Programming.** Graph DP is one application of DP — not the other way around. Dijkstra and BFS are not DP; a DP formulation over a DAG (like longest path in a DAG) is.
+
+## 9. Advanced Dynamic Programming
+
+Once basic DP is solid, advanced DP is a matter of applying the same reasoning process to harder state spaces:
+
+- 1D DP, 2D DP
+- Knapsack-type problems
+- String DP, Grid DP, Tree DP, Graph DP
+- State compression
+- Optimizing DP complexity (space-optimized rolling arrays, monotonic-deque optimization, etc.)
+
+For **every** DP problem, force yourself through the same six questions before writing code:
+
+1. **What is the state?**
+2. **What are the decisions?**
+3. **What smaller problem does each decision create?**
+4. **What is the recurrence / transition?**
+5. **What are the base cases?**
+6. **What is the computational complexity?**
+
+## 10. Mathematical and Optimization Problems
+
+Finally, DSA connects outward to pure mathematical problem-solving — Project Euler–style problems in particular, which may draw on:
+
+- Number theory
+- Combinatorics
+- Recursion
+- Dynamic Programming
+- Optimization
+- Mathematical patterns and efficient computation
+
+**Do not classify every Euler-style problem as DP.** The right move is to identify *which* technique — number theory, combinatorics, recursion, DP, or straight optimization — actually fits the problem in front of you, rather than reaching for DP by default.
+
+## Core Conceptual Map
+
+**Data Structures:**
+Array → Linked List → Stack → Queue → Tree → Graph
+
+**Algorithmic Reasoning:**
+Recursion → Recursion Tracing → DFS → BFS → Backtracking → Memoisation → Dynamic Programming
+
+**Advanced Problem Solving:**
+Graph Algorithms → Advanced DP → Mathematical Problems → Optimization
+
+The single most important sub-chain in this whole map:
+
+> **Recursion → DFS → Backtracking → Memoisation → Dynamic Programming**
+
+Do not skip the intermediate reasoning steps to get to DP faster — the intermediate steps *are* what makes DP make sense.
+
+## The Teaching Principle
+
+The goal is algorithmic thinking, not memorized code. For every algorithm you learn from here on, answer all ten of these before moving on:
+
+1. What problem does it solve?
+2. Why does the algorithm work?
+3. How does it work, step by step?
+4. What data structure does it use?
+5. What is happening internally?
+6. Can I trace it manually, on paper?
+7. What is its time complexity?
+8. What is its space complexity?
+9. What are its limitations?
+10. How does it connect to the next concept in the chain?
+
+Use small examples and trace them by hand before looking at generalized code. And don't move into advanced DP before recursion, recursion tracing, DFS, BFS, backtracking, and memoisation are all demonstrably solid — that gap is where most DP struggle actually comes from.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-0-how-computers-work/low-high-level-programming", title: "Low-Level vs High-Level Programming" }}
+  next={{ href: "/docs/cs-book/part-1-foundations/big-o-notation", title: "Big O Notation" }}
+/>
