@@ -63,9 +63,9 @@ const chapters = [
         chapter: "Algorithms by Abdul Bari",
         items: [
           { title: "Section 0: Course Overview & Roadmap", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/0-introduction-and-roadmap" },
-          { title: "Section 1: Introduction to Algorithms", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/1-introduction-to-algorithms" },
-          { title: "Section 2: Priori vs. Posteriori Analysis", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/2-priori-vs-posteriori-analysis" },
-          { title: "Section 3: Characteristics of an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/3-characteristics-of-an-algorithm" },
+          { title: "1: Introduction to Algorithms", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-introduction-to-algorithms" },
+          { title: "1.1: Priori vs. Posteriori Analysis", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-1-priori-vs-posteriori-analysis" },
+          { title: "1.2: Characteristics of an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-2-characteristics-of-an-algorithm" },
         ],
       },
     ],
