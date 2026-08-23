@@ -39,6 +39,42 @@ Both of these strategies are typically used for **optimization problems** — th
 
 The idea underlying Dynamic Programming is called the **Principle of Optimality**: an optimal solution to a problem can be constructed from optimal solutions to its **subproblems**. Rather than solving the same subproblem again every time it's needed, Dynamic Programming **solves each subproblem once, stores the result, and reuses it.**
 
+### 1.1 Greedy Method vs. Dynamic Programming
+
+Both strategies target optimization problems, but they get there very differently:
+
+| Aspect | Greedy Method | Dynamic Programming |
+|---|---|---|
+| **Decision style** | Makes one choice at each step and **never looks back** — the choice is final | Explores how subproblems combine, and picks the best combination |
+| **What it examines** | Only the current best-looking option | All relevant subproblem results, stored and reused |
+| **Correctness guarantee** | Only optimal when the problem has the **greedy-choice property** (a locally best choice always leads to the globally best solution) | Always optimal when the problem has **optimal substructure** (guaranteed by the Principle of Optimality) |
+| **Overlapping subproblems** | Not required — greedy never revisits a decision | Central to the approach — DP exists specifically to avoid resolving the same subproblem twice |
+| **Typical cost** | Cheap — usually a single pass, $O(n \log n)$ or better | More expensive — builds and fills a table of subproblem results |
+| **Classic examples** | Activity Selection, Fractional Knapsack, Huffman Coding, Kruskal's/Prim's MST | 0/1 Knapsack, Fibonacci, Longest Common Subsequence, Matrix Chain Multiplication |
+
+> **A concrete contrast:** in the **Fractional Knapsack** problem, greedily grabbing the item with the best value-per-weight ratio first always leads to the optimal fill — no need to reconsider earlier picks. But in the **0/1 Knapsack** problem (each item must be taken whole or not at all), that same greedy strategy can lock in a choice that blocks a better combination later — so it needs Dynamic Programming's "consider the subproblems, then combine" approach to guarantee the optimal answer.
+
+### 1.2 Where to Use What
+
+A quick decision guide for picking between the two:
+
+- **Reach for Greedy when:** each choice, once made, never needs to be reconsidered — committing early can't box you out of the optimal answer later. This only holds when the problem has the **greedy-choice property.**
+- **Reach for Dynamic Programming when:** a choice made now *could* conflict with a better option later, so you need to compare full subproblem outcomes rather than commit blindly. This is needed when the problem has **overlapping subproblems** and **optimal substructure.**
+- **Not sure which applies?** Try the greedy approach first and look for a counterexample — a case where the locally best choice provably leads to a worse final answer (like 0/1 Knapsack above). If you find one, the problem needs Dynamic Programming instead.
+- **Both can even show up in the same family of problems** — Fractional Knapsack (Greedy) vs. 0/1 Knapsack (DP) is the textbook case: same setup, but a single constraint change (splitting items or not) flips which strategy is correct.
+
+### 1.3 How to Understand the Situation
+
+When you're facing a new optimization problem and need to work out which strategy it calls for, ask these questions in order:
+
+1. **Does an early choice ever come back to bite you?** Walk through a small example by hand. If committing to the best-looking option right now can *permanently rule out* a better final answer, greedy is unsafe — you need DP.
+2. **Can you prove the greedy-choice property, or only assume it?** If you can argue that swapping any greedy pick for a different one never improves the final result (an "exchange argument"), greedy is provably safe. If you're just *hoping* it works, that's a warning sign — test it.
+3. **Do smaller subproblems get asked for more than once, from different paths?** If the same subproblem (e.g., `fib(2)`, or "best value using the first `i` items with capacity `w`") gets requested repeatedly through different decision paths, that's the signature of **overlapping subproblems** — a strong signal for DP.
+4. **Does an optimal answer decompose cleanly into optimal answers to smaller versions of itself?** If yes, the problem has **optimal substructure** — the precondition the Principle of Optimality depends on, and what makes DP applicable at all.
+5. **Run a brute-force check on a tiny case.** For a handful of items or elements, compute the true optimal by hand or exhaustively, then compare it against what greedy produces. A single mismatch is proof greedy fails here — no further argument needed.
+
+> **Simple rule:** if you can find *any* small case where the greedy pick isn't part of the true optimal solution, stop trying to make greedy work — that counterexample is your proof you need Dynamic Programming instead.
+
 ---
 
 ## 2. A Motivating Example: Fibonacci Numbers
