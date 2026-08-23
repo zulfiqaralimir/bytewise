@@ -1,0 +1,47 @@
+<svg viewBox="0 0 640 620" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman, Times, serif">
+  <rect x="0" y="0" width="640" height="620" fill="#fdfdfb"/>
+
+  <text x="380" y="26" text-anchor="middle" font-size="16" fill="#2c3e50" font-weight="bold">DFS Spanning Tree</text>
+  <text x="380" y="46" text-anchor="middle" font-size="13" fill="#555" font-style="italic">Visit order: 1, 4, 3, 10, 9, 2, 8, 7, 5, 6</text>
+
+  <!-- Tree edges (solid) -->
+  <g stroke="#2c3e50" stroke-width="1.6">
+    <line x1="380" y1="80"  x2="380" y2="150"/> <!-- 1-4 -->
+    <line x1="380" y1="150" x2="380" y2="220"/> <!-- 4-3 -->
+    <line x1="380" y1="220" x2="280" y2="290"/> <!-- 3-10 -->
+    <line x1="380" y1="220" x2="380" y2="290"/> <!-- 3-9 -->
+    <line x1="380" y1="220" x2="480" y2="290"/> <!-- 3-2 -->
+    <line x1="480" y1="290" x2="480" y2="360"/> <!-- 2-8 -->
+    <line x1="480" y1="360" x2="480" y2="430"/> <!-- 8-7 -->
+    <line x1="480" y1="430" x2="480" y2="500"/> <!-- 7-5 -->
+    <line x1="480" y1="500" x2="480" y2="570"/> <!-- 5-6 -->
+  </g>
+
+  <!-- Back edges (dashed), routed to the left / right of the chain -->
+  <g stroke="#a33" stroke-width="1.4" stroke-dasharray="5,4" fill="none">
+    <path d="M 380,80  C 180,150 180,260 380,220" /> <!-- 1-2 back edge, big loop left -->
+    <path d="M 480,290 C 620,340 620,420 480,430" /> <!-- 2-7 back edge -->
+    <path d="M 480,290 C 600,380 600,480 480,500" /> <!-- 2-5 back edge -->
+    <path d="M 480,360 C 380,410 380,470 480,500" /> <!-- 8-5 back edge -->
+  </g>
+
+  <!-- Nodes -->
+  <g font-size="14" fill="#fff" font-weight="bold">
+    <circle cx="380" cy="70"  r="19" fill="#2c3e50"/><text x="380" y="76"  text-anchor="middle">1</text>
+    <circle cx="380" cy="150" r="17" fill="#b8860b"/><text x="380" y="156" text-anchor="middle">4</text>
+    <circle cx="380" cy="220" r="17" fill="#b8860b"/><text x="380" y="226" text-anchor="middle">3</text>
+    <circle cx="280" cy="290" r="15" fill="#2e7d32"/><text x="280" y="296" text-anchor="middle">10</text>
+    <circle cx="380" cy="290" r="15" fill="#2e7d32"/><text x="380" y="296" text-anchor="middle">9</text>
+    <circle cx="480" cy="290" r="16" fill="#2c7fb8"/><text x="480" y="296" text-anchor="middle">2</text>
+    <circle cx="480" cy="360" r="16" fill="#2c7fb8"/><text x="480" y="366" text-anchor="middle">8</text>
+    <circle cx="480" cy="430" r="16" fill="#2c7fb8"/><text x="480" y="436" text-anchor="middle">7</text>
+    <circle cx="480" cy="500" r="16" fill="#2c7fb8"/><text x="480" y="506" text-anchor="middle">5</text>
+    <circle cx="480" cy="570" r="15" fill="#2e7d32"/><text x="480" y="576" text-anchor="middle">6</text>
+  </g>
+
+  <!-- Legend -->
+  <line x1="60" y1="590" x2="100" y2="590" stroke="#2c3e50" stroke-width="1.6"/>
+  <text x="110" y="594" font-size="12" fill="#333">Tree edge</text>
+  <line x1="220" y1="590" x2="260" y2="590" stroke="#a33" stroke-width="1.4" stroke-dasharray="5,4"/>
+  <text x="270" y="594" font-size="12" fill="#333">Back edge (connects to an ancestor)</text>
+</svg>

@@ -1,0 +1,36 @@
+<svg viewBox="0 0 700 440" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman, Times, serif">
+  <rect x="0" y="0" width="700" height="440" fill="#fdfdfb"/>
+
+  <!-- Edges -->
+  <g stroke="#999" stroke-width="1.4">
+    <line x1="150" y1="80"  x2="80"  y2="180"/> <!-- 1-4 -->
+    <line x1="150" y1="80"  x2="300" y2="180"/> <!-- 1-2 -->
+    <line x1="80"  y1="180" x2="150" y2="280"/> <!-- 4-3 -->
+    <line x1="150" y1="280" x2="100" y2="380"/> <!-- 3-10 -->
+    <line x1="150" y1="280" x2="200" y2="380"/> <!-- 3-9 -->
+    <line x1="300" y1="180" x2="150" y2="280"/> <!-- 2-3 -->
+    <line x1="300" y1="180" x2="480" y2="100"/> <!-- 2-5 -->
+    <line x1="300" y1="180" x2="560" y2="180"/> <!-- 2-7 -->
+    <line x1="300" y1="180" x2="480" y2="260"/> <!-- 2-8 -->
+    <line x1="480" y1="100" x2="600" y2="40"/>  <!-- 5-6 -->
+    <line x1="480" y1="100" x2="560" y2="180"/> <!-- 5-7 -->
+    <line x1="480" y1="100" x2="480" y2="260"/> <!-- 5-8 -->
+    <line x1="560" y1="180" x2="480" y2="260"/> <!-- 7-8 -->
+  </g>
+
+  <!-- Nodes -->
+  <g font-size="14" fill="#fff" font-weight="bold">
+    <circle cx="150" cy="80"  r="19" fill="#2c3e50"/><text x="150" y="86"  text-anchor="middle">1</text>
+    <circle cx="80"  cy="180" r="18" fill="#2c3e50"/><text x="80"  y="186" text-anchor="middle">4</text>
+    <circle cx="150" cy="280" r="18" fill="#2c3e50"/><text x="150" y="286" text-anchor="middle">3</text>
+    <circle cx="100" cy="380" r="17" fill="#2c3e50"/><text x="100" y="386" text-anchor="middle">10</text>
+    <circle cx="200" cy="380" r="17" fill="#2c3e50"/><text x="200" y="386" text-anchor="middle">9</text>
+    <circle cx="300" cy="180" r="18" fill="#2c3e50"/><text x="300" y="186" text-anchor="middle">2</text>
+    <circle cx="480" cy="100" r="18" fill="#2c3e50"/><text x="480" y="106" text-anchor="middle">5</text>
+    <circle cx="600" cy="40"  r="17" fill="#2c3e50"/><text x="600" y="46"  text-anchor="middle">6</text>
+    <circle cx="560" cy="180" r="18" fill="#2c3e50"/><text x="560" y="186" text-anchor="middle">7</text>
+    <circle cx="480" cy="260" r="18" fill="#2c3e50"/><text x="480" y="266" text-anchor="middle">8</text>
+  </g>
+
+  <text x="350" y="420" text-anchor="middle" font-size="13" fill="#555" font-style="italic">10 vertices, 13 edges — the graph used for the detailed BFS and DFS walkthrough below.</text>
+</svg>

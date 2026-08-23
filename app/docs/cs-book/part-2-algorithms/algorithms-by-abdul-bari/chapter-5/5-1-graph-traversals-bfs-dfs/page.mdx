@@ -1,0 +1,184 @@
+export const metadata = {
+  title: "5.1: Graph Traversals — BFS & DFS — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Breadth-First Search and Depth-First Search as graph traversal methods: visiting vs. exploring a vertex, BFS with a queue, DFS with a stack, spanning trees, cross edges vs. back edges, and why a graph can have many valid BFS/DFS orders.",
+  keywords: [
+    "BFS",
+    "DFS",
+    "breadth-first search",
+    "depth-first search",
+    "graph traversal",
+    "spanning tree",
+    "cross edges",
+    "back edges",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 5.1: Graph Traversals — BFS & DFS",
+    description:
+      "BFS with a queue, DFS with a stack, spanning trees, cross edges vs. back edges, and why a graph can have many valid BFS/DFS orders.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 5.1: Graph Traversals — BFS & DFS
+
+*Course: Algorithms | Based on the lecture by Abdul Bari*
+
+---
+
+## 1. Two Key Terms
+
+Before understanding either traversal method, we need two terms:
+
+1. **Visiting a vertex** — going to (marking as reached) one particular vertex.
+2. **Exploration of a vertex** — if you are standing on a particular vertex, visiting *all* of its adjacent vertices is called exploring that vertex.
+
+**Breadth-First Search (BFS)** and **Depth-First Search (DFS)** are both **graph traversal methods** — a tree is just a special case of a graph, so both methods apply equally to trees.
+
+---
+
+## 2. A Quick First Example
+
+Take vertex **1** as the starting vertex (you may start BFS or DFS from *any* vertex).
+
+### 2.1 Breadth-First Search (BFS)
+
+1. Visit **1**.
+2. Explore 1 — visit its adjacent vertices **2, 4, 5** (any order is fine).
+3. Move to the next unexplored vertex — explore **2** — visit its adjacent vertices **7, 3, 6**.
+4. No vertex remains for exploration — done.
+
+### 2.2 Depth-First Search (DFS)
+
+1. Visit **1**, then immediately begin exploring it.
+2. Go to **2** (an adjacent vertex) — since 2 is *newly* visited, **suspend 1** and start exploring 2 right away (don't visit 1's other neighbours yet).
+3. From 2, go to **3** — suspend 2, start exploring 3. Nothing is adjacent to 3 (other than 2), so 3 is fully explored — go back to 2.
+4. Continue exploring 2: visit and explore **6** (nothing further), then **7** (nothing further) — go back to 1.
+5. Continue exploring 1: visit and explore **4**, then **5** — done.
+
+<Figure src="/images/bfs-dfs-small-example-graph.svg" alt="Small example graph with vertices 1-7. BFS from 1: 1,2,4,5,7,3,6. DFS from 1: 1,2,3,6,7,4,5" width={700} height={380} caption="Same graph, two different traversal orders — the results are different because BFS explores level by level while DFS dives deep immediately." />
+
+> **The key difference:** in BFS, once you finish exploring a vertex, you move on to the *next* vertex for exploration. In DFS, the moment you visit a *new* vertex, you immediately suspend the current one and start exploring the new one — you go as deep as possible before backing up.
+
+---
+
+## 3. A Binary Tree Example
+
+A tree is a graph too, so the same ideas apply directly. On a binary tree:
+
+- **BFS is exactly a level-order traversal.**
+- **DFS is exactly a pre-order traversal.**
+
+<Figure src="/images/bfs-dfs-binary-tree.svg" alt="Binary tree with 7 nodes. BFS (level order): 1,2,3,4,5,6,7. DFS (preorder): 1,2,4,5,3,6,7" width={500} height={320} caption="On a binary tree, BFS = level order and DFS = preorder — a useful mental shortcut." />
+
+---
+
+## 4. A Larger Graph — Detailed Walkthrough
+
+To really understand both algorithms, we now work through a bigger, 10-vertex graph in full detail.
+
+<Figure src="/images/graph-base-10-vertices.svg" alt="Base 10-vertex graph used for the detailed BFS and DFS walkthrough" width={700} height={440} caption="The graph used for the rest of this lesson." />
+
+### 4.1 Breadth-First Search — Using a Queue
+
+BFS is performed using a **Queue** data structure.
+
+**Initial step:**
+- Pick any starting vertex — here, vertex **1**.
+- Record it in the result, and add it to the queue.
+
+**Repeating step:**
+- Take a vertex out of the queue and **fully explore it** — visit every one of its adjacent vertices, add each newly-visited vertex to both the result and the queue.
+- Repeat until the queue is empty.
+
+Walking through this graph: explore **1** → visit 4, 2. Explore **4** → visit 3. Explore **2** → visit 5, 8, 7 (3 is skipped — already visited). Explore **3** → visit 10, 9 (2 already visited). Explore **5** → visit 6 (8, 7 already visited). Explore 8, 7, 10, 9, 6 — nothing new remains.
+
+> **Resulting BFS order:** 1, 4, 2, 3, 5, 8, 7, 10, 9, 6
+
+<Figure src="/images/bfs-spanning-tree-10-vertices.svg" alt="BFS spanning tree for the 10-vertex graph, with tree edges solid and cross edges (to already-visited vertices) dashed" width={780} height={400} caption="The BFS spanning tree. Solid edges are tree edges (used to first reach a vertex); dashed edges are cross edges — connections to vertices that were already visited." />
+
+### 4.2 Rules of BFS
+
+1. You may **start** BFS from any vertex you like.
+2. While exploring a vertex, you may visit its adjacent vertices in **any order.**
+3. **Rule:** when exploring a vertex, you must visit *all* of its adjacent vertices before moving on to explore the next vertex.
+4. The **next vertex to explore** must always be taken from the **queue** — never chosen arbitrarily.
+
+Because of the freedom in steps 1 and 2, a graph can have **many different, equally valid BFS sequences.** For example, on this same graph:
+
+- `1, 2, 4, 8, 5, 7, 3, 6, 10, 9`
+- `5, 2, 8, 7, 6, 3, 1, 9, 10, 4`
+
+are both equally valid BFS traversals — they simply made different (but rule-following) choices about starting vertex and visit order.
+
+---
+
+### 4.3 Depth-First Search — Using a Stack
+
+DFS is performed using a **Stack** data structure.
+
+**Initial step:**
+- Pick any starting vertex — here, vertex **1** — and visit it.
+
+**Repeating step:**
+- Every time a **new** vertex is visited, start exploring it **immediately.**
+- The vertex you came from is **suspended** (pushed onto the stack) so you can return to it later.
+- When a vertex has no unvisited neighbours left, it is **completely explored** — pop the stack and resume exploring the previous vertex.
+
+Walking through this graph: visit **1** → go to **4** (suspend 1) → go to **3** (suspend 4) → go to **10** (suspend 3, nothing further, back to 3) → go to **9** (suspend 3, nothing further, back to 3) → 3's only remaining neighbour is **2** (already-visited neighbours 4 skipped) → go to **8** (suspend 2) → go to **7** (suspend 8) → go to **5** (suspend 7) → go to **6** (suspend 5, nothing further, back to 5) → 5 fully explored, back to 7 → 7 fully explored, back to 8 → 8 fully explored, back to 2 → 2 fully explored, back to 3 → back to 4 → back to 1 — done.
+
+> **Resulting DFS order:** 1, 4, 3, 10, 9, 2, 8, 7, 5, 6
+
+<Figure src="/images/dfs-spanning-tree-10-vertices.svg" alt="DFS spanning tree for the 10-vertex graph, with tree edges solid and back edges (to an ancestor already on the stack) dashed" width={640} height={620} caption="The DFS spanning tree — a long chain here. Solid edges are tree edges; dashed edges are back edges, connecting a vertex back to one of its ancestors already on the stack." />
+
+Reading the DFS tree top to bottom gives a **pre-order traversal** of the spanning tree: `1, 4, 3, 10, 9, 2, 8, 7, 5, 6`.
+
+### 4.4 More Valid DFS Traversals
+
+Just like BFS, the freedom to choose a starting vertex and the order of adjacent vertices means DFS also has **many valid traversal sequences** for the same graph, for example:
+
+- `1, 2, 8, 7, 5, 6, 3, 9, 10, 4`
+- `3, 4, 1, 2, 5, 6, 7, 8, 10, 9`
+
+---
+
+## 5. Summary: BFS vs. DFS
+
+| Aspect | BFS | DFS |
+|---|---|---|
+| **Data structure used** | Queue | Stack |
+| **Strategy** | Fully explore the current vertex (all neighbours) before moving to the next queued vertex | The moment a new vertex is visited, suspend the current one and dive into the new one immediately |
+| **On a binary tree, equivalent to** | Level-order traversal | Pre-order traversal |
+| **Non-tree edges are called** | Cross edges | Back edges |
+| **Time complexity** | O(n), where n is the number of vertices | O(n), where n is the number of vertices |
+
+---
+
+## 6. Key Takeaways
+
+- **Visiting** a vertex means marking it reached; **exploring** a vertex means visiting all of its adjacent vertices.
+- **BFS** uses a **queue**: fully explore one vertex, then move to the next vertex waiting in the queue. This mirrors **level-order** traversal on a tree.
+- **DFS** uses a **stack**: the instant a new vertex is discovered, suspend the current one and dive into the new one. This mirrors **pre-order** traversal on a tree.
+- Both traversals may start from **any vertex**, and adjacent vertices may be visited in **any order** — so a single graph can have **many different, equally valid** BFS or DFS sequences.
+- The one strict rule for both: you must fully finish exploring the current vertex according to the algorithm's discipline (queue for BFS, stack for DFS) before moving on.
+- Non-tree edges are called **cross edges** in a BFS spanning tree, and **back edges** in a DFS spanning tree.
+- Both BFS and DFS run in **O(n)** time, where *n* is the number of vertices.
+
+---
+
+**Watch the original lecture:** <a href="https://www.youtube.com/watch?v=pcKY4hjDrxk" target="_blank" rel="noopener noreferrer">Graph Traversals — BFS & DFS — Abdul Bari (YouTube)</a>
+
+---
+
+*Lesson notes derived from a lecture transcript — Abdul Bari, Algorithms Course.*
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction", title: "3: Greedy Method — Introduction" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction", title: "6: Introduction to Backtracking — Brute-Force Approach" }}
+/>
