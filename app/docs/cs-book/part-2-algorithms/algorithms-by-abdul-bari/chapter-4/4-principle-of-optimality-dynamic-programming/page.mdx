@@ -138,6 +138,8 @@ int fib(int n)
 - For Fibonacci, this turns an **$O(2^n)$** naive recursive solution into an **$O(n)$** Dynamic Programming solution.
 - Building the table from the base cases upward (as shown here) is called a **bottom-up** approach — one of the two standard ways to implement Dynamic Programming (the other being top-down recursion with stored results, known as **memoization**).
 
+> **Note:** this Fibonacci recursion is not backtracking — it has no choices to try and no constraints to check, so there's nothing to prune. The wasted work here comes from solving the same subproblem repeatedly, which Dynamic Programming fixes.
+
 ---
 
 *Lesson notes derived from lecture whiteboard images — Abdul Bari, Algorithms Course.*
