@@ -1,0 +1,61 @@
+<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman, Times, serif">
+  <rect x="0" y="0" width="820" height="200" fill="#fdfdfb"/>
+
+  <text x="220" y="35" text-anchor="middle" font-size="16" fill="#2c3e50" font-weight="bold">Before: F[] initialized</text>
+  <text x="640" y="35" text-anchor="middle" font-size="16" fill="#2c3e50" font-weight="bold">After: F[] filled bottom-up</text>
+
+  <defs>
+    <marker id="arrowfib" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2c3e50"/>
+    </marker>
+  </defs>
+
+  <!-- BEFORE table: 6 cells, all -1 -->
+  <g>
+    <text x="30" y="90" font-size="14" fill="#333" font-weight="bold">F</text>
+    <g font-size="15" fill="#a33" font-weight="bold">
+      <rect x="50"  y="65" width="55" height="45" fill="#fff" stroke="#999" stroke-width="1.3"/><text x="77"  y="93" text-anchor="middle">-1</text>
+      <rect x="105" y="65" width="55" height="45" fill="#fff" stroke="#999" stroke-width="1.3"/><text x="132" y="93" text-anchor="middle">-1</text>
+      <rect x="160" y="65" width="55" height="45" fill="#fff" stroke="#999" stroke-width="1.3"/><text x="187" y="93" text-anchor="middle">-1</text>
+      <rect x="215" y="65" width="55" height="45" fill="#fff" stroke="#999" stroke-width="1.3"/><text x="242" y="93" text-anchor="middle">-1</text>
+      <rect x="270" y="65" width="55" height="45" fill="#fff" stroke="#999" stroke-width="1.3"/><text x="297" y="93" text-anchor="middle">-1</text>
+      <rect x="325" y="65" width="55" height="45" fill="#fff" stroke="#999" stroke-width="1.3"/><text x="352" y="93" text-anchor="middle">-1</text>
+    </g>
+    <g font-size="12" fill="#555">
+      <text x="77"  y="128" text-anchor="middle">0</text>
+      <text x="132" y="128" text-anchor="middle">1</text>
+      <text x="187" y="128" text-anchor="middle">2</text>
+      <text x="242" y="128" text-anchor="middle">3</text>
+      <text x="297" y="128" text-anchor="middle">4</text>
+      <text x="352" y="128" text-anchor="middle">5</text>
+    </g>
+    <text x="215" y="158" text-anchor="middle" font-size="13" fill="#555" font-style="italic">-1 means "not yet computed"</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="400" y1="88" x2="450" y2="88" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowfib)"/>
+
+  <!-- AFTER table: 6 cells, filled 0,1,1,2,3,5 ; last cell highlighted -->
+  <g>
+    <text x="470" y="90" font-size="14" fill="#333" font-weight="bold">F</text>
+    <g font-size="15" fill="#111" font-weight="bold">
+      <rect x="490" y="65" width="50" height="45" fill="#eef4fa" stroke="#2c7fb8" stroke-width="1.3"/><text x="515" y="93" text-anchor="middle">0</text>
+      <rect x="540" y="65" width="50" height="45" fill="#eef4fa" stroke="#2c7fb8" stroke-width="1.3"/><text x="565" y="93" text-anchor="middle">1</text>
+      <rect x="590" y="65" width="50" height="45" fill="#eef4fa" stroke="#2c7fb8" stroke-width="1.3"/><text x="615" y="93" text-anchor="middle">1</text>
+      <rect x="640" y="65" width="50" height="45" fill="#eef4fa" stroke="#2c7fb8" stroke-width="1.3"/><text x="665" y="93" text-anchor="middle">2</text>
+      <rect x="690" y="65" width="50" height="45" fill="#eef4fa" stroke="#2c7fb8" stroke-width="1.3"/><text x="715" y="93" text-anchor="middle">3</text>
+      <rect x="740" y="65" width="50" height="45" fill="#2c3e50" stroke="#b8860b" stroke-width="2.2"/><text x="765" y="93" text-anchor="middle" fill="#fff">5</text>
+    </g>
+    <g font-size="12" fill="#555">
+      <text x="515" y="128" text-anchor="middle">0</text>
+      <text x="565" y="128" text-anchor="middle">1</text>
+      <text x="615" y="128" text-anchor="middle">2</text>
+      <text x="665" y="128" text-anchor="middle">3</text>
+      <text x="715" y="128" text-anchor="middle">4</text>
+      <text x="765" y="128" text-anchor="middle">5</text>
+    </g>
+  </g>
+
+  <text x="640" y="158" text-anchor="middle" font-size="13" fill="#555" font-style="italic">Each F[i] computed once, reused when needed — no repeated calls.</text>
+  <text x="640" y="180" text-anchor="middle" font-size="14" fill="#b8860b" font-weight="bold">F[5] = fib(5) = 5</text>
+</svg>

@@ -70,6 +70,7 @@ const chapters = [
           { title: "2: Divide and Conquer — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-divide-and-conquer-introduction" },
           { title: "2.1: Recurrence Relation T(n) = T(n-1) + 1 — Part 1", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-1-recurrence-relation-part-1" },
           { title: "3: Greedy Method — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction" },
+          { title: "4: Principle of Optimality — Introduction to Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-4/4-principle-of-optimality-dynamic-programming" },
           { title: "5.1: Graph Traversals — BFS & DFS", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-1-graph-traversals-bfs-dfs" },
           { title: "6: Introduction to Backtracking — Brute-Force Approach", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction" },
         ],
