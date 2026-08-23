@@ -93,6 +93,13 @@ body {
   font-family: 'Times New Roman', Times, Georgia, serif;
 }
 
+/* Algorithms by Abdul Bari — serif (Times New Roman) headings */
+.prose .abdul-bari-serif h1,
+.prose .abdul-bari-serif h2,
+.prose .abdul-bari-serif h3 {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+}
+
 /* Callout boxes */
 .callout-info    { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
 .callout-tip     { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }

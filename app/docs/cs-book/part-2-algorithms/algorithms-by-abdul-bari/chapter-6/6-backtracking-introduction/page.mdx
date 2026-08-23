@@ -1,0 +1,129 @@
+export const metadata = {
+  title: "6: Introduction to Backtracking — Brute-Force Approach — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Backtracking as a brute-force strategy for finding all valid solutions to a problem: the state-space tree, the bounding function that prunes invalid branches early, and how backtracking (DFS) differs from branch and bound (BFS).",
+  keywords: [
+    "backtracking",
+    "state-space tree",
+    "bounding function",
+    "backtracking vs branch and bound",
+    "brute force algorithm",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 6: Introduction to Backtracking",
+    description:
+      "The state-space tree, the bounding function that prunes invalid branches early, and backtracking (DFS) vs. branch and bound (BFS).",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 6: Introduction to Backtracking — Brute-Force Approach
+
+---
+
+## What Is Backtracking?
+
+> **Backtracking** is a problem-solving strategy — one of several strategies covered in this course (alongside divide and conquer, dynamic programming, greedy method, and branch and bound).
+
+- Backtracking follows a **brute-force approach**: for a given problem, try out **all possible solutions**, and pick the ones that are wanted.
+- **Contrast with Dynamic Programming:** dynamic programming also explores possibilities, but it is used for **optimization problems** — finding the single best solution.
+- **Backtracking is different:** it is used when a problem has **multiple valid solutions**, and the goal is to find **all of them** (or all of them satisfying some constraint) — not just one optimal answer.
+
+---
+
+## A Motivating Example: Seating Arrangement
+
+- **Problem:** 3 students — two boys **B1, B2** and one girl **G1** — must be seated in 3 chairs. In how many ways can they be arranged?
+- With `n = 3` students, the number of possible arrangements is **n! = 3! = 6** ways.
+- **Goal:** find *all* 6 arrangements — not just one.
+- The solution process is represented as a **solution tree**, also called a **state-space tree.**
+
+---
+
+## Building the State-Space Tree (All Possibilities)
+
+We build the tree level by level, one chair at a time:
+
+- **Level 1 (Chair 1):** try each student in turn — B1, B2, or G1.
+- **Level 2 (Chair 2):** from whichever two students remain, try each one.
+- **Level 3 (Chair 3):** the one remaining student takes the last chair — this completes one full arrangement.
+
+When a branch runs out of further choices, we **backtrack** — step back up the tree and try the next unexplored option at a higher level. This depth-first "go deep, then back up" process is what gives **backtracking** its name.
+
+<Figure src="/images/backtracking-full-state-space-tree.svg" alt="Full state-space tree for seating 3 students (B1, B2, G1) in 3 chairs, showing all 6 leaf arrangements" width={900} height={430} caption="The complete state-space tree for the seating problem — every root-to-leaf path is one full arrangement. There are 6 leaves, matching 3! = 6." />
+
+Following each of the 6 root-to-leaf paths gives one distinct seating arrangement — together, they cover **every possible solution** to the problem.
+
+---
+
+## Applying a Constraint: The Bounding Function
+
+Backtracking problems usually come with **constraints**. Rather than generating every full arrangement and checking it at the end, backtracking checks constraints **as early as possible** — and abandons a branch the moment it becomes invalid.
+
+> **New constraint:** a girl must not sit in the middle chair (chair 2).
+
+- Whenever the algorithm is about to place **G1 in chair 2**, it immediately recognizes the arrangement can never be valid — so it **stops exploring that branch right there**, without even generating chair 3.
+- We say that branch's node is **killed**, and the rule used to kill it is called a **bounding function.**
+
+<Figure src="/images/backtracking-pruned-tree-bounding-function.svg" alt="Pruned state-space tree with the bounding function applied: both branches where G1 is placed in chair 2 are killed immediately, leaving 4 valid solutions" width={900} height={430} caption="Applying the bounding function (&quot;no girl in chair 2&quot;) kills 2 branches immediately — leaving 4 valid solutions instead of 6." />
+
+> **Why this matters:** the bounding function does two things at once — it enforces the constraint, **and** it saves work by never even generating the invalid parts of the tree. This is the core efficiency idea behind backtracking: **prune early, don't generate and check later.**
+
+---
+
+## Backtracking vs. Branch and Bound
+
+A second strategy, **branch and bound**, also follows the brute-force approach and also builds a state-space tree. The two strategies differ only in **how they traverse the tree:**
+
+| Aspect | Backtracking | Branch and Bound |
+|---|---|---|
+| **Traversal order** | **Depth-First Search (DFS)** — dive down one branch fully, then backtrack | **Breadth-First Search (BFS)** — explore every node at one level before going deeper |
+| **Common ground** | Both use brute-force search and build the same state-space tree | Both use brute-force search and build the same state-space tree |
+
+<Figure src="/images/backtracking-vs-branch-and-bound-dfs-bfs.svg" alt="Comparison diagram: backtracking visits nodes in depth-first order, while branch and bound visits nodes in breadth-first order, level by level" width={900} height={400} caption="Same tree shape, different visiting order — backtracking goes deep first (DFS); branch and bound goes wide first, level by level (BFS)." />
+
+> Branch and bound itself is a deeper topic and will be covered in its own lesson later in the course. For now, the key point is just this **traversal difference** between the two strategies.
+
+---
+
+## Problems Covered Under Backtracking
+
+The following classic problems will be explored in upcoming lessons as applications of the backtracking strategy:
+
+- **N-Queens Problem**
+- **Subset problems** (e.g., subset-sum)
+- **Graph Coloring Problem**
+
+---
+
+## The Big Picture
+
+- **Backtracking** is a brute-force strategy for finding **all** solutions to a problem, not just one optimal solution (unlike dynamic programming).
+- Solutions are represented using a **state-space tree**, built level by level, one decision at a time.
+- Backtracking traverses this tree using **Depth-First Search (DFS)** — go deep, then back up and try the next option.
+- A **bounding function** checks constraints early and **kills** invalid branches immediately, saving the work of exploring them further.
+- **Branch and bound** is a related brute-force strategy that builds the same kind of tree but traverses it using **Breadth-First Search (BFS)** instead.
+- Upcoming backtracking problems include the **N-Queens problem**, **subset problems**, and the **graph coloring problem**.
+
+> **Simple takeaway:** backtracking is brute force with judgment — explore every branch depth-first, but the moment a bounding function proves a branch can't lead anywhere valid, kill it and back up immediately.
+
+---
+
+## Backtracking in One Sentence
+
+> **Backtracking is recursion that systematically explores all valid configurations of a problem (permutations, combinations, subsets, or placements), pruning a branch as soon as it violates a constraint.**
+
+**Pruning** = cutting off a branch of the search tree *before* fully exploring it, because you can already tell it can't lead to a valid solution — so you skip the wasted work instead of generating it and checking later.
+
+In the seating example: the moment G1 is about to sit in chair 2, backtracking doesn't bother generating chair 3 at all — it just kills that branch right there. That "kill it early" step is pruning, and the rule that decides *when* to kill it is the **bounding function**.
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction", title: "3: Greedy Method — Introduction" }}
+  next={null}
+/>
