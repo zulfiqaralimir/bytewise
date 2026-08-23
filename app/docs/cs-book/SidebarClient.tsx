@@ -69,6 +69,7 @@ const chapters = [
           { title: "1.3: How to Write and Analyze an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-3-how-to-write-and-analyze-an-algorithm" },
           { title: "2: Divide and Conquer — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-divide-and-conquer-introduction" },
           { title: "2.1: Recurrence Relation T(n) = T(n-1) + 1 — Part 1", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-1-recurrence-relation-part-1" },
+          { title: "3: Greedy Method — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction" },
         ],
       },
     ],
