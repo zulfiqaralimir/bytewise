@@ -39,31 +39,16 @@ Both of these strategies are typically used for **optimization problems** — th
 
 The idea underlying Dynamic Programming is called the **Principle of Optimality**: an optimal solution to a problem can be constructed from optimal solutions to its **subproblems**. Rather than solving the same subproblem again every time it's needed, Dynamic Programming **solves each subproblem once, stores the result, and reuses it.**
 
-### 1.1 Greedy Method vs. Dynamic Programming
-
-Both strategies target optimization problems, but they get there very differently:
-
-| Aspect | Greedy Method | Dynamic Programming |
-|---|---|---|
-| **Decision style** | Makes one choice at each step and **never looks back** — the choice is final | Explores how subproblems combine, and picks the best combination |
-| **What it examines** | Only the current best-looking option | All relevant subproblem results, stored and reused |
-| **Correctness guarantee** | Only optimal when the problem has the **greedy-choice property** (a locally best choice always leads to the globally best solution) | Always optimal when the problem has **optimal substructure** (guaranteed by the Principle of Optimality) |
-| **Overlapping subproblems** | Not required — greedy never revisits a decision | Central to the approach — DP exists specifically to avoid resolving the same subproblem twice |
-| **Typical cost** | Cheap — usually a single pass, $O(n \log n)$ or better | More expensive — builds and fills a table of subproblem results |
-| **Classic examples** | Activity Selection, Fractional Knapsack, Huffman Coding, Kruskal's/Prim's MST | 0/1 Knapsack, Fibonacci, Longest Common Subsequence, Matrix Chain Multiplication |
-
-> **A concrete contrast:** in the **Fractional Knapsack** problem, greedily grabbing the item with the best value-per-weight ratio first always leads to the optimal fill — no need to reconsider earlier picks. But in the **0/1 Knapsack** problem (each item must be taken whole or not at all), that same greedy strategy can lock in a choice that blocks a better combination later — so it needs Dynamic Programming's "consider the subproblems, then combine" approach to guarantee the optimal answer.
-
-### 1.2 Where to Use What
+### 1.1 Where to Use What
 
 A quick decision guide for picking between the two:
 
 - **Reach for Greedy when:** each choice, once made, never needs to be reconsidered — committing early can't box you out of the optimal answer later. This only holds when the problem has the **greedy-choice property.**
 - **Reach for Dynamic Programming when:** a choice made now *could* conflict with a better option later, so you need to compare full subproblem outcomes rather than commit blindly. This is needed when the problem has **overlapping subproblems** and **optimal substructure.**
-- **Not sure which applies?** Try the greedy approach first and look for a counterexample — a case where the locally best choice provably leads to a worse final answer (like 0/1 Knapsack above). If you find one, the problem needs Dynamic Programming instead.
-- **Both can even show up in the same family of problems** — Fractional Knapsack (Greedy) vs. 0/1 Knapsack (DP) is the textbook case: same setup, but a single constraint change (splitting items or not) flips which strategy is correct.
+- **Not sure which applies?** Try the greedy approach first and look for a counterexample — a case where the locally best choice provably leads to a worse final answer. If you find one, the problem needs Dynamic Programming instead.
+- **See Section 5 below** for a fuller side-by-side comparison of how the two strategies differ.
 
-### 1.3 How to Understand the Situation
+### 1.2 How to Understand the Situation
 
 When you're facing a new optimization problem and need to work out which strategy it calls for, ask these questions in order:
 
@@ -165,7 +150,22 @@ int fib(int n)
 
 ---
 
-## 5. Key Takeaways
+## 5. Greedy Method vs. Dynamic Programming
+
+Since these two strategies are introduced together, it's worth being precise about how they differ — both are used for optimization problems, but they arrive at a solution in very different ways.
+
+| Aspect | Greedy Method | Dynamic Programming |
+|---|---|---|
+| **How a choice is made** | Makes the **locally best** choice at each step, and **never reconsiders** it | Considers **results from multiple subproblems** and combines them to build the overall solution |
+| **Subproblems explored** | Only **one** path is ever followed — whatever looks best right now | **Multiple overlapping** subproblems are solved (once each) and their results are reused |
+| **Optimality guarantee** | Gives an optimal answer **only when the problem has the greedy-choice property** — otherwise it can settle for a suboptimal answer | Guarantees an optimal answer whenever the problem satisfies the **Principle of Optimality** |
+| **Speed** | Generally **faster** — one pass, no storing/reusing of subproblem results | Generally **slower** than greedy, but still far faster than naive recursion, thanks to storing and reusing subproblem results |
+
+> **In short:** Greedy commits to one choice at each step and moves on, hoping local decisions add up to a global optimum. Dynamic Programming is more thorough — it works out the optimal answer to every relevant subproblem (storing each one only once) and combines them, which is why it can guarantee optimality in cases where greedy cannot.
+
+---
+
+## 6. Key Takeaways
 
 - **Dynamic Programming**, like the Greedy Method, is generally used for **optimization problems.**
 - It rests on the **Principle of Optimality**: an optimal solution is built from optimal solutions to its subproblems.
