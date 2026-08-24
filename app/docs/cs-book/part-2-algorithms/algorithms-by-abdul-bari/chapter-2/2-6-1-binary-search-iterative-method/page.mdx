@@ -1,0 +1,182 @@
+export const metadata = {
+  title: "2.6.1: Binary Search — Iterative Method — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Binary search as a divide-and-conquer algorithm on a sorted array: the low/high/mid pointer scheme, worked examples for found and not-found keys, the iterative algorithm, its decision-tree view, and O(log n) time complexity.",
+  keywords: [
+    "binary search",
+    "binary search iterative method",
+    "binary search algorithm",
+    "divide and conquer binary search",
+    "binary search time complexity",
+    "binary search decision tree",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 2.6.1: Binary Search — Iterative Method",
+    description:
+      "The low/high/mid pointer scheme, worked examples, the iterative algorithm, its decision-tree view, and why binary search is O(log n).",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 2.6.1: Binary Search — Iterative Method
+
+---
+
+## 1. Introduction
+
+- There are two common searching techniques: **linear search** and **binary search.**
+- **Binary search follows the divide and conquer strategy** — just as divide and conquer says, when a problem is too large, break it into subproblems, solve them, and combine the results.
+- **Prerequisite:** the list of elements **must already be sorted** for binary search to work. This is not optional — it's the one condition the entire algorithm depends on.
+
+<Figure src="/images/binary-search-sorted-array.svg" alt="Sorted array A of 15 elements: 3, 6, 8, 12, 14, 17, 25, 29, 31, 36, 42, 47, 53, 55, 62 at indices 1 to 15" width={900} height={140} caption="The array used throughout this lesson — 15 elements, already in sorted order." />
+
+---
+
+## 2. The Approach: Two Pointers and a Midpoint
+
+Binary search uses two index pointers:
+
+- **low** — the starting point of the current search range.
+- **high** — the ending point of the current search range.
+
+At every step, we compute:
+
+$$mid = \left\lfloor \frac{low + high}{2} \right\rfloor$$
+
+We compare the **key** (the value being searched for) against `A[mid]`:
+
+- If they're equal — the element is **found** at `mid`.
+- If `key < A[mid]` — the key must be in the **left half** (since the array is sorted), so we set `high = mid - 1`.
+- If `key > A[mid]` — the key must be in the **right half**, so we set `low = mid + 1`.
+
+Each step **halves** the size of the remaining search range — this is the divide-and-conquer step in action.
+
+---
+
+## 3. Worked Example 1: Searching for key = 42 (Found)
+
+| low | high | mid = ⌊(low+high)/2⌋ | A[mid] | Result |
+|---|---|---|---|---|
+| 1 | 15 | 8 | 29 | 42 > 29 → search right half |
+| 9 | 15 | 12 | 47 | 42 < 47 → search left half |
+| 9 | 11 | 10 | 36 | 42 > 36 → search right half |
+| 11 | 11 | 11 | **42** | **Found at index 11** |
+
+The element is found in just **4 comparisons.** A linear search, by contrast, would have needed to check elements one by one from the start — up to 11 comparisons to reach index 11.
+
+---
+
+## 4. Worked Example 2: Searching for key = 12 (Found, Fewer Steps)
+
+| low | high | mid | A[mid] | Result |
+|---|---|---|---|---|
+| 1 | 15 | 8 | 29 | 12 < 29 → search left half |
+| 1 | 7 | 4 | **12** | **Found at index 4** |
+
+This time the element is found in just **2 comparisons** — the number of comparisons depends entirely on *where* the key lies relative to the midpoints, not on the size of the array alone.
+
+---
+
+## 5. Worked Example 3: Searching for key = 30 (Not Found)
+
+Key **30** does not appear in the array at all (29 is followed directly by 31). Let's trace what happens:
+
+| low | high | mid | A[mid] | Result |
+|---|---|---|---|---|
+| 1 | 15 | 8 | 29 | 30 > 29 → search right half |
+| 9 | 15 | 12 | 47 | 30 < 47 → search left half |
+| 9 | 11 | 10 | 36 | 30 < 36 → search left half |
+| 9 | 9 | 9 | 31 | 30 < 31 → search left half |
+| 9 | 8 | — | — | **low > high — stop** |
+
+> **Stopping condition:** `low` starts on the left and `high` starts on the right — `low` can never legitimately cross past `high`. The moment `low > high`, the search range has become empty, which means the element **is not present** in the list.
+
+Even for an unsuccessful search, this takes only **4 comparisons** — not a full scan of the array.
+
+---
+
+## 6. The Binary Search Algorithm
+
+Putting this logic into a function that takes the array `A`, its size `n`, and the `key` to search for:
+
+```c
+int BinSearch(A, n, key)
+{
+    l = 1; h = n;
+    while (l <= h)
+    {
+        mid = (l + h) / 2;
+        if (key == A[mid])
+            return mid;
+        if (key < A[mid])
+            h = mid - 1;
+        else
+            l = mid + 1;
+    }
+    return 0;
+}
+```
+
+- The loop condition `l <= h` directly encodes the stopping rule from Example 3: keep searching only while a valid range still exists.
+- If the loop ends without returning, `0` is returned to signal **"not found."**
+- This is an **iterative** version of binary search, built with a loop rather than recursion — though a recursive version (calling itself on the appropriate half) works just as well, in keeping with binary search's divide-and-conquer roots.
+
+---
+
+## 7. Visualizing Binary Search as a Decision Tree
+
+Every possible sequence of `mid` values this algorithm can compute, for this array, can be laid out as a tree: the first `mid` is the root, and each subsequent `mid` (depending on whether the key was smaller or larger) becomes a child.
+
+<Figure src="/images/binary-search-decision-tree.svg" alt="Binary search decision tree rooted at index 8, with children 4 and 12, showing all mid values down to the leaves, height = log2(16) = 4" width={900} height={500} caption="Every root-to-node path is exactly the sequence of mid values binary search would compute while looking for that node's value. The two empty boxes are an example of 'not found' outcomes past the final indices." />
+
+- Searching for **29** (the root) takes just **1 comparison**.
+- Searching for **47** takes **2 comparisons** (8 → 12).
+- Searching for **55** takes **3 comparisons** (8 → 12 → 14).
+- Searching for the value at index **7** (a leaf) takes **4 comparisons** — the maximum possible for this array.
+
+---
+
+## 8. Time Complexity Analysis
+
+> **The number of comparisons is bounded by the height of this tree** — every comparison moves exactly one level down.
+
+- With `n = 15` elements, treat it as `n + 1 = 16` possible outcomes (15 found positions, plus the boundary for "not found").
+- Height of the tree = `log₂(16) = 4` — matching every worked example above, where at most 4 comparisons were ever needed.
+- In general, for `n` elements, the height of this tree is **log n**.
+
+| Case | When it happens | Time Complexity |
+|---|---|---|
+| **Best case** | Key is found at the root (the very first `mid`) | O(1) |
+| **Worst case** | Key is found at a leaf, or not found at all | O(log n) |
+| **Average case** | Averaging the comparison count needed across every element | O(log n) |
+
+> To compute the **average case** precisely: sum the number of comparisons required to find *each* element in the array, then divide by `n`. Working this out for this tree also comes out to **O(log n)**.
+
+---
+
+## 9. Key Takeaways
+
+- **Binary search** follows the **divide and conquer** strategy: repeatedly halve the search range until the key is found or the range is empty.
+- It requires the array to be **sorted** — this is a strict prerequisite.
+- Two pointers, **low** and **high**, bound the current search range; `mid = ⌊(low+high)/2⌋` is checked at each step.
+- The search stops successfully when `key == A[mid]`, and stops unsuccessfully the moment `low > high`.
+- The full set of possible comparison sequences forms a **decision tree** whose height is **log n** — this directly gives the algorithm's time complexity.
+- **Best case: O(1)** (key at the root/middle). **Worst case: O(log n)** (key at a leaf, or absent). **Average case: O(log n)** as well.
+- This makes binary search dramatically faster than linear search (O(n)) for large sorted datasets.
+
+> **Simple takeaway:** binary search turns "search" into "halve, compare, repeat" — sorted data plus a midpoint check is all it takes to trade O(n) for O(log n).
+
+---
+
+**Watch the original lecture:** <a href="https://www.youtube.com/watch?v=C2apEw9pgtw" target="_blank" rel="noopener noreferrer">Binary Search — Abdul Bari (YouTube)</a>
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-1-recurrence-relation-part-1", title: "2.1: Recurrence Relation T(n) = T(n-1) + 1 — Part 1" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction", title: "3: Greedy Method — Introduction" }}
+/>
