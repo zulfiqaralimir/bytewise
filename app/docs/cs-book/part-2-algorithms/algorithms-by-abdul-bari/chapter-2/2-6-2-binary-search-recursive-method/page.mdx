@@ -1,0 +1,148 @@
+export const metadata = {
+  title: "2.6.2: Binary Search — Recursive Method — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Binary search written recursively instead of iteratively: defining the small/large cases, the RBinSearch algorithm, deriving the recurrence T(n) = T(n/2) + 1, and solving it with the Master Theorem to get Theta(log n).",
+  keywords: [
+    "binary search recursive method",
+    "recursive binary search algorithm",
+    "RBinSearch",
+    "master theorem binary search",
+    "T(n) = T(n/2) + 1",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 2.6.2: Binary Search — Recursive Method",
+    description:
+      "Defining the small/large cases, the RBinSearch algorithm, deriving T(n) = T(n/2) + 1, and solving it with the Master Theorem.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 2.6.2: Binary Search — Recursive Method
+
+---
+
+## 1. From Iterative to Recursive
+
+Binary search follows the **divide and conquer** strategy, so besides the iterative (loop-based) version, it can also be written directly as a **recursive algorithm** — which is often the more natural way to express a divide-and-conquer idea.
+
+---
+
+## 2. Defining "Small" vs. "Large"
+
+Every divide-and-conquer algorithm must define two things: what counts as a **small** problem (solved directly), and how a **large** problem gets divided.
+
+- **Small problem:** exactly **one element** remains in the search range — that is, `low == high`.
+- **Large problem:** more than one element remains — the range still needs to be divided further.
+
+When the problem is small (a single element), we simply check whether that one element is the key we're looking for — there's nothing left to divide.
+
+---
+
+## 3. The Recursive Algorithm
+
+```c
+Algorithm RBinSearch(l, h, key)
+{
+    if (l == h)
+    {
+        if (A[l] == key)
+            return l;
+        else
+            return 0;
+    }
+    else
+    {
+        mid = (l + h) / 2;
+        if (key == A[mid])
+            return mid;
+        if (key < A[mid])
+            return RBinSearch(l, mid-1, key);
+        else
+            return RBinSearch(mid+1, h, key);
+    }
+}
+```
+
+- **Base case (`l == h`):** only one element is left. If `A[l]` equals the key, return its index `l`; otherwise, the key isn't in the list at all — return `0`.
+- **Recursive case (`l != h`):** compute `mid`, and check it directly — if it matches the key, we're done.
+- If the key is **smaller** than `A[mid]`, recurse on the **left half**: `RBinSearch(l, mid-1, key)`.
+- Otherwise (the key is **greater**), recurse on the **right half**: `RBinSearch(mid+1, h, key)`.
+
+<Figure src="/images/binary-search-recursive-pointers.svg" alt="Array of 15 elements with pointers l=1, mid=8, h=15 marked for the first call of the recursive binary search" width={900} height={170} caption="The same sorted array used for the iterative version — the recursive version starts with the identical l, mid, h setup." />
+
+> Note the key structural difference from many divide-and-conquer algorithms: `RBinSearch` makes **only one** recursive call per invocation — either the left half *or* the right half, never both. This will matter directly when we write the recurrence relation.
+
+---
+
+## 4. Writing the Recurrence Relation
+
+Let $T(n)$ be the time taken by `RBinSearch` on an array of size `n`.
+
+### 4.1 Reading the Recurrence Off the Code
+
+- **Base case (n = 1):** just one comparison (`A[l] == key`) — constant time, written as **1**.
+- **Recursive case (n > 1):** computing `mid` plus up to two comparisons (`key == A[mid]`, `key < A[mid]`) is all constant work — folded into **1**, exactly as we did for other recurrences. Then exactly **one** recursive call is made, on a sub-array of size **n/2** — contributing **$T(n/2)$**.
+
+<Figure src="/images/binary-search-recursive-recurrence-mapping.svg" alt="RBinSearch code annotated with costs: base case = 1, mid + comparisons = 1, single recursive call = T(n/2), giving T(n) = T(n/2) + 1 for n > 1" width={820} height={420} caption="Reading the recurrence directly off the code: constant work (1) plus the cost of the single recursive call, T(n/2)." />
+
+Putting it together:
+
+$$
+T(n) =
+\begin{cases}
+1 & n = 1 \\
+T(n/2) + 1 & n > 1
+\end{cases}
+$$
+
+> **Why divide by 2, not subtract 1?** Unlike the earlier `T(n) = T(n-1) + 1` recurrence (where each call shrinks the problem by one element), binary search **halves** the problem at every step — because it only ever recurses into *one* of the two halves it created, and that half has roughly `n/2` elements.
+
+---
+
+## 5. Solving the Recurrence with the Master Theorem
+
+**Reference video:** <a href="https://www.youtube.com/watch?v=8gt0D0IqU5w&list=PLDN4rrl48XKpZkf03iYFl-O29szjTrs_O&index=25" target="_blank" rel="noopener noreferrer">Master Theorem — Abdul Bari (YouTube)</a>
+
+The recurrence $T(n) = T(n/2) + 1$ fits the standard Master Theorem form $T(n) = aT(n/b) + f(n)$, with:
+
+- $a = 1$ (one recursive call)
+- $b = 2$ (problem size halves)
+- $f(n) = 1 = n^0$ (constant work outside the recursive call)
+
+Comparing the two exponents:
+
+- $\log_b a = \log_2 1 = 0$
+- $f(n) = n^0$
+
+Since both exponents are equal (both $0$), this falls into the Master Theorem case where $f(n) = \Theta(n^{\log_b a})$, giving:
+
+$$T(n) = \Theta(n^0 \log n) = \Theta(\log n)$$
+
+> This matches exactly what we found for the **iterative** version of binary search: whether written as a loop or as recursive calls, binary search runs in **$\Theta(\log n)$** time.
+
+---
+
+## 6. Key Takeaways
+
+- Binary search can be written **recursively** as naturally as iteratively, since it follows the divide-and-conquer strategy.
+- **Small problem:** a single element (`l == h`), solved directly by comparison. **Large problem:** compute `mid`, then recurse into exactly **one** half.
+- Because only **one** recursive call is made per invocation (not two, as in many other divide-and-conquer algorithms), the recurrence is $T(n) = T(n/2) + 1$, not $T(n) = 2T(n/2) + 1$.
+- Solving this recurrence — whether by back-substitution or the **Master Theorem** — gives $T(n) = \Theta(\log n)$.
+- This confirms that the recursive and iterative versions of binary search have the **same time complexity: $\Theta(\log n)$.**
+
+> **Simple takeaway:** the recursion doesn't change what binary search costs — it changes how you *prove* it, trading a tracing tree for a one-line Master Theorem application.
+
+---
+
+**Watch the original lecture:** <a href="https://www.youtube.com/watch?v=uEUXGcc2VXM&list=PLDN4rrl48XKpZkf03iYFl-O29szjTrs_O&index=32" target="_blank" rel="noopener noreferrer">Binary Search — Recursive Method — Abdul Bari (YouTube)</a>
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-6-1-binary-search-iterative-method", title: "2.6.1: Binary Search — Iterative Method" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction", title: "3: Greedy Method — Introduction" }}
+/>
