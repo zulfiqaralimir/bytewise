@@ -67,6 +67,7 @@ const chapters = [
           { title: "1.1: Priori vs. Posteriori Analysis", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-1-priori-vs-posteriori-analysis" },
           { title: "1.2: Characteristics of an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-2-characteristics-of-an-algorithm" },
           { title: "1.3: How to Write and Analyze an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-3-how-to-write-and-analyze-an-algorithm" },
+          { title: "1.4: Frequency Count Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-4-frequency-count-method" },
           { title: "2: Divide and Conquer — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-divide-and-conquer-introduction" },
           { title: "2.1: Recurrence Relation T(n) = T(n-1) + 1 — Part 1", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-1-recurrence-relation-part-1" },
           { title: "2.6.1: Binary Search — Iterative Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-6-1-binary-search-iterative-method" },
