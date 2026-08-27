@@ -134,6 +134,120 @@ public:
 };
 ```
 
+## Addendum: What Does `@abstractmethod` Actually Add? (Clarified via Dog/Cat)
+
+### Step 1 — Same shape as the very first if/else problem
+
+```python
+class TaxCalculator:
+    def calculate_tax(self, order_type, order):
+        if order_type == "domestic":
+            return order.price * order.quantity * 0.10
+        elif order_type == "foreign":
+            return order.price * order.quantity * 0.20
+```
+
+This is doing the exact same thing as the very first Polymorphism if/else example: **checking a string, then picking a formula based on it.**
+
+```python
+def make_sound(animal_type):
+    if animal_type == "dog":
+        print("Woof")
+    elif animal_type == "cat":
+        print("Meow")
+```
+
+Same pattern: **check a string → run different logic.** The tax if/else and the animal if/else are the same shape of problem, just different words.
+
+### Step 2 — Map DomesticTax/ForeignTax directly onto Dog/Cat
+
+Recall the Dog/Cat classes from Polymorphism:
+
+```python
+class Dog:
+    def make_sound(self):
+        print("Woof")
+
+class Cat:
+    def make_sound(self):
+        print("Meow")
+```
+
+Two separate classes, each with their **own version** of a method with the **same name** (`make_sound`).
+
+The tax version is the identical pattern, just renamed:
+
+```python
+class DomesticTax:
+    def calculate(self, order):
+        return order.price * order.quantity * 0.10
+
+class ForeignTax:
+    def calculate(self, order):
+        return order.price * order.quantity * 0.20
+```
+
+**Mapping:**
+
+| Dog/Cat | Tax |
+|---|---|
+| `Dog` | `DomesticTax` |
+| `Cat` | `ForeignTax` |
+| `make_sound()` | `calculate()` |
+| Dog's `make_sound` returns "Woof" | DomesticTax's `calculate` returns 10% |
+| Cat's `make_sound` returns "Meow" | ForeignTax's `calculate` returns 20% |
+
+`DomesticTax` and `ForeignTax` are just two classes, each with their own version of a `calculate` method — exactly like `Dog` and `Cat` each had their own version of `make_sound`.
+
+### Step 3 — What does `@abstractmethod` add, that Dog/Cat didn't have?
+
+Notice: in Dog/Cat, there was **no shared parent class**. `Dog` and `Cat` were two totally separate, unrelated classes that just happened to both have a method called `make_sound`. Python let you put them in the same list and call `.make_sound()` on each — no `ABC`, no `@abstractmethod`, nothing extra needed.
+
+**So why does the tax version add `TaxStrategy` with `@abstractmethod` at all?**
+
+Answer: **it doesn't add new *behavior*. It adds a safety promise.**
+
+```python
+class TaxStrategy(ABC):
+    @abstractmethod
+    def calculate(self, order):
+        pass
+```
+
+This line says: *"Any class that claims to be a `TaxStrategy` MUST have a `calculate` method — or Python will refuse to let you create it."*
+
+**Without that promise (plain classes, like Dog/Cat):**
+```python
+class DomesticTax:
+    def calculate(self, order):
+        return order.price * order.quantity * 0.10
+
+class BrokenTax:
+    pass   # forgot to write calculate()! Python won't stop you.
+
+b = BrokenTax()
+b.calculate(order)   # crashes at runtime — AttributeError, only discovered when it's called
+```
+
+**With the `ABC` + `@abstractmethod` promise:**
+```python
+class TaxStrategy(ABC):
+    @abstractmethod
+    def calculate(self, order):
+        pass
+
+class BrokenTax(TaxStrategy):
+    pass   # forgot calculate() again
+
+b = BrokenTax()   # ERROR IMMEDIATELY — Python refuses to even create the object
+```
+
+<Callout type="info" title="🗣️ The Difference, in One Sentence">
+Without `ABC`/`@abstractmethod`, a missing method is a bug you discover later, possibly in production, when it's finally called. With it, Python catches the mistake the moment you try to create the broken class — much earlier, much safer.
+</Callout>
+
+**So `TaxStrategy` is NOT doing the "different tax formulas" work** — `DomesticTax`, `ForeignTax`, `CryptoTax` do that part, exactly like Dog/Cat did. `TaxStrategy` is just a **contract-checker** sitting above them, making sure nobody forgets to write `calculate()`.
+
 ### How OCP directly depends on the OOP pillars you already know
 
 **Technical:** OCP is not a separate mechanism — it's an *outcome* achieved by combining Abstraction (Type 2: a shared interface like `TaxStrategy`) with Polymorphism (the caller invokes `.calculate()` without checking which subclass it has). <Revision>Without those two pillars already in place, OCP would be impossible to achieve — you'd be forced back into if/else chains.</Revision>
