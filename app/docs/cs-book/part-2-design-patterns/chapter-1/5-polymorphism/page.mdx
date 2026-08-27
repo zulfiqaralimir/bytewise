@@ -300,6 +300,46 @@ Only one `say_hello` can exist at a time in plain functions like this — the se
 
 **This is the exact problem polymorphism solves:** what if I want **multiple** things, each with their own version of "say_hello", to exist **at the same time**, without one replacing the other?
 
+---
+
+### Rebuilding Polymorphism — Step 2
+
+Classes let the same method name exist multiple times, safely.
+
+In Step 1, you saw that two plain functions named `say_hello` can't coexist — the second one wipes out the first.
+
+**A class fixes this by giving each version of the method its own separate "home."**
+
+```python
+class Dog:
+    def make_sound(self):
+        print("Woof")
+
+class Cat:
+    def make_sound(self):
+        print("Meow")
+```
+
+Notice: both classes have a method called `make_sound`. This is **not a conflict**, unlike Step 1's `say_hello` problem — because `Dog`'s `make_sound` lives *inside* `Dog`, and `Cat`'s `make_sound` lives *inside* `Cat`. They're in two separate boxes. One doesn't overwrite the other.
+
+**Now create one real object from each class:**
+
+```python
+d = Dog()
+c = Cat()
+```
+
+`d` is a real Dog object. `c` is a real Cat object. Each one carries its own class's version of `make_sound` with it.
+
+```python
+d.make_sound()   # prints "Woof" — runs Dog's own version
+c.make_sound()   # prints "Meow" — runs Cat's own version
+```
+
+**The key idea to hold onto:** `d.make_sound()` and `c.make_sound()` use the **exact same method name** (`make_sound`), but they run **completely different code**, because `d` and `c` are different objects, each carrying their own class's version with them.
+
+This is different from Step 1, where there was only ever *one* `say_hello` in existence at a time. Here, there are genuinely **two separate `make_sound` methods**, coexisting, and which one runs depends entirely on *which object* you called it on.
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance", title: "Section 4: Inheritance" }}
   next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
