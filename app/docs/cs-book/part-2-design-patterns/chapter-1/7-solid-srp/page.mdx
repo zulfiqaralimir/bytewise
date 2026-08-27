@@ -1,13 +1,11 @@
 export const metadata = {
-  title: "SOLID Principles — SRP & Open/Closed (OCP) — ByteWise CS Book",
+  title: "SOLID Principles — Single Responsibility (SRP) — ByteWise CS Book",
   description:
-    "Chapter 1, Section 7 of LLD From First Principles — an introduction to the five SOLID principles, the Single Responsibility Principle using a trading Order class split into Order, TaxCalculator, OrderRepository, and NotificationService, and the Open/Closed Principle using a TaxStrategy hierarchy that lets new tax types be added without editing existing code, in Python and C++.",
+    "Chapter 1, Section 7 of LLD From First Principles — an introduction to the five SOLID principles, then a deep dive into the Single Responsibility Principle using a trading Order class split into Order, TaxCalculator, OrderRepository, and NotificationService, in Python and C++.",
   keywords: [
     "SOLID principles",
     "single responsibility principle",
     "SRP",
-    "open closed principle",
-    "OCP",
     "low level design",
     "LLD",
     "object oriented design",
@@ -15,9 +13,9 @@ export const metadata = {
     "cpp classes",
   ],
   openGraph: {
-    title: "SOLID Principles — SRP & Open/Closed (OCP) — ByteWise CS Book",
+    title: "SOLID Principles — Single Responsibility (SRP) — ByteWise CS Book",
     description:
-      "A class should do one job, and have only one reason to change — and should be open to extension but closed to modification.",
+      "A class should do one job, and have only one reason to change.",
   },
 };
 
@@ -176,136 +174,7 @@ SRP does **not** mean "a class should only have one method." A class can have ma
 In your own words — what's the "one reason to change" test, and why did splitting `Order` into four classes make future changes safer?
 </Callout>
 
----
-
-## O — Open/Closed Principle (OCP)
-
-You already met this informally back in [Section 0](/docs/cs-book/part-2-design-patterns/chapter-1/0-what-problem-does-lld-solve) ("LLD exists to make change cheap") and saw it in action in the [Polymorphism section](/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism) (the `process_order` if/else chain vs. `order.execute()`). Now let's formalize it properly, on its own.
-
-### Start with an everyday picture: renovating vs. rebuilding
-
-Imagine your house needs a new room. A **good contractor builds an extension** — new walls, connected to the existing structure, without touching your existing kitchen, bedrooms, or plumbing. A **bad contractor knocks down a load-bearing wall** to fit the new room in — now your whole existing structure is at risk, and you have to re-inspect everything that used to work.
-
-Good software design works the same way: adding new functionality should feel like building an extension, not knocking down walls.
-
-<Callout type="tip" title="🗣️ Conversational">
-A class should be **open** to being extended (you can add new behavior) but **closed** to being modified (you shouldn't have to edit its existing, already-tested code to do so).
-</Callout>
-
-**Technical:** Software entities (classes, modules, functions) should be open for extension but closed for modification — new functionality should be added by writing new code, not by altering existing code that other parts of the system already depend on and trust.
-
-### Why bother — what breaks without it? (The exact if/else problem from Polymorphism, formalized)
-
-**Bad — violates OCP:**
-
-```python
-class TaxCalculator:
-    def calculate_tax(self, order_type, order):
-        if order_type == "domestic":
-            return order.price * order.quantity * 0.10
-        elif order_type == "foreign":
-            return order.price * order.quantity * 0.20
-        elif order_type == "crypto":
-            return order.price * order.quantity * 0.30
-        # every new order type = editing this method again
-```
-
-<Callout type="warning" title="🗣️ What's Wrong Here">
-Every time a new tax category is introduced (say, "ETF" tax rules), you must **reopen this method** and add another `elif`. This method is never "finished" — it grows forever, and every edit risks breaking the domestic/foreign/crypto logic that already worked and was already tested.
-</Callout>
-
-**Good — follows OCP, using Abstraction (Type 2) + Polymorphism together:**
-
-```python
-from abc import ABC, abstractmethod
-
-class TaxStrategy(ABC):
-    @abstractmethod
-    def calculate(self, order):
-        pass
-
-class DomesticTax(TaxStrategy):
-    def calculate(self, order):
-        return order.price * order.quantity * 0.10
-
-class ForeignTax(TaxStrategy):
-    def calculate(self, order):
-        return order.price * order.quantity * 0.20
-
-class CryptoTax(TaxStrategy):
-    def calculate(self, order):
-        return order.price * order.quantity * 0.30
-```
-
-**Using it:**
-```python
-def process_tax(order, tax_strategy):
-    return tax_strategy.calculate(order)
-
-process_tax(my_order, DomesticTax())
-process_tax(my_order, ForeignTax())
-```
-
-<Callout type="info" title='🗣️ Now Adding "ETF Tax"'>
-```python
-class EtfTax(TaxStrategy):
-    def calculate(self, order):
-        return order.price * order.quantity * 0.05
-```
-
-**Nothing else changes.** `DomesticTax`, `ForeignTax`, `CryptoTax`, and `process_tax()` are never touched. You only ever *add* a new class — you never *edit* an existing, working one. That's OCP.
-</Callout>
-
-**C++ version:**
-```cpp
-class TaxStrategy {
-public:
-    virtual double calculate(const Order& order) = 0;
-    virtual ~TaxStrategy() {}
-};
-
-class DomesticTax : public TaxStrategy {
-public:
-    double calculate(const Order& order) override {
-        return order.price * order.quantity * 0.10;
-    }
-};
-
-class ForeignTax : public TaxStrategy {
-public:
-    double calculate(const Order& order) override {
-        return order.price * order.quantity * 0.20;
-    }
-};
-
-// Adding EtfTax later = new class only, nothing above is touched
-class EtfTax : public TaxStrategy {
-public:
-    double calculate(const Order& order) override {
-        return order.price * order.quantity * 0.05;
-    }
-};
-```
-
-### How OCP directly depends on the OOP pillars you already know
-
-**Technical:** OCP is not a separate mechanism — it's an *outcome* achieved by combining Abstraction (Type 2: a shared interface like `TaxStrategy`) with Polymorphism (the caller invokes `.calculate()` without checking which subclass it has). Without those two pillars already in place, OCP would be impossible to achieve — you'd be forced back into if/else chains.
-
-<Callout type="tip" title="🗣️ Conversational">
-This is why we built Abstraction and Polymorphism *before* SOLID — OCP is really just "use an interface + polymorphism instead of an if/else on type." You already know how to do this; SOLID just gives it a name and tells you *when* to reach for it.
-</Callout>
-
-### An important caution — OCP doesn't mean "never edit any class, ever"
-
-<Callout type="tip" title="🗣️ Conversational">
-OCP applies to code that's *already stable and depended upon by others* — not to every single line you ever write. If `Order` itself gains a genuinely new field everyone needs (like `order_id`), you edit `Order` — that's normal evolution, not an OCP violation. OCP specifically targets the pattern of "growing if/else or switch statements based on type," which is the exact trap that breaks as a system scales.
-</Callout>
-
-<Callout type="warning" title="🧠 Check Yourself Before Moving On">
-In your own words — how does `TaxStrategy` let you add `EtfTax` without touching any existing class, and which two OOP pillars make that possible?
-</Callout>
-
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
-  next={null}
+  next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp", title: "Section 8: SOLID — Open/Closed" }}
 />

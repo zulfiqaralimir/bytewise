@@ -104,7 +104,7 @@ export default function OgImage() {
             marginBottom: 16,
           }}
         >
-          Chapter 1 · Section 7
+          Chapter 1 · Section 8
         </div>
 
         {/* Main title */}
@@ -119,7 +119,7 @@ export default function OgImage() {
             marginBottom: 24,
           }}
         >
-          SOLID: Single Responsibility
+          SOLID: Open/Closed
         </div>
 
         {/* Subtitle */}
@@ -133,7 +133,7 @@ export default function OgImage() {
             letterSpacing: "0.02em",
           }}
         >
-          SOLID Overview · One Reason to Change · Order Class Split
+          Open for Extension · Closed for Modification · TaxStrategy
         </div>
 
         {/* Accent divider */}
@@ -159,7 +159,7 @@ export default function OgImage() {
 
         {/* Tags row */}
         <div style={{ display: "flex", gap: 12, marginBottom: 44 }}>
-          {["SOLID", "SRP", "Single Responsibility", "Order Class"].map((tag) => (
+          {["SOLID", "OCP", "Open/Closed", "TaxStrategy"].map((tag) => (
             <div
               key={tag}
               style={{
