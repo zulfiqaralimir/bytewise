@@ -263,6 +263,43 @@ c.make_sound()   # no if/else anywhere — Cat just knows it says Meow
 In the if/else version, the *outside code* is responsible for figuring out what to do. In the class/polymorphism version, *each object* is responsible for knowing what to do about itself. That shift — from "outside code checks and decides" to "the object itself already knows" — **is** polymorphism.
 </Callout>
 
+---
+
+## From First Principle
+
+### Rebuilding Polymorphism — Step 1
+
+Forget classes, objects, inheritance, everything. Just this one idea:
+
+**A function/method is just a named set of instructions that does something when you call it.**
+
+```python
+def say_hello():
+    print("Hello")
+
+say_hello()   # runs the instructions inside — prints "Hello"
+```
+
+That's it. Calling `say_hello()` runs whatever is written inside it.
+
+**Now — same name, different instructions:**
+
+```python
+def say_hello():
+    print("Hello")
+
+def say_hello():          # redefining the SAME name
+    print("Hi there")
+
+say_hello()   # what do you think prints now?
+```
+
+Only one `say_hello` can exist at a time in plain functions like this — the second definition **replaces** the first. So this would print "Hi there", not "Hello". The first one is gone.
+
+---
+
+**This is the exact problem polymorphism solves:** what if I want **multiple** things, each with their own version of "say_hello", to exist **at the same time**, without one replacing the other?
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance", title: "Section 4: Inheritance" }}
   next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
