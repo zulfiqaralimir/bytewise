@@ -36,12 +36,12 @@ Imagine your house needs a new room. A **good contractor builds an extension** �
 Good software design works the same way: <Revision>adding new functionality should feel like building an extension, not knocking down walls.</Revision>
 
 <Callout type="tip" title="🗣️ Conversational">
-A class should be **open** to being extended (you can add new behavior) but **closed** to being modified (you shouldn't have to edit its existing, already-tested code to do so).
+<Revision>A class should be **open** to being extended (you can add new behavior) but **closed** to being modified (you shouldn't have to edit its existing, already-tested code to do so).</Revision>
 </Callout>
 
-**Technical:** Software entities (classes, modules, functions) should be open for extension but closed for modification — new functionality should be added by writing new code, not by altering existing code that other parts of the system already depend on and trust.
+**Technical:** <Revision>Software entities (classes, modules, functions)</Revision> should be <Revision>open for extension but closed for modification</Revision> — new functionality should be added by writing new code, not by altering existing code that other parts of the system already depend on and trust.
 
-### Why bother — what breaks without it? (The exact if/else problem from Polymorphism, formalized)
+### <Revision>Why bother — what breaks without it? (The exact if/else problem from Polymorphism, formalized)</Revision>
 
 **Bad — violates OCP:**
 
@@ -61,7 +61,7 @@ class TaxCalculator:
 Every time a new tax category is introduced (say, "ETF" tax rules), you must **reopen this method** and add another `elif`. This method is never "finished" — it grows forever, and every edit risks breaking the domestic/foreign/crypto logic that already worked and was already tested.
 </Callout>
 
-**Good — follows OCP, using Abstraction (Type 2) + Polymorphism together:**
+**Good — <Revision>follows OCP, using Abstraction (Type 2) + Polymorphism together</Revision>:**
 
 ```python
 from abc import ABC, abstractmethod
