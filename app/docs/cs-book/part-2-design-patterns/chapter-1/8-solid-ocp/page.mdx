@@ -21,6 +21,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { Callout } from "@/app/components/Callout";
+import { Revision } from "@/app/components/Revision";
 
 # LLD From First Principles
 
@@ -32,7 +33,7 @@ You already met this informally back in [Section 0](/docs/cs-book/part-2-design-
 
 Imagine your house needs a new room. A **good contractor builds an extension** — new walls, connected to the existing structure, without touching your existing kitchen, bedrooms, or plumbing. A **bad contractor knocks down a load-bearing wall** to fit the new room in — now your whole existing structure is at risk, and you have to re-inspect everything that used to work.
 
-Good software design works the same way: adding new functionality should feel like building an extension, not knocking down walls.
+Good software design works the same way: <Revision>adding new functionality should feel like building an extension, not knocking down walls.</Revision>
 
 <Callout type="tip" title="🗣️ Conversational">
 A class should be **open** to being extended (you can add new behavior) but **closed** to being modified (you shouldn't have to edit its existing, already-tested code to do so).
