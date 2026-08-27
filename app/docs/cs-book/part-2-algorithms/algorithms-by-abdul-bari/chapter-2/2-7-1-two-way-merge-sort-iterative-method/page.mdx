@@ -1,20 +1,21 @@
 export const metadata = {
   title: "2.7.1: Two-Way Merge Sort — Iterative Method — Algorithms by Abdul Bari — ByteWise",
   description:
-    "The iterative, bottom-up formulation of Two-Way Merge Sort: the merge operation, merging as runs that double in size each pass, a full worked trace on an 8-element array, and the O(n log n) time complexity derivation.",
+    "The iterative, bottom-up formulation of Two-Way Merge Sort: the merge operation and its auxiliary array, M-way merging, why 'Two-Way Merge Sort' (iterative) and 'Merge Sort' (recursive) are often confused, a full worked trace, and the O(n log n) derivation.",
   keywords: [
     "two-way merge sort",
     "iterative merge sort",
     "merge sort iterative method",
     "merge algorithm",
-    "k-way merging",
+    "M-way merging",
+    "merge sort vs two-way merge sort",
     "O(n log n)",
     "Abdul Bari algorithms",
   ],
   openGraph: {
     title: "Algorithms by Abdul Bari — 2.7.1: Two-Way Merge Sort — Iterative Method",
     description:
-      "The merge operation, bottom-up run-doubling passes, a full worked trace, and the O(n log n) time complexity derivation.",
+      "The merge operation, M-way merging, iterative vs. recursive Merge Sort, a full worked trace, and the O(n log n) derivation.",
     type: "article",
   },
 };
@@ -24,21 +25,37 @@ import { Figure } from "@/app/components/Figure";
 
 # 2.7.1: Two-Way Merge Sort — Iterative Method
 
+*Course: Algorithms | Based on the lecture by Abdul Bari*
+
 ---
 
 ## 1. The Building Block: Merging Two Sorted Lists
 
-Before Merge Sort itself, we need the core operation it's built on: **merging** two already-sorted lists into one combined sorted list.
+> **Merging** is the process of combining two already-sorted lists into a single sorted list.
+
+- These lists can be stored as **arrays or linked lists** — the merging idea itself doesn't depend on the underlying data structure.
+- They don't need to be the same size, though the worked examples here use equal-sized lists for simplicity.
 
 <Figure src="/images/merge-operation-trace.svg" alt="Merging sorted array A = 2,8,15,18 and sorted array B = 5,9,12,17 into merged sorted array C = 2,5,8,9,12,15,17,18" width={900} height={260} caption="Merging two sorted lists of size m and n produces one sorted list of size m + n." />
 
 ### 1.1 How Merging Works
 
-- Three pointers are used: `i` (into `A`), `j` (into `B`), and `k` (into the output `C`).
-- At each step, compare `A[i]` and `B[j]`: whichever is **smaller** gets copied into `C[k]`, and that list's pointer (and `k`) advances.
-- Once one list is **exhausted**, the remaining elements of the other list are simply copied over in order — they're already sorted, and all larger than everything placed so far.
+- Three index pointers are used: `i` (into `A`), `j` (into `B`), and `k` (into a new, initially empty output list `C`).
+- At each step, compare `A[i]` and `B[j]`: whichever is **smaller** gets copied into `C[k]`; that element's pointer *and* `k` both advance to the next position.
+- This continues until **one of the two lists is completely exhausted.**
+- At that point, the **remaining elements** of the other list are simply copied over as-is — they're already sorted, and every one of them is larger than everything already placed in `C`.
 
-### 1.2 The Merge Algorithm
+> **The key property:** if the two input lists are already sorted, the result of merging them is guaranteed to be sorted too.
+
+### 1.2 Time Complexity of Merging
+
+If list `A` has `m` elements and list `B` has `n` elements, every one of the `m + n` elements is compared and copied **exactly once.**
+
+$$\text{Time to merge} = \Theta(m + n)$$
+
+This notation, $\Theta(m + n)$, comes up so consistently for this operation that it has become something of a **signature for merging** — seeing it is a strong hint that a merge step is involved.
+
+### 1.3 The Merge Algorithm
 
 ```c
 Algorithm Merge(A, B, m, n)
@@ -58,79 +75,94 @@ Algorithm Merge(A, B, m, n)
 }
 ```
 
-> The first `while` loop runs the main comparison logic until **one** list runs out. The two `for` loops that follow are a safety net — only **one** of them will actually do any work, copying over whatever remains of the other list.
-
-### 1.3 Time Complexity of Merge
-
-Every element of `A` and every element of `B` is copied into `C` **exactly once** — no element is ever revisited or compared more than a constant number of times.
-
-$$\text{Time to merge} = O(m + n)$$
+- Indices start at **1** here (rather than 0), purely to keep the explanation simple.
+- The `while` loop is the main comparing-and-copying step, and runs until **one** list is exhausted.
+- The two `for` loops that follow handle whichever list has elements left over — we don't know in advance whether it will be `A` or `B`, so both are written, but only **one** of them will actually copy anything.
 
 ---
 
-## 2. A Quick Generalization: k-Way Merging
+## 2. Merging More Than Two Lists
 
 Merging isn't limited to exactly two lists at a time.
 
+- Given several sorted lists, you can compare the **first (smallest remaining) element of every list** at once, and copy over whichever is smallest overall.
+- Merging **4** lists together this way is called **4-way merging**; in general, merging `M` lists together at once is called **M-way merging.**
+- **Two-way merging** — taking just two lists at a time — is the special case where `M = 2`, and it's the one **most commonly used** in practice.
+
 <Figure src="/images/k-way-merging-concept.svg" alt="Four sorted lists A, B, C, D merged pairwise (2-way merging) down to a single sorted list; note on M-way merging as a generalization" width={900} height={320} caption="2-way merging combines two lists at a time; M-way merging combines M lists directly, in a single pass." />
 
-> Two-Way Merge Sort, the subject of this lesson, is built entirely from **repeated 2-way merges** — the simplest and most widely used case. (M-way merging is a useful generalization, but isn't needed for the algorithm covered here.)
+> **Multiple valid patterns:** if you have several lists and merge them two at a time, there's more than one way to pair them up — you could merge A with B and C with D, or A with D and B with C, and so on, in various orders. Two-way merging just says "combine two lists at a time"; it doesn't fix which two.
 
 ---
 
-## 3. Two-Way Merge Sort: The Big Idea
+## 3. Two-Way Merge Sort vs. Merge Sort
 
-> Treat every single element as an already-sorted "run" of size 1. Repeatedly **merge pairs of adjacent runs** together — doubling the run size each pass — until only one run remains, covering the whole array.
+> There is a small but important naming distinction: **Two-Way Merge Sort** is an **iterative** procedure (built from loops), while **Merge Sort** (without qualification) usually refers to the **recursive** version of the same idea.
 
-This is an **iterative, bottom-up** approach: rather than recursing down to single elements first (as the recursive formulation does), we start directly from single elements and merge our way up.
-
----
-
-## 4. Worked Example: Sorting `[9, 3, 7, 5, 6, 4, 8, 2]`
-
-<Figure src="/images/merge-sort-full-trace.svg" alt="Two-way merge sort trace of array 9,3,7,5,6,4,8,2 across three passes: pass 1 merges runs of size 1 into pairs, pass 2 merges runs of size 2, pass 3 merges runs of size 4 into the fully sorted array, taking log2(8)=3 passes at O(n) cost each, giving O(n log n) total" width={900} height={420} caption="Each pass doubles the sorted run length; the array is fully sorted once the run length reaches n." />
-
-### 4.1 Pass by Pass
-
-- **1st pass** — merge runs of size **1** into runs of size 2: `(9,3)→(3,9)`, `(7,5)→(5,7)`, `(6,4)→(4,6)`, `(8,2)→(2,8)`.
-- **2nd pass** — merge runs of size **2** into runs of size 4: `(3,9)+(5,7)→(3,5,7,9)`, `(4,6)+(2,8)→(2,4,6,8)`.
-- **3rd pass** — merge runs of size **4** into one run of size 8: `(3,5,7,9)+(2,4,6,8)→(2,3,4,5,6,7,8,9)`.
-
-The array is now fully sorted — and it took exactly **3 passes** to get there.
+Both rely on the same underlying operation — merging two sorted lists — but organize the work differently. This lesson covers the **iterative, two-way** version.
 
 ---
 
-## 5. Time Complexity Analysis
+## 4. Setting Up: Sorting via Repeated Merging
 
-### 5.1 Number of Passes
+To sort using merging, we normally need at least two *already-sorted* lists to combine. But we're starting from a single, **unsorted** array. The trick:
 
-- The run size doubles every pass: **1 → 2 → 4 → 8**. Sorting stops once the run size reaches `n`.
-- For `n = 8`: since `8 = 2³`, it takes **log₂(8) = 3** passes — exactly matching the worked example.
-- In general, the number of passes is **log n**.
+> Treat every **individual element** as its own sorted list of size 1. A list with just one element is trivially "sorted" — there's nothing to compare it against.
 
-### 5.2 Cost per Pass
+For an array of 8 elements, that means starting with **8 separate one-element lists**, and repeatedly using **two-way merging** to combine them down to a single, fully sorted list.
 
-- In *any* single pass, every element of the array is touched by **exactly one** merge operation — the merges at that pass partition the whole array into disjoint pairs of runs.
-- Since merging costs O(size of the two runs combined), and every pass's merges together cover all `n` elements, each full pass costs **O(n)**.
+> **Where do the merged results go?** Merging two lists produces a new list, so the result **cannot** be written back into the same array while merging is still using it. In practice, merged results are written into a **second array**; once a full pass is done, that second array is copied back into the first before the next pass begins (or the algorithm simply alternates between the two arrays from pass to pass).
 
-### 5.3 Putting It Together
-
-$$\text{Total time} = (\text{cost per pass}) \times (\text{number of passes}) = O(n) \times O(\log n)$$
-
-$$O(n \log n)$$
+> **Odd number of elements:** if there's an odd number of lists to merge in a pass, the one leftover, unpaired element (or list) simply carries forward untouched, and gets merged in a later pass.
 
 ---
 
-## 6. Key Takeaways
+## 5. Worked Example: Sorting `[9, 3, 7, 5, 6, 4, 8, 2]`
 
-- **Merging** two sorted lists of sizes `m` and `n` takes **O(m + n)** time, using three simple pointers.
-- Merging generalizes beyond two lists at a time (**M-way merging**), but **Two-Way Merge Sort** is built from repeated **2-way merges**.
-- The **iterative** version of Merge Sort starts from runs of size 1 and repeatedly merges adjacent runs, **doubling** the run size each pass, until the whole array is one sorted run.
-- The number of passes needed is **log n**, since the run size doubles every pass.
-- Each individual pass costs **O(n)**, since every element is merged exactly once per pass.
-- Combining these: Two-Way Merge Sort runs in **O(n log n)** time overall.
+<Figure src="/images/merge-sort-full-trace.svg" alt="Two-way merge sort trace of array 9,3,7,5,6,4,8,2 across three passes: pass 1 merges runs of size 1 into pairs, pass 2 merges runs of size 2, pass 3 merges runs of size 4 into the fully sorted array, taking log2(8)=3 passes at O(n) cost each, giving O(n log n) total" width={900} height={420} caption="Each pass halves the number of lists (equivalently, doubles the sorted run length); sorting finishes once only one list remains." />
 
-> **Simple takeaway:** merge sort's cost is just "log n doublings, each one an O(n) sweep" — the doubling gives you the log, the sweep gives you the n.
+### 5.1 Pass by Pass
+
+- **1st pass** — 8 one-element lists become 4 two-element lists: `(9,3)→(3,9)`, `(7,5)→(5,7)`, `(6,4)→(4,6)`, `(8,2)→(2,8)`.
+- **2nd pass** — 4 two-element lists become 2 four-element lists: `(3,9)+(5,7)→(3,5,7,9)`, `(4,6)+(2,8)→(2,4,6,8)`.
+- **3rd pass** — the last 2 lists merge into 1 eight-element list: `(3,5,7,9)+(2,4,6,8)→(2,3,4,5,6,7,8,9)`.
+
+The array is now fully sorted — and it took exactly **3 passes.**
+
+---
+
+## 6. Time Complexity Analysis
+
+### 6.1 Number of Passes
+
+- Each pass **halves** the number of separate lists: **8 → 4 → 2 → 1.**
+- Sorting finishes once only **one** list remains — that is, once `n` has been divided by 2 enough times to reach 1.
+- For `n = 8`: since `8 = 2³`, that takes **log₂(8) = 3** divisions — exactly matching the 3 passes above.
+- In general, the number of passes required is **log n.**
+
+### 6.2 Cost per Pass
+
+- In *any* single pass, every element in the array is moved by **exactly one** merge operation — the merges happening in that pass together account for all `n` elements.
+- Since each pass touches all `n` elements exactly once, every pass costs **Θ(n).**
+
+### 6.3 Putting It Together
+
+$$\text{Total time} = (\text{cost per pass}) \times (\text{number of passes}) = n \times \log n$$
+
+$$\Theta(n \log n)$$
+
+There is a known class of functions with this exact growth rate, which is why the tighter **Θ** notation (rather than just **O**) is used for this result.
+
+---
+
+## 7. Key Takeaways
+
+- **Merging** combines two sorted lists (arrays or linked lists) into one sorted list, using three pointers, in **Θ(m + n)** time.
+- Merging generalizes to **M-way merging** (comparing the fronts of M lists at once); **two-way merging** (M = 2) is the most commonly used case, and multiple valid pairing patterns exist when more than two lists are involved.
+- **Two-Way Merge Sort** is the **iterative** (loop-based) version of Merge Sort; the more commonly discussed **Merge Sort** is usually its **recursive** counterpart.
+- To sort an unsorted array, treat every single element as its own sorted list of size 1, then repeatedly apply two-way merging to combine these lists.
+- Merged output must go into a **separate array**, since a list can't be safely overwritten while it's still being read from — results are copied back (or the algorithm alternates) between passes. An unpaired element in an odd-sized pass simply carries forward.
+- The number of passes is **log n** (the list count halves each pass); each pass costs **Θ(n)**, giving a total time of **Θ(n log n).**
 
 ---
 
