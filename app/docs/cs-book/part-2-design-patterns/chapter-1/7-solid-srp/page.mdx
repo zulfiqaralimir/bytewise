@@ -1,0 +1,180 @@
+export const metadata = {
+  title: "SOLID Principles — Single Responsibility (SRP) — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 7 of LLD From First Principles — an introduction to the five SOLID principles, then a deep dive into the Single Responsibility Principle using a trading Order class split into Order, TaxCalculator, OrderRepository, and NotificationService, in Python and C++.",
+  keywords: [
+    "SOLID principles",
+    "single responsibility principle",
+    "SRP",
+    "low level design",
+    "LLD",
+    "object oriented design",
+    "python classes",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "SOLID Principles — Single Responsibility (SRP) — ByteWise CS Book",
+    description:
+      "A class should do one job, and have only one reason to change.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+# LLD From First Principles
+
+## Section 7: SOLID Principles — Introduction
+
+### What is SOLID, and why does it come right after the four pillars?
+
+**Technical:** SOLID is a set of five design principles that guide *how* to use the four OOP pillars (Encapsulation, Abstraction, Inheritance, Polymorphism) well. The pillars are the raw tools; SOLID is the guidance on using those tools so your design stays flexible and doesn't collapse as requirements grow.
+
+<Callout type="tip" title="🗣️ Conversational">
+Think of the four pillars as knowing how to use a hammer, saw, and drill. SOLID is the set of rules a good carpenter follows so the house doesn't fall apart later — *where* to put a wall, *how much* weight one beam should carry, *when* to add a support instead of overloading an existing one.
+</Callout>
+
+The five letters:
+- **S** — Single Responsibility Principle
+- **O** — Open/Closed Principle (you've already met this informally in [Section 0](/docs/cs-book/part-2-design-patterns/chapter-1/0-what-problem-does-lld-solve))
+- **L** — Liskov Substitution Principle
+- **I** — Interface Segregation Principle
+- **D** — Dependency Inversion Principle
+
+We'll take these one at a time, each with its own "why does this need to exist" first, exactly like we did for the OOP pillars.
+
+---
+
+## S — Single Responsibility Principle (SRP)
+
+### Start with an everyday picture: one employee, one job
+
+Imagine one employee at a trading firm who is responsible for: executing trades, calculating tax on every trade, printing paper receipts, AND answering customer support calls. Every time tax law changes, you have to retrain this same person. Every time the printer software changes, same person again. Every time a customer complains, same person, again — and now they're too busy to execute trades properly, because they're doing four jobs at once.
+
+**A well-run company gives each employee ONE clear job.** A tax specialist handles tax. A trade execution person handles execution. If tax law changes, only the tax specialist needs to be touched — nobody else's work is at risk of breaking.
+
+That's the Single Responsibility Principle.
+
+<Callout type="tip" title="🗣️ Conversational">
+A class should do **one job**, and have only **one reason to change**. If you can describe what a class does and you need the word "and" in that description, it's probably doing too much.
+</Callout>
+
+**Technical:** A class should have only one reason to change — meaning it should be responsible for a single, well-defined piece of functionality, not multiple unrelated concerns bundled together.
+
+### Why bother — what breaks without it?
+
+**Bad — one class doing too much (Stock/Trading example):**
+
+```python
+class Order:
+    def __init__(self, ticker, quantity, price):
+        self.ticker = ticker
+        self.quantity = quantity
+        self.price = price
+
+    def validate(self):
+        if self.quantity <= 0:
+            raise ValueError("Quantity must be positive")
+
+    def calculate_tax(self):
+        return self.price * self.quantity * 0.15   # tax logic — unrelated to "being an order"
+
+    def save_to_database(self):
+        print(f"Saving order for {self.ticker} to database")   # database logic — also unrelated
+
+    def send_confirmation_email(self):
+        print(f"Emailing confirmation for {self.ticker} order")   # email logic — also unrelated
+```
+
+<Callout type="warning" title="🗣️ What's Wrong Here">
+`Order` now has **four separate reasons to change**: if tax law changes, if the database schema changes, if the email service changes, or if order validation rules change. A change to email logic risks accidentally breaking something in a class that's supposed to just represent an order. And whoever works on tax code now has to open a file called "Order" to find it — confusing and risky.
+</Callout>
+
+**Good — each responsibility in its own class:**
+
+```python
+class Order:
+    def __init__(self, ticker, quantity, price):
+        self.ticker = ticker
+        self.quantity = quantity
+        self.price = price
+
+    def validate(self):
+        if self.quantity <= 0:
+            raise ValueError("Quantity must be positive")
+
+
+class TaxCalculator:
+    def calculate_tax(self, order):
+        return order.price * order.quantity * 0.15
+
+
+class OrderRepository:
+    def save(self, order):
+        print(f"Saving order for {order.ticker} to database")
+
+
+class NotificationService:
+    def send_confirmation(self, order):
+        print(f"Emailing confirmation for {order.ticker} order")
+```
+
+<Callout type="info" title="🗣️ What Changed">
+Now each class has exactly one job, and one reason to change. If tax law changes, you touch only `TaxCalculator`. `Order` itself never needs to change for tax reasons — it only changes if the definition of "what an order is" changes.
+</Callout>
+
+**C++ (same split):**
+```cpp
+class Order {
+public:
+    std::string ticker;
+    int quantity;
+    double price;
+
+    Order(std::string t, int q, double p) : ticker(t), quantity(q), price(p) {}
+
+    void validate() {
+        if (quantity <= 0) {
+            throw std::invalid_argument("Quantity must be positive");
+        }
+    }
+};
+
+class TaxCalculator {
+public:
+    double calculateTax(const Order& order) {
+        return order.price * order.quantity * 0.15;
+    }
+};
+
+class OrderRepository {
+public:
+    void save(const Order& order) {
+        std::cout << "Saving order for " << order.ticker << " to database" << std::endl;
+    }
+};
+
+class NotificationService {
+public:
+    void sendConfirmation(const Order& order) {
+        std::cout << "Emailing confirmation for " << order.ticker << " order" << std::endl;
+    }
+};
+```
+
+### The test to apply when designing any class
+
+**Ask: "What is the ONE reason this class would need to change?"** If you can list more than one unrelated reason (tax law changes, OR database changes, OR email service changes), the class is violating SRP and should be split.
+
+<Callout type="tip" title="🗣️ Common Trap">
+SRP does **not** mean "a class should only have one method." A class can have many methods, as long as they're all serving the *same* responsibility. `Order.validate()` and a future `Order.get_ticker()` both serve "being an order" — that's fine, still one responsibility.
+</Callout>
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+In your own words — what's the "one reason to change" test, and why did splitting `Order` into four classes make future changes safer?
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
+  next={null}
+/>
