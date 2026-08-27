@@ -373,6 +373,50 @@ Look very closely at that loop. Inside it, the variable is just called `animal` 
 You write `animal.make_sound()` **once**. You never write it again, no matter how many animal types you add later (Cow, Duck, Horse...). Every new animal type just needs its own `make_sound()` method, and this same loop will automatically call the right one — because it was never checking types to begin with.
 </Callout>
 
+---
+
+### Rebuilding Polymorphism — Step 4: Connecting to the Trading Example
+
+Everything you just learned with Dog/Cat maps **exactly** onto the `Order` example from earlier — just swap the words.
+
+| Dog/Cat version | Trading version |
+|---|---|
+| `Dog`, `Cat` classes | `MarketOrder`, `LimitOrder`, `StopLossOrder` classes |
+| `make_sound()` method | `execute()` method |
+| `animals = [Dog(), Cat()]` | `orders = [MarketOrder(...), LimitOrder(...), StopLossOrder(...)]` |
+| `animal.make_sound()` in a loop | `order.execute()` in a loop |
+| "Woof" / "Meow" — different sounds | "Market order executed..." / "Limit order executed..." — different behaviors |
+
+**The code, side by side with the Dog/Cat version:**
+
+```python
+# Dog/Cat version
+animals = [Dog(), Cat()]
+for animal in animals:
+    animal.make_sound()
+
+# Trading version — SAME PATTERN
+orders = [MarketOrder("AAPL", 10), LimitOrder("TSLA", 5, 250.0)]
+for order in orders:
+    order.execute()
+```
+
+**Trace it exactly like before:**
+- First pass: `order` holds the `MarketOrder` object → `order.execute()` runs `MarketOrder`'s own version → prints "Market order executed..."
+- Second pass: `order` holds the `LimitOrder` object → `order.execute()` runs `LimitOrder`'s own version → prints "Limit order executed..."
+
+**No if/else anywhere in this loop.** No `isinstance()` check. No "is this a MarketOrder or a LimitOrder?" The loop just says "call `execute()`," and each object already knows what that means for itself — exactly like Dog knowing it says "Woof" and Cat knowing it says "Meow."
+
+### Why this matters in a real interview (tying back to Section 0)
+
+If you add a new order type tomorrow — say `TrailingStopOrder` — you just write a new class with its own `execute()` method. **This loop never changes.** It already works for the new type, automatically, the same way it would automatically work if you added a `Duck` class to the animals list.
+
+That's the entire payoff: **one small piece of code (the loop) that never needs editing again, no matter how much the system grows.**
+
+<Callout type="info" title="The Full Picture, Built From Zero">
+Same method name → different real behavior → decided automatically by which object you're actually holding → calling code never needs to check or change.
+</Callout>
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance", title: "Section 4: Inheritance" }}
   next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
