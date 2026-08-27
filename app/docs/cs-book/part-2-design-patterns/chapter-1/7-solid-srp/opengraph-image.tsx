@@ -119,7 +119,7 @@ export default function OgImage() {
             marginBottom: 24,
           }}
         >
-          SOLID: Single Responsibility
+          SOLID: SRP & Open/Closed
         </div>
 
         {/* Subtitle */}
@@ -133,7 +133,7 @@ export default function OgImage() {
             letterSpacing: "0.02em",
           }}
         >
-          SOLID Overview · One Reason to Change · Order Class Split
+          One Reason to Change · Open for Extension, Closed for Modification
         </div>
 
         {/* Accent divider */}
@@ -159,7 +159,7 @@ export default function OgImage() {
 
         {/* Tags row */}
         <div style={{ display: "flex", gap: 12, marginBottom: 44 }}>
-          {["SOLID", "SRP", "Single Responsibility", "Order Class"].map((tag) => (
+          {["SOLID", "SRP", "Open/Closed (OCP)", "TaxStrategy"].map((tag) => (
             <div
               key={tag}
               style={{
