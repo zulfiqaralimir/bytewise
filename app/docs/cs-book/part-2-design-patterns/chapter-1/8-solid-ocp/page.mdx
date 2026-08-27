@@ -145,7 +145,7 @@ public:
 ### An important caution — OCP doesn't mean "never edit any class, ever"
 
 <Callout type="tip" title="🗣️ Conversational">
-OCP applies to code that's *already stable and depended upon by others* — not to every single line you ever write. If `Order` itself gains a genuinely new field everyone needs (like `order_id`), you edit `Order` — that's normal evolution, not an OCP violation. OCP specifically targets the pattern of "growing if/else or switch statements based on type," which is the exact trap that breaks as a system scales.
+OCP applies to code that's *already stable and depended upon by others* — not to every single line you ever write. If `Order` itself gains a genuinely new field everyone needs (like `order_id`), you edit `Order` — that's normal evolution, not an OCP violation. OCP specifically targets the pattern of "growing <Revision>if/else or switch statements</Revision> based on type," which is the exact trap that breaks as a system scales.
 </Callout>
 
 <Callout type="warning" title="🧠 Check Yourself Before Moving On">
