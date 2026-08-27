@@ -136,7 +136,7 @@ public:
 
 ### How OCP directly depends on the OOP pillars you already know
 
-**Technical:** OCP is not a separate mechanism — it's an *outcome* achieved by combining Abstraction (Type 2: a shared interface like `TaxStrategy`) with Polymorphism (the caller invokes `.calculate()` without checking which subclass it has). Without those two pillars already in place, OCP would be impossible to achieve — you'd be forced back into if/else chains.
+**Technical:** OCP is not a separate mechanism — it's an *outcome* achieved by combining Abstraction (Type 2: a shared interface like `TaxStrategy`) with Polymorphism (the caller invokes `.calculate()` without checking which subclass it has). <Revision>Without those two pillars already in place, OCP would be impossible to achieve — you'd be forced back into if/else chains.</Revision>
 
 <Callout type="tip" title="🗣️ Conversational">
 This is why we built Abstraction and Polymorphism *before* SOLID — OCP is really just "use an interface + polymorphism instead of an if/else on type." You already know how to do this; SOLID just gives it a name and tells you *when* to reach for it.
