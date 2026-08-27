@@ -1,0 +1,76 @@
+<svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman, Times, serif">
+  <rect x="0" y="0" width="820" height="260" fill="#fdfdfb"/>
+
+  <text x="130" y="30" text-anchor="middle" font-size="16" fill="#2c3e50" font-weight="bold">Two sorted lists</text>
+  <text x="700" y="30" text-anchor="middle" font-size="16" fill="#2c3e50" font-weight="bold">One merged sorted list</text>
+
+  <!-- A array -->
+  <text x="20" y="65" font-size="15" fill="#333" font-weight="bold">A</text>
+  <g stroke="#2c7fb8" stroke-width="1.3" fill="#eef4fa">
+    <rect x="40"  y="45" width="42" height="36"/>
+    <rect x="82"  y="45" width="42" height="36"/>
+    <rect x="124" y="45" width="42" height="36"/>
+    <rect x="166" y="45" width="42" height="36"/>
+  </g>
+  <g font-size="14" fill="#111" text-anchor="middle" font-weight="bold">
+    <text x="61"  y="68">2</text>
+    <text x="103" y="68">8</text>
+    <text x="145" y="68">15</text>
+    <text x="187" y="68">18</text>
+  </g>
+
+  <!-- B array -->
+  <text x="20" y="115" font-size="15" fill="#333" font-weight="bold">B</text>
+  <g stroke="#b8860b" stroke-width="1.3" fill="#f4f1e9">
+    <rect x="40"  y="95" width="42" height="36"/>
+    <rect x="82"  y="95" width="42" height="36"/>
+    <rect x="124" y="95" width="42" height="36"/>
+    <rect x="166" y="95" width="42" height="36"/>
+  </g>
+  <g font-size="14" fill="#111" text-anchor="middle" font-weight="bold">
+    <text x="61"  y="118">5</text>
+    <text x="103" y="118">9</text>
+    <text x="145" y="118">12</text>
+    <text x="187" y="118">17</text>
+  </g>
+
+  <text x="130" y="160" text-anchor="middle" font-size="13" fill="#555" font-style="italic">m = 4, n = 4 elements</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="90" x2="330" y2="90" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowmerge)"/>
+  <text x="295" y="75" text-anchor="middle" font-size="13" fill="#2c3e50" font-weight="bold">Merge</text>
+  <defs>
+    <marker id="arrowmerge" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2c3e50"/>
+    </marker>
+  </defs>
+
+  <!-- C array (merged) -->
+  <text x="360" y="65" font-size="15" fill="#333" font-weight="bold">C</text>
+  <g stroke="#2e7d32" stroke-width="1.3" fill="#eaf5ea">
+    <rect x="380" y="45" width="42" height="36"/>
+    <rect x="422" y="45" width="42" height="36"/>
+    <rect x="464" y="45" width="42" height="36"/>
+    <rect x="506" y="45" width="42" height="36"/>
+    <rect x="548" y="45" width="42" height="36"/>
+    <rect x="590" y="45" width="42" height="36"/>
+    <rect x="632" y="45" width="42" height="36"/>
+    <rect x="674" y="45" width="42" height="36"/>
+  </g>
+  <g font-size="14" fill="#111" text-anchor="middle" font-weight="bold">
+    <text x="401" y="68">2</text>
+    <text x="443" y="68">5</text>
+    <text x="485" y="68">8</text>
+    <text x="527" y="68">9</text>
+    <text x="569" y="68">12</text>
+    <text x="611" y="68">15</text>
+    <text x="653" y="68">17</text>
+    <text x="695" y="68">18</text>
+  </g>
+
+  <text x="530" y="115" text-anchor="middle" font-size="13" fill="#555" font-style="italic">m + n = 8 elements, fully sorted</text>
+
+  <rect x="60" y="185" width="700" height="60" rx="8" fill="#f4f1e9" stroke="#b8860b" stroke-width="1.3"/>
+  <text x="410" y="210" text-anchor="middle" font-size="14" fill="#111">Pointers i (into A), j (into B), and k (into C) all move strictly left to right.</text>
+  <text x="410" y="232" text-anchor="middle" font-size="14" fill="#111">At each step, the smaller of A[i] and B[j] is copied into C[k], and that pointer advances.</text>
+</svg>

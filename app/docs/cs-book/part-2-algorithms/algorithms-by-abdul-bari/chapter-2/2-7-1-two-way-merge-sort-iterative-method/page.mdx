@@ -1,0 +1,144 @@
+export const metadata = {
+  title: "2.7.1: Two-Way Merge Sort — Iterative Method — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "The iterative, bottom-up formulation of Two-Way Merge Sort: the merge operation, merging as runs that double in size each pass, a full worked trace on an 8-element array, and the O(n log n) time complexity derivation.",
+  keywords: [
+    "two-way merge sort",
+    "iterative merge sort",
+    "merge sort iterative method",
+    "merge algorithm",
+    "k-way merging",
+    "O(n log n)",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 2.7.1: Two-Way Merge Sort — Iterative Method",
+    description:
+      "The merge operation, bottom-up run-doubling passes, a full worked trace, and the O(n log n) time complexity derivation.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 2.7.1: Two-Way Merge Sort — Iterative Method
+
+---
+
+## 1. The Building Block: Merging Two Sorted Lists
+
+Before Merge Sort itself, we need the core operation it's built on: **merging** two already-sorted lists into one combined sorted list.
+
+<Figure src="/images/merge-operation-trace.svg" alt="Merging sorted array A = 2,8,15,18 and sorted array B = 5,9,12,17 into merged sorted array C = 2,5,8,9,12,15,17,18" width={900} height={260} caption="Merging two sorted lists of size m and n produces one sorted list of size m + n." />
+
+### 1.1 How Merging Works
+
+- Three pointers are used: `i` (into `A`), `j` (into `B`), and `k` (into the output `C`).
+- At each step, compare `A[i]` and `B[j]`: whichever is **smaller** gets copied into `C[k]`, and that list's pointer (and `k`) advances.
+- Once one list is **exhausted**, the remaining elements of the other list are simply copied over in order — they're already sorted, and all larger than everything placed so far.
+
+### 1.2 The Merge Algorithm
+
+```c
+Algorithm Merge(A, B, m, n)
+{
+    i = 1; j = 1; k = 1;
+    while (i <= m && j <= n)
+    {
+        if (A[i] < B[j])
+            C[k++] = A[i++];
+        else
+            C[k++] = B[j++];
+    }
+    for (; i <= m; i++)
+        C[k++] = A[i];
+    for (; j <= n; j++)
+        C[k++] = B[j];
+}
+```
+
+> The first `while` loop runs the main comparison logic until **one** list runs out. The two `for` loops that follow are a safety net — only **one** of them will actually do any work, copying over whatever remains of the other list.
+
+### 1.3 Time Complexity of Merge
+
+Every element of `A` and every element of `B` is copied into `C` **exactly once** — no element is ever revisited or compared more than a constant number of times.
+
+$$\text{Time to merge} = O(m + n)$$
+
+---
+
+## 2. A Quick Generalization: k-Way Merging
+
+Merging isn't limited to exactly two lists at a time.
+
+<Figure src="/images/k-way-merging-concept.svg" alt="Four sorted lists A, B, C, D merged pairwise (2-way merging) down to a single sorted list; note on M-way merging as a generalization" width={900} height={320} caption="2-way merging combines two lists at a time; M-way merging combines M lists directly, in a single pass." />
+
+> Two-Way Merge Sort, the subject of this lesson, is built entirely from **repeated 2-way merges** — the simplest and most widely used case. (M-way merging is a useful generalization, but isn't needed for the algorithm covered here.)
+
+---
+
+## 3. Two-Way Merge Sort: The Big Idea
+
+> Treat every single element as an already-sorted "run" of size 1. Repeatedly **merge pairs of adjacent runs** together — doubling the run size each pass — until only one run remains, covering the whole array.
+
+This is an **iterative, bottom-up** approach: rather than recursing down to single elements first (as the recursive formulation does), we start directly from single elements and merge our way up.
+
+---
+
+## 4. Worked Example: Sorting `[9, 3, 7, 5, 6, 4, 8, 2]`
+
+<Figure src="/images/merge-sort-full-trace.svg" alt="Two-way merge sort trace of array 9,3,7,5,6,4,8,2 across three passes: pass 1 merges runs of size 1 into pairs, pass 2 merges runs of size 2, pass 3 merges runs of size 4 into the fully sorted array, taking log2(8)=3 passes at O(n) cost each, giving O(n log n) total" width={900} height={420} caption="Each pass doubles the sorted run length; the array is fully sorted once the run length reaches n." />
+
+### 4.1 Pass by Pass
+
+- **1st pass** — merge runs of size **1** into runs of size 2: `(9,3)→(3,9)`, `(7,5)→(5,7)`, `(6,4)→(4,6)`, `(8,2)→(2,8)`.
+- **2nd pass** — merge runs of size **2** into runs of size 4: `(3,9)+(5,7)→(3,5,7,9)`, `(4,6)+(2,8)→(2,4,6,8)`.
+- **3rd pass** — merge runs of size **4** into one run of size 8: `(3,5,7,9)+(2,4,6,8)→(2,3,4,5,6,7,8,9)`.
+
+The array is now fully sorted — and it took exactly **3 passes** to get there.
+
+---
+
+## 5. Time Complexity Analysis
+
+### 5.1 Number of Passes
+
+- The run size doubles every pass: **1 → 2 → 4 → 8**. Sorting stops once the run size reaches `n`.
+- For `n = 8`: since `8 = 2³`, it takes **log₂(8) = 3** passes — exactly matching the worked example.
+- In general, the number of passes is **log n**.
+
+### 5.2 Cost per Pass
+
+- In *any* single pass, every element of the array is touched by **exactly one** merge operation — the merges at that pass partition the whole array into disjoint pairs of runs.
+- Since merging costs O(size of the two runs combined), and every pass's merges together cover all `n` elements, each full pass costs **O(n)**.
+
+### 5.3 Putting It Together
+
+$$\text{Total time} = (\text{cost per pass}) \times (\text{number of passes}) = O(n) \times O(\log n)$$
+
+$$O(n \log n)$$
+
+---
+
+## 6. Key Takeaways
+
+- **Merging** two sorted lists of sizes `m` and `n` takes **O(m + n)** time, using three simple pointers.
+- Merging generalizes beyond two lists at a time (**M-way merging**), but **Two-Way Merge Sort** is built from repeated **2-way merges**.
+- The **iterative** version of Merge Sort starts from runs of size 1 and repeatedly merges adjacent runs, **doubling** the run size each pass, until the whole array is one sorted run.
+- The number of passes needed is **log n**, since the run size doubles every pass.
+- Each individual pass costs **O(n)**, since every element is merged exactly once per pass.
+- Combining these: Two-Way Merge Sort runs in **O(n log n)** time overall.
+
+> **Simple takeaway:** merge sort's cost is just "log n doublings, each one an O(n) sweep" — the doubling gives you the log, the sweep gives you the n.
+
+---
+
+**Watch the original lecture:** <a href="https://www.youtube.com/watch?v=6pV2IF0fgKY" target="_blank" rel="noopener noreferrer">Two-Way Merge Sort — Iterative Method — Abdul Bari (YouTube)</a>
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-6-2-binary-search-recursive-method", title: "2.6.2: Binary Search — Recursive Method" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction", title: "3: Greedy Method — Introduction" }}
+/>
