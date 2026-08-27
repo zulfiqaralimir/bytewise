@@ -340,6 +340,39 @@ c.make_sound()   # prints "Meow" — runs Cat's own version
 
 This is different from Step 1, where there was only ever *one* `say_hello` in existence at a time. Here, there are genuinely **two separate `make_sound` methods**, coexisting, and which one runs depends entirely on *which object* you called it on.
 
+---
+
+### Rebuilding Polymorphism — Step 3
+
+The actual "polymorphism" moment: not knowing (or caring) which type you have.
+
+In Step 2, you called `d.make_sound()` and `c.make_sound()` **separately**, and you — the programmer — knew exactly which was which (`d` is a Dog, `c` is a Cat).
+
+**Now here's the real shift:** what if you put both objects into one list, and processed them **without checking what type each one is**?
+
+```python
+animals = [Dog(), Cat()]
+
+for animal in animals:
+    animal.make_sound()
+```
+
+Look very closely at that loop. Inside it, the variable is just called `animal` — a generic name. The loop code has **no if/else, no type-check, nothing** that asks "is this a Dog or a Cat?" It just says: *whatever you are, call your own `make_sound()`.*
+
+**Trace it by hand:**
+- First time through the loop: `animal` currently holds the `Dog()` object → `animal.make_sound()` runs Dog's version → prints "Woof"
+- Second time through the loop: `animal` currently holds the `Cat()` object → `animal.make_sound()` runs Cat's version → prints "Meow"
+
+**The exact same line of code — `animal.make_sound()` — produced two different outputs**, because each time, `animal` was secretly holding a different real object. The loop itself never needed to know which one it had. It just trusted that whatever object was there, calling `.make_sound()` on it would do the right thing *for that object.*
+
+### This is the whole definition of polymorphism, now that you've built up to it:
+
+**Polymorphism = writing code that calls a method by name, without checking what exact type the object is — and trusting that each object will run its own correct version.**
+
+<Callout type="tip" title="🗣️ One More Time, in the Simplest Words Possible">
+You write `animal.make_sound()` **once**. You never write it again, no matter how many animal types you add later (Cow, Duck, Horse...). Every new animal type just needs its own `make_sound()` method, and this same loop will automatically call the right one — because it was never checking types to begin with.
+</Callout>
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance", title: "Section 4: Inheritance" }}
   next={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp", title: "Section 6: Keypoints of C++" }}
