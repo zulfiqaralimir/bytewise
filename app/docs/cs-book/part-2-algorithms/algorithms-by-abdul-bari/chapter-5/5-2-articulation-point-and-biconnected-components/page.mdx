@@ -22,6 +22,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { Figure } from "@/app/components/Figure";
+import { Revision } from "@/app/components/Revision";
 
 # 5.2: Articulation Point and Biconnected Components
 
@@ -81,6 +82,21 @@ Label each vertex with its **discovery time**, `d[ ]` — simply the order in wh
 
 <Figure src="/images/articulation-dfs-low-values.svg" alt="Same DFS tree annotated with both discovery time d[] and low-link value L[] for every vertex, with vertex 3 circled as the identified articulation point" width={900} height={340} caption="Every vertex now carries two numbers: when it was discovered, and the earliest ancestor its subtree can reach." />
 
+### 2.4 <Revision>d[ ] vs. L[ ] — What Each One Actually Tells You</Revision>
+
+These two numbers answer two completely different questions:
+
+- **`d[x]` — Discovery time.** Just a timestamp: "When did DFS first step on vertex x?" It's fixed the moment DFS visits x, and never changes afterward. It says nothing about what x can reach — only which position it was visited in.
+
+- **`L[x]` — Low-link value.** A question about *reach*, not time: "Starting at x, and looking at its entire subtree (x, its children, grandchildren, and so on), what is the **smallest discovery time** any of them can touch — either by walking down the tree, or by taking *one* back edge upward?"
+
+In plain words, `L[x]` asks: *how far back up the tree can x's whole branch reach, if it gets a single shortcut?*
+
+**Concrete difference using vertex 5:**
+
+- `d[5] = 4` — just says "5 was the 4th vertex DFS visited."
+- `L[5] = 3` — says "the best that vertex 5's whole branch (5 and 6) can do is reach back to vertex 3" (because 6 has a back edge to 3, and nothing reaches any earlier vertex than that).
+
 ---
 
 ## 3. The Articulation Point Condition
@@ -130,6 +146,61 @@ Once all articulation points are found, each one can be resolved the same way: i
 - Each vertex also gets a **low-link value `L[ ]`** — the earliest discovery time reachable from its subtree via at most one back edge.
 - For a non-root vertex pair `(u, v)` with `u` as parent: **`L[v] ≥ d[u]`** means `u` is an articulation point.
 - The **root** is a special case, checked separately: it's an articulation point only if it has **2 or more children** in the DFS tree.
+
+---
+
+## 7. Building Intuition: The Staircase Analogy
+
+The condition `L[v] ≥ d[u]` can feel abstract at first. Here's the same idea with no jargon — just a staircase.
+
+### 7.1 Picture the DFS Tree as a Staircase
+
+Number each vertex's floor by when DFS visited it:
+
+```
+Floor 1:  vertex 1   (root, ground floor)
+Floor 2:  vertex 4
+Floor 3:  vertex 3
+Floor 4:  vertex 5
+Floor 5:  vertex 6
+```
+
+The tree edges (1→4→3→5→6) are the **main staircase** — the only "official" way down to the ground floor.
+
+A **back edge** is a **secret shortcut door** that lets someone skip straight down to an earlier floor without using the main staircase. In this graph, vertex 6 has exactly one such door, leading to floor 3 (vertex 3) — that's the only shortcut anyone on floors 4–5 has.
+
+### 7.2 The Real Question
+
+If floor 3 (vertex 3) is knocked out entirely, can anyone standing on floors 4–5 (vertices 5, 6) still reach the ground floor (vertex 1)?
+
+- The main staircase is broken — you can't walk down through a floor that no longer exists.
+- The only secret door from {5, 6} leads to floor 3 — which is gone.
+- So {5, 6} is stuck. Trapped. No way down.
+
+That's the entire reason 3 is an articulation point: their only exit led to the floor that was removed.
+
+### 7.3 The Contrast That Makes the Rule Click
+
+Now imagine instead that vertex 6's secret door led to vertex **1** (floor 1) instead of vertex 3 (floor 3):
+
+- Knock out floor 3 again.
+- 5 and 6 can't use the main staircase (broken at floor 3).
+- But 6's secret door leads straight to floor 1 — which still exists. They walk through it and land safely on the ground floor.
+- **3 is no longer an articulation point** — {5, 6} had an escape route that never needed to pass through 3.
+
+### 7.4 Matching This to the Numbers
+
+- `L[5]` = the lowest floor number that 5's group (5 and 6) can reach using their best secret door.
+- `d[3]` = the floor number of vertex 3 itself.
+
+| Scenario | L[5] | d[3] | Comparison | Result |
+|---|---|---|---|---|
+| Real graph (6's door → vertex 3) | 3 | 3 | `3 ≥ 3` — **true** | Their best exit lands *on* 3's own floor. Remove 3, they're trapped. **3 is an articulation point.** |
+| Hypothetical (6's door → vertex 1) | 1 | 3 | `1 ≥ 3` — **false** | Their best exit lands *below* 3, on floor 1. They escape past 3 entirely. **3 is not an articulation point.** |
+
+### 7.5 The Rule in One Sentence
+
+`L[v] ≥ d[u]` means: *the lowest floor v's group can reach is no better than u's own floor* — so `u` is the last stepping-stone standing between that subtree and the rest of the graph. Remove that stepping-stone, and the subtree has nowhere left to go.
 
 ---
 
