@@ -1,0 +1,147 @@
+export const metadata = {
+  title: "5.2: Articulation Point and Biconnected Components — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Articulation points (cut vertices) as single points of failure in a graph: DFS spanning trees, discovery time, low-link values, and the L[v] >= d[u] condition used to detect them algorithmically.",
+  keywords: [
+    "articulation point",
+    "cut vertex",
+    "biconnected components",
+    "DFS spanning tree",
+    "discovery time",
+    "low-link value",
+    "graph connectivity",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 5.2: Articulation Point and Biconnected Components",
+    description:
+      "DFS spanning trees, discovery time, low-link values, and the L[v] >= d[u] condition used to detect articulation points.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 5.2: Articulation Point and Biconnected Components
+
+*Course: Algorithms | Based on the lecture by Abdul Bari*
+
+---
+
+## 1. What Is an Articulation Point?
+
+> An **articulation point** (also called a cut vertex) is any vertex whose **removal disconnects the graph** into multiple components.
+
+Consider the example graph used throughout this lesson: vertices 1–6, where vertex **3** sits between two clusters. Removing vertex 3 splits the graph into two pieces: **{1, 4, 2}** and **{5, 6}**. That makes 3 an articulation point.
+
+### 1.1 Why Articulation Points Matter
+
+- If this graph represents a **network** — a road network, a computer network — an articulation point is a **single point of failure.** If that one vertex goes down, the network breaks into disconnected pieces.
+- Ideally, a robust network should **remain a single connected piece** even if something in it fails.
+
+### 1.2 The Fix
+
+Once an articulation point is found, the fix is simple: if you know which components it separates, just **add an edge** connecting those components directly. This removes the dependency on the articulation point.
+
+<Figure src="/images/articulation-base-graph-and-fix.svg" alt="Left: original graph with vertex 3 highlighted as an articulation point, showing it splits the graph into {1,4,2} and {5,6}. Right: the same graph with a new edge added between 4 and 5, removing the articulation point." width={900} height={340} caption="Adding a single edge between the two components (here, between 4 and 5) means the graph stays connected even if vertex 3 is removed." />
+
+> Even the **new** connecting vertex (4, in this example) becomes less critical: the chance that both endpoints of a repair edge fail at once is much lower than relying on a single articulation point.
+
+---
+
+## 2. Finding Articulation Points Algorithmically
+
+Spotting an articulation point by eye is easy on a small graph — but a computer needs a systematic procedure. The algorithm has several steps, each building on the last.
+
+### 2.1 Step 1: Build a DFS Spanning Tree
+
+Starting from vertex 1, a depth-first traversal visits: **1 → 4 → 3 → 5 → 6** (6 has an edge back to 3, but no new vertex to visit) → back up to 5, back up to 3 → **2** (2 has an edge back to 1) → back up through 3, 4, 1. Every vertex is now explored.
+
+### 2.2 Step 2: Record Discovery Times
+
+Label each vertex with its **discovery time**, `d[ ]` — simply the order in which DFS first visits it.
+
+<Figure src="/images/articulation-dfs-discovery-times.svg" alt="DFS spanning tree rooted at 1, with tree edges 1-4, 4-3, 3-5, 5-6, 3-2, and back edges 6-3 and 2-1, labeled with discovery times d=1 through d=6" width={900} height={340} caption="Solid edges are DFS tree edges; dashed edges are back edges (an edge from a vertex to one of its own ancestors)." />
+
+| Vertex | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| d[ ] | 1 | 6 | 3 | 2 | 4 | 5 |
+
+### 2.3 Step 3: Compute the Low-Link Value, L[ ]
+
+> `L[v]` is the **lowest discovery time reachable** from the subtree rooted at `v`, using at most **one back edge.** In other words: how far back up the tree can this vertex (or its descendants) reach?
+
+- **L[1] = 1** (it's the root).
+- **L[2] = 1** — vertex 2 has a back edge straight to vertex 1.
+- **L[3] = 1** — from 3, going to child 2, which reaches back to 1.
+- **L[4] = 1** — from 4, going down to 3, then to 2, which reaches back to 1.
+- **L[5] = 3** — from 5, going to child 6, which has a back edge only as far as 3.
+- **L[6] = 3** — 6's own back edge goes directly to 3.
+
+<Figure src="/images/articulation-dfs-low-values.svg" alt="Same DFS tree annotated with both discovery time d[] and low-link value L[] for every vertex, with vertex 3 circled as the identified articulation point" width={900} height={340} caption="Every vertex now carries two numbers: when it was discovered, and the earliest ancestor its subtree can reach." />
+
+---
+
+## 3. The Articulation Point Condition
+
+> For any **parent–child** pair `(u, v)` in the DFS tree (`u` = parent, `v` = child), **if `L[v] ≥ d[u]`, then `u` is an articulation point.** (This rule applies to every vertex *except* the root — the root needs a separate check, covered below.)
+
+The intuition: if none of `v`'s subtree can reach any ancestor *earlier* than `u` itself, then `v`'s entire subtree depends on `u` to stay connected to the rest of the graph. Remove `u`, and that subtree is cut off.
+
+### 3.1 Checking Each Pair
+
+- **u = 4, v = 3:** is `L[3] = 1 ≥ d[4] = 2`? **No** (1 < 2) — not an articulation point via this pair.
+- **u = 3, v = 5:** is `L[5] = 3 ≥ d[3] = 3`? **Yes** (3 ≥ 3) — **vertex 3 is an articulation point.**
+
+Checking every other parent–child pair in this graph doesn't satisfy the condition — so **3** is the only articulation point, matching what we could already see by inspection.
+
+---
+
+## 4. The Root Is a Special Case
+
+The `L[v] ≥ d[u]` rule doesn't apply to the root, since the root has no parent to compare against. Instead:
+
+> The **root** of the DFS tree is an articulation point **if and only if it has two or more children** in the DFS spanning tree.
+
+<Figure src="/images/articulation-root-special-case.svg" alt="Comparison: a DFS tree root with only one child is not an articulation point; a root with two or more children is an articulation point, since removing it disconnects the separate subtrees from each other" width={900} height={340} caption="If the root has multiple independent subtrees hanging off it, removing the root disconnects them from one another." />
+
+In our example, root **1** has only **one** DFS-tree child (vertex 4) — the edge 1–2 became a *back edge*, not a second tree branch. So root 1 is **not** an articulation point here.
+
+---
+
+## 5. Putting the Algorithm Together
+
+1. Run a DFS from any starting vertex, building the DFS spanning tree.
+2. Record each vertex's discovery time, `d[ ]`, in the order visited.
+3. Compute each vertex's low-link value, `L[ ]`, from its subtree (including any back edges found).
+4. For every non-root vertex pair `(u, v)` where `u` is the parent of `v`: if `L[v] ≥ d[u]`, mark `u` as an articulation point.
+5. Separately, check the root: if it has **2 or more** children in the DFS tree, it is also an articulation point.
+
+Once all articulation points are found, each one can be resolved the same way: identify the components it separates, and add a connecting edge between them.
+
+---
+
+## 6. Key Takeaways
+
+- An **articulation point** is a vertex whose removal disconnects the graph — a critical weak point in any network.
+- The fix for an articulation point is straightforward: add an edge directly connecting the components it separates.
+- Finding articulation points algorithmically starts with a **DFS spanning tree**, recording each vertex's **discovery time `d[ ]`**.
+- Each vertex also gets a **low-link value `L[ ]`** — the earliest discovery time reachable from its subtree via at most one back edge.
+- For a non-root vertex pair `(u, v)` with `u` as parent: **`L[v] ≥ d[u]`** means `u` is an articulation point.
+- The **root** is a special case, checked separately: it's an articulation point only if it has **2 or more children** in the DFS tree.
+
+---
+
+**Watch the original lecture:** <a href="https://www.youtube.com/watch?v=jFZsDDB0-vo" target="_blank" rel="noopener noreferrer">Articulation Point and Biconnected Components — Abdul Bari (YouTube)</a>
+
+---
+
+*Lesson notes derived from a lecture transcript — Abdul Bari, Algorithms Course.*
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-1-graph-traversals-bfs-dfs", title: "5.1: Graph Traversals — BFS & DFS" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction", title: "6: Introduction to Backtracking — Brute-Force Approach" }}
+/>

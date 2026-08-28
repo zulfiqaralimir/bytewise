@@ -78,6 +78,7 @@ const chapters = [
           { title: "3: Greedy Method — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction" },
           { title: "4: Principle of Optimality — Introduction to Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-4/4-principle-of-optimality-dynamic-programming" },
           { title: "5.1: Graph Traversals — BFS & DFS", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-1-graph-traversals-bfs-dfs" },
+          { title: "5.2: Articulation Point and Biconnected Components", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-2-articulation-point-and-biconnected-components" },
           { title: "6: Introduction to Backtracking — Brute-Force Approach", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction" },
           { title: "11: Hashing Technique", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-hashing-technique" },
         ],
