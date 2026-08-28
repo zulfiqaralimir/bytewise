@@ -36,22 +36,55 @@ LeetCode tutorials assume you already know Python's plumbing, then jump straight
 
 | # | Topic | Covers |
 |---|-------|--------|
-| 1 | Core Data Types | int/float, str, bool, `None`, mutability vs. immutability |
-| 2 | Lists & Slicing | indexing, negative index, `list[a:b:c]`, copying vs. referencing |
-| 3 | Dicts & Sets | creation, lookup, `.get()`, membership testing, when to use which |
-| 4 | Tuples & Unpacking | tuple packing, multiple assignment, `a, b = b, a` |
-| 5 | Loops Deep Dive | `for n in nums`, `range(len())`, `enumerate()`, `zip()`, `while` |
-| 6 | Comprehensions | list/dict/set comprehensions, when they help vs. hurt readability |
-| 7 | Functions | default args, `*args`/`**kwargs`, `lambda`, return of multiple values |
-| 8 | Sorting | `sorted()` vs `.sort()`, `key=`, `lambda` keys, reverse, sorting tuples |
-| 9 | Strings | slicing, `.split()`, `.join()`, f-strings, ASCII/`ord()`/`chr()` |
-| 10 | `collections` Module | `Counter`, `defaultdict`, `deque`, `OrderedDict` |
-| 11 | `heapq` Module | min-heap basics, pushing tuples, simulating a max-heap |
-| 12 | Recursion Basics | base case, call stack, recursion vs. iteration tradeoffs |
-| 13 | Common Gotchas | mutable default args, shallow vs. deep copy, `[[0]*n]*m` trap |
-| 14 | Big-O of Built-ins | cost of list/dict/set ops you'll rely on constantly |
+| 1 | Indentation | how Python uses whitespace instead of `{ }` to group code |
+| 2 | Core Data Types | int/float, str, bool, `None`, mutability vs. immutability |
+| 3 | Lists & Slicing | indexing, negative index, `list[a:b:c]`, copying vs. referencing |
+| 4 | Dicts & Sets | creation, lookup, `.get()`, membership testing, when to use which |
+| 5 | Tuples & Unpacking | tuple packing, multiple assignment, `a, b = b, a` |
+| 6 | Loops Deep Dive | `for n in nums`, `range(len())`, `enumerate()`, `zip()`, `while` |
+| 7 | Comprehensions | list/dict/set comprehensions, when they help vs. hurt readability |
+| 8 | Functions | default args, `*args`/`**kwargs`, `lambda`, return of multiple values |
+| 9 | Sorting | `sorted()` vs `.sort()`, `key=`, `lambda` keys, reverse, sorting tuples |
+| 10 | Strings | slicing, `.split()`, `.join()`, f-strings, ASCII/`ord()`/`chr()` |
+| 11 | `collections` Module | `Counter`, `defaultdict`, `deque`, `OrderedDict` |
+| 12 | `heapq` Module | min-heap basics, pushing tuples, simulating a max-heap |
+| 13 | Recursion Basics | base case, call stack, recursion vs. iteration tradeoffs |
+| 14 | Common Gotchas | mutable default args, shallow vs. deep copy, `[[0]*n]*m` trap |
+| 15 | Big-O of Built-ins | cost of list/dict/set ops you'll rely on constantly |
 
 Each topic gets its own deep-dive section below, filled in one at a time.
+
+---
+
+## 1. Indentation
+
+Python doesn't use `{ }` or `end` keywords to group code like some languages do. Instead, it uses **indentation** (spaces) to show what belongs inside what.
+
+```python
+if x > 5:
+    print("big")
+    print("still inside the if")
+print("outside the if now")
+```
+
+Rules:
+
+- A line ending in `:` (like `if`, `for`, `while`, `def`) means "what follows is indented — it belongs to me."
+- Everything indented at the same level after that `:` is considered "inside" that block.
+- The moment a line goes back to a lower indentation, you've stepped **outside** that block.
+
+Standard is **4 spaces** per level (most editors do this automatically when you press Tab).
+
+Here's the trap that confuses almost everyone at first:
+
+```python
+if x > 5:
+    print("A")
+    print("B")
+  print("C")   # ← ERROR: doesn't match either level above
+```
+
+Python will throw an `IndentationError` because line C's indentation doesn't cleanly match any existing level.
 
 ---
 
