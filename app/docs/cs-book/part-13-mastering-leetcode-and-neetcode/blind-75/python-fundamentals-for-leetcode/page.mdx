@@ -1,0 +1,61 @@
+export const metadata = {
+  title: "Python Fundamentals for LeetCode — Blind 75 — ByteWise",
+  description:
+    "The Python plumbing LeetCode tutorials assume you already know — covered first, before jumping into Blind 75 problems.",
+  keywords: [
+    "Python fundamentals",
+    "Python for coding interviews",
+    "Blind 75",
+    "LeetCode prep",
+    "Python basics",
+    "coding interview patterns",
+  ],
+  openGraph: {
+    title: "Python Fundamentals for LeetCode",
+    description:
+      "Fix the plumbing first, then the algorithms make sense.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Python Fundamentals for LeetCode
+
+*Blind 75 · Foundations*
+
+---
+
+## Introduction
+
+LeetCode tutorials assume you already know Python's plumbing, then jump straight into algorithms. Let's fix the plumbing first.
+
+---
+
+## Roadmap
+
+| # | Topic | Covers |
+|---|-------|--------|
+| 1 | Core Data Types | int/float, str, bool, `None`, mutability vs. immutability |
+| 2 | Lists & Slicing | indexing, negative index, `list[a:b:c]`, copying vs. referencing |
+| 3 | Dicts & Sets | creation, lookup, `.get()`, membership testing, when to use which |
+| 4 | Tuples & Unpacking | tuple packing, multiple assignment, `a, b = b, a` |
+| 5 | Loops Deep Dive | `for n in nums`, `range(len())`, `enumerate()`, `zip()`, `while` |
+| 6 | Comprehensions | list/dict/set comprehensions, when they help vs. hurt readability |
+| 7 | Functions | default args, `*args`/`**kwargs`, `lambda`, return of multiple values |
+| 8 | Sorting | `sorted()` vs `.sort()`, `key=`, `lambda` keys, reverse, sorting tuples |
+| 9 | Strings | slicing, `.split()`, `.join()`, f-strings, ASCII/`ord()`/`chr()` |
+| 10 | `collections` Module | `Counter`, `defaultdict`, `deque`, `OrderedDict` |
+| 11 | `heapq` Module | min-heap basics, pushing tuples, simulating a max-heap |
+| 12 | Recursion Basics | base case, call stack, recursion vs. iteration tradeoffs |
+| 13 | Common Gotchas | mutable default args, shallow vs. deep copy, `[[0]*n]*m` trap |
+| 14 | Big-O of Built-ins | cost of list/dict/set ops you'll rely on constantly |
+
+Each topic gets its own deep-dive section below, filled in one at a time.
+
+---
+
+<ArticleNav
+  prev={{ title: "Blind 75 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75" }}
+  next={null}
+/>

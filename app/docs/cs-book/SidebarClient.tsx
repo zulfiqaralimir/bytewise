@@ -348,6 +348,7 @@ const chapters = [
         chapter: "Mastering Blind 75",
         items: [
           { title: "Blind 75 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75" },
+          { title: "Python Fundamentals for LeetCode", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/python-fundamentals-for-leetcode" },
         ],
       },
     ],
