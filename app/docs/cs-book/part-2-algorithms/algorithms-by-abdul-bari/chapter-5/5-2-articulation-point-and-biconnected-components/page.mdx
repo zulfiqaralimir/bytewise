@@ -28,6 +28,10 @@ import { Revision } from "@/app/components/Revision";
 
 *Course: Algorithms | Based on the lecture by Abdul Bari*
 
+*d[x] is when you visited x; L[x] is how far back x's branch can escape. A vertex u is an articulation point if some child v of u has L[v] ≥ d[u] — meaning v's branch can't escape past u, so removing u traps it.*
+
+**If a child can't find its way back past its own parent, the parent is holding that whole branch together — pull the parent out, and the branch falls off.**
+
 ---
 
 ## 1. What Is an Articulation Point?
