@@ -1,0 +1,64 @@
+export const metadata = {
+  title: "Python Indentation — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "How Python uses whitespace instead of braces to group code, and the IndentationError trap that catches almost everyone at first.",
+  keywords: [
+    "Python indentation",
+    "IndentationError",
+    "Python whitespace",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "Python Indentation",
+    description:
+      "Python doesn't use braces to group code — it uses indentation.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Python Indentation
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 1*
+
+---
+
+## Introduction
+
+Python doesn't use `{ }` or `end` keywords to group code like some languages do. Instead, it uses **indentation** (spaces) to show what belongs inside what.
+
+```python
+if x > 5:
+    print("big")
+    print("still inside the if")
+print("outside the if now")
+```
+
+Rules:
+
+- A line ending in `:` (like `if`, `for`, `while`, `def`) means "what follows is indented — it belongs to me."
+- Everything indented at the same level after that `:` is considered "inside" that block.
+- The moment a line goes back to a lower indentation, you've stepped **outside** that block.
+
+Standard is **4 spaces** per level (most editors do this automatically when you press Tab).
+
+Here's the trap that confuses almost everyone at first:
+
+```python
+if x > 5:
+    print("A")
+    print("B")
+  print("C")   # ← ERROR: doesn't match either level above
+```
+
+Python will throw an `IndentationError` because line C's indentation doesn't cleanly match any existing level.
+
+---
+
+<ArticleNav
+  prev={{ title: "Python Fundamentals for LeetCode", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/python-fundamentals-for-leetcode" }}
+  next={null}
+/>
