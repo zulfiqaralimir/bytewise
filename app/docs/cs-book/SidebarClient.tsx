@@ -344,6 +344,12 @@ const chapters = [
           { title: "Topic 1: Problem 4 — Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-4-group-anagrams" },
         ],
       },
+      {
+        chapter: "Mastering Blind 75",
+        items: [
+          { title: "Blind 75 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75" },
+        ],
+      },
     ],
   },
   {
