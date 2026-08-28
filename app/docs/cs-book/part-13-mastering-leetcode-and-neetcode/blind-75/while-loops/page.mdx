@@ -1,0 +1,71 @@
+export const metadata = {
+  title: "While Loops — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "How while loops work in Python, why infinite loops happen, and how while True with break gives you an event-driven loop.",
+  keywords: [
+    "Python while loop",
+    "infinite loop",
+    "while True break",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "While Loops",
+    description:
+      "A while loop repeats as long as a condition stays true — Python checks before every pass.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# While Loops
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 2*
+
+---
+
+## Introduction
+
+A `while` loop repeats a block of code **as long as a condition stays true**. Python checks the condition before each pass — the moment it becomes false, the loop stops.
+
+```python
+count = 0
+while count < 5:
+    print(count)
+    count += 1
+```
+
+What's happening line by line:
+- `count = 0` — starting value.
+- `while count < 5:` — checks the condition. If true, runs the indented block below it.
+- `print(count)` — inside the loop, does the work.
+- `count += 1` — this is short for `count = count + 1`. Without this, `count` would never change, and the loop would run forever (an **infinite loop**).
+- Once `count` becomes `5`, the condition `count < 5` is false, so Python skips the block and moves to whatever comes after the loop.
+
+A few things that trip people up:
+
+**1. `while` vs `for`** — use `while` when you don't know in advance how many times you'll loop (e.g. "keep going until the list is empty"). Use `for` when you're iterating over a known sequence (a list, a range, etc.) — we'll cover `for` next.
+
+**2. Infinite loops** — if you forget to update the variable the condition depends on, the loop never ends:
+```python
+count = 0
+while count < 5:
+    print(count)   # forgot count += 1 — this runs forever!
+```
+
+**3. `while True` with `break`** — sometimes you want a loop that runs until something specific happens inside it, not a simple counter:
+```python
+while True:
+    answer = input("Type 'quit' to stop: ")
+    if answer == "quit":
+        break   # exits the loop immediately
+```
+
+---
+
+<ArticleNav
+  prev={{ title: "Python Indentation", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/indentation" }}
+  next={null}
+/>

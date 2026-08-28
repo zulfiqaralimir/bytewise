@@ -350,6 +350,7 @@ const chapters = [
           { title: "Blind 75 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75" },
           { title: "Python Fundamentals for LeetCode", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/python-fundamentals-for-leetcode" },
           { title: "1. Indentation", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/indentation" },
+          { title: "2. While Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/while-loops" },
         ],
       },
     ],
