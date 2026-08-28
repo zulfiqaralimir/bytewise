@@ -1,0 +1,63 @@
+<svg viewBox="0 0 780 400" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman, Times, serif">
+  <rect x="0" y="0" width="780" height="400" fill="#fdfdfb"/>
+
+  <text x="330" y="25" text-anchor="middle" font-size="14" fill="#2c7fb8" font-weight="bold">h'(x) = [h(x) + f(i)] % size,   f(i) = i,   i = 0, 1, 2, ...</text>
+
+  <text x="30" y="55" font-size="15" fill="#333" font-weight="bold">Insertion order: 8, 3, 13, 6, 4, 10</text>
+
+  <text x="500" y="55" font-size="15" fill="#333" font-weight="bold">Hash Table</text>
+  <g stroke="#2c3e50" stroke-width="1.2" fill="#fff">
+    <rect x="470" y="70"  width="90" height="28"/>
+    <rect x="470" y="98"  width="90" height="28"/>
+    <rect x="470" y="126" width="90" height="28"/>
+    <rect x="470" y="154" width="90" height="28" fill="#eaf5ea"/>
+    <rect x="470" y="182" width="90" height="28" fill="#fbeaea"/>
+    <rect x="470" y="210" width="90" height="28" fill="#fbeaea"/>
+    <rect x="470" y="238" width="90" height="28" fill="#eaf5ea"/>
+    <rect x="470" y="266" width="90" height="28"/>
+    <rect x="470" y="294" width="90" height="28" fill="#eaf5ea"/>
+    <rect x="470" y="322" width="90" height="28"/>
+  </g>
+  <g font-size="12" fill="#555">
+    <text x="455" y="88"  text-anchor="end">0</text>
+    <text x="455" y="116" text-anchor="end">1</text>
+    <text x="455" y="144" text-anchor="end">2</text>
+    <text x="455" y="172" text-anchor="end">3</text>
+    <text x="455" y="200" text-anchor="end">4</text>
+    <text x="455" y="228" text-anchor="end">5</text>
+    <text x="455" y="256" text-anchor="end">6</text>
+    <text x="455" y="284" text-anchor="end">7</text>
+    <text x="455" y="312" text-anchor="end">8</text>
+    <text x="455" y="340" text-anchor="end">9</text>
+  </g>
+  <g font-size="15" fill="#111" font-weight="bold" text-anchor="middle">
+    <text x="515" y="89">10</text>
+    <text x="515" y="173">3</text>
+    <text x="515" y="201">13</text>
+    <text x="515" y="229">4</text>
+    <text x="515" y="257">6</text>
+    <text x="515" y="313">8</text>
+  </g>
+
+  <!-- annotations for collisions -->
+  <text x="600" y="201" font-size="11" fill="#a33" font-style="italic">13: collides at 3 &#8594; +1 &#8594; 4</text>
+  <text x="600" y="229" font-size="11" fill="#a33" font-style="italic">4: collides at 4 &#8594; +1 &#8594; 5</text>
+
+  <!-- Trace box -->
+  <rect x="20" y="80" width="420" height="290" rx="8" fill="#f6f6f2" stroke="#ddd" stroke-width="1.3"/>
+  <g font-size="13" fill="#111">
+    <text x="35" y="105">8 &#8594; h(8) = 8 &#8594; index 8 (free)</text>
+    <text x="35" y="130">3 &#8594; h(3) = 3 &#8594; index 3 (free)</text>
+    <text x="35" y="155">13 &#8594; h(13) = 3 &#8594; occupied</text>
+    <text x="55" y="177">try i=1: (3+1)%10 = 4 &#8594; free &#8594; index 4</text>
+    <text x="35" y="202">6 &#8594; h(6) = 6 &#8594; index 6 (free)</text>
+    <text x="35" y="227">4 &#8594; h(4) = 4 &#8594; occupied (13)</text>
+    <text x="55" y="249">try i=1: (4+1)%10 = 5 &#8594; free &#8594; index 5</text>
+    <text x="35" y="274">10 &#8594; h(10) = 0 &#8594; index 0 (free)</text>
+  </g>
+  <line x1="35" y1="290" x2="420" y2="290" stroke="#ccc" stroke-width="1"/>
+  <text x="35" y="312" font-size="13" fill="#2c7fb8" font-weight="bold">Search key = 4:</text>
+  <text x="55" y="332" font-size="12" fill="#111">index 4 has 13 (no) &#8594; index 5 has 4 &#8594; found!</text>
+  <text x="35" y="354" font-size="13" fill="#a33" font-weight="bold">Search key = 24:</text>
+  <text x="55" y="374" font-size="12" fill="#111">idx 4,5,6 occupied but not 24 &#8594; idx 7 empty &#8594; not found</text>
+</svg>

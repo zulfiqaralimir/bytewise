@@ -1,0 +1,176 @@
+export const metadata = {
+  title: "11: Hashing Technique — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Hashing as a search technique aiming for O(1) lookup: direct addressing, the mod hash function, collisions, and the two families of collision resolution — chaining (open hashing) and linear/quadratic probing (closed hashing).",
+  keywords: [
+    "hashing",
+    "hash function",
+    "hash table",
+    "collision resolution",
+    "chaining",
+    "linear probing",
+    "quadratic probing",
+    "open hashing",
+    "closed hashing",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 11: Hashing Technique",
+    description:
+      "Direct addressing, the mod hash function, collisions, and the two families of collision resolution — chaining and linear/quadratic probing.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 11: Hashing Technique
+
+*Course: Algorithms | Based on the lecture by Abdul Bari*
+
+---
+
+## 1. Why Hashing? Recapping Search Techniques
+
+| Method | Requirement | Time Complexity |
+|---|---|---|
+| **Linear Search** | None — elements can be in any order | O(n) |
+| **Binary Search** | Elements must be sorted | O(log n) |
+| **Hashing** | — | **O(1)** (goal) |
+
+Binary search improves on linear search, but at the cost of needing sorted data. **Hashing** aims higher still: **constant-time** search, without requiring the data to be sorted at all.
+
+---
+
+## 2. The Basic Idea: Direct Addressing
+
+> Store each element **at the index equal to its own value.** To search for a key, go **directly** to that index.
+
+<Figure src="/images/hashing-direct-address.svg" alt="Direct addressing: hash function h(x)=x maps keys 8,3,13,6,4,10,50 directly to array indices of the same value, wasting space for large sparse keys" width={900} height={260} caption="With h(x) = x, an element with key 50 needs an array of at least 51 slots — even if only a handful of keys are actually used." />
+
+- Searching for key **10**: go straight to index 10, check if it's occupied. Searching for key **12**: go straight to index 12 — not found. Either way, this takes **O(1)** time.
+- **The problem:** if one of the keys is large (like 50), the array must be large enough to hold index 50 — even though only a handful of elements are actually being stored. Space is wasted on a massive scale.
+
+---
+
+## 3. The Mathematical Model
+
+- The set of elements to be stored is called the **key space.**
+- The array used to store them is called the **hash table.**
+- A **hash function**, `h(x)`, maps each key from the key space to a location (index) in the hash table.
+- `h(x) = x` is the **ideal** hash function in the sense that it's a **one-to-one** mapping — every distinct key gets its own distinct index, so there's never any ambiguity about where an element lives.
+
+> Functions are either **one-to-one** (each input maps to a unique output) or **many-to-one** (multiple inputs can map to the same output). `h(x) = x` is one-to-one — but as we'll see, that's exactly what forces the table to be so large. Almost any other hash function will be many-to-one, depending on the keys and table size.
+
+---
+
+## 4. A Smaller Hash Function: `x mod size`
+
+To use space efficiently, we shrink the hash table to a fixed, practical size and use the **modulus** operator to fit any key into it:
+
+$$h(x) = x \bmod \text{size}$$
+
+With, for example, `size = 10`:
+
+<Figure src="/images/hashing-mod-collision.svg" alt="Hash function h(x) = x mod 10 mapping keys 8,3,13,6,4,10 to a 10-slot hash table; 3 and 13 both map to index 3, causing a collision" width={900} height={260} caption="8 % 10 = 8 and 3 % 10 = 3 land cleanly — but 13 % 10 = 3 lands on the same index as 3." />
+
+> **Collision:** when two or more different keys map to the **same** index under a hash function. Shrinking the table (to make it space-efficient) is exactly what makes the hash function many-to-one — and collisions become inevitable.
+
+---
+
+## 5. Collision Resolution Methods
+
+There are two broad families of techniques for handling collisions:
+
+<Figure src="/images/hashing-collision-taxonomy.svg" alt="Collision resolution methods: Open Hashing (Chaining) and Closed Hashing (Open Addressing: Linear Probing, Quadratic Probing)" width={900} height={300} caption="The two families of collision resolution, and the specific methods covered in this lesson." />
+
+---
+
+## 6. Open Hashing: Chaining
+
+> Instead of storing an element directly in the hash table, each index holds a **chain** (linked list). When a key hashes to an index, it's simply **added to that index's chain** — collisions don't overwrite anything, they just grow the chain.
+
+<Figure src="/images/hashing-chaining.svg" alt="Chaining example: keys 8,3,13,6,4,10 hashed with h(x)=x mod 10; 3 and 13 both hash to index 3 and form a chain there" width={900} height={300} caption="13 collides with 3 at index 3 — rather than overwriting it, 13 is linked onto the same chain." />
+
+### 6.1 Searching with Chaining
+
+To search for key **13**: compute `h(13) = 13 mod 10 = 3`, go to index 3, then walk along the chain there (3, then 13) until the key is found (or the chain ends).
+
+### 6.2 Time Complexity
+
+Since a search may need to walk through more than one element in a chain, the time is **not O(1)** in the worst case — but it's still generally **faster than O(log n)**, especially when collisions are kept rare.
+
+---
+
+## 7. Closed Hashing: Linear Probing
+
+> When a collision happens, simply look for the **next free slot** in the table itself — no separate chains, everything lives directly in the array.
+
+This is expressed with a modified hash function:
+
+$$h'(x) = [h(x) + f(i)] \bmod \text{size}, \quad \text{where } f(i) = i,\ i = 0, 1, 2, \ldots$$
+
+If there's a collision at `i = 0`, try `i = 1` (the next slot); if that's also occupied, try `i = 2`; and so on, until a free slot is found.
+
+<Figure src="/images/hashing-linear-probing.svg" alt="Linear probing example: keys 8,3,13,6,4,10 inserted with h(x)=x mod 10 and linear probing; 13 collides at index 3 and moves to index 4; 4 collides at index 4 and moves to index 5" width={900} height={300} caption="Each collision is resolved by moving one slot at a time until a free slot is found." />
+
+### 7.1 Searching with Linear Probing
+
+- **Search key 4:** `h(4) = 4` — occupied by 13, not a match — probe index 5 — found 4.
+- **Search key 24:** `h(24) = 4` — occupied (13), then 5 (4), then 6 (6) — none match — index 7 is **empty**, so the search stops and reports **not found.**
+
+> The rule for searching mirrors insertion exactly: hash to a starting index, then scan forward through occupied slots until you either find the key or hit an empty slot (which proves the key isn't present).
+
+### 7.2 The Drawback: Clustering
+
+Linear probing tends to cause **clustering** — a run of consecutive occupied slots builds up around popular indices, which can slow down future insertions and searches in that region.
+
+---
+
+## 8. Closed Hashing: Quadratic Probing
+
+Quadratic probing addresses the clustering problem with a small but important change to the probing function:
+
+$$h'(x) = [h(x) + f(i)] \bmod \text{size}, \quad \text{where } f(i) = i^2,\ i = 0, 1, 2, \ldots$$
+
+Instead of moving one slot at a time, each successive probe jumps **i²** slots away — 1, then 4, then 9, and so on — spreading collided elements further apart.
+
+<Figure src="/images/hashing-quadratic-probing.svg" alt="Quadratic probing example: keys 8,3,13,23 inserted with h(x)=x mod 10; 13 collides at index 3 and moves to index 4 (offset 1); 23 collides at index 3, then 4, and moves to index 7 (offset 4)" width={900} height={300} caption="23 collides twice, but the quadratic offsets (1, then 4) place it well away from the original cluster." />
+
+> Compare the outcomes: under **linear** probing, colliding keys pile up in immediately adjacent slots. Under **quadratic** probing, 23 ends up 4 slots away from index 3 — spreading elements out and reducing clustering, which keeps future searches faster.
+
+---
+
+## 9. Summary: Comparing the Methods
+
+| Method | Family | How Collisions Are Resolved | Notes |
+|---|---|---|---|
+| **Chaining** | Open Hashing | Linked list at each index | No clustering; extra memory for chain links |
+| **Linear Probing** | Closed Hashing | Next slot: `+1, +2, +3, ...` | Simple, but prone to clustering |
+| **Quadratic Probing** | Closed Hashing | Growing jumps: `+1, +4, +9, ...` | Reduces clustering |
+
+---
+
+## 10. The Big Picture
+
+- **Hashing** aims for **O(1)** average search time, improving on linear search (O(n)) and binary search (O(log n)).
+- The **ideal** hash function `h(x) = x` is one-to-one and gives true O(1) access, but wastes huge amounts of space for large or sparse keys.
+- A practical hash function like `h(x) = x mod size` keeps the table small, but becomes **many-to-one** — making **collisions** (two keys mapping to the same index) inevitable.
+- Collisions are resolved by either **Open Hashing (Chaining)** — storing colliding elements in a linked list at each index — or **Closed Hashing (Open Addressing)** — finding another slot within the table itself.
+- **Linear probing** (`f(i) = i`) looks for the next free slot one step at a time, but tends to cause **clustering.**
+- **Quadratic probing** (`f(i) = i²`) spreads collided elements further apart, reducing clustering.
+- None of these collision-resolution methods achieve **exactly** O(1) in the worst case, but all of them are typically **faster than O(log n)** in practice.
+
+> **Simple takeaway:** hashing trades the guarantee of O(1) for the *practical average case* of O(1) — the price is a collision-resolution strategy, and picking a good one (chaining vs. probing) is the whole game.
+
+---
+
+**Reference video:** <a href="https://www.youtube.com/watch?v=mFY0J5W8Udk&list=PLDN4rrl48XKpZkf03iYFl-O29szjTrs_O&index=80" target="_blank" rel="noopener noreferrer">Abdul Bari — Hashing Technique</a> · <a href="https://bytewise-one.vercel.app/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-hashing-technique" target="_blank" rel="noopener noreferrer">ByteWise page</a>
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction", title: "6: Introduction to Backtracking" }}
+  next={null}
+/>
