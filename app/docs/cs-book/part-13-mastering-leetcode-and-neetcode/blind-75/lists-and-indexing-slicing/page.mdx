@@ -1,0 +1,97 @@
+export const metadata = {
+  title: "Lists and Indexing/Slicing — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "Python list indexing, slicing, common list operations, and the two-pointer pattern that shows up throughout Blind 75 array problems.",
+  keywords: [
+    "Python lists",
+    "list indexing",
+    "list slicing",
+    "two pointer pattern",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "Lists and Indexing/Slicing",
+    description:
+      "Lists are Python's core data structure for holding ordered collections — and Blind 75 array problems are basically all about manipulating lists.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Lists and Indexing/Slicing
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 4*
+
+---
+
+## Lists and Indexing/Slicing
+
+Lists are Python's core data structure for holding ordered collections — and Blind 75 array problems are basically all about manipulating lists.
+
+```python
+nums = [10, 20, 30, 40, 50]
+```
+
+**Indexing** — accessing a single element by position (starts at **0**, not 1):
+
+```python
+nums[0]    # 10  (first element)
+nums[2]    # 30  (third element)
+nums[-1]   # 50  (last element — negative counts from the end)
+nums[-2]   # 40  (second-to-last)
+```
+
+**Slicing** — grabbing a sub-section using `list[start:stop]`:
+
+```python
+nums[1:3]    # [20, 30]        — starts at index 1, stops BEFORE index 3
+nums[:2]     # [10, 20]        — from the beginning up to (not including) index 2
+nums[2:]     # [30, 40, 50]    — from index 2 to the end
+nums[:]      # [10, 20, 30, 40, 50]  — a full copy of the list
+nums[::-1]   # [50, 40, 30, 20, 10]  — reversed (step of -1)
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>Same off-by-one trap as `range()`: the `stop` index is never included.</span>
+
+**Common list operations you'll use constantly:**
+
+```python
+nums.append(60)      # add to the end       -> [10,20,30,40,50,60]
+nums.pop()            # remove & return last -> 60, list shrinks back
+nums.pop(0)           # remove & return index 0
+len(nums)             # length of the list -> 5
+30 in nums            # membership check -> True
+nums.sort()           # sort in place
+sorted(nums)          # returns a NEW sorted list, leaves nums unchanged
+```
+
+**Modifying while looping — a real trap:**
+
+```python
+for i in range(len(nums)):
+    nums[i] = nums[i] * 2   # fine — modifying by index
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>But don't change a list's *size* (append/remove) while iterating over it directly with `for x in nums:` — it skips elements or errors, because the sequence shifts under you mid-loop.</span>
+
+**Two-pointer pattern (you'll see this everywhere in Blind 75):**
+
+```python
+left, right = 0, len(nums) - 1
+while left < right:
+    # do something with nums[left] and nums[right]
+    left += 1
+    right -= 1
+```
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>This pattern shows up throughout Blind 75 — pair sums, palindrome checks, reversing in place, and container/area problems all lean on two pointers moving toward each other.</span>
+
+---
+
+<ArticleNav
+  prev={{ title: "For Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/for-loops" }}
+  next={null}
+/>
