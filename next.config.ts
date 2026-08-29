@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx", "md", "mdx"],
+  experimental: {
+    webpackMemoryOptimizations: true,
+    // Webpack build worker moves compilation into a separate process,
+    // cutting peak memory in the main build process — Next auto-enables
+    // this unless a custom webpack() config is present (we have one below),
+    // so it has to be turned back on explicitly.
+    webpackBuildWorker: true,
+  },
   webpack(config) {
     // 327+ MDX pages each run the full remark/rehype pipeline (KaTeX, GFM,
     // syntax highlighting) during the webpack compile step. Default
