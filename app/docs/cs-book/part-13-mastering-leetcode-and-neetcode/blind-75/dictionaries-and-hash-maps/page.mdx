@@ -1,0 +1,106 @@
+export const metadata = {
+  title: "Dictionaries and Hash Maps — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "How Python dictionaries work, the .get() trap, and the hash-map pattern behind Two Sum and most Blind 75 'have I seen this before' problems.",
+  keywords: [
+    "Python dictionaries",
+    "hash maps",
+    "Two Sum",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "Dictionaries and Hash Maps",
+    description:
+      "The single most important data structure for Blind 75 — constant-time 'have I seen this before?' lookups.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Dictionaries / Hash Maps
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 5*
+
+---
+
+## Introduction
+
+A dictionary stores **key-value pairs** — instead of looking things up by position (like a list), you look them up by a key. <span style={{ color: "#2563eb", fontWeight: 700 }}>This is the single most important data structure for Blind 75, because it lets you check "have I seen this before?" in constant time.</span>
+
+```python
+ages = {"Alice": 30, "Bob": 25}
+```
+
+**Basic operations:**
+
+```python
+ages["Alice"]           # 30 — look up by key
+ages["Charlie"] = 35    # add a new key-value pair
+ages["Alice"] = 31      # update an existing key
+del ages["Bob"]         # remove a key
+"Alice" in ages         # True — checks if a KEY exists (not a value)
+len(ages)               # number of key-value pairs
+```
+
+**Trap:** <span style={{ color: "#dc2626", fontWeight: 700 }}>looking up a key that doesn't exist crashes:</span>
+
+```python
+ages["David"]   # KeyError!
+```
+
+Safer way — `.get()`, which returns `None` (or a default you choose) instead of crashing:
+
+```python
+ages.get("David")        # None
+ages.get("David", 0)     # 0 — use 0 if key is missing
+```
+
+## Why This Matters for LeetCode — the Classic Pattern
+
+Take "Two Sum": given a list of numbers and a target, find two numbers that add up to it. The brute-force way checks every pair (`O(n²)`). <span style={{ color: "#16a34a", fontWeight: 700 }}>The hash map way does it in one pass (`O(n)`):</span>
+
+```python
+def two_sum(nums, target):
+    seen = {}   # value -> index
+    for i, x in enumerate(nums):
+        complement = target - x
+        if complement in seen:
+            return [seen[complement], i]
+        seen[x] = i
+```
+
+Walk through `nums = [2, 7, 11, 15]`, `target = 9`:
+
+```
+i=0, x=2: complement=7, not in seen -> seen becomes {2: 0}
+i=1, x=7: complement=2, IS in seen (seen[2]=0) -> return [0, 1]
+```
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>The key idea: instead of searching the whole list again for the complement (slow), you check the dictionary — which is nearly instant — because you've been recording every number you've already visited.</span>
+
+## Looping Over a Dictionary
+
+```python
+for key in ages:              # loops over keys only
+    print(key)
+
+for key, value in ages.items():   # loops over both
+    print(key, value)
+
+for value in ages.values():   # loops over values only
+    print(value)
+```
+
+---
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>**Rule of thumb for Blind 75:** whenever a problem involves "have I seen this value before," "count occurrences," or "find a pair/complement" — a dictionary is almost always the tool that turns a slow brute-force solution into a fast one.</span>
+
+---
+
+<ArticleNav
+  prev={{ title: "Lists and Indexing/Slicing", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/lists-and-indexing-slicing" }}
+  next={null}
+/>

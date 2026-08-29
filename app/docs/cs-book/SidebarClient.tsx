@@ -353,6 +353,7 @@ const chapters = [
           { title: "2. While Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/while-loops" },
           { title: "3. For Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/for-loops" },
           { title: "4. Lists and Indexing/Slicing", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/lists-and-indexing-slicing" },
+          { title: "5. Dictionaries and Hash Maps", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/dictionaries-and-hash-maps" },
         ],
       },
     ],
