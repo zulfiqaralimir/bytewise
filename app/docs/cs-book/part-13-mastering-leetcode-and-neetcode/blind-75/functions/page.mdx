@@ -1,0 +1,107 @@
+export const metadata = {
+  title: "Functions (def) — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "How Python functions work — parameters, return, default args, and how to read LeetCode's self/type-hint function signatures without getting intimidated.",
+  keywords: [
+    "Python functions",
+    "def keyword",
+    "return statement",
+    "type hints",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "Functions (def)",
+    description:
+      "LeetCode problems are always structured as a function you fill in — understanding the pieces matters a lot.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Functions (`def`)
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 6*
+
+---
+
+## Introduction
+
+A function is a reusable block of code that you define once and can call as many times as you need. <span style={{ color: "#2563eb", fontWeight: 700 }}>LeetCode problems are always structured as a function you fill in — so understanding the pieces matters a lot.</span>
+
+```python
+def add(a, b):
+    result = a + b
+    return result
+
+print(add(3, 5))   # 8
+```
+
+Breaking it down:
+- `def` — keyword that starts a function definition.
+- `add` — the function's name (you choose this).
+- `(a, b)` — **parameters**: placeholder names for the values the function expects to receive.
+- `:` then an indented block — same indentation rule as `if`/`while`/`for`. Everything indented belongs to the function's body.
+- `return result` — sends a value back to whoever called the function. Once `return` runs, the function stops immediately — nothing after it executes.
+
+**Calling vs defining:**
+
+```python
+def add(a, b):      # DEFINING — just teaches Python the recipe, doesn't run it yet
+    return a + b
+
+add(3, 5)            # CALLING — actually runs it, using 3 and 5 as a and b
+```
+
+**No `return` means `None`:**
+
+```python
+def greet(name):
+    print("Hello", name)   # prints, but doesn't return anything
+
+x = greet("Sam")   # prints "Hello Sam"
+print(x)           # None — because greet() never used `return`
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>This trips people up constantly — a function can *do* something (like `print`) without *returning* anything usable.</span>
+
+**Default parameter values:**
+
+```python
+def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+greet("Sam")              # "Hello, Sam!"
+greet("Sam", "Hi")        # "Hi, Sam!"
+```
+
+## What LeetCode Function Signatures Actually Look Like
+
+```python
+def twoSum(self, nums: list[int], target: int) -> list[int]:
+    ...
+```
+
+<span style={{ color: "#16a34a", fontWeight: 700 }}>Don't let this intimidate you — it's the same `def` you just learned, with two extra things:</span>
+
+- `self` — appears because LeetCode wraps your function inside a `class` (a container). You don't need to worry about `self` for now — just leave it there and ignore it; it's handled automatically when the code runs.
+- `nums: list[int]`, `target: int`, `-> list[int]` — these are **type hints**. They're just documentation telling you (and your editor) "`nums` should be a list of integers," "this function returns a list of integers." <span style={{ color: "#2563eb", fontWeight: 700 }}>Python doesn't enforce them — they're optional notes, not rules. You can mentally skip right past them to focus on the logic.</span>
+
+**Multiple return values:**
+
+```python
+def min_max(nums):
+    return min(nums), max(nums)
+
+low, high = min_max([3, 7, 1, 9])
+print(low, high)   # 1 9
+```
+
+---
+
+<ArticleNav
+  prev={{ title: "Dictionaries and Hash Maps", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/dictionaries-and-hash-maps" }}
+  next={null}
+/>
