@@ -45,6 +45,7 @@ const chapters = [
           { title: "Section 6: Keypoints of C++", href: "/docs/cs-book/part-2-design-patterns/chapter-1/6-keypoints-of-cpp" },
           { title: "Section 7: SOLID — Single Responsibility", href: "/docs/cs-book/part-2-design-patterns/chapter-1/7-solid-srp" },
           { title: "Section 8: SOLID — Open/Closed", href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp" },
+          { title: "Section 9: SOLID — Liskov Substitution", href: "/docs/cs-book/part-2-design-patterns/chapter-1/9-solid-lsp" },
         ],
       },
     ],

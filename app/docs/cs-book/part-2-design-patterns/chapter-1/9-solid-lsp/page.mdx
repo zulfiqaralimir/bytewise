@@ -1,0 +1,139 @@
+export const metadata = {
+  title: "SOLID Principles — Liskov Substitution (LSP) — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 9 of LLD From First Principles — a deep dive into the Liskov Substitution Principle using a CancelledOrder that breaks its parent's contract, fixed with state instead of a broken override, in Python and C++.",
+  keywords: [
+    "SOLID principles",
+    "liskov substitution principle",
+    "LSP",
+    "low level design",
+    "LLD",
+    "object oriented design",
+    "python classes",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "SOLID Principles — Liskov Substitution (LSP) — ByteWise CS Book",
+    description:
+      "A subclass must be a safe, surprise-free substitute for its base class.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+*A subclass must be a safe, surprise-free substitute for its base class*
+
+## Section 9: SOLID Principles — Liskov Substitution (LSP)
+
+**OOP Principles Used:** Inheritance, Polymorphism
+
+This is the principle that makes [Inheritance](/docs/cs-book/part-2-design-patterns/chapter-1/4-inheritance) and [Polymorphism](/docs/cs-book/part-2-design-patterns/chapter-1/5-polymorphism) safe to actually use. Inheritance lets you say "a `CancelledOrder` is a kind of `Order`." Polymorphism lets calling code treat any `Order` the same way without checking which subclass it got. LSP is the rule that keeps that trust from backfiring.
+
+### Start with an everyday picture: a universal remote
+
+Imagine you have a TV remote that's supposed to work for "any TV."
+
+- You buy a new TV, plug it in, use the same remote.
+- Pressing the power button now turns up the volume instead of turning the TV on/off.
+- That remote is no longer a safe substitute — you expected the same behavior, and didn't get it.
+
+That's the Liskov Substitution Principle.
+
+### Definition
+
+<Callout type="tip" title="🗣️ Conversational">
+If class `B` is a subclass of class `A`, you should be able to swap a `B` object in wherever an `A` object was expected — and everything should still work correctly, with no surprises.
+</Callout>
+
+**Technical:** Objects of a subclass should be substitutable for objects of the base class, without altering the correctness of the program. A subclass must honor the behavior contract the base class promises.
+
+### Why bother — what breaks without it?
+
+**Bad — `CancelledOrder` breaks the promise:**
+
+```python
+class Order:
+    def execute(self):
+        print("Order executed")
+
+class CancelledOrder(Order):
+    def execute(self):
+        raise Exception("Cannot execute a cancelled order!")
+```
+
+<Callout type="warning" title="🗣️ What's Wrong Here">
+Any code that trusted "calling `.execute()` on an `Order` works fine" now crashes the moment it happens to get a `CancelledOrder`. `CancelledOrder` claims — by inheriting from `Order` — to be a kind of `Order`. But it doesn't honor what `Order.execute()` promised. Substituting it in broke the program.
+</Callout>
+
+**Good — model cancellation as state, not as a broken override:**
+
+```python
+class Order:
+    def __init__(self):
+        self.is_cancelled = False
+
+    def cancel(self):
+        self.is_cancelled = True
+
+    def execute(self):
+        if self.is_cancelled:
+            print("Order is cancelled — nothing to execute")
+            return
+        print("Order executed")
+```
+
+**Using it:**
+```python
+def run(order: Order):
+    order.execute()   # always safe, no matter what state the order is in
+
+active_order = Order()
+run(active_order)          # "Order executed"
+
+cancelled_order = Order()
+cancelled_order.cancel()
+run(cancelled_order)       # "Order is cancelled — nothing to execute"
+```
+
+<Callout type="info" title="🗣️ What Changed">
+There's no subclass secretly narrowing the contract anymore — every `Order`, in every state, responds to `.execute()` the same predictable way: it either executes, or it tells you calmly why it didn't. No exceptions, no surprises, no code that has to know in advance whether it received a "real" order or a cancelled one. That's what makes it substitutable.
+</Callout>
+
+**C++ version:**
+```cpp
+class Order {
+public:
+    void cancel() {
+        isCancelled = true;
+    }
+
+    void execute() {
+        if (isCancelled) {
+            std::cout << "Order is cancelled — nothing to execute" << std::endl;
+            return;
+        }
+        std::cout << "Order executed" << std::endl;
+    }
+
+private:
+    bool isCancelled = false;
+};
+```
+
+### The test to apply when writing a subclass
+
+**Ask: "If I hand this subclass to code that only knows about the base class, could anything break, crash, or behave surprisingly?"** If the answer is yes — a method that now throws where the base class didn't, a method that silently does nothing when the base class guaranteed an effect, a return type that changes shape — the subclass is violating LSP, even though it compiles and the names all line up.
+
+<Callout type="tip" title="🗣️ Common Trap">
+LSP violations are sneaky because they don't look wrong — `CancelledOrder` *is*, conceptually, a kind of order. The mistake isn't the "is-a" relationship; it's forcing the subclass to break a method's promise just to fit the parent's method signature. When honoring the contract isn't possible, the fix is usually to model the difference as **data or state** (like `is_cancelled` above), not as an override that throws or does the opposite of what's expected.
+</Callout>
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+In your own words — what does "substitutable" mean here, and why does the state-based `Order` fix it where the `raise Exception` version didn't?
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp", title: "Section 8: SOLID — Open/Closed" }}
+  next={null}
+/>
