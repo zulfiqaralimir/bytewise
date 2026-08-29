@@ -93,6 +93,39 @@ while left < right:
 
 ---
 
+## What Does "In Place" Actually Mean?
+
+Good question — "in place" is a term you'll see constantly in these problems, so worth pausing on.
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>**"In place" means the operation modifies the original object directly in memory, rather than creating a new one and returning it.**</span>
+
+```python
+nums = [30, 10, 20]
+nums.sort()
+print(nums)   # [10, 20, 30]  — the ORIGINAL list itself changed
+```
+
+Notice: `nums.sort()` doesn't `return` anything useful — if you tried `x = nums.sort()`, `x` would be `None`. <span style={{ color: "#16a34a", fontWeight: 700 }}>That's your clue it's an in-place method: it changes `nums` directly and gives nothing back.</span>
+
+Compare that to `sorted()`, which is **not** in place:
+
+```python
+nums = [30, 10, 20]
+new_list = sorted(nums)
+print(nums)       # [30, 10, 20]  — original UNCHANGED
+print(new_list)   # [10, 20, 30]  — a brand new list
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>**Why this matters for LeetCode:** many problems explicitly ask you to modify the array "in place" to save memory — meaning don't create a second array, just rearrange the values inside the one you were given.</span> This shows up a lot (e.g. "Remove Duplicates from Sorted Array," "Move Zeroes").
+
+A simple way to think about it:
+- `nums.sort()` → same list, reordered, returns `None`
+- `sorted(nums)` → new list, `nums` untouched, returns the new list
+
+Same pattern applies to other methods: `.append()`, `.pop()`, `.reverse()` are in-place (change the list directly, return `None` or the removed item). `.reverse()` vs `nums[::-1]` is the same distinction — the first mutates, the second creates a new reversed list.
+
+---
+
 <ArticleNav
   prev={{ title: "For Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/for-loops" }}
   next={null}
