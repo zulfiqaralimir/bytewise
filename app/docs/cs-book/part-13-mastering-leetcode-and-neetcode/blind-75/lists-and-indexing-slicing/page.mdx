@@ -77,7 +77,64 @@ for i in range(len(nums)):
     nums[i] = nums[i] * 2   # fine — modifying by index
 ```
 
-<span style={{ color: "#dc2626", fontWeight: 700 }}>But don't change a list's *size* (append/remove) while iterating over it directly with `for x in nums:` — it skips elements or errors, because the sequence shifts under you mid-loop.</span>
+<span style={{ color: "#dc2626", fontWeight: 700 }}>But don't change a list's *size* (append/remove) while iterating over it directly with `for x in nums:` — it skips elements or errors, because the sequence shifts under you mid-loop.</span> Worth slowing down on — a concrete walkthrough beats just stating the rule.
+
+**Why changing values by index is safe**
+
+- `range(len(nums))` is calculated **once**, at the start. Since `len(nums)` is `3`, this becomes `range(3)` → the fixed sequence `0, 1, 2`.
+- The loop just walks through `0, 1, 2` no matter what you do to `nums` inside.
+- On each pass, you use `i` as an address ("go to slot `i`") and overwrite whatever value is sitting there.
+- You're not touching how many slots exist — just what's written into each slot.
+
+```python
+nums = [1, 2, 3]
+for i in range(len(nums)):
+    nums[i] = nums[i] * 2
+```
+
+Step by step:
+```
+i=0: nums[0] = nums[0]*2 = 2   → nums is now [2, 2, 3]
+i=1: nums[1] = nums[1]*2 = 4   → nums is now [2, 4, 3]
+i=2: nums[2] = nums[2]*2 = 6   → nums is now [2, 4, 6]
+```
+
+<span style={{ color: "#16a34a", fontWeight: 700 }}>Safe, predictable — the loop never cared about the list's length changing, because it isn't changing.</span>
+
+**Why changing the list's size while looping breaks things**
+
+```python
+nums = [1, 2, 3, 4]
+for x in nums:
+    if x % 2 == 0:
+        nums.remove(x)
+```
+
+Here, `for x in nums:` doesn't loop over a fixed count like `range()` did — it walks through the list **live**, using an internal position counter (think of it as "look at position 0, then position 1, then position 2...").
+
+Walk through it:
+```
+position 0: x = 1 (odd, skip)
+position 1: x = 2 (even) → nums.remove(2) → list is now [1, 3, 4]
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>Here's the problem: after removing `2`, everything after it shifts left by one.</span> `4` used to be at position 3, now it's at position 2. But the loop's internal counter has already moved on to position 2 next:
+
+```
+position 2: x = 4 (even) → nums.remove(4) → list is now [1, 3]
+position 3: doesn't exist → loop ends
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>Notice: `3` was never checked! It got shifted into position 1, but the loop had already passed position 1 by the time that happened. You silently skipped an element — no error, just a wrong answer, which is the worst kind of bug.</span>
+
+**The fix, if you need to remove things:**
+
+```python
+nums = [1, 2, 3, 4]
+nums = [x for x in nums if x % 2 != 0]   # build a NEW list instead
+```
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>**The rule of thumb:** looping by index (`range(len(nums))`) to *overwrite values* = safe. Looping directly over the list (`for x in nums`) while *adding/removing elements* = dangerous, because the list is shifting under the loop's feet while it's still walking through it.</span>
 
 **Two-pointer pattern (you'll see this everywhere in Blind 75):**
 
