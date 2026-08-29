@@ -1,0 +1,110 @@
+export const metadata = {
+  title: "Classes and self — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "What a Python class actually is, why self is the first parameter of every method, and why LeetCode's class Solution wrapper is boilerplate you can safely ignore.",
+  keywords: [
+    "Python classes",
+    "self keyword",
+    "__init__",
+    "class Solution",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "Classes and self",
+    description:
+      "Demystifying LeetCode's class Solution wrapper — what self actually refers to, and why you can usually ignore it.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Classes and `self`
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 7*
+
+---
+
+## Introduction
+
+You just saw that LeetCode wraps your function like this:
+
+```python
+class Solution:
+    def twoSum(self, nums, target):
+        ...
+```
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>Let's demystify exactly what that wrapper is and why `self` is there.</span>
+
+## What a Class Actually Is
+
+A class is a blueprint for creating objects that bundle together data and functions. Think of it like a template:
+
+```python
+class Dog:
+    def __init__(self, name):
+        self.name = name
+
+    def bark(self):
+        print(self.name, "says woof!")
+
+d = Dog("Rex")
+d.bark()   # Rex says woof!
+```
+
+Breaking this down:
+- `class Dog:` — defines a new blueprint called `Dog`.
+- `__init__` — a special function that runs automatically when you create a new `Dog`. It sets up the object's initial data.
+- `self` — refers to **this specific object**. When you write `self.name = name`, you're saying "store `name` on *this* dog" — so each dog you create can have a different name.
+- `d = Dog("Rex")` — creates an actual `Dog` object, running `__init__` with `name="Rex"`.
+- `d.bark()` — calls the `bark` function *on* `d`. Python automatically passes `d` in as `self` — that's why `bark` can access `self.name` and get `"Rex"`.
+
+## Why `self` Is the First Parameter of Every Method
+
+```python
+d.bark()
+```
+
+is really just shorthand for:
+
+```python
+Dog.bark(d)
+```
+
+<span style={{ color: "#16a34a", fontWeight: 700 }}>Python automatically fills in `self` with whichever object you called the method on. You never type it in yourself when calling — you only see it in the `def` line.</span>
+
+## Now, Back to LeetCode
+
+```python
+class Solution:
+    def twoSum(self, nums, target):
+        seen = {}
+        for i, x in enumerate(nums):
+            complement = target - x
+            if complement in seen:
+                return [seen[complement], i]
+            seen[x] = i
+```
+
+LeetCode's judge does something like this behind the scenes:
+
+```python
+sol = Solution()
+sol.twoSum([2, 7, 11, 15], 9)
+```
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>That's it — `self` just refers to the `Solution` object, but since your function doesn't actually use `self` for anything (no `self.something`), you can completely ignore it.</span> Just treat `nums` and `target` as your real inputs, write your logic, and `return` your answer. The `self` and `class Solution:` wrapper is boilerplate you'll type the same way every single time.
+
+---
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>**One practical tip:** you almost never need to write your own classes to solve Blind 75 problems — you just need to recognize this wrapper and not be intimidated by it.</span>
+
+---
+
+<ArticleNav
+  prev={{ title: "Functions (def)", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/functions" }}
+  next={null}
+/>
