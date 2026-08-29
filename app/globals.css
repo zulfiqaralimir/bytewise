@@ -100,6 +100,17 @@ body {
   font-family: 'Times New Roman', Times, Georgia, serif;
 }
 
+/* Blind-75 Solutions — Times New Roman headings, Arial code blocks */
+.prose .blind75-solutions-serif h1,
+.prose .blind75-solutions-serif h2,
+.prose .blind75-solutions-serif h3 {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+}
+.prose .blind75-solutions-serif pre,
+.prose .blind75-solutions-serif pre code {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 /* Callout boxes */
 .callout-info    { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
 .callout-tip     { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 1rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem; }
