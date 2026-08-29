@@ -1,0 +1,93 @@
+export const metadata = {
+  title: "List Comprehensions — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "How Python list comprehensions work, filtering with if, and when a regular for loop is actually the clearer choice for Blind 75 solutions.",
+  keywords: [
+    "list comprehension",
+    "Python comprehensions",
+    "filtering lists",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "List Comprehensions",
+    description:
+      "A compact way to build a new list from an existing sequence, in a single line.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# List Comprehensions
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 8*
+
+---
+
+## Introduction
+
+A list comprehension is a compact way to build a new list from an existing sequence, in a single line — instead of writing a full `for` loop with `.append()`.
+
+**The long way (using a regular loop):**
+
+```python
+nums = [1, 2, 3, 4, 5]
+squares = []
+for x in nums:
+    squares.append(x * x)
+print(squares)   # [1, 4, 9, 16, 25]
+```
+
+**The same thing as a list comprehension:**
+
+```python
+squares = [x * x for x in nums]
+print(squares)   # [1, 4, 9, 16, 25]
+```
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>Reading it left to right: "give me `x * x`, **for** each `x` **in** `nums`."</span> The expression before `for` is what gets put into the new list.
+
+## Adding a Condition (Filtering)
+
+```python
+evens = [x for x in nums if x % 2 == 0]
+print(evens)   # [2, 4]
+```
+
+Read as: "give me `x`, for each `x` in `nums`, **but only if** `x % 2 == 0`."
+
+<span style={{ color: "#16a34a", fontWeight: 700 }}>You already saw this pattern earlier, solving the "modifying while looping" trap:</span>
+
+```python
+nums = [x for x in nums if x % 2 != 0]   # keep only odd numbers, build a new list
+```
+
+**Comparing structure side by side:**
+
+| Regular loop | List comprehension |
+|---|---|
+| `for x in nums:`<br/>`    result.append(x*2)` | `result = [x*2 for x in nums]` |
+| `for x in nums:`<br/>`    if x > 5:`<br/>`        result.append(x)` | `result = [x for x in nums if x > 5]` |
+
+**A common LeetCode use — building a lookup structure in one line:**
+
+```python
+nums = [10, 20, 30]
+doubled = [n * 2 for n in nums]        # [20, 40, 60]
+indices = [i for i, n in enumerate(nums) if n > 15]   # [1, 2]
+```
+
+## When to Use It vs a Regular Loop
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>List comprehensions are great for simple "transform" or "filter" operations that fit on one line.</span> If the logic inside the loop needs multiple steps, `if`/`elif`/`else` branches, or side effects (like printing, updating a dictionary, etc.), a regular `for` loop is clearer — don't force it into a comprehension just because you can.
+
+<span style={{ color: "#dc2626", fontWeight: 700 }}>**One trap:** it's easy to write a comprehension so dense it becomes hard to read. If you have to squint to parse it, write it as a regular loop instead — readability wins, especially while you're still learning.</span>
+
+---
+
+<ArticleNav
+  prev={{ title: "Classes and self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/classes-and-self" }}
+  next={null}
+/>

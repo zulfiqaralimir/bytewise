@@ -356,6 +356,7 @@ const chapters = [
           { title: "5. Dictionaries and Hash Maps", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/dictionaries-and-hash-maps" },
           { title: "6. Functions (def)", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/functions" },
           { title: "7. Classes and self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/classes-and-self" },
+          { title: "8. List Comprehensions", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/list-comprehensions" },
         ],
       },
     ],
