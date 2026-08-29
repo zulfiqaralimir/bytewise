@@ -1,0 +1,78 @@
+export const metadata = {
+  title: "For Loops — Python Fundamentals for LeetCode — ByteWise",
+  description:
+    "How for loops work in Python, range() variations, enumerate() for index+value pairs, and the off-by-one trap that trips up LeetCode array problems.",
+  keywords: [
+    "Python for loop",
+    "range function",
+    "enumerate",
+    "Python fundamentals",
+    "Blind 75",
+    "LeetCode prep",
+  ],
+  openGraph: {
+    title: "For Loops",
+    description:
+      "A for loop iterates over a known sequence — Python handles the incrementing for you.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# For Loops
+
+*Blind 75 · Python Fundamentals for LeetCode · Topic 3*
+
+---
+
+## Introduction
+
+A `for` loop iterates over a **known sequence** — a list, a string, a range of numbers, etc. — running the block once for each item.
+
+```python
+for i in range(5):
+    print(i)
+```
+
+What's happening line by line:
+- `range(5)` generates the sequence `0, 1, 2, 3, 4` (starts at 0, stops **before** 5).
+- `for i in range(5):` — on each pass, `i` takes the next value from that sequence.
+- `print(i)` — runs once per value, using the current `i`.
+
+<span style={{ color: "#16a34a", fontWeight: 700 }}>No manual counter needed — Python handles the incrementing for you.</span> This is the key difference from `while`: you don't manage the "when to stop" logic yourself.
+
+**Looping over other things, not just numbers:**
+
+```python
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(fruit)
+```
+
+Here `fruit` takes on each element of the list in turn — `"apple"`, then `"banana"`, then `"cherry"`.
+
+**If you need both the index and the value:**
+
+```python
+for i, fruit in enumerate(fruits):
+    print(i, fruit)
+```
+
+<span style={{ color: "#2563eb", fontWeight: 700 }}>`enumerate()` gives you a pair `(index, value)` on each pass</span>, which is very common in LeetCode solutions (e.g. tracking array positions).
+
+**`range()` variations:**
+```python
+range(5)        # 0, 1, 2, 3, 4
+range(2, 5)     # 2, 3, 4        (start, stop)
+range(0, 10, 2) # 0, 2, 4, 6, 8  (start, stop, step)
+```
+
+**Common trap:** <span style={{ color: "#dc2626", fontWeight: 700 }}>forgetting that `range(5)` stops **before** 5, not at 5 — this causes off-by-one errors, which are extremely common in LeetCode array problems.</span>
+
+---
+
+<ArticleNav
+  prev={{ title: "While Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/while-loops" }}
+  next={null}
+/>
