@@ -81,7 +81,7 @@ indices = [i for i, n in enumerate(nums) if n > 15]   # [1, 2]
 
 ## When to Use It vs a Regular Loop
 
-<span style={{ color: "#2563eb", fontWeight: 700 }}>List comprehensions are great for simple "transform" or "filter" operations that fit on one line.</span> If the logic inside the loop needs multiple steps, `if`/`elif`/`else` branches, or side effects (like printing, updating a dictionary, etc.), a regular `for` loop is clearer — don't force it into a comprehension just because you can.
+<span style={{ color: "#2563eb", fontWeight: 700 }}>List comprehensions are great for simple <span style={{ color: "#16a34a" }}>"transform"</span> or <span style={{ color: "#16a34a" }}>"filter"</span> operations that fit on one line.</span> If the logic inside the loop needs multiple steps, `if`/`elif`/`else` branches, or side effects (like printing, updating a dictionary, etc.), a regular `for` loop is clearer — don't force it into a comprehension just because you can.
 
 <span style={{ color: "#dc2626", fontWeight: 700 }}>**One trap:** it's easy to write a comprehension so dense it becomes hard to read. If you have to squint to parse it, write it as a regular loop instead — readability wins, especially while you're still learning.</span>
 
