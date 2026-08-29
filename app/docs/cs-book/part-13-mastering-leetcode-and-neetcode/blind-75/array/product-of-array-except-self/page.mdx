@@ -1,0 +1,295 @@
+export const metadata = {
+  title: "Product of Array Except Self — Blind 75 — ByteWise",
+  description:
+    "LeetCode #238 Product of Array Except Self — brute force O(n²), the prefix/suffix O(n) trick with full traces, and the O(1) extra-space follow-up, without division.",
+  keywords: [
+    "product of array except self",
+    "LeetCode 238",
+    "prefix suffix array",
+    "Blind 75",
+    "array problems",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Product of Array Except Self",
+    description:
+      "LeetCode #238 · Medium — build answer[i] as prefix(i) × suffix(i), no division, O(n) time, O(1) extra space.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Product of Array Except Self
+
+**LeetCode #238 · 🟡 Medium**
+
+*Blind 75 · Array · Problem 4 of 10*
+
+---
+
+### Problem Statement
+
+> Given an array `nums`, return a new array `answer` where `answer[i]` is the product of **all** elements in `nums` except `nums[i]` — **without using division**, and ideally in `O(n)` time.
+
+```python
+nums = [1, 2, 3, 4]
+# answer[0] = 2*3*4 = 24
+# answer[1] = 1*3*4 = 12
+# answer[2] = 1*2*4 = 8
+# answer[3] = 1*2*3 = 6
+answer = [24, 12, 8, 6]
+```
+
+**Constraints:**
+- `2 <= nums.length <= 10⁵`
+- `-30 <= nums[i] <= 30`
+- The product of any prefix or suffix of `nums` is guaranteed to fit in a 32-bit integer
+- You must write an algorithm that runs in `O(n)` time **without using division**
+
+---
+
+### Hint
+
+The obvious trick would be: multiply everything together, then divide by `nums[i]` for each position. But the problem specifically forbids division — partly because it breaks if any element is `0`. So you need a different approach.
+
+---
+
+### Your Attempt
+
+> Take a few minutes to try this yourself before reading on. Think about what `answer[i]` equals in terms of "everything to the left of `i`" and "everything to the right of `i`" — can you compute both sides without recalculating from scratch at every position?
+
+---
+
+### Complete Walkthrough
+
+#### Brute Force Approach
+
+```python
+def productExceptSelf(nums):
+    n = len(nums)
+    answer = []
+    for i in range(n):
+        product = 1
+        for j in range(n):
+            if j != i:
+                product *= nums[j]
+        answer.append(product)
+    return answer
+```
+
+For every index `i`, loop through the whole array again, multiplying everything except `nums[i]`. That's a loop inside a loop.
+
+**Time Complexity: O(n²)** — nested loop over all pairs.
+
+**Space Complexity: O(1)** extra (ignoring the output array).
+
+**Why it fails:** with `n` up to `10⁵`, that's up to `10¹⁰` multiplications — far too slow. Works for intuition, but not what you'd submit.
+
+---
+
+#### Intuition
+
+`answer[i]` = (product of everything to the **left** of `i`) × (product of everything to the **right** of `i`).
+
+So instead of recalculating from scratch each time, you can:
+1. Build a **prefix** pass — for each `i`, how much do all elements *before* it multiply to?
+2. Build a **suffix** pass — for each `i`, how much do all elements *after* it multiply to?
+3. Multiply prefix × suffix at each position.
+
+---
+
+#### Building the Prefix Array
+
+**Goal:** build a `prefix` array where `prefix[i]` = the product of all elements **before** index `i` (not including `nums[i]` itself).
+
+```python
+n = len(nums)
+prefix = [1] * n   # start with all 1s
+```
+
+Start with `1` at every position because multiplying by `1` doesn't change anything — a safe "neutral" starting value, and it handles `prefix[0]` correctly (there's *nothing* before index 0, so its prefix product should be 1).
+
+```python
+for i in range(1, n):
+    prefix[i] = prefix[i-1] * nums[i-1]
+```
+
+The loop starts at `1`, not `0` — because `prefix[0]` is already correctly `1` and needs no calculation.
+
+**Trace it, one iteration at a time**, using `nums = [1, 2, 3, 4]`:
+
+Before the loop: `prefix = [1, 1, 1, 1]`
+
+```
+i=1: prefix[1] = prefix[0] * nums[0] = 1 * 1 = 1   → prefix = [1, 1, 1, 1]
+i=2: prefix[2] = prefix[1] * nums[1] = 1 * 2 = 2   → prefix = [1, 1, 2, 1]
+i=3: prefix[3] = prefix[2] * nums[2] = 2 * 3 = 6   → prefix = [1, 1, 2, 6]
+```
+
+**Final result:** `prefix = [1, 1, 2, 6]`
+
+**Sanity check against what "prefix" should mean:**
+
+| index | should equal | check |
+|---|---|---|
+| `prefix[0]` | product of nothing (before index 0) | `1` ✓ |
+| `prefix[1]` | product of `nums[0]` → `1` | `1` ✓ |
+| `prefix[2]` | product of `nums[0]*nums[1]` → `1*2` | `2` ✓ |
+| `prefix[3]` | product of `nums[0]*nums[1]*nums[2]` → `1*2*3` | `6` ✓ |
+
+**The key trick:** each step reuses the *previous* prefix value instead of recalculating from scratch — `prefix[i] = prefix[i-1] * nums[i-1]`. That's what makes this `O(n)` instead of `O(n²)`: a running product carried forward, one multiplication at a time.
+
+---
+
+#### Building the Suffix Array
+
+Same idea, mirrored — built from the **right** side going backward.
+
+**Goal:** build a `suffix` array where `suffix[i]` = the product of all elements **after** index `i`.
+
+```python
+suffix = [1] * n   # same reasoning as before — neutral starting value
+
+for i in range(n-2, -1, -1):
+    suffix[i] = suffix[i+1] * nums[i+1]
+```
+
+`suffix[n-1]` (the last index) should be `1`, since there's nothing after the last element. `range(n-2, -1, -1)` walks **backward** from the second-to-last index down to `0` — the loop starts at `n-2` because `suffix[n-1]` is already correctly `1`, the mirror image of how the prefix loop started at `1`.
+
+**Trace it**, using the same `nums = [1, 2, 3, 4]`, `n = 4`:
+
+Before the loop: `suffix = [1, 1, 1, 1]`
+
+```
+i=2: suffix[2] = suffix[3] * nums[3] = 1 * 4 = 4    → suffix = [1, 1, 4, 1]
+i=1: suffix[1] = suffix[2] * nums[2] = 4 * 3 = 12   → suffix = [1, 12, 4, 1]
+i=0: suffix[0] = suffix[1] * nums[1] = 12 * 2 = 24  → suffix = [24, 12, 4, 1]
+```
+
+**Final result:** `suffix = [24, 12, 4, 1]`
+
+**Sanity check:**
+
+| index | should equal | check |
+|---|---|---|
+| `suffix[3]` | product of nothing (after last index) | `1` ✓ |
+| `suffix[2]` | product of `nums[3]` → `4` | `4` ✓ |
+| `suffix[1]` | product of `nums[2]*nums[3]` → `3*4` | `12` ✓ |
+| `suffix[0]` | product of `nums[1]*nums[2]*nums[3]` → `2*3*4` | `24` ✓ |
+
+---
+
+#### Combining Prefix and Suffix
+
+```python
+answer = [prefix[i] * suffix[i] for i in range(n)]
+```
+
+```
+prefix = [1, 1, 2, 6]
+suffix = [24, 12, 4, 1]
+
+answer[0] = 1 * 24 = 24
+answer[1] = 1 * 12 = 12
+answer[2] = 2 * 4  = 8
+answer[3] = 6 * 1  = 6
+
+answer = [24, 12, 8, 6]
+```
+
+That matches the expected output from the problem statement — this whole solution runs in `O(n)` time (two passes to build prefix and suffix, one pass to combine) with no division anywhere.
+
+---
+
+#### Bonus: O(1) Extra Space Optimization
+
+Common LeetCode follow-up: *"Can you do it without extra output-space arrays?"*
+
+The idea: reuse the `answer` array to store prefix products first, then sweep through it again — right to left — multiplying in the suffix using a single running variable instead of a full suffix array. (The `answer` array itself doesn't count against the space limit, since it has to be returned anyway.)
+
+```python
+def productExceptSelf(nums):
+    n = len(nums)
+    answer = [1] * n
+
+    # Pass 1: fill answer with prefix products (same as before)
+    for i in range(1, n):
+        answer[i] = answer[i-1] * nums[i-1]
+
+    # Pass 2: sweep right to left, multiplying in suffix on the fly
+    suffix = 1
+    for i in range(n-1, -1, -1):
+        answer[i] = answer[i] * suffix
+        suffix = suffix * nums[i]
+
+    return answer
+```
+
+**Pass 1** is identical to the prefix array already built — just stored directly into `answer` instead of a separate `prefix` array.
+
+**Pass 2** is the new part. `suffix` is a single number, not an array — it tracks "the running product of everything to the right, so far," updated as you walk backward.
+
+**Trace Pass 2** with `nums = [1, 2, 3, 4]`. After Pass 1: `answer = [1, 1, 2, 6]` (identical to the old `prefix` array). Before Pass 2: `suffix = 1`.
+
+```
+i=3: answer[3] = 6 * 1 = 6    → answer = [1, 1, 2, 6]    then suffix = 1 * 4 = 4
+i=2: answer[2] = 2 * 4 = 8    → answer = [1, 1, 8, 6]    then suffix = 4 * 3 = 12
+i=1: answer[1] = 1 * 12 = 12  → answer = [1, 12, 8, 6]   then suffix = 12 * 2 = 24
+i=0: answer[0] = 1 * 24 = 24  → answer = [24, 12, 8, 6]  then suffix = 24 * 1 = 24
+```
+
+**Final result:** `answer = [24, 12, 8, 6]` — matches the two-array version exactly.
+
+**Why the order matters — the critical detail:** notice each step **multiplies first, then updates `suffix`**:
+
+```python
+answer[i] = answer[i] * suffix   # use suffix as it is right now
+suffix = suffix * nums[i]         # THEN fold nums[i] into it for next time
+```
+
+If you flipped this order, `suffix` would already include `nums[i]` when you multiply it into `answer[i]` — meaning `answer[i]` would wrongly include itself in the product. At the moment you use `suffix`, it must represent "everything strictly to the right of `i`," not "everything from `i` onward."
+
+---
+
+### Complexity Analysis
+
+| Version | Time | Extra Space | Reason |
+|---|---|---|---|
+| Brute force | O(n²) | O(1) | Nested loop recomputes the product for every index |
+| Prefix + suffix arrays | O(n) | O(n) | Two full arrays (`prefix`, `suffix`) alongside `answer` |
+| O(1) space (reuse `answer` + running variable) | O(n) | O(1) | Only one running `suffix` variable — `answer` doesn't count, since it's the required return value |
+
+Both optimized versions run in `O(n)` time — the space optimization is purely about memory, which is exactly the kind of follow-up interviewers ask to test whether you understand *why* the algorithm works, not just that it works.
+
+---
+
+### Edge Cases
+
+**Universal checklist:**
+- **Minimum length (`n = 2`):** `nums = [3, 5]` → `answer = [5, 3]` — each position is just the *other* element.
+- **Array contains one zero:** `nums = [1, 2, 0, 4]` → only the zero's own index gets a nonzero product (the product of everything else); every other index becomes `0` because the zero is included in their prefix or suffix.
+- **Array contains two or more zeros:** every position becomes `0`, since every `answer[i]` includes at least one of the zeros in either its prefix or suffix product.
+- **Negative numbers:** `nums = [-1, 2, -3]` → sign flips are handled automatically by multiplication — no special-casing needed.
+- **All identical values:** `nums = [2, 2, 2, 2]` → `answer = [8, 8, 8, 8]`.
+
+> **Simple rule:** whenever a problem involves products or sums "of everything except position `i`," check what happens with a single `0` and with multiple `0`s separately — division-based instincts (which break entirely on `0`) are exactly what this problem is designed to catch.
+
+---
+
+### Key Takeaway
+
+> When a problem asks for "everything except position `i`," think **prefix × suffix decomposition** — it avoids recomputing from scratch and gets you to `O(n)` without needing division.
+
+---
+
+### Real-World Application
+
+Attribution problems — e.g. an ad platform computing each channel's marginal contribution to total conversions ("what would revenue be without this channel?"), or a grading curve recalculating each student's rank relative to everyone else. Both need "everything except me" computed for every element, cheaply, which is exactly the prefix/suffix pattern.
+
+---
+
+<ArticleNav
+  prev={{ title: "List Comprehensions", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/list-comprehensions" }}
+  next={null}
+/>
