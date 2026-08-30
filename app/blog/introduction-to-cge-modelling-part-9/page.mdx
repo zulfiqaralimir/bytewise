@@ -47,6 +47,122 @@ MIMAP's Model 0 is a minimal theoretical CGE model built around a 5-account SAM 
 | $WL$ | Total wage bill paid to workers |
 | $YH$ | Households' income |
 
+### <span style={{ color: "#2563eb", fontWeight: 700 }}>Labour, Capital, and Households: Three Different Accounts</span>
+
+It's easy to look at this SAM and assume Labour and Capital *are* the households — after all, households are the ones working and owning things. But the SAM tracks them as three separate accounts because each answers a different question.
+
+**Labour (Factor Account 1) — the supply of work**
+
+```text
+Labour is a PRODUCTIVE FACTOR (input to production)
+├─ It represents: total hours of work available
+├─ Who owns it? Households own their own labour
+├─ What happens?
+│   ├─ Households SUPPLY their labour to firms
+│   └─ Firms PAY WAGES for that labour
+└─ In the SAM: tracks total wage payments (WL = 28,860)
+```
+
+**Capital (Factor Account 2) — productive assets**
+
+```text
+Capital is a PRODUCTIVE FACTOR (input to production)
+├─ It represents: machines, equipment, buildings, land
+├─ Who owns it? Households own capital through savings/investments
+├─ What happens?
+│   ├─ Households SUPPLY their capital to firms
+│   └─ Firms PAY RETURNS for that capital (profits, rent, interest)
+└─ In the SAM: tracks total capital payments (RK = 18,500)
+```
+
+**Households (Institution Account 3) — the people who own both**
+
+```text
+Households are ECONOMIC AGENTS (decision-makers)
+├─ They OWN labour (their work capacity)
+├─ They OWN capital (savings, property, investments)
+├─ They RECEIVE income from selling labour + capital
+├─ They DECIDE how much to spend vs. save
+├─ They CONSUME goods and services
+└─ In the SAM: tracks income received + spending decisions
+```
+
+The relationship between the three:
+
+```text
+                    HOUSEHOLDS
+                    (the people)
+                    ↙        ↘
+              OWN LABOUR      OWN CAPITAL
+              (their work)    (their assets)
+                  ↓               ↓
+            SUPPLY TO FIRMS  SUPPLY TO FIRMS
+                  ↓               ↓
+            RECEIVE WAGES   RECEIVE RETURNS
+             (WL = 28,860)   (RK = 18,500)
+                  ↓               ↓
+            TOTAL INCOME (YH = 47,360)
+                  ↓
+            DECIDE TO SPEND
+            on Goods + Services
+```
+
+**A concrete example:** Consider a household member, Ahmed, who both works and owns a small asset.
+
+- **As a worker (labour supply):** Ahmed works 8 hours/day at a factory. The factory pays him 500 PKR/day. That 500 PKR is part of $WL_G$ — labour payment to the Goods sector.
+- **As a capital owner (capital supply):** Ahmed also owns a small shop building, which he rents out for 2,000 PKR/month (≈ 67 PKR/day). That 67 PKR/day is part of $RK_G$ — capital return from the Goods sector.
+- **As a household member (consumer):** Ahmed's total income is 500 + 67 = 567 PKR/day. He spends 340 PKR on food (Goods), 180 PKR on services, and saves 47 PKR. That 520 PKR of spending is part of $E_G$ and $E_S$.
+
+In the SAM, Ahmed's wage is counted in the Labour account, his rental income in the Capital account, and his spending in the Households account — three different rows even though it's the same person in all three.
+
+**Why the SAM separates them:**
+
+| | Labour & Capital | Households |
+|---|---|---|
+| What | Resources used in production | The people/consumers |
+| Role | Supply side of the economy | Demand side of the economy |
+| Question answered | "Where do production inputs come from?" | "Who decides what to consume?" |
+| Answer | From households who own them | Households, based on their income |
+
+Or, in national-accounting terms: the Labour and Capital accounts answer "what did firms pay for inputs?"; the Households account answers "what did people earn and spend?"
+
+**The distinction, side by side:**
+
+```text
+WRONG WAY (a common first read):
+Households = Labour + Capital + Consumption
+(all mixed together)
+
+CORRECT WAY (SAM structure):
+FACTORS (inputs to production):
+  ├─ Labour  = flow of work    (supply side)
+  └─ Capital = stock of assets (supply side)
+
+INSTITUTIONS (decision-makers & consumers):
+  └─ Households = people who own factors & consume (demand side)
+```
+
+**Tracing Ahmed's money through the SAM:**
+
+```text
+Ahmed works                         → Labour account
+Ahmed earns 567 PKR/day             → Households account (income)
+Ahmed spends 520 PKR                → Households account (spending)
+Money flows to Goods and Services   → Production accounts
+Which hire labour and capital again → Labour / Capital accounts
+Ahmed gets paid again                → circular flow continues
+```
+
+**Summary:**
+
+| Account | Represents | Role | Flow direction |
+|---|---|---|---|
+| Labour | Work/labour supply | Factor of production | Households → Activities |
+| Capital | Assets/machinery | Factor of production | Households → Activities |
+| Households | People/consumers | Economic agent | Factors → Households → Activities |
+
+Same people, three roles: as workers they show up in the Labour account, as asset owners in the Capital account, and as consumers in the Households account.
+
 ### Model 0 Numerical Example
 
 | Receipts → / Expenses ↓ | Factors: 1. | Factors: 2. | Institutions: 3. | Prod. Activities: 4. | Prod. Activities: 5. | Total (1 to 5) |
