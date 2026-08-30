@@ -56,6 +56,7 @@ const chapters = [
       {
         chapter: "General Algorithms",
         items: [
+          { title: "Top 6 Coding Interview Concepts (Data Structures & Algorithms)", href: "/docs/cs-book/part-2-algorithms/top-6-coding-interview-concepts" },
           { title: "Binary Search", href: "/docs/cs-book/part-2-algorithms/binary-search" },
           { title: "Sorting Algorithms", href: "/docs/cs-book/part-2-algorithms/sorting-algorithms" },
           { title: "Graph Traversal", href: "/docs/cs-book/part-2-algorithms/graph-traversal" },

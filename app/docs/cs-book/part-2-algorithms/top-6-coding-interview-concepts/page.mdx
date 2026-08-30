@@ -1,0 +1,98 @@
+export const metadata = {
+  title: "Top 6 Coding Interview Concepts — ByteWise CS Book",
+  description:
+    "The six data structure and algorithm patterns that actually show up in coding interviews, ranked by frequency — hashmaps, recursion, DFS/BFS, binary search, sliding window, and heaps.",
+  keywords: [
+    "coding interview patterns",
+    "hashmaps",
+    "recursion",
+    "DFS BFS",
+    "binary search",
+    "sliding window",
+    "heaps",
+    "blind 75",
+  ],
+  openGraph: {
+    title: "Top 6 Coding Interview Concepts — ByteWise CS Book",
+    description:
+      "The six DSA patterns that actually show up in coding interviews, ranked by frequency — and why dynamic programming isn't one of them.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# <span style={{ color: "#16a34a", fontWeight: 700 }}>Top 6 Coding Interview Concepts (Data Structures & Algorithms)</span>
+
+## Top 6 Coding Interview Patterns
+
+Before diving deeper into Blind 75, it's worth stepping back and covering the big picture: which concepts actually show up most often in real coding interviews, based on real-world interview experience.
+
+**Dynamic programming does not make this list.** This is a deliberate and somewhat surprising point: despite DP's reputation as the hardest and most heavily studied topic, it doesn't actually show up in interviews all that often. In fact, **a number of companies have outright banned asking dynamic programming questions**, and even the companies that still ask it don't ask it particularly frequently. The advice here is that time spent obsessively preparing for DP is often better redirected toward the six patterns below, which come up far more consistently.
+
+Here they are, ranked from least to most frequently tested.
+
+### 6. Heaps
+
+A **heap** is a data structure designed to efficiently track the minimum or maximum value in a changing collection. Some interview problems are essentially *just* "use a heap correctly" — for example, "top K values" style problems come up very frequently and are almost tailor-made for a heap.
+
+There are two variations: a **minimum heap** and a **maximum heap**. Key properties:
+- **Retrieving the min (or max) value is O(1)** — instant.
+- **Inserting a value or popping the min/max is O(log n)** — still very efficient.
+
+**A subtlety that even experienced interviewers sometimes get wrong:** if you already have all n values available upfront, you can build a heap from them in **O(n) time**. But if you're adding values one at a time — for instance, from a live data stream where you don't have everything available at once — each insertion costs O(log n), so adding n values that way takes **O(n log n)** total. It's the same data structure, but two genuinely different time complexities depending on *how* the values arrive — a distinction worth being precise about if it comes up.
+
+Heaps also aren't limited to standalone problems — they're a component inside standard algorithms like **shortest-path graph algorithms**. The implementation of a heap itself is a bit complex, but in practice you'll almost always be *using* one via a library rather than building one from scratch, which makes it an easy data structure to apply even though it's non-trivial internally.
+
+### 5. Sliding Window
+
+**Sliding window** uses **two pointers** to sweep through an array once, instead of checking every combination with nested loops. This is a technique that's easy to stumble into without realizing it's a *named*, standard algorithm — many people first discover it while struggling through a specific problem, only later realizing it's a reusable, memorizable pattern that applies across many different problems.
+
+The core motivation: many problems seem to require iterating through an array n times to solve, which produces **O(n²)** time overall. Sliding window instead uses two pointers moved intelligently, so that — even counting both pointers — the array is only traversed a constant number of times, giving **O(n) time** instead of nested loops.
+
+### 4. Binary Search
+
+**Binary search** is the algorithm most CS students learn early and consider conceptually simple. The core intuition: if you're guessing a number between 1 and 100 and get feedback on whether your guess was too high or too low, the optimal strategy is always to guess the midpoint (50) — because whichever way the feedback goes, you eliminate half of the remaining possibilities. Repeating this process is what makes binary search so efficient: **O(log n) time**, compared to a plain linear scan at **O(n)**.
+
+**The genuinely hard part of binary search isn't the algorithm — it's recognizing when to apply it.** Often it's obvious: you're given a sorted array and asked to search for a value. But there are also plenty of problems where binary search is the right approach yet it *isn't* obvious at all — there may be other data structures or complexity in the problem that make it look like, say, a sliding window problem, when the underlying solution actually depends on binary search. Correctly identifying that a problem needs binary search is often described as the harder skill compared to implementing it once identified.
+
+### 3. DFS & BFS
+
+**Depth-First Search (DFS)** and **Breadth-First Search (BFS)** are described as probably the most commonly used algorithms in coding interviews overall, because of how broadly they apply — to **trees**, to **2D matrix/grid-style graphs**, and to **general graphs of nodes and edges**.
+
+They're also **the building blocks for more advanced algorithms**, including **Dijkstra's algorithm** (shortest path), **Kruskal's algorithm**, **Prim's algorithm**, and **Bellman-Ford**. Nearly all standard graph algorithms are built on top of DFS and BFS fundamentals — so a strong grip on these two traversal methods unlocks a very large number of problems, not limited to graphs, but extending into trees and beyond.
+
+**A specific piece of advice given here:** aim to reach the point where you could write DFS or BFS "in your sleep." Once these become second nature through repetition, you're in a strong position for interviews, since so much else builds on top of them. That said, it's acknowledged that these algorithms can feel genuinely daunting when you're first learning them — the difficulty is real at the beginner stage, even though it fades with repeated practice.
+
+### 2. Recursion
+
+**Recursion** was described as very difficult to learn initially — but something that eventually becomes intuitive with enough exposure. It underlies an enormous number of problem categories: **graphs**, **backtracking**, and (when using the memoization approach) **dynamic programming**, among many others.
+
+To use recursion effectively, you need a solid understanding of:
+- The **base case** — the condition under which recursion stops.
+- The **recursive step** — how a problem is broken into a smaller version of itself.
+- The **call stack** — recursion is **not free**; it consumes extra memory, and understanding what's happening on the call stack during recursive execution matters for reasoning about correctness and complexity.
+
+**A key insight offered here:** recursion is likely the real underlying reason people find graphs, trees, and backtracking difficult. Those topics aren't necessarily hard in themselves — the difficulty usually traces back to not having a strong enough foundation in recursion itself. It's considered one of the hardest categories for people to learn well, but also one of the most essential — it's hard to imagine preparing for interviews without it.
+
+### 1. HashMaps
+
+The single most important pattern — described as the most simple concept on the list, yet also the most common — is the **hashmap** (Python's dictionary). A huge number of problems can be solved simply by reaching for a hashmap.
+
+The canonical example is **Two Sum**: rather than repeatedly iterating through the array to find a matching value, a hashmap lets you check "have I seen this value before?" instantly, solving the entire problem efficiently.
+
+**The core property to know:** essentially every hashmap operation — search, insert, remove — runs in **O(1) time**, i.e. constant time. Technically, this is described as *amortized* rather than a hard guarantee, since there are different possible underlying implementations of a hashmap — but in practice, **99% of the time in real interviews, people simply treat hashmap operations as O(1)** without diving into that technicality.
+
+Beyond standalone problems, hashmaps show up as a **supporting utility structure** inside nearly every other category on this list — DFS, recursion, and sliding window all frequently lean on a hashmap internally to do things efficiently, even when the hashmap isn't the "whole" solution. The advice given is direct: if you don't have a solid understanding of hashmaps and how efficient they are, almost any coding interview problem is going to be a struggle.
+
+---
+
+### The takeaway
+
+These six patterns — **HashMaps, Recursion, DFS & BFS, Binary Search, Sliding Window, and Heaps** — are presented as the most common concepts actually tested in interviews, deliberately kept to a concise list rather than an exhaustive one. The explicit recommendation: if you don't yet have a strong grasp of these six, that should take priority over moving into **dynamic programming** or into more advanced, rarely-seen topics like **KMP pattern matching** or **Kruskal's algorithm** — since those are far less likely to come up in an actual interview compared to the six patterns above.
+
+**Reference video:** [Top 6 Coding Interview Patterns](https://www.youtube.com/watch?v=ft0owvS5tQA)
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/2-encapsulation", title: "Section 2: Encapsulation" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/binary-search", title: "Binary Search" }}
+/>
