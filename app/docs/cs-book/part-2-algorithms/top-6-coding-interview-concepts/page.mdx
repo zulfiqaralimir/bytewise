@@ -43,17 +43,33 @@ There are two variations: a **minimum heap** and a **maximum heap**. Key propert
 
 Heaps also aren't limited to standalone problems — they're a component inside standard algorithms like **shortest-path graph algorithms**. The implementation of a heap itself is a bit complex, but in practice you'll almost always be *using* one via a library rather than building one from scratch, which makes it an easy data structure to apply even though it's non-trivial internally.
 
+**DSA discussed under Heaps:**
+- **Min-Heap** and **Max-Heap**
+- **Priority Queue** (the abstraction a heap implements)
+- **Top-K elements** problems
+- **Shortest-path graph algorithms** (heaps as a supporting structure)
+
 ### 5. Sliding Window
 
 **Sliding window** uses **two pointers** to sweep through an array once, instead of checking every combination with nested loops. This is a technique that's easy to stumble into without realizing it's a *named*, standard algorithm — many people first discover it while struggling through a specific problem, only later realizing it's a reusable, memorizable pattern that applies across many different problems.
 
 The core motivation: many problems seem to require iterating through an array n times to solve, which produces **O(n²)** time overall. Sliding window instead uses two pointers moved intelligently, so that — even counting both pointers — the array is only traversed a constant number of times, giving **O(n) time** instead of nested loops.
 
+**DSA discussed under Sliding Window:**
+- **Two Pointers** technique
+- **Arrays** and **Strings** (the data types sliding window operates on)
+- **Subarray / substring** problems
+
 ### 4. Binary Search
 
 **Binary search** is the algorithm most CS students learn early and consider conceptually simple. The core intuition: if you're guessing a number between 1 and 100 and get feedback on whether your guess was too high or too low, the optimal strategy is always to guess the midpoint (50) — because whichever way the feedback goes, you eliminate half of the remaining possibilities. Repeating this process is what makes binary search so efficient: **O(log n) time**, compared to a plain linear scan at **O(n)**.
 
 **The genuinely hard part of binary search isn't the algorithm — it's recognizing when to apply it.** Often it's obvious: you're given a sorted array and asked to search for a value. But there are also plenty of problems where binary search is the right approach yet it *isn't* obvious at all — there may be other data structures or complexity in the problem that make it look like, say, a sliding window problem, when the underlying solution actually depends on binary search. Correctly identifying that a problem needs binary search is often described as the harder skill compared to implementing it once identified.
+
+**DSA discussed under Binary Search:**
+- **Sorted Arrays** (the classic setup for binary search)
+- **Search space reduction** — halving the space each step
+- **Sliding Window** (the pattern binary search problems are sometimes mistaken for)
 
 ### 3. DFS & BFS
 
@@ -62,6 +78,14 @@ The core motivation: many problems seem to require iterating through an array n 
 They're also **the building blocks for more advanced algorithms**, including **Dijkstra's algorithm** (shortest path), **Kruskal's algorithm**, **Prim's algorithm**, and **Bellman-Ford**. Nearly all standard graph algorithms are built on top of DFS and BFS fundamentals — so a strong grip on these two traversal methods unlocks a very large number of problems, not limited to graphs, but extending into trees and beyond.
 
 **A specific piece of advice given here:** aim to reach the point where you could write DFS or BFS "in your sleep." Once these become second nature through repetition, you're in a strong position for interviews, since so much else builds on top of them. That said, it's acknowledged that these algorithms can feel genuinely daunting when you're first learning them — the difficulty is real at the beginner stage, even though it fades with repeated practice.
+
+**DSA discussed under DFS & BFS:**
+- **Trees**
+- **2D matrix / grid graphs**
+- **General graphs** (nodes and edges)
+- **Dijkstra's Algorithm** (shortest path)
+- **Kruskal's Algorithm** and **Prim's Algorithm** (minimum spanning tree)
+- **Bellman-Ford Algorithm**
 
 ### 2. Recursion
 
@@ -74,6 +98,12 @@ To use recursion effectively, you need a solid understanding of:
 
 **A key insight offered here:** recursion is likely the real underlying reason people find graphs, trees, and backtracking difficult. Those topics aren't necessarily hard in themselves — the difficulty usually traces back to not having a strong enough foundation in recursion itself. It's considered one of the hardest categories for people to learn well, but also one of the most essential — it's hard to imagine preparing for interviews without it.
 
+**DSA discussed under Recursion:**
+- **Graphs**
+- **Backtracking**
+- **Dynamic Programming** (via memoization)
+- **Call Stack** (the memory structure recursion relies on)
+
 ### 1. HashMaps
 
 The single most important pattern — described as the most simple concept on the list, yet also the most common — is the **hashmap** (Python's dictionary). A huge number of problems can be solved simply by reaching for a hashmap.
@@ -83,6 +113,10 @@ The canonical example is **Two Sum**: rather than repeatedly iterating through t
 **The core property to know:** essentially every hashmap operation — search, insert, remove — runs in **O(1) time**, i.e. constant time. Technically, this is described as *amortized* rather than a hard guarantee, since there are different possible underlying implementations of a hashmap — but in practice, **99% of the time in real interviews, people simply treat hashmap operations as O(1)** without diving into that technicality.
 
 Beyond standalone problems, hashmaps show up as a **supporting utility structure** inside nearly every other category on this list — DFS, recursion, and sliding window all frequently lean on a hashmap internally to do things efficiently, even when the hashmap isn't the "whole" solution. The advice given is direct: if you don't have a solid understanding of hashmaps and how efficient they are, almost any coding interview problem is going to be a struggle.
+
+**DSA discussed under HashMaps:**
+- **Two Sum** (the canonical hashmap problem)
+- **DFS**, **Recursion**, and **Sliding Window** (patterns that lean on a hashmap internally)
 
 ---
 
