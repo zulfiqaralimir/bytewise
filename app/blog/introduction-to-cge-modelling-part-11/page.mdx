@@ -91,6 +91,161 @@ Sources of Elasticities:
 
 In practice, most country CGE studies blend these: start from a GTAP or literature value, then adjust it with expert judgment to fit local structural conditions before locking it in at the calibration stage described in [Part 4](/blog/introduction-to-cge-modelling-part-4).
 
+### Worked Example: Econometric Estimation
+
+A researcher studying Pakistan agriculture from 1990 to 2020 collects wage and employment data:
+
+```text
+Data collected:
+├─ Year 1990: Wage = 100, Employment = 1,000
+├─ Year 2000: Wage = 150, Employment = 950
+├─ Year 2010: Wage = 200, Employment = 920
+└─ Year 2020: Wage = 250, Employment = 900
+
+Calculate elasticity:
+% Δ Wage = (250-100)/100 = 150%
+% Δ Employment = (900-1000)/1000 = -10%
+
+σ = |% Δ Employment| / |% Δ Wage|
+σ = 10% / 150% = 0.067 ≈ 0.67
+```
+
+**Conclusion:** agriculture's elasticity of substitution ≈ 0.67 — the same value used in the sector table above.
+
+### Worked Example: Literature Review
+
+Instead of running the regression yourself, you search for existing estimates and average them:
+
+```text
+Paper 1 (2010): "Production elasticity in Pakistan manufacturing"
+├─ Estimates σ = 0.85
+└─ 500 firms studied
+
+Paper 2 (2015): "Factor substitution in developing countries"
+├─ Estimates σ = 0.80 for manufacturing
+└─ Cross-country analysis
+
+Paper 3 (2020): "Pakistan industrial survey"
+├─ Estimates σ = 0.83
+└─ Recent data
+
+Average: (0.85 + 0.80 + 0.83) / 3 = 0.83
+
+Use: σ_manufacturing = 0.83
+```
+
+### Worked Example: Calibration from the SAM
+
+Where no direct estimate exists, you can infer a plausible elasticity from the SAM's own factor shares plus a modelling judgment call:
+
+```text
+From SAM:
+├─ Agriculture: 5,760 labour, 1,440 capital
+├─ Labour share: α = 5,760 / (5,760+1,440) = 0.80
+└─ Capital share: (1-α) = 0.20
+
+Calibration logic:
+"If production doubles, would labour and capital both double?"
+├─ YES → σ = 1.0 (Cobb-Douglas)
+├─ NO, labour needs less → σ > 1.0 (high substitution)
+└─ NO, labour needs more → σ < 1.0 (low substitution)
+
+For agriculture: assume σ = 0.67 (a reasonable guess given the SAM's labour intensity)
+```
+
+### Where to Find Elasticity Data for Pakistan
+
+| Source | Where to Find | Reliability |
+|---|---|---|
+| GTAP Database | www.gtap.agecon.purdue.edu | High (international standard) |
+| World Bank | data.worldbank.org | High |
+| Pakistan Bureau of Statistics | www.pbs.gov.pk | High (local data) |
+| Published papers | Google Scholar, SSRN | High (peer-reviewed) |
+| IMF / ADB reports | imf.org, adb.org | High |
+| Expert judgment | Industry specialists | Medium |
+
+### A Typical Workflow for a Pakistan CGE Model
+
+```text
+Step 1: Literature Review
+├─ Search papers on Pakistan agriculture, manufacturing, etc.
+└─ Collect elasticity estimates from 5-10 papers
+
+Step 2: Average Estimates
+├─ If estimates are: 0.65, 0.68, 0.70, 0.66
+└─ Average = 0.67
+
+Step 3: Sensitivity Analysis
+├─ Build model with σ = 0.67
+├─ Also test with σ = 0.60 and σ = 0.75
+└─ See if results change
+
+Step 4: Use Best Estimate
+├─ If σ = 0.67 matches Pakistan best
+└─ Use it in model
+```
+
+### Why Elasticities Differ Across Sectors
+
+Different sectors substitute labour for capital at different rates because they run on different technologies:
+
+```text
+Agriculture:
+├─ Technology: Traditional farming
+├─ Substitution: Hard (need workers)
+└─ σ = 0.67 (low)
+
+Manufacturing:
+├─ Technology: Assembly line, robots possible
+├─ Substitution: Easier
+└─ σ = 0.83 (medium)
+
+Services:
+├─ Technology: Mixed (humans + computers)
+├─ Substitution: Balanced
+└─ σ = 1.0 (balanced)
+
+Energy:
+├─ Technology: Refineries, rigid process
+├─ Substitution: Very hard
+└─ σ = 0.56 (very low)
+```
+
+### Sensitivity Checks
+
+Once an elasticity is chosen, it's worth stress-testing it before locking it into the model:
+
+```text
+Does σ_agriculture = 0.67 make sense?
+
+Test 1: When wage ↑ 20%
+├─ Employment ↓ 13.4% (using σ = 0.67)
+└─ Does this match Pakistan reality?
+
+Test 2: Compare to other countries
+├─ India agriculture σ = 0.70 (similar)
+├─ Brazil agriculture σ = 0.65 (similar)
+└─ Pakistan σ = 0.67 seems reasonable
+
+Test 3: Expert opinion
+├─ Ask Pakistan agricultural economists
+└─ "Does this elasticity match reality?"
+```
+
+**Summary — where elasticities come from:**
+
+- ✅ **Primary:** econometric estimation from historical data
+- ✅ **Secondary:** literature review of published papers
+- ✅ **Tertiary:** SAM calibration and expert judgment
+
+**For a Pakistan CGE model specifically:**
+
+1. Search GTAP, World Bank, and Pakistan Bureau of Statistics databases
+2. Review Pakistani academic papers
+3. Average estimates from multiple sources
+4. Test with sensitivity analysis
+5. Validate with domain experts
+
 ---
 
 <ArticleNav
