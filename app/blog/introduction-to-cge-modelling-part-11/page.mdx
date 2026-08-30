@@ -65,11 +65,29 @@ Low elasticity means firms cannot easily substitute machines for labour. When wa
 
 Elasticities are not estimated *within* the CGE model itself — the model takes them as given inputs. They're sourced from outside the model in five ways:
 
-1. **Econometric studies** *(most common)* — researchers estimate elasticities from historical time-series or panel data, e.g. "when wages rose 10%, employment fell X%."
-2. **Literature review** — borrowing a published estimate directly, e.g. "other economists found σ = 0.67 for agriculture."
-3. **Calibration from the SAM** — inferring a plausible value from the SAM's own data plus a modelling assumption, e.g. "if output doubled, would labour need to double?"
-4. **Expert judgment** — a domain expert's informed estimate where no data exists, e.g. "agriculture can't automate easily," so σ = 0.67 is set by judgment.
-5. **International databases** — pulling standard values from GTAP (Global Trade Analysis Project), the World Bank, or the IMF.
+```text
+Sources of Elasticities:
+
+1. Econometric Studies (most common)
+   ├─ Researchers estimate from historical data
+   └─ "When wages rose 10%, employment fell X%"
+
+2. Literature Review
+   ├─ Copy from published papers
+   └─ "Other economists found σ = 0.67 for agriculture"
+
+3. Calibration from SAM
+   ├─ Use SAM data + assumptions
+   └─ "If output doubled, would labour need to double?"
+
+4. Expert Judgment
+   ├─ "Agriculture can't automate easily"
+   └─ Set σ = 0.67 based on expert opinion
+
+5. International Databases
+   ├─ GTAP (Global Trade Analysis Project)
+   └─ World Bank, IMF databases
+```
 
 In practice, most country CGE studies blend these: start from a GTAP or literature value, then adjust it with expert judgment to fit local structural conditions before locking it in at the calibration stage described in [Part 4](/blog/introduction-to-cge-modelling-part-4).
 
