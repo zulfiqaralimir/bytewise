@@ -1,0 +1,139 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 8: Reading a Social Accounting Matrix (SAM) — ByteWise",
+  description: "How to read a Social Accounting Matrix using Pakistan's 2007-08 SAM — the 'column pays row' convention, the nine core accounts, tracing a textile factory's flow through the economy, and how the SAM feeds CGE calibration.",
+  keywords: ["reading a SAM", "Pakistan SAM 2007-08", "column pays row", "SAM accounts"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 8: Reading a Social Accounting Matrix (SAM)",
+    description: "The 'column pays row' convention, the nine core accounts, and tracing a textile factory's flow through the economy.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 8: Reading a Social Accounting Matrix (SAM)
+
+> *Economics & Finance Models · CGE Modelling Series · Part 8 of 13*
+
+Part 3 introduced the SAM as the model's database. This part shows how to actually read one, using Pakistan's 2007-08 SAM.
+
+For a much deeper, cell-by-cell walkthrough of every row and column in this same SAM, see [How to Read a Social Accounting Matrix (SAM)](/blog/how-to-read-a-sam).
+
+---
+
+## Reading a Social Accounting Matrix (SAM) — the Pakistan SAM 2007-08
+
+### What Is a SAM?
+
+A Social Accounting Matrix is a comprehensive, economy-wide data framework that captures all economic transactions in a single accounting period. It presents the circular flow of income in matrix form, where rows represent receipts (income), columns represent expenditures (payments), and cells contain the monetary value of transactions between accounts. A SAM extends the standard input-output table by adding factor accounts (labour, capital, land), institutional accounts (households, government), and external accounts (rest of world).
+
+### The Fundamental Reading Convention
+
+> **Cell T(i, j), in row i and column j, records a payment FROM account j TO account i.**
+
+Or, more simply: **"Column pays Row."**
+
+- Reading **across a row** → all income sources of that account
+- Reading **down a column** → all expenditure destinations of that account
+
+**Critical accounting principle:** for every account, **Row Total = Column Total** — total income must equal total expenditure.
+
+### Structure of the Pakistan SAM 2007-08 (Table 5.1)
+
+| # | Account | Description |
+|---|---|---|
+| 1 | Activities | Production activities/sectors |
+| 2 | Commodities | Goods and services |
+| 3 | Land | Factor of production |
+| 4 | Labor | Factor of production |
+| 5 | Capital | Factor of production |
+| 6 | Household | Consumers/households |
+| 7 | Government | Public sector |
+| 8 | S-I | Savings-Investment |
+| 9 | ROW | Rest of World |
+
+### Reading Specific Cells
+
+- **Activities row, Commodities column ("Supply Matrix"):** Commodities pays Activities → shows which activities produce which commodities (the supply side).
+- **Commodities row, Activities column ("Intermediate Consumption"):** Activities pays Commodities → activities purchase inputs for production (e.g. a textile factory buying cotton).
+- **Labor row, Activities column ("VA by Labor"):** Activities pays Labor → production pays wages to workers.
+- **Household row, Labor column ("Factor Income → HH"):** Labor pays Household → labour income flows to households.
+- **Commodities row, Household column ("Private Consumption"):** Household pays Commodities → households buy goods and services.
+- **Government row, Household column ("Direct Taxes"):** Household pays Government → income tax.
+- **Commodities row, ROW column ("Imports"):** ROW pays Commodities → foreign goods enter the domestic market.
+- **ROW row, Commodities column ("Exports"):** Commodities pays ROW → domestic goods sold abroad.
+
+### Reading a Complete Row: Income Sources
+
+**Household row** — income comes from factor income (land, labour, capital), government transfers, and remittances from abroad. Row total = total household income.
+
+**Government row** — revenue comes from sales/import tax, capital income (state enterprises), direct taxes, and foreign grants. Row total = total government revenue.
+
+### Reading a Complete Column: Expenditure Uses
+
+**Household column** — expenditure goes to private consumption, direct taxes, and savings. Column total = total household expenditure (must equal the household row total).
+
+**Activities column** — costs are intermediate consumption, plus value added paid to land, labour, and capital. Column total = cost of production, equal to the activities row total (gross output).
+
+### Tracing a Complete Economic Flow: A Textile Factory
+
+1. Factory produces cloth → Activities → Commodities (Supply Matrix)
+2. Factory buys cotton → Commodities ← Activities (Intermediate Consumption)
+3. Factory pays wages → Labor ← Activities (VA by Labor)
+4. Workers receive wages → Household ← Labor (Factor Income → HH)
+5. Workers buy food → Commodities ← Household (Private Consumption)
+6. Workers pay income tax → Government ← Household (Direct Taxes)
+7. Workers save → S-I ← Household (HH Savings)
+8. Government spends tax revenue → Commodities ← Government (Public Consumption)
+
+This traces the full circular flow: production generates factor income, which flows to households, who spend on consumption, which drives further production.
+
+### Key Blocks of the SAM
+
+1. **Production block** — Activities ↔ Commodities (production and intermediate consumption)
+2. **Factor income block** — Factors ← Activities (value added payments)
+3. **Institutional income block** — Household ← Factors, Government, ROW
+4. **Final demand block** — Commodities ← Household, Government, S-I, ROW
+5. **Tax block** — Government ← Commodities (indirect taxes), Government ← Household (direct taxes)
+6. **Trade block** — Commodities ↔ ROW (imports and exports)
+7. **Savings-investment block** — S-I ← Household, Government, ROW; Commodities ← S-I (investment demand)
+
+### Practical Tips for Reading Any SAM
+
+1. **Check dimensions** — more detailed SAMs disaggregate households (urban/rural, income quintiles), sectors, factor types, and trading partners.
+2. **Verify accounting balance** — row sum must equal column sum for every account.
+3. **Identify units** — millions, billions, local currency, current vs. constant prices.
+4. **Look for structural patterns** — high values flag important sectors and major income/expenditure categories; zero cells indicate no transaction (or a structural assumption).
+5. **Calculate shares and ratios** — consumption shares, factor shares, effective tax rates, import penetration, savings rate.
+
+### Using the SAM for CGE Calibration
+
+- **Initial values** — base-year output, consumption, factor employment, trade flows
+- **Share parameters**, e.g. `Labour Share = (Labour payment by sector) / (Total cost in that sector)`
+- **Tax rates**, e.g. `Income Tax Rate = (Direct taxes from households) / (Household income before tax)`
+- **Consumption patterns**, e.g. budget shares for each commodity
+- **Trade elasticities** — while elasticities usually come from econometric studies, the SAM supplies import/export shares and the trade balance
+
+### Common Mistakes When Reading SAMs
+
+1. Reversing the row–column convention (a cell shows a payment *from* the column *to* the row, not the reverse)
+2. Ignoring the accounting balance check
+3. Confusing gross output (includes intermediate inputs) with value added (output minus intermediate consumption)
+4. Misreading an empty cell as "unknown" rather than "no transaction"
+5. Not checking the stated units
+
+### From SAM to CGE: The Connection
+
+**Data sources → SAM construction → CGE calibration → Policy analysis**
+
+1. Data sources: national accounts, input-output tables, household surveys, trade statistics, government budgets
+2. SAM construction: organize data into the SAM framework, ensure consistency, balance the matrix
+3. CGE calibration: extract shares and parameters from the SAM, set elasticities from the literature, replicate the base year exactly
+4. Policy simulation: introduce a shock, let the model find the new equilibrium, and compare it with the SAM base year
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 7: Software and Tools for CGE Modelling", href: "/blog/introduction-to-cge-modelling-part-7" }}
+  next={{ title: "Part 9: Model 0 — The Twelve Core Equations", href: "/blog/introduction-to-cge-modelling-part-9" }}
+/>

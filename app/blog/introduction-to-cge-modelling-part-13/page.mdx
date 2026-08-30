@@ -1,0 +1,53 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 13: Conclusion — ByteWise",
+  description: "Wrapping up the CGE modelling series — how theory, the SAM, calibration, Model 0, Model EXTER, CES elasticities, and Armington/CET trade behavior fit together into the standard MIMAP training sequence toward a full country model.",
+  keywords: ["CGE modelling conclusion", "MIMAP training sequence", "CGE model summary"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 13: Conclusion",
+    description: "How theory, the SAM, calibration, Model 0, Model EXTER, and trade behavior fit together into the MIMAP training sequence.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 13: Conclusion
+
+> *Economics & Finance Models · CGE Modelling Series · Part 13 of 13*
+
+This closes out the series. Here's how everything from Parts 1–12 fits together.
+
+---
+
+## Conclusion
+
+CGE modelling connects economic theory (general equilibrium, utility and profit maximization, market clearing) to real, country-specific data (the Social Accounting Matrix) through a calibrated system of equations — production, demand, trade, income distribution, and market-clearing conditions — that can be solved before and after a policy shock to trace out its economy-wide effects.
+
+The path covered here — from the basic definition of CGE, through SAM structure and reading conventions, calibration, Model 0's five-account SAM and twelve core equations, the fully open nineteen-account Model EXTER, sector-specific CES elasticities, and Armington/CET trade behaviour — traces the standard MIMAP training sequence (Model 0 → AUTA → AUTETA → EXTER) and, applied throughout to Pakistan's economy, gives a concrete foundation for building toward a full country CGE model in GAMS.
+
+---
+
+## The Full Series
+
+1. [What Is CGE Modelling?](/blog/introduction-to-cge-modelling-part-1)
+2. [Theoretical Foundations](/blog/introduction-to-cge-modelling-part-2)
+3. [Structure and Components of a CGE Model](/blog/introduction-to-cge-modelling-part-3)
+4. [How CGE Models Are Calibrated](/blog/introduction-to-cge-modelling-part-4)
+5. [Running Policy Simulations](/blog/introduction-to-cge-modelling-part-5)
+6. [A Practical Worked Example](/blog/introduction-to-cge-modelling-part-6)
+7. [Software and Tools for CGE Modelling](/blog/introduction-to-cge-modelling-part-7)
+8. [Reading a Social Accounting Matrix (SAM)](/blog/introduction-to-cge-modelling-part-8)
+9. [Model 0: The Twelve Core Equations](/blog/introduction-to-cge-modelling-part-9)
+10. [Model EXTER: An Open Economy with Government](/blog/introduction-to-cge-modelling-part-10)
+11. [CES Elasticities of Substitution](/blog/introduction-to-cge-modelling-part-11)
+12. [Trade Equations: Armington and CET](/blog/introduction-to-cge-modelling-part-12)
+13. **Conclusion** *(this page)*
+
+---
+
+*Compiled from a step-by-step CGE modelling learning session with Claude.*
+
+<ArticleNav
+  prev={{ title: "Part 12: Trade Equations — Armington and CET", href: "/blog/introduction-to-cge-modelling-part-12" }}
+  next={null}
+/>

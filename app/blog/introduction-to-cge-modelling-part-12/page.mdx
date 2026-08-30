@@ -1,0 +1,74 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 12: Trade Equations — Armington and CET — ByteWise",
+  description: "How CGE models handle trade — the Armington assumption for import demand, the CET function for export supply, Pakistan's sector-specific trade elasticities, and the 'leakage' effect that weakens fiscal multipliers in open economies.",
+  keywords: ["Armington assumption", "CET export supply", "trade elasticities", "import leakage", "fiscal multiplier"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 12: Trade Equations — Armington and CET",
+    description: "Armington import demand, CET export supply, Pakistan's trade elasticities, and the leakage effect.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 12: Trade Equations — Armington Import Demand and CET Export Supply
+
+> *Economics & Finance Models · CGE Modelling Series · Part 12 of 13*
+
+Part 10's Model EXTER split each tradable sector into domestic and export markets. This part covers the two equations that govern how goods actually move between those markets and the rest of the world.
+
+---
+
+## Trade Equations: Armington Import Demand and CET Export Supply
+
+Pakistan is an open economy — exports are roughly 16% of GDP and imports roughly 20% of GDP, with agricultural exports around 70% of agricultural output and energy imports covering about 40% of consumption. Trade equations capture two decisions:
+
+1. How much of domestic demand is met by imports vs. domestic goods (**Armington**)
+2. How much of domestic output is sold at home vs. exported (**CET**)
+
+### Armington Import Demand (CES)
+
+$$\frac{M_c}{D_c} = \left[\frac{1-\delta}{\delta}\right] \left(\frac{P_{D_c}}{P_{M_c}}\right)^{\sigma}$$
+
+where σ is the elasticity of substitution between domestic and imported varieties of a good.
+
+**Pakistan import elasticities:**
+
+| Commodity | σ | Implication |
+|---|---|---|
+| Agriculture | 1.2–1.5 | Moderate substitution |
+| Manufacturing | 0.8–1.0 | Limited substitution |
+| Energy | 0.2–0.3 | Very limited (rigid import dependency) |
+| Services | 0.3–0.5 | Very limited |
+
+### CET Export Supply
+
+$$\frac{X_c^{\text{export}}}{D_c} = \left[\frac{1-\psi}{\psi}\right] \left(\frac{P_{X_c}}{P_{D_c}}\right)^{\tau}$$
+
+where τ is the elasticity of transformation between exporting and selling domestically.
+
+**Pakistan export elasticities:**
+
+| Commodity | τ | Current Export Share |
+|---|---|---|
+| Rice | 0.8–1.0 | 70% |
+| Cotton | 0.9–1.1 | 85% |
+| Textiles | 0.7–0.9 | 60% |
+| Wheat | 0.3–0.5 | 5% (food security priority) |
+| Energy | 0.1–0.2 | 2% (domestic priority) |
+
+### The Trade Multiplier "Leakage" Effect
+
+Compare two equal-sized subsidies (10 billion PKR each):
+
+- **Agricultural subsidy:** ~70% of the boosted output is exported (foreign exchange benefit), ~30% stays domestic and drives a multiplier — overall multiplier ≈ 2.4×.
+- **Energy subsidy:** output is 100% domestic (energy cannot be exported), but because import substitution elasticity is very low (σ ≈ 0.2), the economy still imports roughly the same amount of energy regardless of the subsidy — overall multiplier ≈ 1.52×.
+
+**Key insight:** open economies with high import elasticities experience "leakage," where a domestic stimulus results in more import substitution rather than additional domestic consumption — reducing the effective multiplier of the policy.
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 11: CES Elasticities of Substitution", href: "/blog/introduction-to-cge-modelling-part-11" }}
+  next={{ title: "Part 13: Conclusion", href: "/blog/introduction-to-cge-modelling-part-13" }}
+/>

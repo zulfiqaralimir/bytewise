@@ -1,0 +1,52 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 3: Structure and Components of a CGE Model — ByteWise",
+  description: "Inside a CGE model — the Social Accounting Matrix as its database, the six families of equations that drive it, and how closure rules determine what's fixed versus what adjusts.",
+  keywords: ["Social Accounting Matrix", "SAM", "CGE equations", "model closure", "Armington assumption"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 3: Structure and Components of a CGE Model",
+    description: "The SAM as the model's database, the six families of equations, and closure rules.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 3: Structure and Components of a CGE Model
+
+> *Economics & Finance Models · CGE Modelling Series · Part 3 of 13*
+
+Part 2 covered the theory. This part opens up the model itself — its data, its equations, and the closure rules that shape how it behaves.
+
+---
+
+## Structure and Components of a CGE Model
+
+### A. The Database — the Social Accounting Matrix (SAM)
+
+This is the foundation: a snapshot of the economy in a base year showing all transactions between agents, production by sector, consumption patterns, trade flows, and tax revenues. It is a detailed spreadsheet of the entire economy where every row total equals its corresponding column total.
+
+### B. Equations in the Model
+
+1. **Production Functions** — combine inputs (labour, capital, materials) into output, e.g. via nested CES functions.
+2. **Demand Functions** — households maximize utility subject to budget; firms minimize cost. Often Linear Expenditure System (LES) or CES functions.
+3. **Trade Equations** — the Armington assumption treats domestic and foreign goods as imperfect substitutes; export supply and import demand functions follow.
+4. **Market Clearing Conditions** — for each good: Production + Imports = Consumption + Investment + Exports; for factors: Labour supply = Labour demand across all sectors.
+5. **Income–Expenditure Identities** — household income = wages + capital income + transfers − taxes; government budget: tax revenue = spending + transfers (or deficit/surplus).
+6. **Pricing Equations** — relate producer prices, consumer prices, taxes, and world prices.
+
+### C. Closures
+
+"Closure rules" determine which variables are fixed (exogenous) and which adjust (endogenous):
+
+- **Labour market:** Is the wage fixed, or employment? Or do both adjust?
+- **Government:** Does it balance its budget, or run a deficit?
+- **Investment–Savings:** How is investment determined?
+
+Different closures produce different model behaviour.
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 2: Theoretical Foundations", href: "/blog/introduction-to-cge-modelling-part-2" }}
+  next={{ title: "Part 4: How CGE Models Are Calibrated", href: "/blog/introduction-to-cge-modelling-part-4" }}
+/>

@@ -1,0 +1,76 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 5: Running Policy Simulations — ByteWise",
+  description: "How CGE models turn a calibrated baseline into policy answers — shocking a variable, letting prices and quantities re-equilibrate, and reading GDP, sectoral, and welfare results, illustrated with a tariff-removal example.",
+  keywords: ["policy simulation", "comparative statics", "dynamic CGE", "tariff removal", "sensitivity analysis"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 5: Running Policy Simulations",
+    description: "Shocking a variable, re-equilibrating, and reading the results — illustrated with a tariff-removal example.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 5: Running Policy Simulations
+
+> *Economics & Finance Models · CGE Modelling Series · Part 5 of 13*
+
+Part 4 covered calibrating a model to a base year. This part covers what you actually do with a calibrated model: run policy simulations.
+
+---
+
+## Running Policy Simulations
+
+Once calibrated, a CGE model lets you simulate "what-if" policy scenarios.
+
+### A. How Simulations Work
+
+1. **Baseline** — the calibrated model at equilibrium
+2. **Shock** — change a policy variable (tax rate, tariff, subsidy, etc.)
+3. **Adjustment** — prices and quantities change until a new equilibrium is reached
+4. **Comparison** — new equilibrium vs. baseline = policy impact
+
+### B. Types of Policy Shocks
+
+- **Tax policy** — VAT changes, carbon tax, income tax
+- **Trade policy** — removing tariffs, import quotas, currency devaluation
+- **Subsidy changes** — removing fuel subsidies, agricultural support
+- **Productivity shocks** — technology improvements, infrastructure investment
+- **Demographic changes** — population growth, labour force changes
+
+### C. Example — Removing an Import Tariff
+
+Initial situation: 20% tariff on imported textiles. Shock: remove the tariff.
+
+1. Imported textiles become cheaper
+2. Consumers buy more imports, less domestic textiles
+3. Domestic textile producers reduce output
+4. Workers are laid off from the textile sector
+5. Workers move to other sectors (if labour is mobile)
+6. Wages may adjust downward
+7. Government loses tariff revenue
+8. Consumers benefit from lower prices
+9. A new equilibrium is reached
+
+### D. Reading the Results
+
+The model reports changes in GDP, sectoral output, employment by sector, prices, trade balance, household welfare (often "equivalent variation"), government revenue, and income distribution.
+
+### E. Comparative Statics vs. Dynamic Models
+
+**Comparative statics** (most common) compares two equilibria — before and after the shock — with no time dimension; it answers "what's the long-run effect?" **Dynamic CGE** shows the adjustment path over time, answering "how does the economy transition year by year?"
+
+### F. Interpretation Caution
+
+Results show direction and relative magnitude, not precise forecasts. "GDP increases by 2.3%" means a positive, moderate effect — useful for comparing policies against each other, not as an exact prediction.
+
+### G. Sensitivity Analysis
+
+Because elasticities are uncertain, good practice is to re-run simulations with different elasticity values, check whether conclusions hold, and identify which parameters matter most.
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 4: How CGE Models Are Calibrated", href: "/blog/introduction-to-cge-modelling-part-4" }}
+  next={{ title: "Part 6: A Practical Worked Example", href: "/blog/introduction-to-cge-modelling-part-6" }}
+/>

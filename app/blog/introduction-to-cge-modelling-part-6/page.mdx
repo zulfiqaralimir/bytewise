@@ -1,0 +1,100 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 6: A Practical Worked Example — ByteWise",
+  description: "A complete two-sector, two-factor CGE model built from a base-year SAM through to a 5% manufacturing tax shock — production functions, market clearing, and a full before/after results table.",
+  keywords: ["CGE worked example", "two-sector model", "SAM example", "tax shock simulation"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 6: A Practical Worked Example",
+    description: "A two-sector CGE model from base-year SAM through a 5% manufacturing tax shock.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 6: A Practical Worked Example
+
+> *Economics & Finance Models · CGE Modelling Series · Part 6 of 13*
+
+Parts 1–5 covered theory, structure, calibration, and simulation mechanics one piece at a time. This part puts all of it together in a single, complete mini-model.
+
+---
+
+## A Practical Worked Example
+
+Let's build a mini two-sector economy to see everything connect.
+
+### A. Setup
+
+**Sectors:** Agriculture (AG), Manufacturing (MFG)
+**Agents:** Households, Firms, Government, Rest of World
+**Factors:** Labour (L), Capital (K)
+
+### B. The Base-Year SAM (values in $ million)
+
+| | AG | MFG | Labor | Capital | HH | Gov | ROW | Total |
+|---|---|---|---|---|---|---|---|---|
+| AG | 10 | 20 | | | 50 | 5 | 15 | 100 |
+| MFG | 15 | 10 | | | 70 | 10 | 25 | 130 |
+| Labor | 40 | 50 | | | | | | 90 |
+| Capital | 35 | 50 | | | | | | 85 |
+| HH | | | 90 | 85 | | 10 | 5 | 190 |
+| Gov | | | | | 15 | | | 15 |
+| ROW | | | | | 55 | | | 55 |
+| **Total** | 100 | 130 | 90 | 85 | 190 | 25 | 45 | |
+
+Agriculture uses $10M of its own output, $15M from manufacturing, $40M labour, $35M capital (total cost $100M). Households earn $90M wages + $85M capital income = $175M, pay $15M in taxes, and receive $10M in transfers, for $190M disposable income, which they spend on $50M of agricultural goods, $70M of manufactured goods, $55M of imports, and $15M of savings.
+
+### C. Key Equations (Simplified)
+
+**Production (Cobb-Douglas):**
+
+$$Q_{AG} = A_{AG} \cdot L_{AG}^{0.4} \cdot K_{AG}^{0.35}$$
+$$Q_{MFG} = A_{MFG} \cdot L_{MFG}^{0.38} \cdot K_{MFG}^{0.38}$$
+
+**Household demand:**
+
+$$C_{AG} = \alpha_{AG} \times (\text{Income} - \text{Savings})$$
+$$C_{MFG} = \alpha_{MFG} \times (\text{Income} - \text{Savings})$$
+
+**Market clearing:**
+
+$$L_{AG} + L_{MFG} = 90 \quad \text{(total labour supply)}$$
+$$K_{AG} + K_{MFG} = 85 \quad \text{(total capital stock)}$$
+
+**Trade (Armington):** domestic goods and imports are imperfect substitutes with elasticity σ_M.
+
+### D. Policy Experiment: 5% Tax on Manufacturing Output
+
+Logic of the adjustment:
+
+1. Manufacturing price rises (producers pass on part of the tax) — new price ≈ 1.04
+2. Demand for manufactured goods falls as households substitute toward agriculture — demand falls to ≈ 126
+3. Manufacturing output contracts; less labour/capital needed
+4. Released resources shift to agriculture, which expands slightly to ≈ 102
+5. Wages come under slight downward pressure (≈ 0.98)
+6. Government revenue rises: 5% × 126 ≈ 6.3 in new tax revenue
+7. Households pay higher prices for manufactured goods (a welfare loss), partly offset by government transfers
+
+**Results table:**
+
+| Variable | Baseline | After Tax | % Change |
+|---|---|---|---|
+| GDP | 230 | 228.5 | −0.65% |
+| AG Output | 100 | 102 | +2.0% |
+| MFG Output | 130 | 126 | −3.1% |
+| Wage Rate | 1.00 | 0.98 | −2.0% |
+| MFG Price | 1.00 | 1.04 | +4.0% |
+| AG Price | 1.00 | 1.01 | +1.0% |
+| Household Welfare | 190 | 188.2 | −0.95% |
+| Gov Revenue | 15 | 21.3 | +42% |
+
+**Interpretation:** government gains revenue (+42%), the economy shrinks slightly (−0.65% GDP), households are worse off (−0.95%), manufacturing contracts (−3.1%), and agriculture benefits slightly (+2%). The tax raises revenue but has real economic costs — policymakers must weigh whether the revenue justifies the efficiency loss.
+
+In real CGE modelling you would use much larger SAMs (20–50+ sectors), multiple household types, disaggregated trade by partner, more complex production nesting, and sensitivity testing.
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 5: Running Policy Simulations", href: "/blog/introduction-to-cge-modelling-part-5" }}
+  next={{ title: "Part 7: Software and Tools for CGE Modelling", href: "/blog/introduction-to-cge-modelling-part-7" }}
+/>

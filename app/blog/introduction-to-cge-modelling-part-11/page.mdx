@@ -1,0 +1,81 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 11: CES Elasticities of Substitution — ByteWise",
+  description: "Why Cobb-Douglas isn't enough — the CES elasticity of substitution between labour and capital, sector-specific values for Pakistan, the low-elasticity/high-multiplier relationship, and where elasticity estimates actually come from.",
+  keywords: ["CES elasticity of substitution", "elasticity of substitution", "labour capital substitution", "Pakistan sector elasticities"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 11: CES Elasticities of Substitution",
+    description: "The CES elasticity of substitution between labour and capital, sector-specific values for Pakistan, and where estimates come from.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 11: CES Elasticities of Substitution
+
+> *Economics & Finance Models · CGE Modelling Series · Part 11 of 13*
+
+Parts 9 and 10 walked through Model 0 and Model EXTER, both built on Cobb-Douglas production. This part explains why Cobb-Douglas is a special case, and what changes when sectors substitute labour for capital at different rates.
+
+---
+
+## Beyond Cobb-Douglas: CES Elasticities of Substitution
+
+Model 0's Cobb-Douglas production function assumes a fixed elasticity of substitution (σ = 1) between labour and capital. Real economies vary by sector, which is where the **CES (Constant Elasticity of Substitution)** function comes in.
+
+$$\sigma_i = \frac{\% \text{ change in } (K/L)}{\% \text{ change in } (w/r)}$$
+
+In plain terms: when the wage rises 1%, how much do firms substitute capital for labour?
+
+- **High σ** (easy to substitute): a 10% wage rise might cut labour demand 15% (σ ≈ 1.5) as firms switch readily to machines.
+- **Medium σ**: a 10% wage rise cuts labour demand ≈ 8% (σ ≈ 0.8).
+- **Low σ** (hard to substitute): a 10% wage rise cuts labour demand only ≈ 3% (σ ≈ 0.3).
+
+### Pakistan Sector Elasticities
+
+| Sector | σᵢ | Labour Share αᵢ | Substitution | Example |
+|---|---|---|---|---|
+| Agriculture | 0.67 | 0.40 | Low | Hard to automate farm labour |
+| Manufacturing | 0.83 | 0.25 | Moderate | Some processes can be automated |
+| Services | 1.00 | 0.45 | Balanced | Mix of human and machine service delivery |
+| Energy | 0.56 | 0.10 | Very Low | Rigid production process |
+
+The general form for agriculture, for instance, is:
+
+$$XS_{AG} = A_{AG}\left[\delta_{AG}(LD_{AG})^{-\rho} + (1-\delta_{AG})(KD_{AG})^{-\rho}\right]^{-1/\rho}, \qquad \sigma_{AG} = \frac{1}{1+\rho}$$
+
+Approximating the labour-demand response to a wage change as $\%\Delta LD_i \approx -\sigma_i \times \%\Delta w$:
+
+**A 10% wage increase across sectors:**
+
+| Sector | σᵢ | Employment Loss | Multiplier Effect |
+|---|---|---|---|
+| Agriculture | 0.67 | 6.7% | High |
+| Manufacturing | 0.83 | 8.3% | Medium |
+| Services | 1.00 | 10.0% | Medium-Low |
+| Energy | 0.56 | 5.6% | Very High |
+
+**Key insight:**
+
+$$\text{Low } \sigma \implies \text{High Multiplier}$$
+
+Low elasticity means firms cannot easily substitute machines for labour. When wages rise, workers keep their jobs, keep earning, and keep spending — so the multiplier effect on the rest of the economy stays strong. High elasticity means the opposite: employment adjusts more, and the multiplier is weaker.
+
+### Where Elasticities Actually Come From
+
+Elasticities are not estimated *within* the CGE model itself — the model takes them as given inputs. They're sourced from outside the model in five ways:
+
+1. **Econometric studies** *(most common)* — researchers estimate elasticities from historical time-series or panel data, e.g. "when wages rose 10%, employment fell X%."
+2. **Literature review** — borrowing a published estimate directly, e.g. "other economists found σ = 0.67 for agriculture."
+3. **Calibration from the SAM** — inferring a plausible value from the SAM's own data plus a modelling assumption, e.g. "if output doubled, would labour need to double?"
+4. **Expert judgment** — a domain expert's informed estimate where no data exists, e.g. "agriculture can't automate easily," so σ = 0.67 is set by judgment.
+5. **International databases** — pulling standard values from GTAP (Global Trade Analysis Project), the World Bank, or the IMF.
+
+In practice, most country CGE studies blend these: start from a GTAP or literature value, then adjust it with expert judgment to fit local structural conditions before locking it in at the calibration stage described in [Part 4](/blog/introduction-to-cge-modelling-part-4).
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 10: Model EXTER — An Open Economy with Government", href: "/blog/introduction-to-cge-modelling-part-10" }}
+  next={{ title: "Part 12: Trade Equations — Armington and CET", href: "/blog/introduction-to-cge-modelling-part-12" }}
+/>

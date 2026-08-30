@@ -1,0 +1,93 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 7: Software and Tools for CGE Modelling — ByteWise",
+  description: "Comparing GAMS, GEMPACK, Python, and R/MATLAB for building CGE models, plus pre-built frameworks like GTAP and PEP, data sources for SAMs, and a recommended learning path.",
+  keywords: ["GAMS", "GEMPACK", "GTAP", "Python CGE modelling", "PEP standard model"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 7: Software and Tools for CGE Modelling",
+    description: "GAMS, GEMPACK, Python, R/MATLAB, pre-built frameworks, data sources, and a learning path.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 7: Software and Tools for CGE Modelling
+
+> *Economics & Finance Models · CGE Modelling Series · Part 7 of 13*
+
+Part 6 walked through a worked example by hand. This part covers the actual software people use to build and solve real CGE models.
+
+---
+
+## Software and Tools for CGE Modelling
+
+### GAMS (General Algebraic Modeling System)
+
+The industry standard. Powerful optimization/equation solving, excellent documentation, large community, built-in solvers (PATH, CONOPT, MINOS). Commercial (~$3,000–10,000+), with a steeper learning curve. Used by the World Bank, IMF, OECD, and most academic researchers.
+
+```
+SETS
+  i sectors /AG, MFG/
+  f factors /Labor, Capital/;
+
+PARAMETERS
+  alpha(i,f) production share parameters
+  io(i,j) input-output coefficients;
+
+VARIABLES
+  Q(i) output by sector
+  P(i) prices
+  WAGE wage rate;
+
+EQUATIONS
+  production(i) production function
+  market_clear(i) supply equals demand;
+```
+
+### GEMPACK
+
+Purpose-built for CGE, very efficient for large models, the backbone of the GTAP network for trade policy analysis. Commercial, though cheaper than GAMS; less flexible; smaller user base.
+
+### Python
+
+Free and open source, flexible, strong data/visualization tooling (pandas, numpy, scipy), and optimization libraries such as `scipy.optimize` or Pyomo. No dedicated CGE package — you build the model from scratch — and it's slower than GAMS at very large scale, but excellent for learning.
+
+```python
+from scipy.optimize import fsolve
+import numpy as np
+
+def cge_equations(vars):
+    Q_ag, Q_mfg, wage, P_ag, P_mfg = vars
+    eq1 = Q_ag - A_ag * L_ag**alpha_ag * K_ag**beta_ag
+    eq2 = Q_mfg - A_mfg * L_mfg**alpha_mfg * K_mfg**beta_mfg
+    eq3 = L_ag + L_mfg - L_total
+    # ... demand and remaining equations
+    return [eq1, eq2, eq3]
+
+solution = fsolve(cge_equations, initial_guess)
+```
+
+### R and MATLAB
+
+R is free, statistically strong, with good visualization (ggplot2), but less commonly used for CGE specifically. MATLAB is powerful for numerical work and prototyping but carries an expensive license and is overkill for most CGE applications.
+
+### Pre-Built CGE Frameworks
+
+- **GTAP** (Global Trade Analysis Project) — a ready-made global CGE model and database, runs in GEMPACK or GAMS
+- **IFPRI models** — for developing countries, often freely available for research
+- **PEP models** (Partnership for Economic Policy) — free standard CGE templates with training materials
+
+### Data Sources for Building SAMs
+
+International: World Bank, OECD input-output tables, GTAP database, UN Comtrade, ILO. Country-specific: national statistics offices, central banks, published input-output tables, household surveys.
+
+### A Recommended Learning Path
+
+For beginners: start in **Python** with a simple two-sector model to understand the logic, then try tiny **Excel-based** CGE models to see every calculation transparently, then move to **GAMS** for professional work. For serious research, GAMS remains the industry standard.
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 6: A Practical Worked Example", href: "/blog/introduction-to-cge-modelling-part-6" }}
+  next={{ title: "Part 8: Reading a Social Accounting Matrix (SAM)", href: "/blog/introduction-to-cge-modelling-part-8" }}
+/>

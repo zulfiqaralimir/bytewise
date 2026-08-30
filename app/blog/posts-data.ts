@@ -1,5 +1,109 @@
 export const posts = [
   {
+    slug: "introduction-to-cge-modelling-part-1",
+    title: "Introduction to CGE Modelling (Part 1 of 13): What Is CGE Modelling?",
+    description:
+      "What Computable General Equilibrium modelling means, its three defining traits — computable, general, equilibrium — and the policy questions it's built to answer.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-2",
+    title: "Introduction to CGE Modelling (Part 2 of 13): Theoretical Foundations",
+    description:
+      "The microeconomic theory behind CGE models — Walrasian general equilibrium, the four core agents, rational-behavior and market-clearing assumptions, and the circular flow of income.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-3",
+    title: "Introduction to CGE Modelling (Part 3 of 13): Structure and Components of a CGE Model",
+    description:
+      "Inside a CGE model — the Social Accounting Matrix as its database, the six families of equations that drive it, and how closure rules determine what's fixed versus what adjusts.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-4",
+    title: "Introduction to CGE Modelling (Part 4 of 13): How CGE Models Are Calibrated",
+    description:
+      "How a CGE model is tuned to reproduce a base-year economy exactly — gathering the SAM, choosing functional forms, assigning elasticities, and solving for share parameters.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-5",
+    title: "Introduction to CGE Modelling (Part 5 of 13): Running Policy Simulations",
+    description:
+      "How CGE models turn a calibrated baseline into policy answers — shocking a variable, letting prices and quantities re-equilibrate, and reading the results, illustrated with a tariff-removal example.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-6",
+    title: "Introduction to CGE Modelling (Part 6 of 13): A Practical Worked Example",
+    description:
+      "A complete two-sector, two-factor CGE model built from a base-year SAM through to a 5% manufacturing tax shock — production functions, market clearing, and a full before/after results table.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-7",
+    title: "Introduction to CGE Modelling (Part 7 of 13): Software and Tools for CGE Modelling",
+    description:
+      "Comparing GAMS, GEMPACK, Python, and R/MATLAB for building CGE models, plus pre-built frameworks like GTAP and PEP, data sources for SAMs, and a recommended learning path.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-8",
+    title: "Introduction to CGE Modelling (Part 8 of 13): Reading a Social Accounting Matrix (SAM)",
+    description:
+      "How to read a Social Accounting Matrix using Pakistan's 2007-08 SAM — the 'column pays row' convention, the nine core accounts, and tracing a textile factory's flow through the economy.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-9",
+    title: "Introduction to CGE Modelling (Part 9 of 13): Model 0 — The Twelve Core Equations",
+    description:
+      "MIMAP's Model 0 — a minimal five-account teaching CGE model — walked through its SAM structure, numerical example, and the twelve equations that solve it.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-10",
+    title: "Introduction to CGE Modelling (Part 10 of 13): Model EXTER — An Open Economy with Government",
+    description:
+      "MIMAP's Model EXTER — a nineteen-account CGE model that opens the economy to trade, splits households by factor endowment, and adds firms and government, with a full worked numerical SAM.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-11",
+    title: "Introduction to CGE Modelling (Part 11 of 13): CES Elasticities of Substitution",
+    description:
+      "Why Cobb-Douglas isn't enough — the CES elasticity of substitution between labour and capital, sector-specific values for Pakistan, and where elasticity estimates actually come from.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-12",
+    title: "Introduction to CGE Modelling (Part 12 of 13): Trade Equations — Armington and CET",
+    description:
+      "How CGE models handle trade — the Armington assumption for import demand, the CET function for export supply, and the 'leakage' effect that weakens fiscal multipliers in open economies.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
+    slug: "introduction-to-cge-modelling-part-13",
+    title: "Introduction to CGE Modelling (Part 13 of 13): Conclusion",
+    description:
+      "Wrapping up the CGE modelling series — how theory, the SAM, calibration, Model 0, Model EXTER, CES elasticities, and Armington/CET trade behavior fit together into the standard MIMAP training sequence.",
+    date: "August 30, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "what-is-meta-analysis",
     title: "What Is Meta-Analysis? A Practical Guide to Combining Research Findings",
     description:

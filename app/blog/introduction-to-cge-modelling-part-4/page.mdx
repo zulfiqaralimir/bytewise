@@ -1,0 +1,63 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 4: How CGE Models Are Calibrated — ByteWise",
+  description: "How a CGE model is tuned to reproduce a base-year economy exactly — gathering the SAM, choosing functional forms, assigning elasticities, and solving for share parameters, worked through a Cobb-Douglas example.",
+  keywords: ["CGE calibration", "share parameters", "benchmark equilibrium", "Cobb-Douglas production function", "elasticity of substitution"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 4: How CGE Models Are Calibrated",
+    description: "Gathering the SAM, choosing functional forms, assigning elasticities, and solving for share parameters.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 4: How CGE Models Are Calibrated
+
+> *Economics & Finance Models · CGE Modelling Series · Part 4 of 13*
+
+Part 3 laid out the model's structure — SAM, equations, closures. This part covers calibration: how that structure gets tuned to match a real economy.
+
+---
+
+## How CGE Models Are Calibrated
+
+Calibration is the process of making a model match real-world data. Unlike econometric models (estimated statistically), CGE models are usually **calibrated** to a base year — tuned so that running the model with no shocks exactly reproduces the base-year SAM.
+
+### The Calibration Process
+
+**Step 1 — Gather the SAM.** Base-year values for production, consumption, trade, from national accounts, input-output tables, household surveys.
+
+**Step 2 — Choose Functional Forms.** Production functions (Cobb-Douglas, CES, Leontief); demand functions (LES, CES, etc.).
+
+**Step 3 — Assign Elasticities.** These come from outside literature (econometric studies):
+
+- **Substitution elasticity (σ):** how easily one input substitutes for another
+- **Income elasticity:** how demand changes with income
+- **Armington elasticity:** how easily domestic and imported goods substitute
+
+Example: if σ = 0.5 for labour–capital substitution, it's harder to replace workers with machines; if σ = 2, it's easier.
+
+**Step 4 — Calculate Share Parameters.** Using the SAM and chosen elasticities, calculate the "share parameters" so the model exactly replicates the base year.
+
+### Worked Example (Cobb-Douglas)
+
+$$Q = A \cdot L^{\alpha} \cdot K^{\beta}$$
+
+From the SAM: Q₀ = 100, L₀ = 50, K₀ = 40. Set α = labour's cost share = 0.6, β = 0.4. Solve for A so that 100 = A · 50^0.6 · 40^0.4.
+
+### Benchmark Equilibrium
+
+After calibration, running the model with no shocks should reproduce the base year exactly — this proves calibration worked.
+
+### Limitations of Calibration
+
+- The model is "locked" to one year of data
+- It relies heavily on elasticities from the literature
+- It may not capture structural change over time
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 3: Structure and Components of a CGE Model", href: "/blog/introduction-to-cge-modelling-part-3" }}
+  next={{ title: "Part 5: Running Policy Simulations", href: "/blog/introduction-to-cge-modelling-part-5" }}
+/>

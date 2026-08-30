@@ -1,0 +1,117 @@
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+export const metadata = {
+  title: "Introduction to CGE Modelling — Part 10: Model EXTER — An Open Economy with Government — ByteWise",
+  description: "MIMAP's Model EXTER — a nineteen-account CGE model that opens the economy to trade, splits households by factor endowment, and adds firms and government, with a full worked numerical SAM.",
+  keywords: ["MIMAP Model EXTER", "open economy CGE", "government sector CGE", "CET Armington"],
+  openGraph: {
+    title: "Introduction to CGE Modelling — Part 10: Model EXTER — An Open Economy with Government",
+    description: "A nineteen-account CGE model that opens the economy to trade and adds firms and government.",
+    type: "article",
+  },
+};
+
+# Introduction to CGE Modelling — Part 10: Model EXTER — An Open Economy with Government
+
+> *Economics & Finance Models · CGE Modelling Series · Part 10 of 13*
+
+Part 9 covered Model 0, the minimal five-account teaching model. This part covers the fully-developed end point of the MIMAP sequence: Model EXTER.
+
+---
+
+## Model EXTER: An Open Economy with Government
+
+Model EXTER is the fully-developed end point of the MIMAP sequence (Model 0 → AUTA → AUTETA → EXTER): a 19-account SAM that opens the economy to trade and adds a government sector, splitting households into labour-endowed and capital-endowed types, adding firms, and separating domestic-market from export-market transactions for each of four sectors (Agriculture, Industry, Services, Non-tradables).
+
+### The Model EXTER SAM Structure
+
+| # | Account | Role |
+|---|---|---|
+| 1 | Labour | Factor |
+| 2 | Capital | Factor |
+| 3 | Labour-endowed households | Agent |
+| 4 | Capital-endowed households | Agent |
+| 5 | Firms | Agent |
+| 6 | Government | Agent |
+| 7 | Rest of World | Agent |
+| 8 | Agriculture (activity) | Productive Activity |
+| 9 | Industry (activity) | Productive Activity |
+| 10 | Services (activity) | Productive Activity |
+| 11 | Non-tradables (activity) | Productive Activity |
+| 12 | Agriculture (domestic good) | Domestic Market |
+| 13 | Industry (domestic good) | Domestic Market |
+| 14 | Services (domestic good) | Domestic Market |
+| 15 | Non-tradables (domestic good) | Domestic Market |
+| 16 | Agriculture (export) | Export Market |
+| 17 | Industry (export) | Export Market |
+| 18 | Services (export) | Export Market |
+| 19 | Accumulation | Capital Account |
+
+**Key symbols in the matrix:**
+
+| Symbol | Meaning |
+|---|---|
+| $WL_A, WL_I, WL_S, WL_N$ | Wage bill paid by Agriculture / Industry / Services / Non-tradables |
+| $RK_A, RK_I, RK_S$ | Capital return paid by each activity (non-tradables assumed labour-only in this variant) |
+| $TG$ | Government transfers to labour-endowed households |
+| $DIV$ | Firm dividends to capital-endowed households |
+| $DTH_{HW}, DTH_{HC}, DTF$ | Direct taxes on labour-HH, capital-HH, and firms |
+| $TI_A, TI_I, TI_S$ | Indirect taxes by sector |
+| $TE_A$ | Export tax on Agriculture |
+| $RK_{row}$ | Capital income repatriated to Rest of World |
+| $DIV_{row}$ | Dividends repatriated abroad |
+| $IM_A, IM_I, IM_S$ | Imports by sector |
+| $VD_A, VD_I, VD_S, VD_N$ | Domestic sales by sector |
+| $EX_A, EX_I, EX_S$ | Exports by sector |
+| $CI_{i,j}$ | Intermediate consumption of domestic good $i$ by activity $j$ |
+| $E_{i,HW}, E_{i,HC}$ | Consumption of good $i$ by labour-HH / capital-HH |
+| $G$ | Government consumption |
+| $IV_A, IV_I$ | Investment demand by good |
+| $ET_A, ET_I, ET_S$ | Export transaction accounts |
+| $SH_{HW}, SH_{HC}, SF, SG, CAB$ | Savings of labour-HH, capital-HH, firms, government, and the current account balance |
+| $VXA, VXI, VXS, VXN$ | Gross output by activity |
+| $VXD_A, VXD_I, VXD_S, VXD_N$ | Total domestic-market absorption by good |
+
+### Model EXTER Numerical Example
+
+| # | Account | 1. | 2. | 3. | 4. | 5. | 6. | 7. | 8. | 9. | 10. | 11. | 12. | 13. | 14. | 15. | 16. | 17. | 18. | 19. | Total |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Labour | | | | | | | | 5 760 | 7 560 | 8 580 | 6 960 | | | | | | | | | 28 860 |
+| 2 | Capital | | | | | | | | 1 440 | 11 340 | 5 720 | | | | | | | | | | 18 500 |
+| 3 | Labour-HH | 28 860 | | | | | | 140 | | | | | | | | | | | | | 29 000 |
+| 4 | Capital-HH | | 11 100 | | | 1 900 | | | | | | | | | | | | | | | 13 000 |
+| 5 | Firms | | | | | | 6 475 | | | | | | | | | | | | | | 6 475 |
+| 6 | Government | | | 580 | 650 | 1 296 | | | | | | | 190.24 | 7 069.22 | 675 | | 90 | | | | 10 549.46 |
+| 7 | Rest of World | | 925 | | 370 | | | | | | | | 379 | 15 300 | 2 700 | | | | | | 19 674 |
+| 8 | Agriculture | | | | | | | | | | | | 7 200 | | | | 1 800 | | | | 9 000 |
+| 9 | Industry | | | | | | | | | | | | | 46 240 | | | | 8 160 | | | 54 400 |
+| 10 | Services | | | | | | | | | | | | | | 19 800 | | | | 2 200 | | 22 000 |
+| 11 | Non-tradables | | | | | | | | | | | | | | | 8 700 | | | | | 8 700 |
+| 12 | Agriculture (dom.) | | | | | | | | 160 | 697.19 | 177.15 | 118.35 | | | | | | | | 1 735.55 | 7 769.24 (approx.) |
+| 13 | Industry (dom.) | | | | | | | | 1 504 | 29 616.81 | 5 459.45 | 1 336.05 | | | | | | | | 15 619.91 | 68 609.22 (approx.) |
+| 14 | Services (dom.) | | | | | | | | 136 | 5 186 | 2 063.4 | 285.6 | | | | | | | | | 23 175 (approx.) |
+| 15 | Non-tradables (dom.) | | | | | | | 8 700 | | | | | | | | | | | | | 8 700 |
+| 16 | Agriculture (export) | | | | | | | | | | | | | | | 1 890 | | | | | 1 890 |
+| 17 | Industry (export) | | | | | | | | | | | | | | | 8 160 | | | | | 8 160 |
+| 18 | Services (export) | | | | | | | | | | | | | | | 2 200 | | | | | 2 200 |
+| 19 | Accumulation | | | 2 842 | 2 470 | 2 910 | 1 709.46 | 7 424 | | | | | | | | | | | | | 17 355.46 |
+| **Total** | | 28 860 | 18 500 | 29 000 | 13 000 | 6 475 | 10 549.46 | 19 674 | 9 000 | 54 400 | 22 000 | 8 700 | 7 769.24 | 68 609.22 | 23 175 | 8 700 | 1 890 | 8 160 | 2 200 | 17 355.46 | |
+
+*(Some intermediate-consumption entries under accounts 12–14 include figures for capital/labour-household and firm consumption columns not separately itemised here — refer to your source table for the full cell-by-cell breakdown; the totals row and column reconcile against it.)*
+
+### Reading What Changed from Model 0 to EXTER
+
+Compared with Model 0's five accounts, EXTER adds three structural features:
+
+1. **Split households and firms** — labour-endowed households (row/column 3) and capital-endowed households (4) receive factor income separately, and firms (5) sit between capital and its owners, paying dividends ($DIV$) and retaining some earnings.
+2. **A government sector** (6) — collecting direct taxes ($DTH_{HW}, DTH_{HC}, DTF$) and indirect taxes ($TI_A, TI_I, TI_S$), paying transfers ($TG$) and consuming ($G$).
+3. **A genuinely open trade structure** — each tradable sector (Agriculture, Industry, Services) is split into a domestic-market row/column (12–14) and an export-market row/column (16–18), fed by the Armington and CET equations described in Part 12, with imports ($IM$) and capital repatriation ($RK_{row}, DIV_{row}$) flowing to and from the Rest of World (7).
+
+The accumulation account (19) closes the model by collecting all savings — household, firm, government, and foreign (the current account balance, $CAB$) — and channelling them into investment demand ($IV_A, IV_I$) in the domestic market.
+
+---
+
+<ArticleNav
+  prev={{ title: "Part 9: Model 0 — The Twelve Core Equations", href: "/blog/introduction-to-cge-modelling-part-9" }}
+  next={{ title: "Part 11: CES Elasticities of Substitution", href: "/blog/introduction-to-cge-modelling-part-11" }}
+/>
