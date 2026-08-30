@@ -200,6 +200,32 @@ This single numerical SAM is what the twelve equations below are calibrated agai
 - Equations 9–11: accounting identities balance
 - Equation 12: sets the price baseline
 
+### Working Through the Equations
+
+The table above states each relationship; this section shows where three of them come from, and works two through with the benchmark numbers.
+
+**Equations 1–3 — production and factor demand.** Firms choose $LD_i$ and $KD_i$ to minimize the cost $w \cdot LD_i + r_i \cdot KD_i$ of producing a target output $XS_i$ under the Cobb-Douglas technology in Equation 1. The first-order condition of that cost-minimization problem gives Equations 2 and 3 directly: each factor's demand equals its cost share of total revenue, divided by its own price.
+
+Reading the shares straight off the benchmark SAM:
+
+$$\alpha_G = \frac{WL_G}{VX_G} = \frac{13{,}320}{26{,}100} \approx 0.51, \qquad 1-\alpha_G = \frac{RK_G}{VX_G} = \frac{12{,}780}{26{,}100} \approx 0.49$$
+
+$$\alpha_S = \frac{WL_S}{VX_S} = \frac{15{,}540}{21{,}260} \approx 0.73, \qquad 1-\alpha_S = \frac{RK_S}{VX_S} = \frac{5{,}720}{21{,}260} \approx 0.27$$
+
+With the wage numeraire $w=1$, Goods' labour demand collapses to $LD_G = \alpha_G \cdot P_G \cdot XS_G = WL_G = 13{,}320$ at the benchmark — the equation reproduces the SAM exactly, which is what calibration (Part 4) requires by construction.
+
+**Equation 4 — household income.** Households collect every wage and capital payment made anywhere in the economy:
+
+$$YH = w \cdot LD_{\text{total}} + \sum_i r_i KD_i = 28{,}860 + 18{,}500 = 47{,}360$$
+
+**Equation 5 — where $C_i = \beta_i \cdot YH$ comes from.** Households are assumed to maximize a Cobb-Douglas utility function over the two goods, $U = C_G^{\beta_G} \cdot C_S^{\beta_S}$, subject to the budget constraint $P_G C_G + P_S C_S = YH$. Setting up the Lagrangian, taking the first-order condition on each $C_i$, and eliminating the multiplier collapses to a strikingly simple result: households spend a *fixed share* $\beta_i$ of income on each good, regardless of price. This is the same trick behind Cobb-Douglas production — constant output elasticities become constant expenditure shares. The shares $\beta_i$ are read straight off the SAM's consumption column ($E_G, E_S$) divided by $YH$, and by construction $\sum_i \beta_i = 1$.
+
+**Equations 6–8 — market clearing.** $XS_i = C_i + IC_i$: output covers final consumption plus what other sectors use as an input (intermediate consumption). $L^S = \sum_i LD_i$ and $K^S = \sum_i KD_i$ are cleared by *prices*, not quantities — if labour demand exceeded supply, the wage $w$ would rise until firms cut back to $L^S$; if capital demand fell short of supply, the return $r_i$ would fall until firms absorbed the rest. At the benchmark, both already hold exactly: $LD_G+LD_S=28{,}860=L^S$ and $KD_G+KD_S=18{,}500=K^S$.
+
+**Equations 9–11 — the identities that must balance.** $VA_i = w\,LD_i + r_i\,KD_i$ restates value added as factor payments: $VA_G = 13{,}320+12{,}780=26{,}100=VX_G$, confirming Goods has no separate profit margin beyond what it pays labour and capital. $YH=E+S$ and $YH=W+R$ are two ways of splitting the same number — by use (spent vs. saved) and by source (wages vs. capital returns). Both reconcile to $YH=47{,}360$ automatically once Equations 1–9 are solved; they're accounting checks on the solution, not additional constraints to solve for.
+
+**Equation 12 — the numeraire.** Covered in full below.
+
 ### Why a Numeraire Is Needed
 
 Without a numeraire, the model is underdetermined: with prices $P_8, P_9, P_{10}, P_{11}, w, r_8, r_9, r_{10}, r_{11}$ as nine unknowns, equations 1–11 only give eight independent equations. Fixing one price — the numeraire — closes the system. Common choices:

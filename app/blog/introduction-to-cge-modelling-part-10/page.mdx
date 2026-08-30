@@ -81,7 +81,7 @@ Model EXTER is the fully-developed end point of the MIMAP sequence (Model 0 → 
 | 3 | Labour-HH | 28 860 | | | | | | 140 | | | | | | | | | | | | | 29 000 |
 | 4 | Capital-HH | | 11 100 | | | 1 900 | | | | | | | | | | | | | | | 13 000 |
 | 5 | Firms | | | | | | 6 475 | | | | | | | | | | | | | | 6 475 |
-| 6 | Government | | | 580 | 650 | 1 296 | | | | | | | 190.24 | 7 069.22 | 675 | | 90 | | | | 10 549.46 |
+| 6 | Government | | | 580 | 650 | 1 295 | | | | | | | 190.24 | 7 069.22 | 675 | | 90 | | | | 10 549.46 |
 | 7 | Rest of World | | 925 | | 370 | | | | | | | | 379 | 15 300 | 2 700 | | | | | | 19 674 |
 | 8 | Agriculture | | | | | | | | | | | | 7 200 | | | | 1 800 | | | | 9 000 |
 | 9 | Industry | | | | | | | | | | | | | 46 240 | | | | 8 160 | | | 54 400 |
@@ -98,6 +98,55 @@ Model EXTER is the fully-developed end point of the MIMAP sequence (Model 0 → 
 | **Total** | | 28 860 | 18 500 | 29 000 | 13 000 | 6 475 | 10 549.46 | 19 674 | 9 000 | 54 400 | 22 000 | 8 700 | 7 769.24 | 68 609.22 | 23 175 | 8 700 | 1 890 | 8 160 | 2 200 | 17 355.46 | |
 
 *(Some intermediate-consumption entries under accounts 12–14 include figures for capital/labour-household and firm consumption columns not separately itemised here — refer to your source table for the full cell-by-cell breakdown; the totals row and column reconcile against it.)*
+
+### Reading the SAM, Block by Block
+
+The same rule from Part 8 applies here: reading **across a row** shows what that account *receives*; reading **down a column** shows what it *pays out*. Below, every figure is read across a row — i.e., as a receipt.
+
+**Factors (Rows 1–2): what Labour and Capital collect**
+
+Row 1 (Labour) receives 5,760 + 7,560 + 8,580 + 6,960 = 28,860 — wages paid by Agriculture, Industry, Services, and Non-tradables respectively. Row 2 (Capital) receives 1,440 + 11,340 + 5,720 = 18,500 from the same three tradable activities; Non-tradables pays no capital return at all, consistent with the "labour-only" note in the symbols table above.
+
+**Households and Firms (Rows 3–5): who owns the factors**
+
+Row 3 (Labour-endowed households) receives 28,860 from the Labour account plus 140 in remittances from the Rest of World, for 29,000 total. Row 4 (Capital-endowed households) receives 11,100 from the Capital account plus 1,900 in dividends from Firms, for 13,000. Row 5 (Firms) receives 6,475 — the capital income Firms collect before passing most of it on to Capital-endowed households as dividends.
+
+**Government (Row 6): tax revenue**
+
+Row 6 (Government) receives 580 (direct tax on Labour-HH) + 650 (direct tax on Capital-HH) + 1,295 (tax on Firms) + 190.24 (indirect tax on Agriculture) + 7,069.22 (indirect tax on Industry) + 675 (indirect tax on Services) + 90 (indirect tax on Non-tradables) = 10,549.46. Notice how lopsided this is: Industry alone supplies two-thirds of all indirect tax revenue.
+
+**Rest of World (Row 7): what foreigners pay Pakistan**
+
+Row 7 (Rest of World) receives 925 (capital repatriated abroad) + 370 (firm payments abroad) + 379 (Agriculture imports) + 15,300 (Industry imports) + 2,700 (Services imports) = 19,674 — money leaving the country to pay for capital returns and imports.
+
+**Activities (Rows 8–11): sales revenue, domestic plus export**
+
+Each activity's row total is its gross output, split between what it sells domestically and what it exports:
+
+| Activity | Domestic sales | Export sales | Total output |
+|---|---|---|---|
+| Agriculture (8) | 7,200 | 1,800 | 9,000 |
+| Industry (9) | 46,240 | 8,160 | 54,400 |
+| Services (10) | 19,800 | 2,200 | 22,000 |
+| Non-tradables (11) | 8,700 | — | 8,700 |
+
+Non-tradables has no export figure at all — there's no column for it, because (as Part 12 covers) it can't be traded internationally by definition.
+
+**Domestic markets (Rows 12–14): who buys the tradable goods**
+
+Each domestic-good row is bought by two kinds of buyer: households consuming it directly, and activities using it as an intermediate input (plus, for Industry, a large slice going to investment). For Industry's domestic good (Row 13, total 68,609.22 approx.): Agriculture buys 1,504 as an input, Industry buys 29,616.81 of its own output back as an input (steel used to make more steel-based goods), Services buys 5,459.45, Non-tradables buys 1,336.05, and 15,619.91 goes to investment (Accumulation) — machinery and equipment. The remainder, roughly 15,000, is direct household consumption. Non-tradables' own domestic good (Row 15, 8,700) is different: it's absorbed entirely within the local economy, with no investment or export component at all.
+
+**Export markets (Rows 16–18): what leaves the country**
+
+These rows are the simplest — each is a single number flowing to the Rest of World: Agriculture exports 1,890, Industry 8,160, Services 2,200. (Compare this to the *domestic-market* sales rows above, which are $8{,}700 - 1{,}890$ etc. smaller than each activity's gross output — the export columns 16–18 and domestic columns 12–14 together account for a sector's full output.)
+
+**Accumulation (Row 19): total savings**
+
+Row 19 receives 2,842 (Labour-HH savings) + 2,470 (Capital-HH savings) + 2,910 (Firm savings) + 1,709.46 (Government savings) + 7,424 (foreign savings, i.e. the current account) = 17,355.46 — every institution's unspent income, pooled and ready to fund investment.
+
+**The balance check**
+
+Every one of these row totals has a matching column total elsewhere in the SAM — Labour's 28,860 in receipts is exactly matched by 28,860 in payments (all of it passed on to Labour-HH); Government's 10,549.46 in tax revenue is matched by 10,549.46 in transfers, consumption, and savings. That row-equals-column balance, checked account by account, is what confirms the SAM is internally consistent before it's used to calibrate the model.
 
 ### Reading What Changed from Model 0 to EXTER
 
