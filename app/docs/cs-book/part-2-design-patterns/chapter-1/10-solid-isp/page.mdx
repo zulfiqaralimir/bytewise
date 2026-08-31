@@ -21,6 +21,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { Callout } from "@/app/components/Callout";
+import { Revision } from "@/app/components/Revision";
 
 *Clients should not be forced to depend on interfaces they do not use*
 
@@ -58,12 +59,12 @@ class Order(ABC):
 **Technical:** `Order` is an interface — a contract. Any class inheriting from it **must** implement `execute()`, or Python refuses to let you create it.
 
 <Callout type="tip" title="🗣️ Conversational">
-Think of `Order` as a form every "kind of order" must fill out. Right now, the form only asks one question: "can you execute?" That's fine — small, focused forms are good.
+Think of `Order` as a form every "kind of order" must fill out. Right now, the form only asks one question: "can you execute?" That's fine — <Revision>small, focused forms are good</Revision>.
 </Callout>
 
 ### Step 2 — What happens when the form gets too big (the problem ISP fixes)
 
-Now imagine someone "improves" the `Order` interface by bundling in everything an order might ever need:
+Now imagine someone "improves" the `Order` interface by <Revision>bundling in everything an order might ever need</Revision>:
 
 ```python
 class Order(ABC):
@@ -80,7 +81,7 @@ class Order(ABC):
         pass
 ```
 
-**Technical:** Every class that inherits `Order` is now forced to implement `execute()`, `cancel()`, AND `refund()` — even if a specific kind of order has no real concept of "refund."
+**Technical:** Every class that inherits `Order` is <Revision>now forced to implement</Revision> `execute()`, `cancel()`, AND `refund()` — even if a specific kind of order has no real concept of "refund."
 
 <Callout type="tip" title="🗣️ Conversational">
 This is the job application form again — now every "kind of order" has to answer questions that might not even apply to it.
