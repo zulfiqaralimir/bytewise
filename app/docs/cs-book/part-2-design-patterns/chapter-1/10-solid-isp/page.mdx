@@ -1,0 +1,176 @@
+export const metadata = {
+  title: "SOLID Principles — Interface Segregation (ISP) — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 10 of LLD From First Principles — deriving the Interface Segregation Principle from a bloated Order interface, showing how ISP violations cause LSP violations.",
+  keywords: [
+    "SOLID principles",
+    "interface segregation principle",
+    "ISP",
+    "low level design",
+    "LLD",
+    "object oriented design",
+    "python classes",
+    "abstract base class",
+  ],
+  openGraph: {
+    title: "SOLID Principles — Interface Segregation (ISP) — ByteWise CS Book",
+    description:
+      "Clients should not be forced to depend on interfaces they do not use.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+*Clients should not be forced to depend on interfaces they do not use*
+
+## Section 10: SOLID Principles — Interface Segregation (ISP)
+
+**OOP Principles Used:** Abstraction (Type 2 — interfaces)
+
+### Start with an everyday picture: a job application form
+
+Imagine applying for a simple cashier job. But the application form also asks you to fill in:
+
+- Years of forklift certification
+- Programming languages you know
+- Management experience
+
+None of this has anything to do with being a cashier. You're forced to deal with questions that don't apply to your actual job.
+
+<Callout type="tip" title="🗣️ Conversational">
+That form is badly designed — it should only ask what's actually relevant to the cashier role, not bundle in everything from every possible job.
+</Callout>
+
+### Step 1 — Recall the interface idea (Abstraction Type 2)
+
+Back in Abstraction, you learned this:
+
+```python
+from abc import ABC, abstractmethod
+
+class Order(ABC):
+    @abstractmethod
+    def execute(self):
+        pass
+```
+
+**Technical:** `Order` is an interface — a contract. Any class inheriting from it **must** implement `execute()`, or Python refuses to let you create it.
+
+<Callout type="tip" title="🗣️ Conversational">
+Think of `Order` as a form every "kind of order" must fill out. Right now, the form only asks one question: "can you execute?" That's fine — small, focused forms are good.
+</Callout>
+
+### Step 2 — What happens when the form gets too big (the problem ISP fixes)
+
+Now imagine someone "improves" the `Order` interface by bundling in everything an order might ever need:
+
+```python
+class Order(ABC):
+    @abstractmethod
+    def execute(self):
+        pass
+
+    @abstractmethod
+    def cancel(self):
+        pass
+
+    @abstractmethod
+    def refund(self):
+        pass
+```
+
+**Technical:** Every class that inherits `Order` is now forced to implement `execute()`, `cancel()`, AND `refund()` — even if a specific kind of order has no real concept of "refund."
+
+<Callout type="tip" title="🗣️ Conversational">
+This is the job application form again — now every "kind of order" has to answer questions that might not even apply to it.
+</Callout>
+
+### Step 3 — Watch what this forces you to do (this is the actual pain)
+
+```python
+class MarketOrder(Order):
+    def execute(self):
+        print("Market order executed")
+
+    def cancel(self):
+        print("Market order cancelled")
+
+    def refund(self):
+        raise Exception("Market orders can't be refunded!")   # forced to write this, even though it makes no sense
+```
+
+<Callout type="warning" title="⚠️ What's Wrong Here">
+- `MarketOrder` doesn't actually support refunds — but because `Order` demands `refund()` from everyone, `MarketOrder` is **forced** to write a method for something it can't really do.
+- The only thing it can do is throw an error inside `refund()` — which is exactly the same broken-promise problem you saw with `CancelledOrder` in LSP.
+- **This is the real insight: ISP violations are a common CAUSE of LSP violations.** A bloated interface forces classes to fake support for things they don't actually have, which then breaks substitutability.
+</Callout>
+
+### Step 4 — The fix: split the big interface into small, focused ones
+
+**Technical:** Instead of one large interface demanding everything, define several small interfaces, each covering one capability. A class only implements the interfaces that actually apply to it.
+
+```python
+class Executable(ABC):
+    @abstractmethod
+    def execute(self):
+        pass
+
+class Cancellable(ABC):
+    @abstractmethod
+    def cancel(self):
+        pass
+
+class Refundable(ABC):
+    @abstractmethod
+    def refund(self):
+        pass
+
+
+class MarketOrder(Executable, Cancellable):   # only implements what it actually supports
+    def execute(self):
+        print("Market order executed")
+
+    def cancel(self):
+        print("Market order cancelled")
+
+
+class LimitOrder(Executable, Cancellable, Refundable):   # this one genuinely supports refund
+    def execute(self):
+        print("Limit order executed")
+
+    def cancel(self):
+        print("Limit order cancelled")
+
+    def refund(self):
+        print("Limit order refunded")
+```
+
+<Callout type="tip" title="🗣️ Conversational">
+Now it's like separate, small forms instead of one giant one — a "can you execute?" form, a "can you cancel?" form, a "can you refund?" form. `MarketOrder` only fills out the forms that actually apply to it. It's never forced to lie about a capability it doesn't have.
+</Callout>
+
+### The formal definition
+
+**Technical:** Clients should not be forced to depend on interfaces they do not use. A class should only be required to implement the methods that are actually relevant to it — large, general-purpose interfaces should be split into smaller, role-specific ones.
+
+<Callout type="tip" title="🗣️ Conversational">
+Don't make one giant interface that forces every class to implement things it doesn't need. Break it into small, focused interfaces instead, and let each class pick only the ones it genuinely supports.
+</Callout>
+
+### How this connects to LSP
+
+<Callout type="info" title="🗣️ Conversational">
+Remember `CancelledOrder.execute()` throwing an error because it was forced to pretend it could execute? `MarketOrder.refund()` throwing an error is the exact same shape of bug — caused by an interface that was too big. ISP is really a *prevention* for the kind of broken promise LSP warns you about.
+</Callout>
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+- In your own words — what was wrong with the big `Order` interface demanding `execute()`, `cancel()`, and `refund()` from every class?
+- How does splitting it into `Executable`, `Cancellable`, `Refundable` fix the problem?
+- Why is an ISP violation often the root cause of an LSP violation?
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/9-solid-lsp", title: "Section 9: SOLID — Liskov Substitution" }}
+  next={null}
+/>
