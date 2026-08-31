@@ -132,6 +132,921 @@ Instead of forcing `CancelledOrder` to pretend it can execute at all, only put `
 - Which two OOP pillars does LSP sit directly on top of, and why does LSP have nothing to protect without them?
 </Callout>
 
+## Addendum: A Simple Explanation
+
+### Liskov Substitution Principle (LSP)
+
+The **Liskov Substitution Principle (LSP)** is the third principle of the **SOLID** principles of object-oriented programming.
+
+It can sound complicated at first, but the basic idea is very simple:
+
+> **If a function is designed to work with a parent class, we should be able to give it an object of a child class without breaking the program or changing the expected behavior.**
+
+The three important words to understand are:
+
+* **Superclass** → parent class
+* **Subclass** → child class
+* **Substitution** → replacing the parent object with a child object
+
+---
+
+### 1. First, Understand Classes and Objects
+
+Before understanding LSP, we need to understand a small Python concept.
+
+Consider:
+
+```python
+class Animal:
+    def make_sound(self):
+        print("Animal makes a sound")
+```
+
+Here, `Animal` is a **class**.
+
+A class is like a **blueprint** for creating objects.
+
+We can create an object from this class:
+
+```python
+animal = Animal()
+```
+
+Here there are two different things:
+
+```text
+animal = Animal()
+   ↑          ↑
+variable     class
+```
+
+* `Animal` → class
+* `animal` → variable that refers to the object created from `Animal`
+* `Animal()` → creates an object from the `Animal` class
+
+We can then use the object:
+
+```python
+animal.make_sound()
+```
+
+Output:
+
+```text
+Animal makes a sound
+```
+
+---
+
+### 2. Superclass
+
+A **superclass** is simply a **parent class**.
+
+For example:
+
+```python
+class Animal:
+    def make_sound(self):
+        print("Animal makes a sound")
+```
+
+Here:
+
+```text
+Animal
+```
+
+is the superclass.
+
+You may also hear these terms:
+
+* Parent class
+* Base class
+* Superclass
+
+They are referring to the same general idea.
+
+---
+
+### 3. Subclass
+
+A **subclass** is a **child class** that inherits from another class.
+
+For example:
+
+```python
+class Dog(Animal):
+    pass
+```
+
+The important part is:
+
+```python
+Dog(Animal)
+```
+
+This means:
+
+> `Dog` inherits from `Animal`.
+
+So the relationship is:
+
+```text
+        Animal
+       (Superclass)
+           ↓
+          Dog
+       (Subclass)
+```
+
+Because `Dog` inherits from `Animal`, it gets the methods of `Animal`.
+
+Therefore:
+
+```python
+dog = Dog()
+
+dog.make_sound()
+```
+
+works even though we never wrote `make_sound()` inside `Dog`.
+
+Python finds the method in the parent class, `Animal`.
+
+---
+
+### 4. A Subclass Can Override a Method
+
+A child class can also provide its own implementation of a method.
+
+For example:
+
+```python
+class Animal:
+    def make_sound(self):
+        print("Animal makes a sound")
+
+
+class Dog(Animal):
+    def make_sound(self):
+        print("Woof!")
+```
+
+Now:
+
+```python
+animal = Animal()
+animal.make_sound()
+```
+
+produces:
+
+```text
+Animal makes a sound
+```
+
+But:
+
+```python
+dog = Dog()
+dog.make_sound()
+```
+
+produces:
+
+```text
+Woof!
+```
+
+The `Dog` class **overrode** the `make_sound()` method.
+
+This is completely normal.
+
+The important thing is that the `Dog` still provides the behavior that an `Animal` is expected to provide: it can `make_sound()`.
+
+---
+
+### 5. Now Let's Understand Substitution
+
+Suppose we write a function:
+
+```python
+def make_animal_sound(animal):
+    animal.make_sound()
+```
+
+The parameter:
+
+```python
+animal
+```
+
+is simply a **variable name**.
+
+It does not automatically mean that Python has verified that the object is an `Animal`.
+
+The function is essentially saying:
+
+> "Give me an object that has a `make_sound()` behavior, and I will call that method."
+
+We can give it an actual `Animal` object:
+
+```python
+animal = Animal()
+
+make_animal_sound(animal)
+```
+
+This works.
+
+---
+
+### 6. Now Replace Animal with Dog
+
+Here's where LSP becomes interesting.
+
+We can write:
+
+```python
+dog = Dog()
+
+make_animal_sound(dog)
+```
+
+This also works.
+
+Why?
+
+Because `Dog` is a subclass of `Animal`.
+
+The function was designed to work with an `Animal`-type object, and we gave it a `Dog` object instead.
+
+In other words, we **substituted** a `Dog` for an `Animal`.
+
+```text
+Expected:
+
+Animal
+   ↓
+make_animal_sound()
+```
+
+But we provided:
+
+```text
+Dog
+ ↓
+make_animal_sound()
+```
+
+The program still works.
+
+That is **substitution**.
+
+---
+
+### 7. What Does Liskov Substitution Principle Say?
+
+Liskov Substitution Principle says:
+
+> **Objects of a subclass should be able to replace objects of the superclass without breaking the correctness or expected behavior of the program.**
+
+In simpler words:
+
+> **If my code expects a parent, I should be able to give it a child without breaking the code.**
+
+For our example:
+
+```text
+Animal → Superclass
+Dog    → Subclass
+```
+
+If this works:
+
+```python
+make_animal_sound(Animal())
+```
+
+then this should also work correctly:
+
+```python
+make_animal_sound(Dog())
+```
+
+---
+
+### 8. Why Is Behavior Important?
+
+LSP is not simply saying:
+
+> "The child must inherit from the parent."
+
+Inheritance by itself is not enough.
+
+The important question is:
+
+> **Can the child behave in a way that the code expects from the parent?**
+
+For example:
+
+```python
+def make_animal_sound(animal):
+    animal.make_sound()
+```
+
+This function expects an object that can perform:
+
+```python
+animal.make_sound()
+```
+
+Our `Dog` can do that:
+
+```python
+class Dog(Animal):
+    def make_sound(self):
+        print("Woof!")
+```
+
+Therefore, `Dog` is a suitable substitute in this situation.
+
+---
+
+### 9. Complete Simple Example
+
+Here is the complete example:
+
+```python
+class Animal:
+    def make_sound(self):
+        print("Animal makes a sound")
+
+
+class Dog(Animal):
+    def make_sound(self):
+        print("Woof!")
+
+
+def make_animal_sound(animal):
+    animal.make_sound()
+
+
+animal = Animal()
+make_animal_sound(animal)
+
+dog = Dog()
+make_animal_sound(dog)
+```
+
+Output:
+
+```text
+Animal makes a sound
+Woof!
+```
+
+Notice that we did **not** need to change the function:
+
+```python
+def make_animal_sound(animal):
+    animal.make_sound()
+```
+
+It works with both:
+
+```python
+Animal()
+```
+
+and:
+
+```python
+Dog()
+```
+
+This is the idea behind LSP.
+
+---
+
+### 10. Understanding `animal` vs `Animal`
+
+This distinction is very important in Python.
+
+Look at:
+
+```python
+animal = Animal()
+```
+
+Here:
+
+```text
+Animal
+```
+
+is the **class**.
+
+And:
+
+```text
+animal
+```
+
+is a **variable** referring to the object created from that class.
+
+So:
+
+```text
+Animal → class / blueprint
+
+animal → variable referring to an object
+```
+
+Similarly:
+
+```python
+dog = Dog()
+```
+
+means:
+
+```text
+Dog → class
+
+dog → variable referring to a Dog object
+```
+
+---
+
+#### What About This?
+
+```python
+def make_animal_sound(animal):
+```
+
+The lowercase `animal` is just a **parameter name**.
+
+It doesn't automatically mean:
+
+> "`animal` must be an `Animal`."
+
+For example, we could write:
+
+```python
+def make_animal_sound(x):
+    x.make_sound()
+```
+
+and then:
+
+```python
+dog = Dog()
+
+make_animal_sound(dog)
+```
+
+Inside the function, `x` refers to the Dog object.
+
+So the name doesn't determine the object's type.
+
+The object that we pass to the function determines what the parameter refers to.
+
+---
+
+### 11. Visualizing What Happens
+
+Consider:
+
+```python
+dog = Dog()
+
+make_animal_sound(dog)
+```
+
+Think of it like this:
+
+```text
+Outside the function:
+
+dog
+ │
+ ▼
+Dog object
+```
+
+Then we pass that object:
+
+```text
+dog
+ │
+ ▼
+Dog object
+ │
+ │ passed into function
+ ▼
+animal
+```
+
+So inside:
+
+```python
+def make_animal_sound(animal):
+    animal.make_sound()
+```
+
+the variable `animal` refers to the **Dog object**.
+
+Therefore:
+
+```python
+animal.make_sound()
+```
+
+actually calls:
+
+```text
+Dog object's make_sound()
+```
+
+which prints:
+
+```text
+Woof!
+```
+
+---
+
+### 12. The Three Important Terms
+
+Now we can clearly define the three terms.
+
+#### Superclass
+
+The **parent class** from which another class inherits.
+
+```python
+class Animal:
+    ...
+```
+
+Here:
+
+```text
+Animal = Superclass
+```
+
+---
+
+#### Subclass
+
+The **child class** that inherits from the superclass.
+
+```python
+class Dog(Animal):
+    ...
+```
+
+Here:
+
+```text
+Dog = Subclass
+```
+
+---
+
+#### Substitution
+
+Using an object of the subclass **where an object of the superclass is expected**.
+
+For example:
+
+```python
+make_animal_sound(Dog())
+```
+
+The function is designed around the behavior of an `Animal`, but we provide a `Dog`.
+
+```text
+Animal expected
+     ↓
+Dog provided
+```
+
+That is **substitution**.
+
+---
+
+### 13. LSP in One Diagram
+
+```text
+                 Animal
+              (Superclass)
+                   │
+                   │ inheritance
+                   ▼
+                  Dog
+              (Subclass)
+                   │
+                   │ create object
+                   ▼
+                Dog()
+                   │
+                   │ substitute
+                   ▼
+        make_animal_sound(animal)
+                   │
+                   ▼
+             animal.make_sound()
+                   │
+                   ▼
+                 "Woof!"
+```
+
+The program continues to work.
+
+Therefore, `Dog` is safely substitutable for `Animal` in this situation.
+
+---
+
+### 14. What Would Violate LSP?
+
+Now let's look at a famous example involving **Rectangle and Square**.
+
+This example is useful because it shows that simply saying:
+
+> "A Square is a Rectangle"
+
+doesn't automatically mean that `Square` can safely substitute for `Rectangle` in every program design.
+
+---
+
+### 15. Rectangle and Square Example
+
+Suppose we have:
+
+```python
+class Rectangle:
+    def set_width(self, width):
+        self.width = width
+
+    def set_height(self, height):
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+```
+
+We can use it like this:
+
+```python
+rectangle = Rectangle()
+
+rectangle.set_width(10)
+rectangle.set_height(5)
+
+print(rectangle.area())
+```
+
+Output:
+
+```text
+50
+```
+
+Because:
+
+```text
+width  = 10
+height = 5
+
+area = 10 × 5
+     = 50
+```
+
+---
+
+### 16. Now Create a Square
+
+Mathematically, a square is a special type of rectangle.
+
+So we might write:
+
+```python
+class Square(Rectangle):
+    def set_width(self, width):
+        self.width = width
+        self.height = width
+
+    def set_height(self, height):
+        self.width = height
+        self.height = height
+```
+
+The inheritance relationship is:
+
+```text
+        Rectangle
+       (Superclass)
+            ↓
+         Square
+       (Subclass)
+```
+
+At first, this looks perfectly reasonable.
+
+But now we have a problem.
+
+---
+
+### 17. A Function Designed for Rectangle
+
+Suppose we have:
+
+```python
+def make_rectangle_10_by_5(rectangle):
+    rectangle.set_width(10)
+    rectangle.set_height(5)
+
+    print(rectangle.area())
+```
+
+With a normal Rectangle:
+
+```python
+rectangle = Rectangle()
+
+make_rectangle_10_by_5(rectangle)
+```
+
+we get:
+
+```text
+50
+```
+
+That's exactly what we expect.
+
+---
+
+### 18. Now Substitute Square
+
+Let's replace the Rectangle with a Square:
+
+```python
+square = Square()
+
+make_rectangle_10_by_5(square)
+```
+
+Let's follow what happens.
+
+First:
+
+```python
+rectangle.set_width(10)
+```
+
+Remember, inside the function, `rectangle` now refers to the **Square object**.
+
+The Square's `set_width()` does this:
+
+```python
+self.width = 10
+self.height = 10
+```
+
+So:
+
+```text
+width  = 10
+height = 10
+```
+
+Then the function executes:
+
+```python
+rectangle.set_height(5)
+```
+
+But this is the Square's `set_height()`:
+
+```python
+self.width = 5
+self.height = 5
+```
+
+Now:
+
+```text
+width  = 5
+height = 5
+```
+
+Therefore:
+
+```python
+rectangle.area()
+```
+
+produces:
+
+```text
+25
+```
+
+Instead of the expected:
+
+```text
+50
+```
+
+---
+
+### 19. Why Is This an LSP Violation?
+
+The function was written with the expectation that it is working with a Rectangle:
+
+```python
+def make_rectangle_10_by_5(rectangle):
+```
+
+For a normal Rectangle:
+
+```text
+width  = 10
+height = 5
+area   = 50
+```
+
+But when we substitute a Square:
+
+```text
+width  = 5
+height = 5
+area   = 25
+```
+
+The Square changes the behavior that the function relies upon.
+
+Therefore, the Square cannot safely substitute for the Rectangle **in this particular design**.
+
+That violates the **Liskov Substitution Principle**.
+
+---
+
+### 20. The Important Lesson from Rectangle and Square
+
+The problem isn't simply:
+
+```text
+Square inherits from Rectangle
+```
+
+The problem is:
+
+```text
+The behavior expected from Rectangle
+             ↓
+       is changed by
+             ↓
+          Square
+```
+
+So LSP is fundamentally about **preserving expected behavior when substitution occurs**.
+
+---
+
+### 21. Final Mental Model
+
+Remember these four things:
+
+```text
+Superclass = Parent
+Subclass   = Child
+Inheritance = Child gets/extends behavior from Parent
+Substitution = Using Child where Parent is expected
+```
+
+And LSP:
+
+> **A subclass should be usable wherever its superclass is expected, without breaking the program's expected behavior.**
+
+#### The simplest possible version:
+
+```text
+Parent expected
+     ↓
+Child provided
+     ↓
+Does the program still behave correctly?
+     ↓
+YES → Good LSP
+NO  → LSP violation
+```
+
+That is the core idea of the **Liskov Substitution Principle**.
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp", title: "Section 8: SOLID — Open/Closed" }}
   next={null}
