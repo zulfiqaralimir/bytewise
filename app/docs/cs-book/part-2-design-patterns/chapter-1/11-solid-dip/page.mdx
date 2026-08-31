@@ -21,6 +21,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { Callout } from "@/app/components/Callout";
+import { Revision } from "@/app/components/Revision";
 
 *High-level modules should not depend on low-level modules — both should depend on abstractions*
 
@@ -32,7 +33,7 @@ import { Callout } from "@/app/components/Callout";
 
 Imagine your lamp was **hardwired directly into your wall** — actual wires soldered straight from the wall into the lamp. If you ever wanted a different lamp, an electrician would need to rewire your wall.
 
-Instead, your wall has a **socket** — a standard plug interface. Any lamp, toaster, or charger that fits the plug shape can be plugged in. The wall doesn't care *which specific device* is plugged in — it only cares that the device follows the plug's shape (the "contract").
+Instead, your wall has a **socket** — a standard plug interface. Any lamp, toaster, or charger that fits the plug shape can be plugged in. <Revision>The wall doesn't care *which specific device* is plugged in — it only cares that the device follows the plug's shape (the "contract").</Revision>
 
 <Callout type="tip" title="🗣️ Conversational">
 The wall depends on "anything that fits a standard plug," not on "this one specific lamp." That's the whole idea of DIP.
