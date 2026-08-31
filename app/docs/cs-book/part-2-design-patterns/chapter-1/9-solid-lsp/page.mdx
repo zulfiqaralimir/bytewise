@@ -24,6 +24,10 @@ import { Callout } from "@/app/components/Callout";
 
 *A subclass must be a safe, surprise-free substitute for its base class*
 
+## LSP Depends on the Parent Class Contract
+
+*It depends on the **contract (expected behavior)** of `Animal`—if `Animal` promises that `make_sound()` must produce an actual sound, then `SilentAnimal` violates LSP; otherwise, it may not. Here, **`Animal` is the parent/superclass**, **`SilentAnimal` is the child/subclass**, and the **contract** means the expected behavior or promise that the parent class establishes for its subclasses to follow.*
+
 ## Section 9: SOLID Principles — Liskov Substitution (LSP)
 
 **OOP Principles Used:** Inheritance, Polymorphism
@@ -1115,12 +1119,6 @@ make_animal_sound(silent_animal)
 ```
 
 So yes — **the Python syntax and execution are correct; the question is whether the example represents an LSP violation, which depends on the contract of `Animal`.**
-
----
-
-### LSP and the Contract of the Parent Class
-
-It depends on the **contract (expected behavior)** of `Animal`—if `Animal` promises that `make_sound()` must produce an actual sound, then `SilentAnimal` violates LSP; otherwise, it may not. Here, **`Animal` is the parent/superclass**, **`SilentAnimal` is the child/subclass**, and the **contract** means the expected behavior or promise that the parent class establishes for its subclasses to follow.
 
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp", title: "Section 8: SOLID — Open/Closed" }}
