@@ -104,7 +104,7 @@ class MarketOrder(Order):
 <Callout type="warning" title="⚠️ What's Wrong Here">
 - `MarketOrder` doesn't actually support refunds — but because `Order` demands `refund()` from everyone, `MarketOrder` is **forced** to write a method for something it can't really do.
 - The only thing it can do is throw an error inside `refund()` — which is exactly the same broken-promise problem you saw with `CancelledOrder` in LSP.
-- **This is the real insight: ISP violations are a common CAUSE of LSP violations.** A bloated interface forces classes to fake support for things they don't actually have, which then breaks substitutability.
+- **This is the real insight:** <Revision>ISP violations are a common CAUSE of LSP violations.</Revision> A bloated interface forces classes to fake support for things they don't actually have, which then breaks substitutability.
 </Callout>
 
 ### Step 4 — The fix: split the big interface into small, focused ones
