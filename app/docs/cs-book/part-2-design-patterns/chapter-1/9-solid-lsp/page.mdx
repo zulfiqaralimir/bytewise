@@ -1047,6 +1047,75 @@ NO  → LSP violation
 
 That is the core idea of the **Liskov Substitution Principle**.
 
+---
+
+### 22. Is `SilentAnimal` an LSP Violation?
+
+Yes. **Technically, `make_animal_sound(SilentAnimal())` is valid Python code** — assuming `SilentAnimal` has been defined.
+
+For example:
+
+```python
+class Animal:
+    def make_sound(self):
+        print("Animal makes a sound")
+
+
+class SilentAnimal(Animal):
+    def make_sound(self):
+        print("I don't make a sound")
+
+
+def make_animal_sound(animal):
+    animal.make_sound()
+
+
+make_animal_sound(SilentAnimal())
+```
+
+This will run and output:
+
+```text
+I don't make a sound
+```
+
+#### But there is an important distinction
+
+The code is **technically valid**, but whether it is an **LSP violation** depends on what behavior the program expects from `Animal`.
+
+If `Animal` simply means:
+
+> "An object that has a `make_sound()` method"
+
+then `SilentAnimal` may be perfectly fine.
+
+But if the design's contract is:
+
+> "Every `Animal` must produce an actual sound when `make_sound()` is called"
+
+then `SilentAnimal` violates that expectation.
+
+So I would **not use the `SilentAnimal` example as the clearest beginner example of LSP**, because it introduces ambiguity about what `make_sound()` is supposed to guarantee.
+
+The **Rectangle → Square example is much better** for demonstrating a genuine behavioral substitution problem.
+
+And one more technical point: this:
+
+```python
+make_animal_sound(SilentAnimal())
+```
+
+works because `SilentAnimal()` creates an object, and that object is passed as the argument to `make_animal_sound()`.
+
+It's equivalent in two steps to:
+
+```python
+silent_animal = SilentAnimal()
+make_animal_sound(silent_animal)
+```
+
+So yes — **the Python syntax and execution are correct; the question is whether the example represents an LSP violation, which depends on the contract of `Animal`.**
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp", title: "Section 8: SOLID — Open/Closed" }}
   next={null}
