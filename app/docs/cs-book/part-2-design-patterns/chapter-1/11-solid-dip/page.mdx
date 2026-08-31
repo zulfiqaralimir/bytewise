@@ -1,0 +1,177 @@
+export const metadata = {
+  title: "SOLID Principles — Dependency Inversion (DIP) — ByteWise CS Book",
+  description:
+    "Chapter 1, Section 11 of LLD From First Principles — deriving the Dependency Inversion Principle from a hardwired OrderProcessor/EmailNotifier, using the Notifier interface to flip the dependency direction.",
+  keywords: [
+    "SOLID principles",
+    "dependency inversion principle",
+    "DIP",
+    "low level design",
+    "LLD",
+    "object oriented design",
+    "python classes",
+    "cpp classes",
+  ],
+  openGraph: {
+    title: "SOLID Principles — Dependency Inversion (DIP) — ByteWise CS Book",
+    description:
+      "High-level modules should not depend on low-level modules — both should depend on abstractions.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Callout } from "@/app/components/Callout";
+
+*High-level modules should not depend on low-level modules — both should depend on abstractions*
+
+## Dependency Inversion (DIP)
+
+**OOP Principles Used:** Abstraction (Type 2 — interfaces), Polymorphism
+
+### Start with an everyday picture: a wall socket, not a hardwired wire
+
+Imagine your lamp was **hardwired directly into your wall** — actual wires soldered straight from the wall into the lamp. If you ever wanted a different lamp, an electrician would need to rewire your wall.
+
+Instead, your wall has a **socket** — a standard plug interface. Any lamp, toaster, or charger that fits the plug shape can be plugged in. The wall doesn't care *which specific device* is plugged in — it only cares that the device follows the plug's shape (the "contract").
+
+<Callout type="tip" title="🗣️ Conversational">
+The wall depends on "anything that fits a standard plug," not on "this one specific lamp." That's the whole idea of DIP.
+</Callout>
+
+### Step 1 — See the problem first, in code (no DIP yet)
+
+```python
+class EmailNotifier:
+    def send(self, message):
+        print(f"Emailing: {message}")
+
+
+class OrderProcessor:
+    def __init__(self):
+        self.notifier = EmailNotifier()   # hardwired directly to EmailNotifier
+
+    def process(self, order):
+        print("Processing order...")
+        self.notifier.send("Your order was processed!")
+```
+
+**Technical:** `OrderProcessor` directly creates and depends on the concrete class `EmailNotifier`. This is a **hardwired connection** — like the lamp soldered into the wall.
+
+<Callout type="warning" title="⚠️ What's Wrong Here">
+- If tomorrow you also want SMS notifications, or want to swap email for a different provider, you must **open up and edit `OrderProcessor`** — the exact "reopening tested code" problem from Section 0.
+- `OrderProcessor`'s job is supposed to be "process orders" — but it's now also tightly stuck to one specific way of sending notifications. It shouldn't need to know or care about *how* notifications are sent.
+</Callout>
+
+### Step 2 — Recall the tools you already have (Abstraction Type 2 + Polymorphism)
+
+You already know how to solve "many different implementations, one shared contract" — this is exactly what Type 2 Abstraction and Polymorphism are for (you used this in OCP with `TaxStrategy`).
+
+```python
+from abc import ABC, abstractmethod
+
+class Notifier(ABC):
+    @abstractmethod
+    def send(self, message):
+        pass
+
+class EmailNotifier(Notifier):
+    def send(self, message):
+        print(f"Emailing: {message}")
+
+class SMSNotifier(Notifier):
+    def send(self, message):
+        print(f"Texting: {message}")
+```
+
+<Callout type="tip" title="🗣️ Conversational">
+`Notifier` is the "standard plug shape." `EmailNotifier` and `SMSNotifier` are two different devices that both fit that plug shape.
+</Callout>
+
+### Step 3 — Make `OrderProcessor` depend on the plug shape, not the specific device
+
+```python
+class OrderProcessor:
+    def __init__(self, notifier: Notifier):   # depends on the ABSTRACTION, not a specific class
+        self.notifier = notifier
+
+    def process(self, order):
+        print("Processing order...")
+        self.notifier.send("Your order was processed!")
+```
+
+**Using it:**
+```python
+processor1 = OrderProcessor(EmailNotifier())
+processor2 = OrderProcessor(SMSNotifier())
+
+processor1.process(order)   # emails
+processor2.process(order)   # texts — SAME OrderProcessor class, no editing needed
+```
+
+<Callout type="tip" title="🗣️ Conversational">
+`OrderProcessor` no longer cares *which* notifier it gets — email, SMS, or something invented next year (WhatsApp, push notification). It just knows: "whatever you are, you can `.send()` a message." That's Polymorphism doing the actual work here, just like in every pillar before this.
+</Callout>
+
+**Technical:** `OrderProcessor` (a high-level module) no longer depends on `EmailNotifier` (a low-level, concrete module). Both now depend on the `Notifier` abstraction instead.
+
+### The formal definition — and why it's called "inversion"
+
+**Technical:** High-level modules should not depend on low-level modules; both should depend on abstractions. Abstractions should not depend on details; details should depend on abstractions.
+
+<Callout type="tip" title='🗣️ Conversational — why "inversion"?'>
+Normally you'd think the "big important class" (`OrderProcessor`) depends on the "small specific class" (`EmailNotifier`) — that feels like the natural direction. DIP flips (inverts) that: instead, `EmailNotifier` has to conform to what `Notifier` (the abstraction) demands, and `OrderProcessor` only ever talks to `Notifier`. The dependency direction is flipped — the specific class now depends on the shared contract, not the other way around.
+</Callout>
+
+### C++ version
+
+```cpp
+class Notifier {
+public:
+    virtual void send(const std::string& message) = 0;
+    virtual ~Notifier() {}
+};
+
+class EmailNotifier : public Notifier {
+public:
+    void send(const std::string& message) override {
+        std::cout << "Emailing: " << message << std::endl;
+    }
+};
+
+class SMSNotifier : public Notifier {
+public:
+    void send(const std::string& message) override {
+        std::cout << "Texting: " << message << std::endl;
+    }
+};
+
+class OrderProcessor {
+private:
+    Notifier* notifier;   // depends on the abstraction, not a concrete class
+
+public:
+    OrderProcessor(Notifier* n) : notifier(n) {}
+
+    void process() {
+        std::cout << "Processing order..." << std::endl;
+        notifier->send("Your order was processed!");
+    }
+};
+```
+
+### How DIP ties back to everything you've already learned
+
+<Callout type="info" title="🗣️ Conversational">
+DIP is really the payoff of everything so far. Abstraction (Type 2) gave you the "plug shape." Polymorphism let different devices plug into it and just work. OCP told you to add new notifiers without editing old code. DIP tells you exactly *where* to put the abstraction in your class relationships — high-level classes should talk to the plug shape, never to the specific device.
+</Callout>
+
+<Callout type="warning" title="🧠 Check Yourself Before Moving On">
+- In your own words — what does the wall-socket analogy represent, and what does the hardwired-lamp version represent?
+- Why is it called "inversion" — what direction of dependency gets flipped?
+- How does DIP depend on Abstraction (Type 2) and Polymorphism already being in place?
+</Callout>
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/10-solid-isp", title: "Section 10: SOLID — Interface Segregation" }}
+  next={null}
+/>

@@ -47,6 +47,7 @@ const chapters = [
           { title: "Section 8: SOLID — Open/Closed", href: "/docs/cs-book/part-2-design-patterns/chapter-1/8-solid-ocp" },
           { title: "Section 9: SOLID — Liskov Substitution", href: "/docs/cs-book/part-2-design-patterns/chapter-1/9-solid-lsp" },
           { title: "Section 10: SOLID — Interface Segregation", href: "/docs/cs-book/part-2-design-patterns/chapter-1/10-solid-isp" },
+          { title: "Section 11: SOLID — Dependency Inversion", href: "/docs/cs-book/part-2-design-patterns/chapter-1/11-solid-dip" },
         ],
       },
     ],
