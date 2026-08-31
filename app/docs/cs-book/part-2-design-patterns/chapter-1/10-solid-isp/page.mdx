@@ -162,7 +162,7 @@ Don't make one giant interface that forces every class to implement things it do
 ### How this connects to LSP
 
 <Callout type="info" title="🗣️ Conversational">
-Remember `CancelledOrder.execute()` throwing an error because it was forced to pretend it could execute? `MarketOrder.refund()` throwing an error is the exact same shape of bug — caused by an interface that was too big. ISP is really a *prevention* for the kind of broken promise LSP warns you about.
+Remember `CancelledOrder.execute()` throwing an error because it was forced to pretend it could execute? `MarketOrder.refund()` throwing an error is the exact same shape of bug — caused by an interface that was too big. <Revision>ISP is really a *prevention* for the kind of broken promise LSP warns you about.</Revision>
 </Callout>
 
 <Callout type="warning" title="🧠 Check Yourself Before Moving On">
