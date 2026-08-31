@@ -171,6 +171,18 @@ Remember `CancelledOrder.execute()` throwing an error because it was forced to p
 - Why is an ISP violation often the root cause of an LSP violation?
 </Callout>
 
+### Why Is an ISP Violation Often the Root Cause of an LSP Violation?
+
+A bloated interface forces a class to implement a method it has no real behavior for. Since the class can't actually do that thing, its only options are to fake it (return a meaningless value) or reject it (throw an exception) — and rejecting it is exactly what breaks substitutability.
+
+- `Order` demanding `refund()` from everyone is the **ISP violation** — the interface is bigger than what every subclass genuinely needs.
+- `MarketOrder.refund()` throwing an exception instead of behaving like `Order` promises is the **LSP violation** — the subclass can no longer safely substitute for the base class.
+- The second problem exists *because of* the first: if `refund()` had never been forced onto `Order` in the first place, `MarketOrder` would never have needed to write a broken implementation of it.
+
+<Callout type="tip" title="🗣️ Conversational">
+The chain runs one direction: an oversized interface (ISP) creates a method a class can't honestly support, and that unsupportable method is what turns into a broken promise (LSP) the moment someone calls it. Fix the interface size, and the LSP violation often disappears on its own — that's why ISP is best understood as prevention for LSP problems.
+</Callout>
+
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-2-design-patterns/chapter-1/9-solid-lsp", title: "Section 9: SOLID — Liskov Substitution" }}
   next={null}
