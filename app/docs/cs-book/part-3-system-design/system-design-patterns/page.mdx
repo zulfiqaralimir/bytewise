@@ -21,6 +21,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { Figure } from "@/app/components/Figure";
+import { Revision } from "@/app/components/Revision";
 
 # System Design Patterns You Should Master
 
@@ -183,7 +184,7 @@ A circuit breaker sits between two services like a proxy and borrows its name fr
 
 The usual way to track something's status is to store one row with a "current state" column, and overwrite it every time something changes: an order goes from *placed* → *shipped* → *delivered*, mutating the same field each time. That's simple, but at high volume — think a banking system processing constant transactions, or an e-commerce platform placing thousands of orders a second — constantly locking and rewriting that one row becomes a bottleneck.
 
-**Event sourcing** flips the idea: instead of overwriting state, you **append** an immutable event every time something happens, and never delete or edit past events. "Order placed at 12:00." "Ready to ship at 12:05." "Shipped at 12:10." "Delivered at 12:30." If you want to know an order's current status, you read through its event log and take the latest entry. The event log itself becomes your source of truth.
+**Event sourcing** flips the idea: instead of overwriting state, you **append** an immutable event every time something happens, and never delete or edit past events. "Order placed at 12:00." "Ready to ship at 12:05." "Shipped at 12:10." "Delivered at 12:30." If you want to know an order's current status, <Revision>you read through its event log and take the latest entry.</Revision> <Revision>The event log itself becomes your source of truth.</Revision>
 
 <Figure title="Event Sourcing" caption="An append-only, immutable log — nothing here is ever edited or deleted, only added to.">
 <svg viewBox="0 0 660 170" xmlns="http://www.w3.org/2000/svg" width="660" height="170">
@@ -219,9 +220,9 @@ The usual way to track something's status is to store one row with a "current st
 </svg>
 </Figure>
 
-> **DSA / Algorithm Angle:** An event log is structurally a simple **append-only sequence** (think of it as a linked list you only ever add to at the tail). Computing "current state" from it is a classic **fold / reduce** operation — walking the sequence once and combining events into a final result, the same operation used in functional programming and MapReduce-style pipelines. It's also the same underlying idea as a database's **write-ahead log (WAL)**, which many databases already use internally for durability.
+> **DSA / Algorithm Angle:** An event log is structurally a <Revision>simple **append-only sequence** (think of it as a linked list you only ever add to at the tail)</Revision>. Computing "current state" from it is a classic **fold / reduce** operation — walking the sequence once and combining events into a final result, the same operation <Revision>used in functional programming and MapReduce-style pipelines.</Revision> It's also the same underlying idea as a database's **write-ahead log (WAL)**, which many databases already use internally for durability.
 
-> **Where You'll See This:** Banking and accounting systems have used this idea for centuries in the form of double-entry ledgers — balances are computed from a list of transactions, never overwritten. In modern engineering, **Kafka** is the tool most commonly used to build this kind of append-only event backbone, and version control systems like **Git** are, conceptually, event sourcing applied to your codebase — your repository's state is just the replay of every commit.
+> **Where You'll See This:** Banking and accounting systems have used this idea for centuries in the form of <Revision>double-entry ledgers</Revision> — balances are computed from a list of transactions, never overwritten. In modern engineering, **Kafka** is the tool most commonly used to build this kind of <Revision>append-only event backbone, and version control systems like **Git** are,</Revision> conceptually, event sourcing applied to your codebase — your repository's state is just the replay of every commit.
 
 ## 5. CQRS
 
