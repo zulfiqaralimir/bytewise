@@ -121,9 +121,9 @@ Sharing one database is tempting: it's simpler, and services that need the same 
 </svg>
 </Figure>
 
-> **Trade-off:** True isolation and the freedom to pick the right database per service — at the cost of more infrastructure to run, and no more cross-service database joins. If the Post service needs a user's name, it has to *ask* the Auth service for it and combine the results itself.
+> **Trade-off:** True isolation and the freedom to pick the right database per service — <Revision>at the cost of more infrastructure to run, and no more cross-service database joins. If the Post service needs a user's name, it has to *ask* the Auth service for it and combine the results itself.</Revision>
 
-> **DSA / Algorithm Angle:** Since the database can no longer join two tables for you, your application code effectively performs the join itself — conceptually the same as an in-memory **hash join**: fetch one dataset, build a lookup structure (a hash map) keyed by ID, then match it against the second dataset.
+> **DSA / Algorithm Angle:** Since the database can no longer join two tables for you, your application code effectively performs the join itself — <Revision>conceptually the same as an in-memory **hash join**: fetch one dataset, build a lookup structure (a hash map) keyed by ID, then match it against the second dataset.</Revision>
 
 > **Where You'll See This:** Any large microservices platform that's serious about fault isolation uses this — payments, identity, and messaging systems inside big tech companies each keep their own dedicated data store, precisely so a bug in one can never directly corrupt another's data.
 
