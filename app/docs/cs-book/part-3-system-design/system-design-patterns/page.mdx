@@ -25,15 +25,15 @@ import { Revision } from "@/app/components/Revision";
 
 # System Design Patterns You Should Master
 
-Five patterns that show up again and again once a system grows past "one server, one database." No prior programming background needed here — we're talking about how the pieces of a system are arranged, not how to code them.
+<Revision>Five patterns that show up again and again once a system grows past</Revision> "one server, one database." No prior programming background needed here — we're talking about how the pieces of a system are arranged, not how to code them.
 
-Wherever a pattern leans on a computer-science idea underneath — a data structure, an algorithm, a classic technique — you'll see a **DSA / Algorithm Angle** note. And wherever real products use the pattern, you'll see a **Where You'll See This** note.
+<Revision>Wherever a pattern leans on a computer-science idea underneath</Revision> — a data structure, an algorithm, a classic technique — you'll see a **DSA / Algorithm Angle** note. And wherever <Revision>real products use the pattern, you'll see a **Where You'll See This** note.</Revision>
 
 ## 1. Monolith vs. Microservices
 
 **The first fork in the road for almost every system.**
 
-Before you design anything else, you have to answer one question: does your whole backend live in one codebase, one server (a **monolith**), or is it split into small, independent services that each own one job (**microservices**)?
+Before you design anything else, you have to answer one question: <Revision>does your whole backend live in one codebase, one server (a **monolith**), or is it split into small, independent services that each own one job (**microservices**)?</Revision>
 
 In a monolith, your authentication code, your notification code, and your comments code all sit inside the same big program. It's simple to reason about and simple to run. But it has one weakness: if the notification part of the code has a bug and crashes, it can take the *entire server* down with it — comments and login included.
 
@@ -275,11 +275,11 @@ In practice: a write comes in, gets turned into an event, and lands in the event
 
 ## How These Five Connect
 
-1. **Monolith vs. Microservices** — the first decision: one codebase, or many independent services?
+1. **Monolith vs. Microservices** — the first decision: <Revision>one codebase, or many independent services?</Revision>
 2. **Database-per-Service** — if you chose microservices, do the services also get separate databases?
-3. **Circuit Breaker** — now that services depend on each other, how do you stop one failure from cascading?
-4. **Event Sourcing** — at high write volume, how do you record state without a single table becoming a bottleneck?
-5. **CQRS** — once you have an event log, how do you also keep reads fast and separate from writes?
+3. **Circuit Breaker** — <Revision>now that services depend on each other, how do you stop one failure from cascading?</Revision>
+4. **Event Sourcing** — <Revision>at high write volume, how do you record state without a single table becoming a bottleneck?</Revision>
+5. **CQRS** — <Revision>once you have an event log, how do you also keep reads fast and separate from writes?</Revision>
 
 ## Summary
 
