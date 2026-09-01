@@ -1,0 +1,653 @@
+export const metadata = {
+  title: "3.5: Prim's and Kruskal's Algorithms — Greedy Method — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Minimum spanning trees built the greedy way: what a spanning tree is, counting how many spanning trees a graph has, Prim's algorithm growing a tree outward, Kruskal's algorithm sorting and filtering edges, and how to deduce missing edge weights from MST selection order.",
+  keywords: [
+    "prim's algorithm",
+    "kruskal's algorithm",
+    "minimum spanning tree",
+    "spanning tree",
+    "greedy method",
+    "MST",
+    "cycle detection",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 3.5: Prim's and Kruskal's Algorithms",
+    description:
+      "Spanning trees, counting spanning trees, Prim's and Kruskal's algorithms worked step by step, and deducing missing MST edge weights.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 3.5: Prim's and Kruskal's Algorithms — Greedy Method
+
+*Course: Algorithms | Based on the lecture by Abdul Bari*
+
+---
+
+## 1. What Is a Spanning Tree?
+
+Before jumping into minimum-cost spanning trees, it helps to nail down what a **spanning tree** actually is.
+
+Take a graph **G = (V, E)**, where:
+
+- **V** is the set of vertices — say `{1, 2, 3, 4, 5, 6}`
+- **E** is the set of edges — say `{(1,2), (2,3), (3,4), (4,5), (5,6), (6,1)}`
+
+A **spanning tree** is a *subgraph* of G. But not just any subset of the graph — specifically, it's a subset of the **edges**, while **all vertices stay exactly as they are**.
+
+Here's the key rule: if a graph has **n** vertices, a spanning tree must contain:
+
+- **All n vertices**
+- Exactly **n − 1 edges** (not more, not fewer)
+
+So for our 6-vertex graph, a spanning tree needs all 6 vertices but only **5 edges** — meaning exactly one edge from the original graph gets left out.
+
+**Why n − 1 edges?** Because a tree, by definition, cannot contain a cycle. If you included all 6 edges of a 6-vertex cycle graph, you'd trace a path back to your starting vertex — that's a cycle, not a tree. Drop any single edge, and the cycle breaks, leaving a valid tree.
+
+There's also a choice involved — which edge you drop determines which spanning tree you get. Leaving out different edges produces different (but equally valid) spanning trees, as long as every vertex is still reachable and no cycle remains.
+
+**Formal definition:**
+
+```text
+S ⊆ G
+S = (V', E')
+where:
+  V' = V              (same vertices as the original graph)
+  |E'| = |V| - 1       (exactly one fewer edge than vertices)
+```
+
+<Figure caption="The graph G = (V, E) alongside one valid spanning tree of it">
+<svg viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="680" height="360" fill="#fdfdfb"/>
+  <text x="170" y="30" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Graph  G = (V, E)</text>
+  <line x1="149.2" y1="92.0" x2="108.5" y2="115.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="87.7" y1="151.5" x2="87.7" y2="198.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="108.5" y1="234.5" x2="149.2" y2="258.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="190.8" y1="258.0" x2="231.5" y2="234.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="252.3" y1="198.5" x2="252.3" y2="151.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="231.5" y1="115.5" x2="190.8" y2="92.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <circle cx="170.0" cy="80.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="170.0" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="252.2724133595217" cy="127.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="252.2724133595217" y="133.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">6</text>
+  <circle cx="252.2724133595217" cy="222.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="252.2724133595217" y="228.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <circle cx="170.0" cy="270.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="170.0" y="275.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <circle cx="87.72758664047832" cy="222.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="87.72758664047832" y="228.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="87.72758664047834" cy="127.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="87.72758664047834" y="133.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <text x="170" y="320" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">{'V = {1,2,3,4,5,6}     |E| = 6'}</text>
+  <text x="505" y="30" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">One Valid Spanning Tree</text>
+  <line x1="484.2" y1="92.0" x2="443.5" y2="115.5" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <line x1="422.7" y1="151.5" x2="422.7" y2="198.5" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <line x1="443.5" y1="234.5" x2="484.2" y2="258.0" stroke="#c3bfae" strokeWidth="2" strokeDasharray="5,6" opacity="0.6" strokeLinecap="round"/>
+  <line x1="525.8" y1="258.0" x2="566.5" y2="234.5" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <line x1="587.3" y1="198.5" x2="587.3" y2="151.5" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <line x1="566.5" y1="115.5" x2="525.8" y2="92.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <circle cx="505.0" cy="80.0" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="505.0" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="587.2724133595217" cy="127.5" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="587.2724133595217" y="133.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">6</text>
+  <circle cx="587.2724133595217" cy="222.5" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="587.2724133595217" y="228.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <circle cx="505.0" cy="270.0" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="505.0" y="275.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <circle cx="422.7275866404783" cy="222.5" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="422.7275866404783" y="228.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="422.7275866404783" cy="127.5" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="422.7275866404783" y="133.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <text x="505" y="320" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">All 6 vertices kept · edge 3–4 dropped</text>
+  <text x="505" y="340" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#8a2323" textAnchor="middle">|E'| = |V| − 1 = 5     → no cycle</text>
+</svg>
+</Figure>
+
+---
+
+## 2. How Many Spanning Trees Can a Graph Have?
+
+Given a graph, how many *different* spanning trees can you form from it?
+
+### Example 1 — a simple cycle graph (6 vertices, 6 edges)
+
+If the graph has exactly 6 edges and a spanning tree needs 5, you're really just choosing which 5 of the 6 edges to keep (equivalently, which 1 to drop). That's:
+
+```text
+6C5 = 6
+```
+
+So there are exactly **6 possible spanning trees** — you can leave out any one of the 6 edges to form a valid tree.
+
+### Example 2 — adding one extra edge
+
+Now suppose the graph has **7 edges** instead of 6 (an extra edge added across the cycle). You still need to select 5 edges for a spanning tree, so naively:
+
+```text
+7C5 = 21
+```
+
+But not all of these selections are valid! The extra edge creates **two separate cycles** in the graph (since it cuts the original ring into two loops). Any combination that keeps both edges of one of these smaller cycles will fail to be a tree. So we have to subtract out the invalid combinations:
+
+```text
+7C5 - 2 = 19
+```
+
+**General formula:**
+
+```text
+Number of spanning trees = |E| C (|V| - 1)  −  (number of cycles of size < |V|)
+```
+
+In plain words: count how many ways you can choose the right number of edges, then subtract off any selections that sneak in a cycle.
+
+<Figure caption="With 6 edges, dropping any single one gives a spanning tree: 6C5 = 6">
+<svg viewBox="0 0 420 360" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="420" height="360" fill="#fdfdfb"/>
+  <text x="210" y="30" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">6 Edges → Drop Any One</text>
+  <line x1="189.2" y1="92.0" x2="148.5" y2="115.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="127.7" y1="151.5" x2="127.7" y2="198.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="148.5" y1="234.5" x2="189.2" y2="258.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="230.8" y1="258.0" x2="271.5" y2="234.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="292.3" y1="198.5" x2="292.3" y2="151.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="271.5" y1="115.5" x2="230.8" y2="92.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <circle cx="210.0" cy="80.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="210.0" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="292.2724133595217" cy="127.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="292.2724133595217" y="133.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">6</text>
+  <circle cx="292.2724133595217" cy="222.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="292.2724133595217" y="228.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <circle cx="210.0" cy="270.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="210.0" y="275.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <circle cx="127.72758664047832" cy="222.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="127.72758664047832" y="228.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="127.72758664047834" cy="127.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="127.72758664047834" y="133.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <text x="210" y="320" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Choose 5 of 6 edges to keep</text>
+  <text x="210" y="344" fontFamily="Georgia, 'Times New Roman', serif" fontSize="16" fontWeight="700" fill="#8a2323" textAnchor="middle">⁶C₅ = 6 spanning trees</text>
+</svg>
+</Figure>
+
+<Figure caption="An extra chord creates two smaller cycles, so 2 combinations must be excluded">
+<svg viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="420" height="380" fill="#fdfdfb"/>
+  <text x="210" y="30" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">7 Edges → Extra Chord Adds Cycles</text>
+  <line x1="189.2" y1="97.0" x2="148.5" y2="120.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="127.7" y1="156.5" x2="127.7" y2="203.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="148.5" y1="239.5" x2="189.2" y2="263.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="230.8" y1="263.0" x2="271.5" y2="239.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="292.3" y1="203.5" x2="292.3" y2="156.5" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="271.5" y1="120.5" x2="230.8" y2="97.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <path d="M 148.5 215.5 Q 210.0 190.0 271.5 144.5" fill="none" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <text x="210.0" y="166.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">extra edge</text>
+  <circle cx="210.0" cy="85.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="210.0" y="90.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="292.2724133595217" cy="132.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="292.2724133595217" y="138.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">6</text>
+  <circle cx="292.2724133595217" cy="227.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="292.2724133595217" y="233.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <circle cx="210.0" cy="275.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="210.0" y="280.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <circle cx="127.72758664047832" cy="227.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="127.72758664047832" y="233.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="127.72758664047834" cy="132.5" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="127.72758664047834" y="138.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <text x="210" y="335" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Chord 3–6 closes two smaller cycles</text>
+  <text x="210" y="360" fontFamily="Georgia, 'Times New Roman', serif" fontSize="16" fontWeight="700" fill="#8a2323" textAnchor="middle">⁷C₅ − 2 = 19 spanning trees</text>
+</svg>
+</Figure>
+
+---
+
+## 3. Weighted Graphs and the Minimum Cost Spanning Tree
+
+Now bring **weights** into the picture. Suppose every edge in the graph has a cost attached.
+
+Take a small 4-vertex weighted graph with edges:
+
+| Edge | Weight |
+|---|---|
+| 1–2 | 5 |
+| 1–4 | 4 |
+| 2–4 | 2 |
+| 2–3 | 3 |
+| 4–3 | 6 |
+
+Since this graph has 4 vertices, any spanning tree needs exactly **3 edges**. But *which* 3 edges you pick changes the total cost:
+
+- **Tree A:** edges 1–2 (5), 2–3 (3), 4–3 (6) → **cost = 14**
+- **Tree B:** edges 1–4 (4), 4–3 (6), 2–3 (3) → **cost = 13**
+- **Tree C:** edges 1–4 (4), 2–4 (2), 2–3 (3) → **cost = 9**
+
+**Key observation:** different spanning trees of the same weighted graph can have very different total costs.
+
+<Figure caption="The same weighted graph yields spanning trees of very different total cost">
+<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="760" height="420" fill="#fdfdfb"/>
+  <text x="115" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Weighted Graph</text>
+  <line x1="69.0" y1="80.0" x2="161.0" y2="80.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <rect x="102.0" y="57.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="115.0" y="72.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">5</text>
+  <line x1="45.0" y1="104.0" x2="45.0" y2="196.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <rect x="32.0" y="127.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="45.0" y="142.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">4</text>
+  <line x1="168.0" y1="97.0" x2="62.0" y2="203.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <rect x="102.0" y="127.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="115.0" y="142.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">2</text>
+  <line x1="185.0" y1="104.0" x2="185.0" y2="196.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <rect x="172.0" y="127.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="185.0" y="142.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">3</text>
+  <line x1="69.0" y1="220.0" x2="161.0" y2="220.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <rect x="102.0" y="197.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="115.0" y="212.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">6</text>
+  <circle cx="45" cy="80" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="45" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="185" cy="80" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="185" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="185" cy="220" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="185" y="225.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="45" cy="220" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="45" y="225.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <text x="115" y="275" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12" fill="#5a5648" textAnchor="middle" fontStyle="italic">4 vertices →</text>
+  <text x="115" y="293" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12" fill="#5a5648" textAnchor="middle" fontStyle="italic">3 edges per tree</text>
+  <text x="335" y="70" fontFamily="Georgia, 'Times New Roman', serif" fontSize="14" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Tree A — cost 14</text>
+  <line x1="304.0" y1="95.0" x2="366.0" y2="95.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="322.0" y="72.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="335.0" y="87.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">5</text>
+  <line x1="280.0" y1="119.0" x2="280.0" y2="181.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <line x1="373.0" y1="112.0" x2="297.0" y2="188.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <line x1="390.0" y1="119.0" x2="390.0" y2="181.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="377.0" y="127.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="390.0" y="142.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">3</text>
+  <line x1="304.0" y1="205.0" x2="366.0" y2="205.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="322.0" y="182.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="335.0" y="197.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">6</text>
+  <circle cx="280" cy="95" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="280" y="100.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="390" cy="95" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="390" y="100.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="390" cy="205" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="390" y="210.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="280" cy="205" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="280" y="210.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <text x="545" y="70" fontFamily="Georgia, 'Times New Roman', serif" fontSize="14" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Tree B — cost 13</text>
+  <line x1="514.0" y1="95.0" x2="576.0" y2="95.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <line x1="490.0" y1="119.0" x2="490.0" y2="181.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="477.0" y="127.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="490.0" y="142.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">4</text>
+  <line x1="583.0" y1="112.0" x2="507.0" y2="188.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <line x1="600.0" y1="119.0" x2="600.0" y2="181.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="587.0" y="127.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="600.0" y="142.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">3</text>
+  <line x1="514.0" y1="205.0" x2="576.0" y2="205.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="532.0" y="182.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="545.0" y="197.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">6</text>
+  <circle cx="490" cy="95" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="490" y="100.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="600" cy="95" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="600" y="100.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="600" cy="205" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="600" y="210.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="490" cy="205" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="490" y="210.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <text x="440" y="265" fontFamily="Georgia, 'Times New Roman', serif" fontSize="14" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Tree C — cost 9 (minimum)</text>
+  <line x1="409.0" y1="290.0" x2="471.0" y2="290.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <line x1="385.0" y1="314.0" x2="385.0" y2="376.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="372.0" y="322.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="385.0" y="337.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">4</text>
+  <line x1="478.0" y1="307.0" x2="402.0" y2="383.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="427.0" y="322.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="440.0" y="337.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">2</text>
+  <line x1="495.0" y1="314.0" x2="495.0" y2="376.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="482.0" y="322.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="495.0" y="337.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">3</text>
+  <line x1="409.0" y1="400.0" x2="471.0" y2="400.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <circle cx="385" cy="290" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="385" y="295.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="495" cy="290" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="495" y="295.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="495" cy="400" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="495" y="405.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="385" cy="400" r="15" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="385" y="405.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+</svg>
+</Figure>
+
+This raises the natural question: **can we find the spanning tree with the minimum possible cost?**
+
+The brute-force answer is yes — generate every possible spanning tree, compute each one's cost, and pick the cheapest. But that's expensive and doesn't scale. Fortunately, **greedy algorithms** solve this efficiently without ever generating every possible tree. The two classic methods are:
+
+1. **Prim's Algorithm**
+2. **Kruskal's Algorithm**
+
+---
+
+## 4. Prim's Algorithm
+
+**Core idea:** grow the spanning tree one edge at a time, always picking the cheapest edge that connects a *new* vertex to the tree you've already built.
+
+**Steps:**
+
+1. Pick the smallest-weight edge in the entire graph to start the tree.
+2. From this point on, always pick the **minimum-weight edge that is connected to the vertices already in your tree** (never a "floating" edge disconnected from what you've built).
+3. Repeat until all vertices are included.
+
+The reasoning behind rule 2: if you picked an edge far away from your current tree, you risk building disconnected pieces instead of one connected tree. Always extending from what's already selected guarantees you end up with a single connected tree.
+
+### Worked Example
+
+Consider this weighted graph with 7 vertices:
+
+| Edge | Weight |
+|---|---|
+| 1–6 | 10 |
+| 1–2 | 28 |
+| 2–7 | 14 |
+| 2–3 | 16 |
+| 6–5 | 25 |
+| 7–5 | 24 |
+| 7–4 | 18 |
+| 3–4 | 12 |
+| 5–4 | 22 |
+
+**Step-by-step trace:**
+
+```text
+Step 1: Smallest edge overall → 1–6 (10)         Tree = {1, 6}
+Step 2: Smallest edge touching {1,6} → 6–5 (25)  Tree = {1, 6, 5}
+         (candidates were 1–2:28 and 6–5:25)
+Step 3: Smallest edge touching {1,6,5} → 5–4 (22) Tree = {1, 6, 5, 4}
+         (candidates were 1–2:28, 5–7:24, 5–4:22)
+Step 4: Smallest edge touching tree → 4–3 (12)    Tree = {1, 6, 5, 4, 3}
+         (candidates were 1–2:28, 4–7:18, 4–3:12)
+Step 5: Smallest edge touching tree → 3–2 (16)    Tree = {1, 6, 5, 4, 3, 2}
+         (candidates were 1–2:28, 7–4:18, 3–2:16)
+Step 6: Smallest edge touching tree → 2–7 (14)    Tree = {1, 6, 5, 4, 3, 2, 7}
+         (candidates were 5–7:24, 4–7:18, 2–7:14)
+```
+
+<Figure caption="Prim's algorithm growing the tree outward, edge by edge, to a final cost of 99">
+<svg viewBox="0 0 460 420" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="460" height="420" fill="#fdfdfb"/>
+  <text x="230" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Prim's Algorithm — Final Tree</text>
+  <line x1="172.2" y1="96.1" x2="107.8" y2="153.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="127.0" y="102.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="140.0" y="117.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">10</text>
+  <text x="140.0" y="101.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">1st</text>
+  <line x1="213.4" y1="85.4" x2="296.6" y2="104.6" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <rect x="242.0" y="72.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="255.0" y="87.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">28</text>
+  <line x1="302.5" y1="126.4" x2="257.5" y2="168.6" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="267.0" y="124.5" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="280.0" y="139.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">14</text>
+  <text x="280.0" y="123.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">6th</text>
+  <line x1="331.5" y1="131.1" x2="368.5" y2="198.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="337.0" y="142.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="350.0" y="157.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">16</text>
+  <text x="350.0" y="141.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">5th</text>
+  <line x1="98.6" y1="192.4" x2="131.4" y2="277.6" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="102.0" y="212.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="115.0" y="227.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">25</text>
+  <text x="115.0" y="211.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">2nd</text>
+  <line x1="224.3" y1="203.1" x2="155.7" y2="281.9" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <rect x="177.0" y="219.5" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="190.0" y="234.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">24</text>
+  <line x1="244.6" y1="208.6" x2="265.4" y2="316.4" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <rect x="242.0" y="239.5" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="255.0" y="254.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">18</text>
+  <line x1="363.8" y1="237.7" x2="286.2" y2="322.3" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="312.0" y="257.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="325.0" y="272.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">12</text>
+  <text x="325.0" y="256.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">4th</text>
+  <line x1="162.9" y1="307.1" x2="247.1" y2="332.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="192.0" y="297.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="205.0" y="312.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">22</text>
+  <text x="205.0" y="296.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontStyle="italic" fill="#5a5648" textAnchor="middle">3rd</text>
+  <circle cx="190" cy="80" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="190" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="320" cy="110" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="320" y="115.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="90" cy="170" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="90" y="175.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">6</text>
+  <circle cx="240" cy="185" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="240" y="190.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">7</text>
+  <circle cx="380" cy="220" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="380" y="225.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="140" cy="300" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="140" y="305.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <circle cx="270" cy="340" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="270" y="345.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <text x="230" y="385" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Grows outward from vertex 1, always extending the tree</text>
+  <text x="230" y="405" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#8a2323" textAnchor="middle">Total cost = 10+25+22+12+16+14 = 99</text>
+</svg>
+</Figure>
+
+All 7 vertices are now included using 6 edges — exactly `|V| − 1`.
+
+**Total cost = 10 + 25 + 22 + 12 + 16 + 14 = 99**
+
+### A Note on Disconnected Graphs
+
+If the original graph isn't fully connected (say it has two separate "islands" of vertices with no edge between them), **no spanning tree exists at all** — a spanning tree, by definition, must connect every vertex, and that's impossible if the graph itself is in disconnected pieces.
+
+If you run Prim's algorithm starting from a vertex in one component, it will happily build a spanning tree for *that component only* — it has no way to "jump" to the other component, since it only ever extends from already-selected vertices.
+
+---
+
+## 5. Kruskal's Algorithm
+
+**Core idea:** instead of growing outward from a starting point, look at *all* the edges sorted by weight, and greedily add the cheapest ones — skipping any edge that would create a cycle.
+
+**Steps:**
+
+1. Always consider the smallest-weight edge remaining in the whole graph.
+2. If adding it does **not** form a cycle with edges already selected, include it.
+3. If it **would** form a cycle, discard it and move to the next-smallest edge.
+4. Repeat until you've selected `|V| − 1` edges.
+
+### Worked Example (same graph as above)
+
+**Step-by-step trace:**
+
+```text
+Consider 1–6 (10)  → no cycle → SELECT   {1–6}
+Consider 3–4 (12)  → no cycle → SELECT   {1–6, 3–4}
+Consider 2–7 (14)  → no cycle → SELECT   {1–6, 3–4, 2–7}
+Consider 2–3 (16)  → no cycle → SELECT   {1–6, 3–4, 2–7, 2–3}
+Consider 7–4 (18)  → would form a cycle → DISCARD
+Consider 5–4 (22)  → no cycle → SELECT   {1–6, 3–4, 2–7, 2–3, 5–4}
+Consider 7–5 (24)  → would form a cycle → DISCARD
+Consider 6–5 (25)  → no cycle → SELECT   {1–6, 3–4, 2–7, 2–3, 5–4, 6–5}
+```
+
+<Figure caption="Kruskal's algorithm on the same graph — two edges are skipped because they would close a cycle">
+<svg viewBox="0 0 460 420" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="460" height="420" fill="#fdfdfb"/>
+  <text x="230" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Kruskal's Algorithm — Same Result</text>
+  <line x1="172.2" y1="96.1" x2="107.8" y2="153.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="127.0" y="102.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="140.0" y="117.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">10</text>
+  <line x1="213.4" y1="85.4" x2="296.6" y2="104.6" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <rect x="242.0" y="72.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="255.0" y="87.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">28</text>
+  <line x1="302.5" y1="126.4" x2="257.5" y2="168.6" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="267.0" y="124.5" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="280.0" y="139.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">14</text>
+  <line x1="331.5" y1="131.1" x2="368.5" y2="198.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="337.0" y="142.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="350.0" y="157.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">16</text>
+  <line x1="98.6" y1="192.4" x2="131.4" y2="277.6" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="102.0" y="212.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="115.0" y="227.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">25</text>
+  <line x1="224.3" y1="203.1" x2="155.7" y2="281.9" stroke="#b7482f" strokeWidth="2.5" strokeDasharray="7,6" opacity="0.85" strokeLinecap="round"/>
+  <g transform="translate(190.0,242.5)"><circle r="11" fill="#fdfdfb" stroke="#b7482f" strokeWidth="1.5"/><line x1="-5" y1="-5" x2="5" y2="5" stroke="#b7482f" strokeWidth="2"/><line x1="-5" y1="5" x2="5" y2="-5" stroke="#b7482f" strokeWidth="2"/></g>
+  <rect x="177.0" y="219.5" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="190.0" y="234.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">24</text>
+  <line x1="244.6" y1="208.6" x2="265.4" y2="316.4" stroke="#b7482f" strokeWidth="2.5" strokeDasharray="7,6" opacity="0.85" strokeLinecap="round"/>
+  <g transform="translate(255.0,262.5)"><circle r="11" fill="#fdfdfb" stroke="#b7482f" strokeWidth="1.5"/><line x1="-5" y1="-5" x2="5" y2="5" stroke="#b7482f" strokeWidth="2"/><line x1="-5" y1="5" x2="5" y2="-5" stroke="#b7482f" strokeWidth="2"/></g>
+  <rect x="242.0" y="239.5" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="255.0" y="254.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">18</text>
+  <line x1="363.8" y1="237.7" x2="286.2" y2="322.3" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="312.0" y="257.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="325.0" y="272.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">12</text>
+  <line x1="162.9" y1="307.1" x2="247.1" y2="332.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="192.0" y="297.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="205.0" y="312.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">22</text>
+  <circle cx="190" cy="80" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="190" y="85.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="320" cy="110" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="320" y="115.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="90" cy="170" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="90" y="175.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">6</text>
+  <circle cx="240" cy="185" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="240" y="190.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">7</text>
+  <circle cx="380" cy="220" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="380" y="225.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="140" cy="300" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="140" y="305.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <circle cx="270" cy="340" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="270" y="345.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <text x="230" y="385" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Dashed × marks edges skipped — they would close a cycle</text>
+  <text x="230" y="405" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#8a2323" textAnchor="middle">Total cost = 10+12+14+16+22+25 = 99</text>
+</svg>
+</Figure>
+
+Six edges selected — done.
+
+**Total cost = 10 + 12 + 14 + 16 + 22 + 25 = 99**
+
+Notice: **Kruskal's and Prim's arrive at the same minimum cost (99)** on this graph, confirming both are valid strategies for the same problem — they just build the tree in a different order.
+
+### Time Complexity
+
+- Kruskal's must repeatedly find the minimum-weight edge from the remaining set of **E** edges, and it does this **|V| − 1** times.
+- Naively, this gives a time complexity of:
+
+```text
+Θ(V · E) = Θ(n · e) = Θ(n²)     (when V and E are both on the order of n)
+```
+
+- **Optimization with a Min-Heap:** if all edges are stored in a **min-heap**, each "find the minimum" operation takes only `O(log n)` time (heap deletion). Since we do this `|V| − 1` ≈ `n` times, the total time becomes:
+
+```text
+O(n log n)
+```
+
+This is a significant improvement over the naive `O(n²)` approach.
+
+### A Note on Disconnected Graphs
+
+<Figure caption="A disconnected graph has no overall spanning tree — only one per component">
+<svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="560" height="300" fill="#fdfdfb"/>
+  <text x="280" y="30" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">A Disconnected Graph — No Spanning Tree Exists</text>
+  <line x1="134.0" y1="110.0" x2="176.0" y2="110.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="200.0" y1="134.0" x2="200.0" y2="166.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="176.0" y1="190.0" x2="134.0" y2="190.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="110.0" y1="166.0" x2="110.0" y2="134.0" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <circle cx="110" cy="110" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="110" y="115.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">A</text>
+  <circle cx="200" cy="110" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="200" y="115.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">B</text>
+  <circle cx="200" cy="190" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="200" y="195.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">C</text>
+  <circle cx="110" cy="190" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="110" y="195.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">D</text>
+  <text x="155" y="235" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Component 1</text>
+  <line x1="439.4" y1="99.1" x2="462.4" y2="115.8" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="474.4" y1="152.7" x2="465.6" y2="179.8" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="434.2" y1="202.6" x2="405.8" y2="202.6" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="374.4" y1="179.8" x2="365.6" y2="152.7" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <line x1="377.6" y1="115.8" x2="400.6" y2="99.1" stroke="#c3bfae" strokeWidth="2.5" opacity="1" strokeLinecap="round"/>
+  <circle cx="420.0" cy="85.0" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="420.0" y="90.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">E</text>
+  <circle cx="481.81867355918496" cy="129.91389536562843" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="481.81867355918496" y="135.41389536562843" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">F</text>
+  <circle cx="458.20604139901076" cy="202.5861046343716" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="458.20604139901076" y="208.0861046343716" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">G</text>
+  <circle cx="381.79395860098924" cy="202.5861046343716" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="381.79395860098924" y="208.0861046343716" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">H</text>
+  <circle cx="358.18132644081504" cy="129.91389536562843" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="358.18132644081504" y="135.41389536562843" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">I</text>
+  <text x="420" y="235" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Component 2</text>
+  <text x="280" y="72" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12.5" fill="#5a5648" textAnchor="middle" fontStyle="italic">no edge connects the two components</text>
+  <line x1="240" y1="150" x2="320" y2="150" stroke="#c3bfae" strokeWidth="2" strokeDasharray="3,7"/>
+</svg>
+</Figure>
+
+Unlike Prim's, Kruskal's algorithm doesn't fail outright on a disconnected graph — it will keep selecting minimum edges from *any* component. It may end up producing a valid spanning tree **for each individual component** (a "spanning forest"), but it still cannot produce a single spanning tree for the entire (disconnected) graph, because no such tree exists.
+
+---
+
+## 6. Finding Missing Edge Weights (Exam-Style Problems)
+
+A common exam question: given a graph where a couple of edge weights are hidden, and you're told which edges *were* included in the minimum spanning tree, what can you deduce about the missing weights?
+
+**Example setup:** A graph on 5 vertices where all edges have known weights except two. The known-weight edges alone already form a valid spanning tree of the graph (the two unknown edges are extra/redundant edges not part of the MST).
+
+**Reasoning:**
+
+- If an edge with unknown weight **was selected early** in Kruskal's process (i.e., before certain known edges), its weight must be **less than or equal to** the weight of the edge that came right after it — otherwise it wouldn't have been picked at that point.
+- If an edge with unknown weight was **never selected** (excluded because it forms a cycle), its weight must be **at least** as large as the largest weight among the edges that were selected before the algorithm got to it — otherwise it would have been chosen instead.
+
+<Figure caption="Two missing edge weights, bounded by where Kruskal's algorithm would have placed them">
+<svg viewBox="0 0 420 410" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="420" height="410" fill="#fdfdfb"/>
+  <text x="210" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Two Missing Edge Weights</text>
+  <line x1="110.0" y1="124.0" x2="110.0" y2="216.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="97.0" y="147.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="110.0" y="162.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">4</text>
+  <line x1="310.0" y1="124.0" x2="310.0" y2="216.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="297.0" y="147.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="310.0" y="162.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">5</text>
+  <line x1="128.7" y1="255.0" x2="191.3" y2="305.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="147.0" y="257.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="160.0" y="272.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">2</text>
+  <line x1="291.3" y1="255.0" x2="228.7" y2="305.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="247.0" y="257.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="260.0" y="272.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">3</text>
+  <line x1="134.0" y1="100.0" x2="286.0" y2="100.0" stroke="#c3bfae" strokeWidth="2" strokeDasharray="5,6" opacity="0.6" strokeLinecap="round"/>
+  <rect x="196.0" y="87.0" width="28" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4"/>
+  <text x="210.0" y="102" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#8a2323" textAnchor="middle">≥ 4</text>
+  <line x1="134.0" y1="240.0" x2="286.0" y2="240.0" stroke="#c3bfae" strokeWidth="2" strokeDasharray="5,6" opacity="0.6" strokeLinecap="round"/>
+  <rect x="196.0" y="227.0" width="28" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4"/>
+  <text x="210.0" y="242.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#8a2323" textAnchor="middle">≥ 6</text>
+  <circle cx="110" cy="100" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="110" y="105.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">1</text>
+  <circle cx="310" cy="100" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="310" y="105.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">2</text>
+  <circle cx="110" cy="240" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="110" y="245.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">4</text>
+  <circle cx="310" cy="240" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="310" y="245.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+  <circle cx="210" cy="320" r="20" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2.5"/><text x="210" y="325.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">5</text>
+  <text x="210" y="365" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12.5" fill="#5a5648" textAnchor="middle" fontStyle="italic">Solid red = known MST edges</text>
+  <text x="210" y="385" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12.5" fill="#5a5648" textAnchor="middle" fontStyle="italic">Dashed = unknown, bounded by selection order</text>
+</svg>
+</Figure>
+
+Working through the specific example:
+
+- One unknown edge is selected in the algorithm's run right after edges of weight 4 have already gone in, and right before an edge of weight 5 — so its minimum possible weight is **4**.
+- The other unknown edge is *never* selected at all (it's the very last one left over, excluded because it always forms a cycle) — so its minimum possible weight is **6**.
+
+This kind of deduction relies entirely on understanding **the order in which Kruskal's algorithm evaluates and accepts edges**.
+
+---
+
+## 7. Full Worked Example — Applying Kruskal's Algorithm
+
+Take a 5-vertex graph with vertices **A, B, C, D, E** and the following weighted edges:
+
+| Edge | Weight |
+|---|---|
+| A–B | 2 |
+| A–E | 3 |
+| B–C | 3 |
+| B–D | 4 |
+| D–C | 4 |
+| D–E | 5 |
+
+**Applying Kruskal's algorithm:**
+
+```text
+Consider A–B (2)  → no cycle → SELECT     {A–B}
+Consider A–E (3) or B–C (3)  → tie, pick either → SELECT one, say A–E   {A–B, A–E}
+Consider the remaining weight-3 edge, B–C → no cycle → SELECT           {A–B, A–E, B–C}
+Consider B–D (4) or D–C (4)  → tie, pick either → SELECT one, say D–C   {A–B, A–E, B–C, D–C}
+```
+
+<Figure caption="Kruskal's algorithm on the A–B–C–D–E graph, arriving at a minimum cost of 12">
+<svg viewBox="0 0 460 360" xmlns="http://www.w3.org/2000/svg" fontFamily="Georgia, 'Times New Roman', serif">
+  <rect x="0" y="0" width="460" height="360" fill="#fdfdfb"/>
+  <text x="230" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Kruskal's on A–B–C–D–E</text>
+  <line x1="134.0" y1="100.0" x2="276.0" y2="100.0" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="192.0" y="77.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="205.0" y="92.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">2</text>
+  <line x1="106.1" y1="123.7" x2="93.9" y2="196.3" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="87.0" y="137.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="100.0" y="152.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">3</text>
+  <line x1="306.6" y1="123.1" x2="333.4" y2="216.9" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="307.0" y="147.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="320.0" y="162.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">3</text>
+  <line x1="288.3" y1="121.0" x2="211.7" y2="259.0" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <rect x="237.0" y="167.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="250.0" y="182.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">4</text>
+  <line x1="223.1" y1="273.4" x2="316.9" y2="246.6" stroke="#8a2323" strokeWidth="5" opacity="1" strokeLinecap="round"/>
+  <rect x="257.0" y="237.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="270.0" y="252.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle">4</text>
+  <line x1="178.9" y1="268.5" x2="111.1" y2="231.5" stroke="#dbd7c9" strokeWidth="2" opacity="0.7" strokeLinecap="round"/>
+  <rect x="132.0" y="227.0" width="26" height="20" rx="5" fill="#fdfdfb" stroke="#e4e1d4" strokeWidth="1"/>
+  <text x="145.0" y="242.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="600" fill="#3a3a3a" textAnchor="middle">5</text>
+  <circle cx="110" cy="100" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="110" y="105.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">A</text>
+  <circle cx="300" cy="100" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="300" y="105.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">B</text>
+  <circle cx="340" cy="240" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="340" y="245.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">C</text>
+  <circle cx="200" cy="280" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="200" y="285.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">D</text>
+  <circle cx="90" cy="220" r="20" fill="#f6e9e5" stroke="#8a2323" strokeWidth="3"/><text x="90" y="225.5" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">E</text>
+  <text x="230" y="322" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fill="#5a5648" textAnchor="middle" fontStyle="italic">Ties at weight 3 and weight 4 — either choice gives the same total</text>
+  <text x="230" y="344" fontFamily="Georgia, 'Times New Roman', serif" fontSize="16" fontWeight="700" fill="#8a2323" textAnchor="middle">Cost = 2+3+3+4 = 12</text>
+</svg>
+</Figure>
+
+Total edges selected: 4 (which is `|V| − 1` = 5 − 1 = 4). Done.
+
+**Total cost = 2 + 3 + 3 + 4 = 12**
+
+### Why Are There Two Valid Answers?
+
+Minimum spanning tree problems are **minimization problems**, so the optimal *cost* is always unique — here, that's **12**. But the *specific set of edges* that achieves that cost doesn't have to be unique.
+
+In this example, at the point where two edges both carry weight 4 (B–D and D–C), either one can be selected — both lead to a valid spanning tree with the same total cost of 12. So this graph actually has **two distinct minimum spanning trees**, both with cost 12. The minimum *cost* is guaranteed to be one answer; the minimum-cost *tree* achieving it may not be.
+
+---
+
+*Lesson notes derived from a lecture transcript — Abdul Bari, Algorithms Course.*
+
+---
+
+**Watch the original lecture:** <a href="https://www.youtube.com/watch?v=4ZlRH0eK-qQ&t=720s" target="_blank" rel="noopener noreferrer">Prim's and Kruskal's Algorithms — Greedy Method — Abdul Bari (YouTube)</a>
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction", title: "3: Greedy Method — Introduction" }}
+  next={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-4/4-principle-of-optimality-dynamic-programming", title: "4: Principle of Optimality — Introduction to Dynamic Programming" }}
+/>

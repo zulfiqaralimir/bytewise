@@ -80,6 +80,7 @@ const chapters = [
           { title: "2.6.2: Binary Search — Recursive Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-6-2-binary-search-recursive-method" },
           { title: "2.7.1: Two-Way Merge Sort — Iterative Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-7-1-two-way-merge-sort-iterative-method" },
           { title: "3: Greedy Method — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction" },
+          { title: "3.5: Prim's and Kruskal's Algorithms — Greedy Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-5-prims-and-kruskals-algorithms" },
           { title: "4: Principle of Optimality — Introduction to Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-4/4-principle-of-optimality-dynamic-programming" },
           { title: "5.1: Graph Traversals — BFS & DFS", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-1-graph-traversals-bfs-dfs" },
           { title: "5.2: Articulation Point and Biconnected Components", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-2-articulation-point-and-biconnected-components" },
