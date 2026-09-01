@@ -19,6 +19,7 @@ export const metadata = {
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
+import { Revision } from "@/app/components/Revision";
 
 # Contains Duplicate
 
@@ -188,7 +189,7 @@ Each `in` check looks at **more and more items** as the list grows — 0, then 1
 
 **The takeaway:** a list for `seen` gives the worst of both worlds — just as slow as brute force (`O(n²)`), but *also* using extra memory (`O(n)`) like the set version. The set is strictly better here — same memory cost, real speed gained — because of how `in` behaves differently for sets versus lists.
 
-> **General rule of thumb:** whenever a problem needs repeated "have I seen this before?" checks, reach for a **set** (or dictionary), not a list — the cost of `in` is what decides the outcome.
+> **General rule of thumb:** <Revision>whenever a problem needs repeated "have I seen this before?" checks, reach for a **set** (or dictionary), not a list — the cost of `in` is what decides the outcome.</Revision>
 
 ---
 
