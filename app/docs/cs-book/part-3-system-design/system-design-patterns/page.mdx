@@ -1,0 +1,297 @@
+export const metadata = {
+  title: "System Design Patterns You Should Master — ByteWise CS Book",
+  description:
+    "Five system design patterns that show up once a system grows past one server and one database: monolith vs. microservices, database-per-service, circuit breaker, event sourcing, and CQRS.",
+  keywords: [
+    "system design patterns",
+    "monolith vs microservices",
+    "database per service",
+    "circuit breaker",
+    "event sourcing",
+    "CQRS",
+    "hystrix",
+    "materialized view",
+  ],
+  openGraph: {
+    title: "System Design Patterns You Should Master — ByteWise CS Book",
+    description:
+      "Monolith vs. microservices, database-per-service, circuit breaker, event sourcing, and CQRS — explained with the DSA idea and real product underneath each one.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# System Design Patterns You Should Master
+
+Five patterns that show up again and again once a system grows past "one server, one database." No prior programming background needed here — we're talking about how the pieces of a system are arranged, not how to code them.
+
+Wherever a pattern leans on a computer-science idea underneath — a data structure, an algorithm, a classic technique — you'll see a **DSA / Algorithm Angle** note. And wherever real products use the pattern, you'll see a **Where You'll See This** note.
+
+## 1. Monolith vs. Microservices
+
+**The first fork in the road for almost every system.**
+
+Before you design anything else, you have to answer one question: does your whole backend live in one codebase, one server (a **monolith**), or is it split into small, independent services that each own one job (**microservices**)?
+
+In a monolith, your authentication code, your notification code, and your comments code all sit inside the same big program. It's simple to reason about and simple to run. But it has one weakness: if the notification part of the code has a bug and crashes, it can take the *entire server* down with it — comments and login included.
+
+Microservices fix that by giving every feature its own small, independently-running service — an Auth service, a Notification service, a Comment service, each possibly written in a different language, deployed separately, and scaled separately. If Notifications goes down, Auth and Comments keep working. The cost is that you now have several small systems to deploy, monitor, and — the tricky part — get talking to each other.
+
+<Figure title="Monolith vs. Microservices" caption="A crash inside a monolith is a shared-fate event. A crash inside one microservice is contained.">
+<svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" width="680" height="260">
+  <text x="90" y="26" fill="#6b7280" fontSize="12" textAnchor="middle" letterSpacing="1">MONOLITH</text>
+  <rect x="20" y="40" width="140" height="180" rx="4" fill="none" stroke="#0d9488" strokeWidth="1.5"/>
+  <rect x="34" y="56" width="112" height="28" rx="3" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="90" y="74" fill="#0f766e" fontSize="11" textAnchor="middle">Auth</text>
+  <rect x="34" y="94" width="112" height="28" rx="3" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="90" y="112" fill="#0f766e" fontSize="11" textAnchor="middle">Notifications</text>
+  <rect x="34" y="132" width="112" height="28" rx="3" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="90" y="150" fill="#0f766e" fontSize="11" textAnchor="middle">Comments</text>
+  <rect x="34" y="170" width="112" height="28" rx="3" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="90" y="188" fill="#0f766e" fontSize="11" textAnchor="middle">Posts</text>
+  <text x="90" y="238" fill="#6b7280" fontSize="10" textAnchor="middle">one crash = everything down</text>
+
+  <line x1="230" y1="30" x2="230" y2="240" stroke="#e5e7eb" strokeWidth="1"/>
+
+  <text x="450" y="26" fill="#6b7280" fontSize="12" textAnchor="middle" letterSpacing="1">MICROSERVICES</text>
+  <rect x="270" y="50" width="88" height="34" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="314" y="71" fill="#0f766e" fontSize="10.5" textAnchor="middle">Auth</text>
+  <rect x="380" y="50" width="88" height="34" rx="4" fill="#fef2f2" stroke="#dc2626"/>
+  <text x="424" y="71" fill="#b91c1c" fontSize="10.5" textAnchor="middle">Notify ✕</text>
+  <rect x="490" y="50" width="90" height="34" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="535" y="71" fill="#0f766e" fontSize="10.5" textAnchor="middle">Comments</text>
+  <rect x="380" y="150" width="88" height="34" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="424" y="171" fill="#0f766e" fontSize="10.5" textAnchor="middle">Posts</text>
+
+  <line x1="358" y1="67" x2="380" y2="67" stroke="#9ca3af" strokeWidth="1.5"/>
+  <line x1="468" y1="67" x2="490" y2="67" stroke="#9ca3af" strokeWidth="1.5"/>
+  <line x1="424" y1="84" x2="424" y2="150" stroke="#9ca3af" strokeDasharray="3,3" strokeWidth="1.5"/>
+  <text x="424" y="220" fill="#6b7280" fontSize="10" textAnchor="middle">Notify is down — the rest keep running</text>
+</svg>
+</Figure>
+
+> **Trade-off:** Monolith — easy to run, but one bug can take the whole app down, and you can't scale just the busy part. Microservices — fault-isolated and independently scalable, but now you must design how services find and talk to each other over the network.
+
+> **DSA / Algorithm Angle:** Splitting into services doesn't need a specific algorithm by itself, but it opens the door to ones you'll meet soon after: **load balancing algorithms** (round robin, least-connections, consistent hashing) to spread traffic across copies of a service, and **service-discovery** lookups (essentially hash-table lookups by service name) so services can find each other.
+
+> **Where You'll See This:** Large-scale consumer platforms — ride-hailing apps, large e-commerce marketplaces, video streaming services — run on microservices, because a single team needs to ship and scale their one feature without waiting on, or breaking, everyone else's. Smaller products and early-stage startups usually start as a monolith on purpose, because it's faster to build and easier for a small team to manage.
+
+## 2. Database-per-Service
+
+**Once you split the code, do you also split the data?**
+
+Say you've gone with microservices: an Auth service, a File-Upload service, a Notification service. The natural next question is — do they all share *one* database, or does each service get its *own*?
+
+Sharing one database is tempting: it's simpler, and services that need the same data (like user details) can just read the same tables. But it quietly breaks the whole point of microservices. Your code is separated, but your data isn't — a bug in the Notification service could still accidentally delete a row in the Users table. That's not real isolation.
+
+**Database-per-service** says: give every service its own database, and let it pick whatever type fits its job. An Auth service might use a document database because its schema keeps changing. A Notification service tracking click-rates and opens might use a fast analytics database. A Posts service with clearly structured data might use a classic relational database. Each one is optimized for what it actually does.
+
+<Figure title="Database-per-Service" caption="Each service picks the database that fits its job — the trade-off is that 'joins' move from the database into your application code.">
+<svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" width="680" height="230">
+  <rect x="30" y="30" width="130" height="40" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="95" y="55" fill="#0f766e" fontSize="11" textAnchor="middle">Auth Service</text>
+  <path d="M60 110 h70 a6 6 0 0 1 6 6 v40 a6 6 0 0 1 -6 6 h-70 a6 6 0 0 1 -6 -6 v-40 a6 6 0 0 1 6 -6 z" fill="#eff6ff" stroke="#2563eb"/>
+  <ellipse cx="95" cy="110" rx="41" ry="7" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="95" y="140" fill="#1d4ed8" fontSize="9.5" textAnchor="middle">Document DB</text>
+  <line x1="95" y1="70" x2="95" y2="103" stroke="#9ca3af" strokeWidth="1.5"/>
+
+  <rect x="275" y="30" width="130" height="40" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="340" y="55" fill="#0f766e" fontSize="11" textAnchor="middle">Notification Svc</text>
+  <path d="M305 110 h70 a6 6 0 0 1 6 6 v40 a6 6 0 0 1 -6 6 h-70 a6 6 0 0 1 -6 -6 v-40 a6 6 0 0 1 6 -6 z" fill="#fffbeb" stroke="#d97706"/>
+  <ellipse cx="340" cy="110" rx="41" ry="7" fill="#fffbeb" stroke="#d97706"/>
+  <text x="340" y="140" fill="#b45309" fontSize="9.5" textAnchor="middle">Analytics DB</text>
+  <line x1="340" y1="70" x2="340" y2="103" stroke="#9ca3af" strokeWidth="1.5"/>
+
+  <rect x="520" y="30" width="130" height="40" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="585" y="55" fill="#0f766e" fontSize="11" textAnchor="middle">Post Service</text>
+  <path d="M550 110 h70 a6 6 0 0 1 6 6 v40 a6 6 0 0 1 -6 6 h-70 a6 6 0 0 1 -6 -6 v-40 a6 6 0 0 1 6 -6 z" fill="#eff6ff" stroke="#2563eb"/>
+  <ellipse cx="585" cy="110" rx="41" ry="7" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="585" y="140" fill="#1d4ed8" fontSize="9.5" textAnchor="middle">Relational DB</text>
+  <line x1="585" y1="70" x2="585" y2="103" stroke="#9ca3af" strokeWidth="1.5"/>
+
+  <line x1="160" y1="130" x2="275" y2="130" stroke="#dc2626" strokeDasharray="4,4" strokeWidth="1.3"/>
+  <text x="217" y="122" fill="#b91c1c" fontSize="9" textAnchor="middle">no direct join</text>
+  <line x1="405" y1="130" x2="520" y2="130" stroke="#dc2626" strokeDasharray="4,4" strokeWidth="1.3"/>
+  <text x="462" y="122" fill="#b91c1c" fontSize="9" textAnchor="middle">no direct join</text>
+
+  <path d="M95 30 q245 -20 490 0" fill="none" stroke="#9ca3af" strokeWidth="1.3"/>
+  <text x="340" y="10" fill="#6b7280" fontSize="9.5" textAnchor="middle">joins now happen in application code, not the database</text>
+</svg>
+</Figure>
+
+> **Trade-off:** True isolation and the freedom to pick the right database per service — at the cost of more infrastructure to run, and no more cross-service database joins. If the Post service needs a user's name, it has to *ask* the Auth service for it and combine the results itself.
+
+> **DSA / Algorithm Angle:** Since the database can no longer join two tables for you, your application code effectively performs the join itself — conceptually the same as an in-memory **hash join**: fetch one dataset, build a lookup structure (a hash map) keyed by ID, then match it against the second dataset.
+
+> **Where You'll See This:** Any large microservices platform that's serious about fault isolation uses this — payments, identity, and messaging systems inside big tech companies each keep their own dedicated data store, precisely so a bug in one can never directly corrupt another's data.
+
+## 3. Circuit Breaker
+
+**Stopping one dead service from taking the rest down with it.**
+
+Now that services depend on each other, here's the nightmare scenario: Service A calls Service B, which calls Service C. If C goes down, B keeps waiting on it and eventually fails too. Then A, waiting on B, fails as well. One dead service just **cascaded** into three dead services.
+
+A circuit breaker sits between two services like a proxy and borrows its name from an electrical circuit breaker. While the downstream service is healthy, the "circuit" stays **closed** and requests flow through normally. The moment it notices failures piling up past a threshold, it **opens** the circuit — it stops sending requests altogether and fails fast, instead of letting everyone wait on a service that's already struggling. After a cooldown period, it goes **half-open**: it lets through one test request to check if the service has recovered. If that succeeds, the circuit closes again; if not, it reopens and waits longer.
+
+<Figure title="Circuit Breaker States" caption="Three states, one loop: closed → open → half-open → back to closed (or back to open, if the test fails).">
+<svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" width="620" height="260">
+  <circle cx="120" cy="130" r="62" fill="#f0fdfa" stroke="#0d9488" strokeWidth="1.6"/>
+  <text x="120" y="122" fill="#0f766e" fontSize="13" textAnchor="middle" fontWeight="600">CLOSED</text>
+  <text x="120" y="140" fill="#6b7280" fontSize="9.5" textAnchor="middle">requests flow</text>
+  <text x="120" y="153" fill="#6b7280" fontSize="9.5" textAnchor="middle">normally</text>
+
+  <circle cx="500" cy="130" r="62" fill="#fef2f2" stroke="#dc2626" strokeWidth="1.6"/>
+  <text x="500" y="122" fill="#b91c1c" fontSize="13" textAnchor="middle" fontWeight="600">OPEN</text>
+  <text x="500" y="140" fill="#6b7280" fontSize="9.5" textAnchor="middle">requests blocked,</text>
+  <text x="500" y="153" fill="#6b7280" fontSize="9.5" textAnchor="middle">fail immediately</text>
+
+  <circle cx="310" cy="230" r="52" fill="#fffbeb" stroke="#d97706" strokeWidth="1.6"/>
+  <text x="310" y="224" fill="#b45309" fontSize="12.5" textAnchor="middle" fontWeight="600">HALF-OPEN</text>
+  <text x="310" y="240" fill="#6b7280" fontSize="9" textAnchor="middle">one test request</text>
+
+  <path d="M182 118 Q 300 70 438 118" fill="none" stroke="#9ca3af" strokeWidth="1.4" markerEnd="url(#arrow)"/>
+  <text x="310" y="60" fill="#6b7280" fontSize="9.5" textAnchor="middle">failures exceed threshold</text>
+
+  <path d="M462 175 Q 400 210 355 213" fill="none" stroke="#9ca3af" strokeWidth="1.4" markerEnd="url(#arrow)"/>
+  <text x="440" y="205" fill="#6b7280" fontSize="9" textAnchor="middle">cooldown timer elapses</text>
+
+  <path d="M270 205 Q 200 175 145 165" fill="none" stroke="#9ca3af" strokeWidth="1.4" markerEnd="url(#arrow)"/>
+  <text x="195" y="245" fill="#6b7280" fontSize="9" textAnchor="middle">test request succeeds</text>
+
+  <path d="M350 220 Q 430 200 465 175" fill="none" stroke="#dc2626" strokeWidth="1.2" strokeDasharray="3,3" markerEnd="url(#arrowred)"/>
+  <text x="440" y="245" fill="#b91c1c" fontSize="8.5" textAnchor="middle">test request fails</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#9ca3af"/>
+    </marker>
+    <marker id="arrowred" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#dc2626"/>
+    </marker>
+  </defs>
+</svg>
+</Figure>
+
+> **DSA / Algorithm Angle:** This pattern *is*, almost literally, a textbook **finite state machine (FSM)** — a foundational computer-science structure with a fixed set of states (closed / open / half-open) and defined transitions between them triggered by events (failure count, timeout, test result). If you've studied automata theory, this is that idea applied directly to production traffic.
+
+> **Where You'll See This:** Netflix popularized this pattern at scale with its open-source **Hystrix** library, built specifically to stop one failing dependency from cascading across its streaming backend. It's now a standard tool in most microservice frameworks and API gateways for exactly this reason.
+
+## 4. Event Sourcing
+
+**Stop overwriting state — start recording what happened.**
+
+The usual way to track something's status is to store one row with a "current state" column, and overwrite it every time something changes: an order goes from *placed* → *shipped* → *delivered*, mutating the same field each time. That's simple, but at high volume — think a banking system processing constant transactions, or an e-commerce platform placing thousands of orders a second — constantly locking and rewriting that one row becomes a bottleneck.
+
+**Event sourcing** flips the idea: instead of overwriting state, you **append** an immutable event every time something happens, and never delete or edit past events. "Order placed at 12:00." "Ready to ship at 12:05." "Shipped at 12:10." "Delivered at 12:30." If you want to know an order's current status, you read through its event log and take the latest entry. The event log itself becomes your source of truth.
+
+<Figure title="Event Sourcing" caption="An append-only, immutable log — nothing here is ever edited or deleted, only added to.">
+<svg viewBox="0 0 660 170" xmlns="http://www.w3.org/2000/svg" width="660" height="170">
+  <line x1="40" y1="90" x2="620" y2="90" stroke="#9ca3af" strokeWidth="1.3" markerEnd="url(#arrow2)"/>
+  <text x="620" y="112" fill="#6b7280" fontSize="10" textAnchor="end">time →</text>
+
+  <circle cx="90" cy="90" r="5" fill="#0d9488"/>
+  <rect x="35" y="35" width="110" height="34" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="90" y="55" fill="#0f766e" fontSize="10" textAnchor="middle">Order Placed</text>
+  <text x="90" y="130" fill="#6b7280" fontSize="9" textAnchor="middle">12:00</text>
+
+  <circle cx="255" cy="90" r="5" fill="#0d9488"/>
+  <rect x="200" y="35" width="110" height="34" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="255" y="55" fill="#0f766e" fontSize="10" textAnchor="middle">Ready to Ship</text>
+  <text x="255" y="130" fill="#6b7280" fontSize="9" textAnchor="middle">12:05</text>
+
+  <circle cx="420" cy="90" r="5" fill="#0d9488"/>
+  <rect x="365" y="35" width="110" height="34" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="420" y="55" fill="#0f766e" fontSize="10" textAnchor="middle">Shipped</text>
+  <text x="420" y="130" fill="#6b7280" fontSize="9" textAnchor="middle">12:10</text>
+
+  <circle cx="560" cy="90" r="6" fill="#d97706"/>
+  <rect x="500" y="35" width="120" height="34" rx="4" fill="#fffbeb" stroke="#d97706"/>
+  <text x="560" y="55" fill="#b45309" fontSize="10" textAnchor="middle">Delivered ★</text>
+  <text x="560" y="130" fill="#6b7280" fontSize="9" textAnchor="middle">12:30</text>
+
+  <text x="330" y="160" fill="#6b7280" fontSize="9.5" textAnchor="middle">"current status" = replay the log, take the last event</text>
+  <defs>
+    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+</svg>
+</Figure>
+
+> **DSA / Algorithm Angle:** An event log is structurally a simple **append-only sequence** (think of it as a linked list you only ever add to at the tail). Computing "current state" from it is a classic **fold / reduce** operation — walking the sequence once and combining events into a final result, the same operation used in functional programming and MapReduce-style pipelines. It's also the same underlying idea as a database's **write-ahead log (WAL)**, which many databases already use internally for durability.
+
+> **Where You'll See This:** Banking and accounting systems have used this idea for centuries in the form of double-entry ledgers — balances are computed from a list of transactions, never overwritten. In modern engineering, **Kafka** is the tool most commonly used to build this kind of append-only event backbone, and version control systems like **Git** are, conceptually, event sourcing applied to your codebase — your repository's state is just the replay of every commit.
+
+## 5. CQRS
+
+**Command Query Responsibility Segregation — stop writes and reads from fighting over the same table.**
+
+Once you have an event log in place, a natural next step follows. At Amazon-level scale, you can't have every single write and every single read hitting the same database table — it becomes the bottleneck for the entire system. **CQRS** says: separate the two paths entirely. Give **writes** (commands — create, update, delete) their own path, and give **reads** (queries) a completely separate one.
+
+In practice: a write comes in, gets turned into an event, and lands in the event log. A background process reads that log, reshapes ("denormalizes") the data into a form that's fast to query, and updates a separate **read database**. Anyone who wants to read data goes straight to that read database — it's always ready, and it never competes with writes for the same resources.
+
+<Figure title="CQRS" caption="Two separate lanes: commands mutate through the event log, queries read from an always-ready, pre-shaped read database.">
+<svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" width="660" height="200">
+  <rect x="10" y="80" width="70" height="34" rx="4" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="45" y="101" fill="#1d4ed8" fontSize="10" textAnchor="middle">Client</text>
+
+  <path d="M80 90 h60" stroke="#9ca3af" strokeWidth="1.3" markerEnd="url(#arrow3)"/>
+  <text x="110" y="82" fill="#6b7280" fontSize="8.5" textAnchor="middle">command</text>
+  <rect x="140" y="55" width="120" height="36" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="200" y="77" fill="#0f766e" fontSize="10" textAnchor="middle">Command Side</text>
+
+  <path d="M260 73 h50" stroke="#9ca3af" strokeWidth="1.3" markerEnd="url(#arrow3)"/>
+  <rect x="310" y="55" width="110" height="36" rx="4" fill="#fffbeb" stroke="#d97706"/>
+  <text x="365" y="77" fill="#b45309" fontSize="10" textAnchor="middle">Event Log</text>
+
+  <path d="M420 73 h50" stroke="#9ca3af" strokeWidth="1.3" markerEnd="url(#arrow3)"/>
+  <text x="445" y="65" fill="#6b7280" fontSize="8.5" textAnchor="middle">denormalize</text>
+  <rect x="470" y="55" width="130" height="36" rx="4" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="535" y="77" fill="#0f766e" fontSize="10" textAnchor="middle">Read Database</text>
+
+  <path d="M80 108 h60" stroke="#9ca3af" strokeWidth="1.3" markerEnd="url(#arrow3)"/>
+  <text x="110" y="128" fill="#6b7280" fontSize="8.5" textAnchor="middle">query</text>
+  <rect x="140" y="120" width="120" height="36" rx="4" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="200" y="142" fill="#1d4ed8" fontSize="10" textAnchor="middle">Query Side</text>
+
+  <path d="M535 91 v45 q0 20 -20 20 h-255 q-20 0 -20 -20 v-4" stroke="#9ca3af" strokeWidth="1.3" fill="none" markerEnd="url(#arrow3)"/>
+  <text x="330" y="188" fill="#6b7280" fontSize="8.5" textAnchor="middle">query side reads straight from the read database</text>
+
+  <defs>
+    <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+</svg>
+</Figure>
+
+> **Trade-off:** The read database is updated slightly after the write happens — this is called **eventual consistency**. If your system can tolerate a brief lag between "I wrote this" and "I can read this," CQRS is a strong fit. If it can't (say, a bank balance check), it needs more care.
+
+> **DSA / Algorithm Angle:** The read database is essentially a **materialized view** — a precomputed, denormalized result kept up to date incrementally, so a query never has to redo the same computation from scratch. That "read straight from a pre-shaped table" idea is the same reasoning behind caching and indexing structures in general: do the expensive work once, look it up cheaply many times.
+
+> **Where You'll See This:** CQRS pairs naturally with event sourcing and shows up wherever reads vastly outnumber writes — social media feeds, e-commerce product catalogs, and real-time leaderboards in large multiplayer games are classic examples, since they all serve enormous read traffic against comparatively few writes.
+
+## How These Five Connect
+
+1. **Monolith vs. Microservices** — the first decision: one codebase, or many independent services?
+2. **Database-per-Service** — if you chose microservices, do the services also get separate databases?
+3. **Circuit Breaker** — now that services depend on each other, how do you stop one failure from cascading?
+4. **Event Sourcing** — at high write volume, how do you record state without a single table becoming a bottleneck?
+5. **CQRS** — once you have an event log, how do you also keep reads fast and separate from writes?
+
+## Summary
+
+- A **monolith** is simple to run but shares fate — one bug can take everything down. **Microservices** isolate failures but require services to find and call each other.
+- **Database-per-service** gives every service full data isolation and the freedom to pick the right database type, at the cost of losing cross-service database joins.
+- A **circuit breaker** stops one failing service from cascading into failures upstream, by tracking closed/open/half-open state and failing fast once a threshold is crossed.
+- **Event sourcing** replaces "overwrite the current state" with "append an immutable event," turning the event log itself into the source of truth.
+- **CQRS** separates the write path (commands, through the event log) from the read path (queries, against a pre-shaped read database), trading a small consistency delay for reads that never compete with writes.
+- These five patterns build on each other: the more you split a system apart for scale and fault isolation, the more you need mechanisms — circuit breakers, event logs, denormalized read stores — to keep it coherent and fast.
+
+Writing Material Reference: [claude.ai/chat/e775bec4-a70c-45cb-b267-2b48ac4c20c5](https://claude.ai/chat/e775bec4-a70c-45cb-b267-2b48ac4c20c5)
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/consistent-hashing", title: "Consistent Hashing" }}
+  next={{ href: "/docs/cs-book/part-4-advanced/cap-theorem", title: "CAP Theorem" }}
+/>
