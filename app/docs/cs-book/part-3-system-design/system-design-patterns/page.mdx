@@ -283,12 +283,12 @@ In practice: a write comes in, gets turned into an event, and lands in the event
 
 ## Summary
 
-- A **monolith** is simple to run but shares fate — one bug can take everything down. **Microservices** isolate failures but require services to find and call each other.
-- **Database-per-service** gives every service full data isolation and the freedom to pick the right database type, at the cost of losing cross-service database joins.
+- A **monolith** is simple to run but shares fate — <Revision>one bug can take everything down.</Revision> **Microservices** isolate failures but require services to find and call each other.
+- **Database-per-service** gives every service full data isolation and the freedom to pick the right database type, at the cost of <Revision>losing cross-service database joins.</Revision>
 - A **circuit breaker** stops one failing service from cascading into failures upstream, by tracking closed/open/half-open state and failing fast once a threshold is crossed.
-- **Event sourcing** replaces "overwrite the current state" with "append an immutable event," turning the event log itself into the source of truth.
-- **CQRS** separates the write path (commands, through the event log) from the read path (queries, against a pre-shaped read database), trading a small consistency delay for reads that never compete with writes.
-- These five patterns build on each other: the more you split a system apart for scale and fault isolation, the more you need mechanisms — circuit breakers, event logs, denormalized read stores — to keep it coherent and fast.
+- **Event sourcing** replaces <Revision>"overwrite the current state"</Revision> with "append an immutable event," <Revision>turning the event log itself into the source of truth.</Revision>
+- **CQRS** <Revision>separates the write path (commands, through the event log)</Revision> from the read path (queries, against a pre-shaped read database), <Revision>trading a small consistency delay</Revision> for reads that never compete with writes.
+- These five patterns build on each other: <Revision>the more you split a system apart for scale and fault isolation, the more you need mechanisms</Revision> — circuit breakers, event logs, <Revision>denormalized read stores</Revision> — to keep it coherent and fast.
 
 Writing Material Reference: [claude.ai/chat/e775bec4-a70c-45cb-b267-2b48ac4c20c5](https://claude.ai/chat/e775bec4-a70c-45cb-b267-2b48ac4c20c5)
 
