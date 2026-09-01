@@ -86,7 +86,7 @@ Say you've gone with microservices: an Auth service, a File-Upload service, a No
 
 Sharing one database is tempting: it's simpler, and services that need the same data (like user details) can just read the same tables. But it quietly breaks the whole point of microservices. Your code is separated, but your data isn't — a bug in the Notification service could still accidentally delete a row in the Users table. That's not real isolation.
 
-**Database-per-service** says: give every service its own database, and let it pick whatever type fits its job. An Auth service might use a document database because its schema keeps changing. A Notification service tracking click-rates and opens might use a fast analytics database. A Posts service with clearly structured data might use a classic relational database. Each one is optimized for what it actually does.
+**Database-per-service** says: give every service its own database, and let it pick whatever type fits its job. An Auth service might use a <Revision>document database</Revision> because its schema keeps changing. A Notification service tracking click-rates and opens might use a fast <Revision>analytics database</Revision>. A Posts service with clearly structured data might use a classic <Revision>relational database.</Revision> Each one is optimized for what it actually does.
 
 <Figure title="Database-per-Service" caption="Each service picks the database that fits its job — the trade-off is that 'joins' move from the database into your application code.">
 <svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" width="680" height="230">
