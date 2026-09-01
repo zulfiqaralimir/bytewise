@@ -72,7 +72,7 @@ Microservices fix that by giving every feature its own small, independently-runn
 </svg>
 </Figure>
 
-> **Trade-off:** Monolith — easy to run, but one bug can take the whole app down, and you can't scale just the busy part. Microservices — fault-isolated and independently scalable, but now you must design how services find and talk to each other over the network.
+> **Trade-off:** Monolith — easy to run, but one bug can take the whole app down, and you can't scale just the busy part. Microservices — fault-isolated and independently scalable, but now you must <Revision>design how services find and talk to each other over the network.</Revision>
 
 > **DSA / Algorithm Angle:** Splitting into services doesn't need a specific algorithm by itself, but it opens the door to ones you'll meet soon after: **load balancing algorithms** (round robin, least-connections, consistent hashing) to spread traffic across copies of a service, and **service-discovery** lookups (essentially hash-table lookups by service name) so services can find each other.
 
