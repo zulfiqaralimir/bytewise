@@ -228,9 +228,9 @@ The usual way to track something's status is to store one row with a "current st
 
 **Command Query Responsibility Segregation — stop writes and reads from fighting over the same table.**
 
-Once you have an event log in place, a natural next step follows. At Amazon-level scale, you can't have every single write and every single read hitting the same database table — it becomes the bottleneck for the entire system. **CQRS** says: separate the two paths entirely. Give **writes** (commands — create, update, delete) their own path, and give **reads** (queries) a completely separate one.
+Once you have an <Revision>event log in place,</Revision> a natural next step follows. At Amazon-level scale, <Revision>you can't have every single write and every single read hitting the same database table</Revision> — it becomes the bottleneck for the entire system. **CQRS** says: separate the two paths entirely. <Revision>Give **writes** (commands — create, update, delete) their own path, and give **reads** (queries) a completely separate one.</Revision>
 
-In practice: a write comes in, gets turned into an event, and lands in the event log. A background process reads that log, reshapes ("denormalizes") the data into a form that's fast to query, and updates a separate **read database**. Anyone who wants to read data goes straight to that read database — it's always ready, and it never competes with writes for the same resources.
+In practice: a write comes in, gets turned into an event, and lands in the event log. A background process reads that log, <Revision>reshapes ("denormalizes") the data into a form that's fast to query, and updates a separate **read database**.</Revision> Anyone who wants to read data goes straight to that read database — it's always ready, and it never competes with writes for the same resources.
 
 <Figure title="CQRS" caption="Two separate lanes: commands mutate through the event log, queries read from an always-ready, pre-shaped read database.">
 <svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" width="660" height="200">
@@ -269,9 +269,9 @@ In practice: a write comes in, gets turned into an event, and lands in the event
 
 > **Trade-off:** The read database is updated slightly after the write happens — this is called **eventual consistency**. If your system can tolerate a brief lag between "I wrote this" and "I can read this," CQRS is a strong fit. If it can't (say, a bank balance check), it needs more care.
 
-> **DSA / Algorithm Angle:** The read database is essentially a **materialized view** — a precomputed, denormalized result kept up to date incrementally, so a query never has to redo the same computation from scratch. That "read straight from a pre-shaped table" idea is the same reasoning behind caching and indexing structures in general: do the expensive work once, look it up cheaply many times.
+> **DSA / Algorithm Angle:** The read database is essentially a **materialized view** — a precomputed, denormalized result kept up to date incrementally, so a query never has to redo the same computation from scratch. That "read straight from a pre-shaped table" <Revision>idea is the same reasoning behind caching and indexing structures in general: do the expensive work once, look it up cheaply many times.</Revision>
 
-> **Where You'll See This:** CQRS pairs naturally with event sourcing and shows up wherever reads vastly outnumber writes — social media feeds, e-commerce product catalogs, and real-time leaderboards in large multiplayer games are classic examples, since they all serve enormous read traffic against comparatively few writes.
+> **Where You'll See This:** <Revision>CQRS pairs naturally with event sourcing</Revision> and shows up wherever reads vastly outnumber writes — social media feeds, e-commerce product catalogs, and real-time leaderboards in large multiplayer games are classic examples, since they all serve enormous read traffic against comparatively few writes.
 
 ## How These Five Connect
 
