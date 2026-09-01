@@ -133,7 +133,7 @@ Sharing one database is tempting: it's simpler, and services that need the same 
 
 Now that services depend on each other, here's the nightmare scenario: Service A calls Service B, which calls Service C. If C goes down, B keeps waiting on it and eventually fails too. Then A, waiting on B, fails as well. One dead service just **cascaded** into three dead services.
 
-A circuit breaker sits between two services like a proxy and borrows its name from an electrical circuit breaker. While the downstream service is healthy, the "circuit" stays **closed** and requests flow through normally. The moment it notices failures piling up past a threshold, it **opens** the circuit — it stops sending requests altogether and fails fast, instead of letting everyone wait on a service that's already struggling. After a cooldown period, it goes **half-open**: it lets through one test request to check if the service has recovered. If that succeeds, the circuit closes again; if not, it reopens and waits longer.
+A circuit breaker <Revision>sits between two services like a proxy</Revision> and borrows its name from an electrical circuit breaker. While the downstream service is healthy, the "circuit" stays **closed** and requests flow through normally. The moment it notices failures piling up past a threshold, it **opens** the circuit — it stops sending requests altogether and fails fast, instead of letting everyone wait on a service that's already struggling. After a cooldown period, it goes **half-open**: it lets through one test request to check if the service has recovered. If that succeeds, the circuit closes again; if not, it reopens and waits longer.
 
 <Figure title="Circuit Breaker States" caption="Three states, one loop: closed → open → half-open → back to closed (or back to open, if the test fails).">
 <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" width="620" height="260">
@@ -176,7 +176,7 @@ A circuit breaker sits between two services like a proxy and borrows its name fr
 
 > **DSA / Algorithm Angle:** This pattern *is*, almost literally, a textbook **finite state machine (FSM)** — a foundational computer-science structure with a fixed set of states (closed / open / half-open) and defined transitions between them triggered by events (failure count, timeout, test result). If you've studied automata theory, this is that idea applied directly to production traffic.
 
-> **Where You'll See This:** Netflix popularized this pattern at scale with its open-source **Hystrix** library, built specifically to stop one failing dependency from cascading across its streaming backend. It's now a standard tool in most microservice frameworks and API gateways for exactly this reason.
+> **Where You'll See This:** Netflix popularized this pattern at scale with its open-source **Hystrix** library, built specifically to stop one failing dependency from cascading across its streaming backend. It's now a standard tool in most microservice frameworks and <Revision>API gateways for exactly this reason.</Revision>
 
 ## 4. Event Sourcing
 
