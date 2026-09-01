@@ -153,12 +153,52 @@ Only **one loop** this time, and it stops the instant a repeat is found.
 
 ---
 
+#### Why a Set, Not a List?
+
+A natural question: what actually changes if `seen` is a plain **list** (`[]`) instead of a **set**?
+
+```python
+def containsDuplicate(nums):
+    seen = []
+    for n in nums:
+        if n in seen:
+            return True
+        seen.append(n)
+    return False
+```
+
+The code looks almost identical — `seen = []` instead of `seen = set()`, `seen.append(n)` instead of `seen.add(n)`. But there's a hidden cost that isn't obvious just from reading it.
+
+**The problem is `if n in seen:`.** When `seen` is a **list**, checking `n in seen` makes Python **scan through the entire list, one element at a time** — the same walk as the brute-force inner loop. There's no shortcut; it just checks each item until it finds a match or runs out of items.
+
+When `seen` is a **set**, `n in seen` works completely differently under the hood — sets use **hashing**, which lets Python jump almost directly to where `n` *would* be, without scanning everything else. That's why the check is `O(1)` — instant, regardless of how big the set gets.
+
+**Trace the list version**, using the same `nums = [1, 2, 3, 3]`, paying attention to how much work each check takes:
+
+```
+seen = [] (empty)
+
+n=1: is 1 in seen? Check against 0 items → No  → append → seen = [1]
+n=2: is 2 in seen? Check against 1 item (1) → No  → append → seen = [1, 2]
+n=3: is 3 in seen? Check against 2 items (1, 2) → No  → append → seen = [1, 2, 3]
+n=3: is 3 in seen? Check against 3 items (1, 2, 3) → YES → return True
+```
+
+Each `in` check looks at **more and more items** as the list grows — 0, then 1, then 2, then 3 items checked. That growing cost turns this right back into **O(n²) time overall** — the same time complexity as brute force. Nothing was actually sped up; it was just written differently.
+
+**The takeaway:** a list for `seen` gives the worst of both worlds — just as slow as brute force (`O(n²)`), but *also* using extra memory (`O(n)`) like the set version. The set is strictly better here — same memory cost, real speed gained — because of how `in` behaves differently for sets versus lists.
+
+> **General rule of thumb:** whenever a problem needs repeated "have I seen this before?" checks, reach for a **set** (or dictionary), not a list — the cost of `in` is what decides the outcome.
+
+---
+
 ### Complexity Analysis
 
 | Approach | Time | Space |
 |---|---|---|
 | Brute force (nested loops) | O(n²) | O(1) |
-| Hash set | O(n) | O(n) |
+| List as `seen` | O(n²) | O(n) |
+| Set as `seen` (hash set) | O(n) | O(n) |
 
 ---
 
