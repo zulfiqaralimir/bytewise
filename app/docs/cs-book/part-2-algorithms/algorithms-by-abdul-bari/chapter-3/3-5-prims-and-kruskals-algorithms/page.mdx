@@ -22,6 +22,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { Figure } from "@/app/components/Figure";
+import { Revision } from "@/app/components/Revision";
 
 # 3.5: Prim's and Kruskal's Algorithms — Greedy Method
 
@@ -280,7 +281,7 @@ Since this graph has 4 vertices, any spanning tree needs exactly **3 edges**. Bu
 
 This raises the natural question: **can we find the spanning tree with the minimum possible cost?**
 
-The brute-force answer is yes — generate every possible spanning tree, compute each one's cost, and pick the cheapest. But that's expensive and doesn't scale. Fortunately, **greedy algorithms** solve this efficiently without ever generating every possible tree. The two classic methods are:
+The brute-force answer is yes — generate every possible spanning tree, compute each one's cost, and pick the cheapest. But that's expensive and doesn't scale. <Revision>Fortunately, **greedy algorithms** solve this efficiently without ever generating every possible tree.</Revision> The two classic methods are:
 
 1. **Prim's Algorithm**
 2. **Kruskal's Algorithm**
@@ -478,7 +479,7 @@ Notice: **Kruskal's and Prim's arrive at the same minimum cost (99)** on this gr
 Θ(V · E) = Θ(n · e) = Θ(n²)     (when V and E are both on the order of n)
 ```
 
-- **Optimization with a Min-Heap:** if all edges are stored in a **min-heap**, each "find the minimum" operation takes only `O(log n)` time (heap deletion). Since we do this `|V| − 1` ≈ `n` times, the total time becomes:
+- <Revision>**Optimization with a Min-Heap:** if all edges are stored in a **min-heap**, each "find the minimum" operation takes only `O(log n)` time (heap deletion). Since we do this `|V| − 1` ≈ `n` times, the total time becomes:</Revision>
 
 ```text
 O(n log n)
@@ -644,6 +645,8 @@ In this example, at the point where two edges both carry weight 4 (B–D and D�
 ---
 
 **Watch the original lecture:** <a href="https://www.youtube.com/watch?v=4ZlRH0eK-qQ&t=720s" target="_blank" rel="noopener noreferrer">Prim's and Kruskal's Algorithms — Greedy Method — Abdul Bari (YouTube)</a>
+
+**Material Preparation Reference:** <a href="https://claude.ai/chat/01d12618-bd18-4cda-9a31-3300d37c96df" target="_blank" rel="noopener noreferrer">Claude.ai chat</a>
 
 ---
 
