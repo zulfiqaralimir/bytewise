@@ -386,7 +386,7 @@ Both work identically as dictionary keys — a string and a tuple are both immut
 
 #### <Revision>The Core Idea — Counting Letters Instead of Sorting</Revision>
 
-Instead of sorting each word's letters (which costs `O(k log k)` per word), this version **counts how many times each letter appears**. Two words are anagrams if and only if they have the **exact same letter counts** — same idea as before, just measured differently.
+<Revision>Instead of sorting each word's letters (which costs `O(k log k)` per word), this version **counts how many times each letter appears**.</Revision> Two words are anagrams if and only if they have the **exact same letter counts** — same idea as before, just measured differently.
 
 ```python
 count = [0] * 26   # a...z
