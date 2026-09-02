@@ -229,7 +229,7 @@ def groupAnagrams(strs):
 
 <Revision>Without that `if` check, the line `groups[key].append(s)` would crash the first time a new key appears</Revision> — `groups[key]` tries to look up the value first, and if nothing's there, there's nothing to call `.append()` on.
 
-**Trace**, using a shortened `strs = ["eat", "tea", "bat"]`:
+<Revision>**Trace**, using a shortened `strs = ["eat", "tea", "bat"]`:</Revision>
 
 ```
 groups = {} (empty)
