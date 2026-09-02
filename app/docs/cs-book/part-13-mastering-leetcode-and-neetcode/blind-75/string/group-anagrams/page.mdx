@@ -203,6 +203,76 @@ s="bat": key="abt" → groups = {"aet": ["eat", "tea", "ate"], "ant": ["tan", "n
 
 ---
 
+### Bonus: Solving It Without `defaultdict`
+
+It's worth understanding what `defaultdict` is actually saving us from, by writing the same solution without it.
+
+**Version 1 — plain dictionary with a manual check:**
+
+```python
+def groupAnagrams(strs):
+    groups = {}
+    for s in strs:
+        key = "".join(sorted(s))
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(s)
+    return list(groups.values())
+```
+
+**What's different:**
+- `groups = {}` — an ordinary dictionary, with no special auto-creating behavior.
+- `if key not in groups:` — before appending, we now have to manually ask: "does this key already exist?"
+- `groups[key] = []` — if it doesn't exist yet, create it ourselves as an empty list.
+- `groups[key].append(s)` — only after the key is guaranteed to exist do we safely append to it.
+
+Without that `if` check, the line `groups[key].append(s)` would crash the first time a new key appears — `groups[key]` tries to look up the value first, and if nothing's there, there's nothing to call `.append()` on.
+
+**Trace**, using a shortened `strs = ["eat", "tea", "bat"]`:
+
+```
+groups = {} (empty)
+
+s="eat": key="aet"
+    "aet" not in groups? True → groups["aet"] = [] → groups = {"aet": []}
+    groups["aet"].append("eat") → groups = {"aet": ["eat"]}
+
+s="tea": key="aet"
+    "aet" not in groups? False (already exists) → skip creating it
+    groups["aet"].append("tea") → groups = {"aet": ["eat", "tea"]}
+
+s="bat": key="abt"
+    "abt" not in groups? True → groups["abt"] = [] → groups = {"aet": ["eat", "tea"], "abt": []}
+    groups["abt"].append("bat") → groups = {"aet": ["eat", "tea"], "abt": ["bat"]}
+```
+
+Same final result — `defaultdict` doesn't change *what* the code does, only *how much code* is needed to do it.
+
+**Version 2 — plain dictionary with `.setdefault()`:**
+
+```python
+def groupAnagrams(strs):
+    groups = {}
+    for s in strs:
+        key = "".join(sorted(s))
+        groups.setdefault(key, []).append(s)
+    return list(groups.values())
+```
+
+`groups.setdefault(key, [])` means: "if `key` exists, give me its current value. If it doesn't exist, create it with the default value `[]` **and** give that back." Either way, a list is returned that can be immediately `.append()`-ed to — a one-line version of the `if key not in groups` check.
+
+**Comparison:**
+
+| Version | Extra code needed | Behavior |
+|---|---|---|
+| `defaultdict(list)` | None — handles missing keys automatically | Cleanest |
+| Plain `{}` + manual `if` check | One extra `if` block | Most explicit, easiest to follow line-by-line |
+| Plain `{}` + `.setdefault()` | One extra method call | Middle ground — compact, but less obvious to a beginner |
+
+**Time and space complexity are identical** across all three versions — this is purely about code style and readability, not performance. `defaultdict` is the most common choice in real interview solutions because it's cleanest, but understanding the manual `if` version explains *why* `defaultdict` is convenient in the first place.
+
+---
+
 ### Edge Cases
 
 **Universal checklist:**
