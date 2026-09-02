@@ -303,6 +303,196 @@ Search and word-game tools that need to find all valid words matching a given se
 
 ---
 
+### Bonus: The Tuple-Based Variation
+
+Good catch — this is a slightly different variation from what we wrote. Let's break down what's new here, especially the **tuple**.
+
+#### What's Different in This Version
+
+```python
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        dic = {}
+
+        for word in strs:
+            s_word = sorted(word)      # ['a', 'e', 't']
+            s_t = tuple(s_word)        # ('a', 'e', 't')
+            if s_t in dic:
+                dic[s_t].append(word)
+            else:
+                dic[s_t] = [word]
+
+        return list(dic.values())
+```
+
+Two things are different from our version: it uses a **tuple** instead of `"".join(...)`, and it uses a manual `if/else` instead of `defaultdict`. Let's focus on the tuple question, since that's new.
+
+#### What Is a Tuple?
+
+A **tuple** is very similar to a list — it holds an ordered sequence of items. The key difference:
+
+```python
+my_list = [1, 2, 3]     # can be changed after creation
+my_tuple = (1, 2, 3)    # CANNOT be changed after creation
+```
+
+Lists use `[ ]`, tuples use `( )`. Once you create a tuple, you can't add, remove, or modify its contents — it's **immutable** (locked, unchangeable).
+
+```python
+my_list[0] = 99      # fine — lists can be modified
+my_tuple[0] = 99      # ERROR — tuples cannot be modified
+```
+
+#### Why Does This Matter Here?
+
+Remember: `sorted(word)` returns a **list**, e.g. `['a', 'e', 't']`.
+
+**The problem:** you cannot use a list as a dictionary key.
+
+```python
+dic = {}
+dic[['a', 'e', 't']] = ['eat']   # TypeError! lists can't be dictionary keys
+```
+
+This fails because dictionary keys must be **immutable** — Python needs a key's value to never change, so it can reliably use it for lookups. A list could be modified after being used as a key, which would break the dictionary internally. So Python simply forbids it.
+
+`tuple(s_word)` converts that list into a tuple — same values, same order, but now **locked** and safe to use as a key:
+
+```python
+s_t = tuple(['a', 'e', 't'])   # ('a', 'e', 't')
+dic[s_t] = ['eat']              # works fine — tuples ARE allowed as keys
+```
+
+#### Comparing the Two Approaches We Now Have
+
+| Approach | How the key is built | Key type |
+|---|---|---|
+| `"".join(sorted(word))` | Sort, then glue letters into a string | `str` — e.g. `"aet"` |
+| `tuple(sorted(word))` | Sort, then convert list to tuple | `tuple` — e.g. `('a', 'e', 't')` |
+
+Both work identically as dictionary keys — a string and a tuple are both immutable, so both are valid. The difference is purely stylistic:
+
+- `"".join(sorted(word))` — produces a clean, readable string like `"aet"`. Slightly more work (the extra `.join()` step), but nicer to look at if you're debugging and print the dictionary.
+- `tuple(sorted(word))` — skips the `.join()` step entirely, going straight from list to tuple. Slightly more direct, but looks a bit less "readable" as a key, e.g. `('a', 'e', 't')` instead of `"aet"`.
+
+**Performance-wise, both are essentially equivalent** — same time and space complexity. This is a matter of preference, and you'll see both styles used in real interview solutions.
+
+---
+
+### Optimal: Counting Letters Instead of Sorting
+
+This is actually the **best** version of all — it avoids sorting entirely, which changes the time complexity for the better. Let's break it down slowly since there are a couple of new things: `ord()` and the counting trick.
+
+#### The Core Idea — Counting Letters Instead of Sorting
+
+Instead of sorting each word's letters (which costs `O(k log k)` per word), this version **counts how many times each letter appears**. Two words are anagrams if and only if they have the **exact same letter counts** — same idea as before, just measured differently.
+
+```python
+count = [0] * 26   # a...z
+```
+
+This creates a list of 26 zeros — one slot for each letter of the alphabet (`a` through `z`). We'll use this list to count letters in a word.
+
+#### What Is `ord()`?
+
+`ord()` converts a character into its underlying number code.
+
+```python
+ord("a")   # 97
+ord("b")   # 98
+ord("c")   # 99
+```
+
+Every character has a numeric code behind the scenes (from something called ASCII). You don't need to memorize these numbers — the useful part is that they're **sequential**: `a` is 97, `b` is 98, `c` is 99, and so on.
+
+**Why this matters:** `ord(c) - ord("a")` converts any lowercase letter into a number from `0` to `25` — a perfect index into our 26-slot `count` list.
+
+```python
+ord("a") - ord("a")   # 97 - 97 = 0
+ord("b") - ord("a")   # 98 - 97 = 1
+ord("c") - ord("a")   # 99 - 97 = 2
+ord("z") - ord("a")   # 122 - 97 = 25
+```
+
+So `a` maps to index `0`, `b` maps to index `1`, ..., `z` maps to index `25` — exactly matching the 26 slots in `count`.
+
+#### Counting the Letters in a Word
+
+```python
+for c in s:
+    count[ord(c) - ord("a")] += 1
+```
+
+For every character `c` in the word `s`, find its index (`0`-`25`) and increment that slot by 1.
+
+**Let's trace this** with `s = "eat"`:
+
+```
+count = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  # 26 zeros
+
+c='e': index = ord('e')-ord('a') = 4  → count[4] += 1
+c='a': index = ord('a')-ord('a') = 0  → count[0] += 1
+c='t': index = ord('t')-ord('a') = 19 → count[19] += 1
+```
+
+Final `count` for `"eat"`: all zeros, except `count[0]=1` (one `a`), `count[4]=1` (one `e`), `count[19]=1` (one `t`).
+
+Now if you counted `"tea"` the same way, you'd get **the exact same `count` list** — same letters, same amounts, just encountered in a different order. That's the anagram detection, done without any sorting at all.
+
+#### Using `count` as the Dictionary Key
+
+```python
+res[tuple(count)].append(s)
+```
+
+Just like before, we can't use a **list** as a dictionary key — so `count` (a list of 26 numbers) gets converted into a **tuple** first, making it immutable and usable as a key. Same reasoning as the previous tuple example, just applied to a count-list instead of a sorted-letters list.
+
+Words that produce the identical 26-number count end up under the identical tuple key, and get grouped together.
+
+#### Why This Is Faster — The Real Payoff
+
+This is the important part. Compare the two approaches:
+
+| Approach | Per-word cost | Why |
+|---|---|---|
+| `sorted(word)` | `O(k log k)` | Sorting always costs `n log n` — no way around it |
+| Counting letters | `O(k)` | Just walking through the word once, incrementing counts — no sorting needed |
+
+(`k` = length of the word)
+
+Since we do this for every word, the overall time complexity becomes:
+
+- Sorting approach: **O(n · k log k)**
+- Counting approach: **O(n · k)** — or written another way, **O(m · n)** where `m` is average word length and `n` is number of words (matching the `O(m * n)` shown in your image)
+
+**Dropping the `log k` factor is the whole win.** For short words this barely matters, but the counting approach is considered the "optimal" solution because it removes an unnecessary sorting step — we don't actually need the letters sorted, we only need to know if the *letter counts* match, and counting achieves that directly.
+
+#### Full Version
+
+```python
+from collections import defaultdict
+
+class Solution:
+    def groupAnagrams(self, strs):
+        res = defaultdict(list)   # mapping charCount -> list of anagrams
+
+        for s in strs:
+            count = [0] * 26   # a...z
+
+            for c in s:
+                count[ord(c) - ord("a")] += 1
+
+            res[tuple(count)].append(s)
+
+        return list(res.values())
+```
+
+---
+
+**Reference video:** <a href="https://www.youtube.com/watch?v=vzdNOK2oB2E&list=PLot-Xpze53ldVwtstag2TL4HQhAnC8ATf&index=52" target="_blank" rel="noopener noreferrer">Group Anagrams — NeetCode</a> · <a href="https://bytewise-one.vercel.app/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/string/group-anagrams" target="_blank" rel="noopener noreferrer">ByteWise page</a>
+
+---
+
 <ArticleNav
   prev={{ title: "Product of Array Except Self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/product-of-array-except-self" }}
   next={null}
