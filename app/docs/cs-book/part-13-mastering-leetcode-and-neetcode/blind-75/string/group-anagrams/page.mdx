@@ -224,7 +224,7 @@ def groupAnagrams(strs):
 **What's different:**
 - `groups = {}` — an ordinary dictionary, with no special auto-creating behavior.
 - `if key not in groups:` — before appending, we now have to manually ask: "does this key already exist?"
-- `groups[key] = []` — if it doesn't exist yet, create it ourselves as an empty list.
+- `groups[key] = []` — <Revision>if it doesn't exist yet, create it ourselves as an empty list.</Revision>
 - `groups[key].append(s)` — only after the key is guaranteed to exist do we safely append to it.
 
 Without that `if` check, the line `groups[key].append(s)` would crash the first time a new key appears — `groups[key]` tries to look up the value first, and if nothing's there, there's nothing to call `.append()` on.
