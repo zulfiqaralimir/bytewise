@@ -371,6 +371,7 @@ const chapters = [
         items: [
           { title: "Blind 75 #3: Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/contains-duplicate" },
           { title: "Blind 75 #4: Product of Array Except Self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/product-of-array-except-self" },
+          { title: "Blind 75 #52: Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/string/group-anagrams" },
         ],
       },
     ],

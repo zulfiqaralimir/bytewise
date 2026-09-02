@@ -1,0 +1,239 @@
+export const metadata = {
+  title: "Group Anagrams — Blind 75 — ByteWise",
+  description:
+    "LeetCode #49 Group Anagrams — brute force O(n²·k log k) pairwise comparison vs. the O(n·k log k) sorted-key defaultdict approach, with full traces.",
+  keywords: [
+    "group anagrams",
+    "LeetCode 49",
+    "defaultdict Python",
+    "Blind 75",
+    "string problems",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Group Anagrams",
+    description:
+      "LeetCode #49 · Medium — sort each word's letters into a canonical key, bucket with defaultdict(list), O(n·k log k) time.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Group Anagrams
+
+**LeetCode #49 · 🟡 Medium**
+
+*Blind 75 Problem 52 of 75 · String · Problem 3 of 10*
+
+---
+
+### Problem Statement
+
+> Given an array of strings `strs`, group the **anagrams** together. You can return the answer in any order.
+>
+> An **anagram** is a word formed by rearranging the letters of another word, using all the original letters exactly once.
+
+```python
+# Example 1
+Input: strs = ["eat","tea","tan","ate","nat","bat"]
+Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+# Example 2
+Input: strs = [""]
+Output: [[""]]
+```
+
+**Constraints:**
+- `1 <= strs.length <= 10⁴`
+- `0 <= strs[i].length <= 100`
+- `strs[i]` consists of lowercase English letters only
+
+---
+
+### Hint
+
+Two words are anagrams exactly when they contain the same letters, just rearranged. Is there a transformation you can apply to a word that turns "the same letters in some order" into "the exact same value" — something you could use as a dictionary key to bucket words together?
+
+---
+
+### Your Attempt
+
+> Take a few minutes to try this yourself before reading on. Think about what single operation on a string would make every anagram of it collapse to an identical result.
+
+---
+
+### Complete Walkthrough
+
+#### <span style={{ color: "#dc2626", fontWeight: 700 }}>Brute Force Approach</span>
+
+For every word, compare it against every other word by checking whether their sorted letters match:
+
+```python
+def groupAnagrams(strs):
+    n = len(strs)
+    visited = [False] * n
+    result = []
+
+    for i in range(n):
+        if visited[i]:
+            continue
+        group = [strs[i]]
+        for j in range(i + 1, n):
+            if visited[j]:
+                continue
+            if sorted(strs[i]) == sorted(strs[j]):
+                group.append(strs[j])
+                visited[j] = True
+        result.append(group)
+
+    return result
+```
+
+**Breaking it down:**
+- `visited = [False] * n` — tracks which words have already been placed into a group, so they're not compared or appended twice.
+- Outer loop `for i in range(n):` — picks the next unplaced word to start a new group.
+- Inner loop `for j in range(i + 1, n):` — scans every later word, sorting both `strs[i]` and `strs[j]` and comparing the results.
+- Any match gets appended to `group` and flagged as `visited`, so it's skipped when the outer loop reaches it.
+
+**Time Complexity: O(n² · k log k)** — for every one of `n` words, the inner loop rescans the rest, and each comparison re-sorts both words (length `k`) to compare them.
+
+**Space Complexity: O(n)** — the `visited` array, plus the output.
+
+**Why it fails:** `n` up to `10⁴` means up to `10⁸` pairwise comparisons in the worst case, each doing extra sorting work on top — far too slow. Every word is also sorted repeatedly instead of once.
+
+---
+
+#### Intuition
+
+If two words are anagrams, they contain the exact same letters — just in a different order. So if you **sort the letters of each word alphabetically**, anagrams will produce the **exact same result**.
+
+```python
+sorted("eat")   # ['a', 'e', 't']
+sorted("tea")   # ['a', 'e', 't']
+sorted("ate")   # ['a', 'e', 't']
+```
+
+All three give the identical sorted list — sorting turns "different arrangements of the same letters" into "the exact same thing."
+
+Compare that to a non-anagram:
+
+```python
+sorted("bat")   # ['a', 'b', 't']
+```
+
+A different result, because `"bat"` doesn't share the same letters.
+
+**We can use the sorted letters as a dictionary key**, and every word that produces the same sorted key gets grouped together automatically — no pairwise comparison needed:
+
+```python
+key_for_eat = "".join(sorted("eat"))   # "aet"
+key_for_tea = "".join(sorted("tea"))   # "aet"  ← same key!
+key_for_bat = "".join(sorted("bat"))   # "abt"  ← different key
+```
+
+`sorted(s)` returns a **list** of characters, not a string — `"".join(...)` glues those letters back into a single string so it can be used as a dictionary key.
+
+---
+
+#### <span style={{ color: "#16a34a", fontWeight: 700 }}>Optimized Approach — Sorted Key + defaultdict</span>
+
+```python
+from collections import defaultdict
+
+def groupAnagrams(strs):
+    groups = defaultdict(list)
+    for s in strs:
+        key = "".join(sorted(s))
+        groups[key].append(s)
+    return list(groups.values())
+```
+
+**Breaking it down:**
+- `from collections import defaultdict` — imports this special dictionary type from Python's built-in `collections` module.
+- `groups = defaultdict(list)` — the dictionary that groups words; each key is a sorted-letters string, each value is a list of original words.
+- `for s in strs:` — walk through every word in the input list, once.
+- `key = "".join(sorted(s))` — sort the letters of the current word, then glue them back into a string to use as the grouping key.
+- `groups[key].append(s)` — add the *original* word `s` (not the sorted version) to the list for this key.
+- `return list(groups.values())` — `.values()` grabs just the grouped lists (the keys themselves aren't needed in the output); wrapping it in `list(...)` converts it from a dictionary-view object into a plain list.
+
+**Why `defaultdict` instead of a normal dictionary?**
+
+With a normal dictionary, appending to a key that doesn't exist yet raises an error:
+
+```python
+groups = {}
+groups["aet"].append("eat")   # KeyError! "aet" doesn't exist yet
+```
+
+`defaultdict(list)` creates a dictionary that **automatically creates a key with an empty list** the first time it's accessed — no manual "does this key exist?" check needed:
+
+```python
+groups = defaultdict(list)
+groups["aet"].append("eat")   # works instantly — "aet" auto-created as [] first
+```
+
+**Trace it**, using `strs = ["eat", "tea", "tan", "ate", "nat", "bat"]`:
+
+```
+groups = {} (empty defaultdict)
+
+s="eat": key="aet" → groups = {"aet": ["eat"]}
+s="tea": key="aet" → groups = {"aet": ["eat", "tea"]}
+s="tan": key="ant" → groups = {"aet": ["eat", "tea"], "ant": ["tan"]}
+s="ate": key="aet" → groups = {"aet": ["eat", "tea", "ate"], "ant": ["tan"]}
+s="nat": key="ant" → groups = {"aet": ["eat", "tea", "ate"], "ant": ["tan", "nat"]}
+s="bat": key="abt" → groups = {"aet": ["eat", "tea", "ate"], "ant": ["tan", "nat"], "abt": ["bat"]}
+```
+
+**Final result:** `[["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]` — one pass, no pairwise comparisons.
+
+**Why this is fast:** every word is sorted exactly **once**, and grouping is an `O(1)`-amortized dictionary insert instead of a rescan — the brute force's nested loop is gone entirely.
+
+---
+
+### Complexity Analysis
+
+| Approach | Time | Space |
+|---|---|---|
+| Brute force (pairwise sort + compare) | O(n² · k log k) | O(n) |
+| Sorted key + `defaultdict` | O(n · k log k) | O(n · k) |
+
+> n = number of words, k = length of the longest word. The optimized approach's `O(n · k)` space comes from storing every word (and its key) in the dictionary — proportional to the total number of characters across all input strings.
+
+---
+
+### Edge Cases
+
+**Universal checklist:**
+- **Empty array:** not possible here since `strs.length >= 1`, but a single-element input (`strs = ["a"]`) should return `[["a"]]` — a group of one.
+- **All same:** `strs = ["eat", "eat", "eat"]` — all three share the same sorted key and land in one group together.
+- **Strings — empty string:** `strs = [""]` → sorting an empty string gives `""`, so it becomes its own group: `[[""]]`.
+- **Strings — one character:** `strs = ["a", "b"]` → each character is its own sorted key, so no grouping happens; each word gets its own list.
+
+**Section-Specific Edge Cases:**
+- **No anagrams at all:** `strs = ["abc", "def"]` → every word maps to a distinct key, so the output has `n` groups of size 1 each — the dictionary approach handles this with no special-casing.
+- **Every word is an anagram of every other word:** all `n` words collapse into a single key — one giant group. Correct, but worth noticing that `defaultdict` doesn't care how lopsided the grouping ends up being.
+- **Very long words near the length cap:** `strs[i]` up to 100 characters means each `sorted()` call costs `O(k log k)` with `k` up to 100 — still cheap, but it's why the total time is `O(n · k log k)` rather than just `O(n)`.
+- **Case sensitivity:** the constraints guarantee lowercase-only input here, but it's worth stating out loud in an interview — `"Eat"` and `"eat"` would sort to different keys (`'E'` sorts before lowercase letters in ASCII) and wrongly land in separate groups unless the input were normalized first.
+
+> **Simple rule:** whenever a problem asks you to "group things that are secretly the same," look for a **canonical form** you can turn into a dictionary key — sorting, counting, or normalizing — so grouping becomes a single pass instead of pairwise comparison.
+
+---
+
+### Key Takeaway
+
+> **"Group things that are secretly the same"** → find a canonical key that every equivalent item maps to (here, the sorted word), and use `defaultdict(list)` to bucket them in one pass instead of comparing every pair.
+
+---
+
+### Real-World Application
+
+Search and word-game tools that need to find all valid words matching a given set of letters — a Scrabble/Words With Friends solver precomputes the sorted-letters key for its entire dictionary once, so that given any rack of tiles, it can instantly look up every valid word using those exact letters, instead of rescanning the whole dictionary each time. Same pattern: canonical key in, instant bucket lookup out.
+
+---
+
+<ArticleNav
+  prev={{ title: "Product of Array Except Self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/product-of-array-except-self" }}
+  next={null}
+/>
