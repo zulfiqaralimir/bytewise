@@ -376,7 +376,7 @@ Both work identically as dictionary keys — a string and a tuple are both immut
 - `"".join(sorted(word))` — produces a clean, readable string like `"aet"`. Slightly more work (the extra `.join()` step), but nicer to look at if you're debugging and print the dictionary.
 - `tuple(sorted(word))` — skips the `.join()` step entirely, going straight from list to tuple. Slightly more direct, but looks a bit less "readable" as a key, e.g. `('a', 'e', 't')` instead of `"aet"`.
 
-**Performance-wise, both are essentially equivalent** — same time and space complexity. This is a matter of preference, and you'll see both styles used in real interview solutions.
+<Revision>**Performance-wise, both are essentially equivalent** — same time and space complexity.</Revision> This is a matter of preference, and you'll see both styles used in real interview solutions.
 
 ---
 
