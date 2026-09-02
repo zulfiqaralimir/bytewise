@@ -10,13 +10,22 @@ const nextConfig: NextConfig = {
     // so it has to be turned back on explicitly.
     webpackBuildWorker: true,
   },
-  webpack(config) {
-    // 327+ MDX pages each run the full remark/rehype pipeline (KaTeX, GFM,
+  webpack(config, { dev }) {
+    // 368+ MDX pages each run the full remark/rehype pipeline (KaTeX, GFM,
     // syntax highlighting) during the webpack compile step. Default
     // parallelism (100) processes too many of these concurrently and OOMs
     // Vercel's build container — cap concurrency to trade build time for
-    // peak memory.
-    config.parallelism = 4;
+    // peak memory. Dropped from 4 to 2 after the site outgrew that ceiling
+    // too (SIGKILL ~70s into the compile step, far earlier than the prior
+    // multi-minute OOMs, meaning headroom ran out sooner this round).
+    config.parallelism = 2;
+    // The persistent filesystem cache (Next/webpack default in production)
+    // holds the module graph in memory during the build on top of writing
+    // it to disk — extra peak RSS we can't afford in this container. Not
+    // needed here since Vercel builds are one-shot, not iterative.
+    if (config.cache && !dev) {
+      config.cache = Object.freeze({ type: "memory" });
+    }
     // Add MDX loader directly — bypasses @next/mdx wrapper which triggers
     // "use client" propagation in Next.js 16 App Router
     config.module.rules.push({
