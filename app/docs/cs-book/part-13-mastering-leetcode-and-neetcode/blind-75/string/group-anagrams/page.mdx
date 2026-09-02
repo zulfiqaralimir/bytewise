@@ -355,7 +355,7 @@ dic = {}
 dic[['a', 'e', 't']] = ['eat']   # TypeError! lists can't be dictionary keys
 ```
 
-This fails because dictionary keys must be **immutable** — Python needs a key's value to never change, so it can reliably use it for lookups. A list could be modified after being used as a key, which would break the dictionary internally. So Python simply forbids it.
+<Revision>This fails because dictionary keys must be **immutable**</Revision> — Python needs a key's value to never change, so it can reliably use it for lookups. A list could be modified after being used as a key, which would break the dictionary internally. So Python simply forbids it.
 
 `tuple(s_word)` converts that list into a tuple — same values, same order, but now **locked** and safe to use as a key:
 
