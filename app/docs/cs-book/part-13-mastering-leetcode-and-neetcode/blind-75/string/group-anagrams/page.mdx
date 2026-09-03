@@ -446,7 +446,7 @@ Now if you counted `"tea"` the same way, you'd get **the exact same `count` list
 res[tuple(count)].append(s)
 ```
 
-Just like before, we can't use a **list** as a dictionary key — so `count` (a list of 26 numbers) gets converted into a **tuple** first, making it immutable and usable as a key. Same reasoning as the previous tuple example, just applied to a count-list instead of a sorted-letters list.
+<Revision>Just like before, we can't use a **list** as a dictionary key — so `count` (a list of 26 numbers) gets converted into a **tuple** first, making it immutable and usable as a key.</Revision> Same reasoning as the previous tuple example, just applied to a count-list instead of a sorted-letters list.
 
 Words that produce the identical 26-number count end up under the identical tuple key, and get grouped together.
 
