@@ -214,6 +214,60 @@ Log timestamp analysis — given a scattered set of second-level timestamps from
 
 ---
 
+### Variation: A Common Alternative Implementation
+
+You'll often see this problem solved with a slightly different version of the same algorithm:
+
+```python
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        numSet = set(nums)
+        longest = 0
+
+        for n in nums:
+            # check if its the start of a sequence
+            if (n - 1) not in numSet:
+                length = 0
+                while (n + length) in numSet:
+                    length += 1
+                longest = max(length, longest)
+        return longest
+```
+
+Two small differences from the version above — both harmless, but worth understanding.
+
+**Difference 1: Looping over `nums` instead of `numSet`**
+
+This version loops over the **original list** (`nums`), which may contain duplicates, instead of the **set** (`numSet`), which has duplicates already removed.
+
+This causes a bit of repeated, wasted work — if `4` appears three times in `nums`, the loop processes `n=4` three separate times. But each repeat check (`if (n-1) not in numSet`) is still O(1) and correctly identifies non-starts, so it just gets skipped instantly each time. Correctness and the overall O(n) time complexity are unaffected — looping over the set instead just avoids the redundant re-checks.
+
+**Difference 2: `length = 0` instead of `length = 1`**
+
+Tracing with `n = 2`, `numSet = {2, 3, 4, 5, 10, 20}`:
+
+```
+length=0: is 2+0=2 in numSet? Yes (trivially — n is always in the set) → length=1
+length=1: is 2+1=3 in numSet? Yes → length=2
+length=2: is 2+2=4 in numSet? Yes → length=3
+length=3: is 2+3=5 in numSet? Yes → length=4
+length=4: is 2+4=6 in numSet? No  → stop
+Final length = 4
+```
+
+Starting at `length=0` spends its first loop iteration confirming that `n` itself is in the set — which is always trivially true, since `n` came from the set/list to begin with. It's a harmless extra check; the final `length` still comes out identical to starting at `length=1`.
+
+**Summary:**
+
+| Difference | Impact |
+|---|---|
+| Loop over `nums` vs `numSet` | Wasted repeated checks on duplicates — correctness and time complexity unaffected |
+| `length = 0` vs `length = 1` | One extra trivially-true check per sequence-start — final answer identical either way |
+
+Both versions are correct, run in O(n), and are functionally equivalent — this is a stylistic variation you'll commonly encounter across different explanations of the same algorithm.
+
+---
+
 <ArticleNav
   prev={{ title: "Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/string/group-anagrams" }}
   next={null}
