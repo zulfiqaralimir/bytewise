@@ -448,7 +448,7 @@ res[tuple(count)].append(s)
 
 <Revision>Just like before, we can't use a **list** as a dictionary key — so `count` (a list of 26 numbers) gets converted into a **tuple** first, making it immutable and usable as a key.</Revision> Same reasoning as the previous tuple example, just applied to a count-list instead of a sorted-letters list.
 
-Words that produce the identical 26-number count end up under the identical tuple key, and get grouped together.
+<Revision>Words that produce the identical 26-number count end up under the identical tuple key, and get grouped together.</Revision>
 
 #### Why This Is Faster — The Real Payoff
 
