@@ -464,7 +464,7 @@ This is the important part. Compare the two approaches:
 Since we do this for every word, the overall time complexity becomes:
 
 - Sorting approach: **O(n · k log k)**
-- Counting approach: **O(n · k)** — or written another way, **O(m · n)** where `m` is average word length and `n` is number of words (matching the `O(m * n)` shown in your image)
+- Counting approach: **O(n · k)** — or written another way, **O(m · n)** where `m` is <Revision>average word length</Revision> and `n` is number of words (matching the `O(m * n)` shown in your image)
 
 **Dropping the `log k` factor is the whole win.** For short words this barely matters, but the counting approach is considered the "optimal" solution because it removes an unnecessary sorting step — we don't actually need the letters sorted, we only need to know if the *letter counts* match, and counting achieves that directly.
 
