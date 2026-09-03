@@ -1,0 +1,220 @@
+export const metadata = {
+  title: "Longest Consecutive Sequence — Blind 75 — ByteWise",
+  description:
+    "LeetCode #128 Longest Consecutive Sequence — why sorting's O(n log n) doesn't meet the O(n) requirement, and the O(n) hash-set sequence-start trick, with full traces.",
+  keywords: [
+    "longest consecutive sequence",
+    "LeetCode 128",
+    "hash set",
+    "Blind 75",
+    "array problems",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Longest Consecutive Sequence",
+    description:
+      "LeetCode #128 · Medium — drop every number into a set, only count upward from true sequence-starts (n-1 not in set), O(n) time.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Longest Consecutive Sequence
+
+**LeetCode #128 · 🟡 Medium**
+
+*Blind 75 Problem 30 of 75 · Array*
+
+---
+
+### Problem Statement
+
+> Given an array of integers `nums`, return the length of the longest consecutive sequence of elements that can be formed.
+
+A **consecutive sequence** is a sequence of elements in which each element is exactly `1` greater than the previous element. The elements do **not** have to be consecutive in the original array — only the *values* need to form an unbroken chain; their positions in the input don't matter.
+
+You must write an algorithm that runs in **O(n) time**.
+
+```python
+# Example 1
+Input: nums = [2, 20, 4, 10, 3, 4, 5]
+Output: 4
+# The longest consecutive sequence is [2, 3, 4, 5]
+```
+
+**Constraints:**
+- `0 <= nums.length <= 10⁵`
+- `-10⁹ <= nums[i] <= 10⁹`
+
+---
+
+### Hint
+
+Sorting first, then walking through counting consecutive runs, works — but sorting always costs `O(n log n)`, and the problem demands `O(n)`. What data structure gives you an **instant** "does this number exist?" check, and how could that check tell you where a sequence *starts*, so you only ever count each number once?
+
+---
+
+### Your Attempt
+
+> Take a few minutes to try this yourself before reading on. Think about how you'd know — without sorting — that a given number is the very first number of its consecutive run.
+
+---
+
+### Complete Walkthrough
+
+#### <span style={{ color: "#dc2626", fontWeight: 700 }}>Sorting Approach</span>
+
+The natural first idea: sort the numbers, then walk through counting consecutive runs.
+
+```python
+def longestConsecutive(nums):
+    if not nums:
+        return 0
+    nums = sorted(set(nums))
+    longest = 1
+    current = 1
+    for i in range(1, len(nums)):
+        if nums[i] == nums[i - 1] + 1:
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 1
+    return longest
+```
+
+**Breaking it down:**
+- `nums = sorted(set(nums))` — dedupe with a set, then sort what's left.
+- `current` tracks the length of the run in progress; `longest` tracks the best run seen so far.
+- Each step compares a number to the one right before it: if it's exactly `+1`, the run continues; otherwise a new run starts at `current = 1`.
+
+**Time Complexity: O(n log n)** — sorting `n` items always costs this, no way around it.
+
+**Space Complexity: O(n)** — the deduped, sorted copy.
+
+**Why it fails:** this is correct and would be a perfectly reasonable first pass in an interview, but the problem explicitly requires **O(n)**, and sorting can never be faster than `O(n log n)`. The real challenge is finding an approach that detects consecutive runs **without sorting at all**.
+
+---
+
+#### Intuition
+
+Use a **set** — not a full dictionary, since all that's needed is an instant "does this exist?" check, not stored values.
+
+For every number, ask one question: **is this number the *start* of a consecutive sequence?** A number is a sequence-start only if `number - 1` does **not** exist in the set. If `number - 1` *does* exist, this number is the middle (or end) of a sequence that starts earlier — not a start itself.
+
+Only for true sequence-starts, count upward: check if `number + 1` exists, then `number + 2`, and so on, tracking how far the chain extends.
+
+It might look like checking `+1, +2, +3...` for every number could be slow — but counting upward only ever happens from true sequence-starts. Every other number gets skipped with a single `O(1)` check. Since each number only ever gets "walked" once, as part of the one sequence it truly belongs to, the total work across the entire list still adds up to `O(n)`.
+
+---
+
+#### <span style={{ color: "#16a34a", fontWeight: 700 }}>Optimized Approach — Hash Set</span>
+
+1. Drop every number into a set → instant `O(1)` existence checks, no sorting needed.
+2. For each number, check if it's a sequence-start: is `number - 1` missing from the set?
+3. If it is a start, count upward — `number + 1`, `number + 2`, ... — for as long as each next value exists in the set.
+4. Track the longest chain found across all sequence-starts.
+
+```python
+def longestConsecutive(nums):
+    num_set = set(nums)
+    longest = 0
+
+    for n in num_set:
+        if n - 1 not in num_set:
+            length = 1
+            while n + length in num_set:
+                length += 1
+            longest = max(longest, length)
+
+    return longest
+```
+
+**Breaking it down:**
+- `num_set = set(nums)` — converts the list into a set, removing duplicates and enabling `O(1)` existence checks.
+- `longest = 0` — tracks the best sequence length found so far.
+- `for n in num_set:` — walk through every unique number; order doesn't matter here.
+- `if n - 1 not in num_set:` — the sequence-start check: if the number just before `n` doesn't exist, `n` is where a sequence begins.
+- `length = 1` — a sequence-start counts as length `1` by itself, before extending further.
+- `while n + length in num_set:` — keep checking upward (`n+1`, `n+2`, `n+3`...) for as long as the next number in the chain exists.
+- `length += 1` — extend the count each time the next number in the chain is found.
+- `longest = max(longest, length)` — once the chain breaks, compare this chain's length against the best found so far.
+
+**Trace it**, using `nums = [2, 20, 4, 10, 3, 4, 5]`:
+
+```
+num_set = {2, 3, 4, 5, 10, 20}
+longest = 0
+
+n=2:  is 1 in num_set? No  → sequence-start!
+      length=1
+        is 3 in num_set? Yes → length=2
+        is 4 in num_set? Yes → length=3
+        is 5 in num_set? Yes → length=4
+        is 6 in num_set? No  → stop
+      longest = max(0, 4) = 4
+
+n=3:  is 2 in num_set? Yes → skip (not a sequence-start)
+n=4:  is 3 in num_set? Yes → skip
+n=5:  is 4 in num_set? Yes → skip
+
+n=10: is 9 in num_set? No → sequence-start!
+      length=1
+        is 11 in num_set? No → stop immediately
+      longest = max(4, 1) = 4   (unchanged)
+
+n=20: is 19 in num_set? No → sequence-start!
+      length=1
+        is 21 in num_set? No → stop immediately
+      longest = max(4, 1) = 4   (unchanged)
+```
+
+**Final result:** `longest = 4` — matches the expected output.
+
+**Why this is fast:** numbers like `3`, `4`, and `5` never enter their own `while` loop — they're skipped instantly with a single check. Only true sequence-starts (`2`, `10`, `20`) run the `while` loop, and the total number of steps taken across *all* the while loops combined can never exceed `n`, because every number in the set gets "walked over" by a while loop at most once, as part of the one sequence it truly belongs to. That's what keeps the algorithm at `O(n)` overall, despite having a loop nested inside a loop.
+
+---
+
+### Complexity Analysis
+
+| Approach | Time | Space |
+|---|---|---|
+| Sort, then scan | O(n log n) | O(n) |
+| Hash set, sequence-starts only | O(n) | O(n) |
+
+---
+
+### Edge Cases
+
+**Universal checklist:**
+- **Empty array:** `nums = []` → `num_set` is empty, the loop never runs, returns `0`.
+- **Single element:** `nums = [5]` → `4` isn't in the set, so `5` is a sequence-start with `length = 1`.
+- **All identical values:** `nums = [7, 7, 7]` → the set collapses to `{7}`, longest run is `1`.
+- **Already sorted / reverse sorted:** doesn't matter — the algorithm never looks at input order, only set membership.
+- **Negative numbers:** `nums = [-3, -2, -1, 0]` → sequence-start logic works identically; `-3 - 1 = -4` not in set, counts up to `0`.
+
+**Section-Specific Edge Cases:**
+- **Duplicates inside a run:** `nums = [1, 2, 2, 3]` → `set(nums)` collapses the repeated `2` before the loop even starts, so duplicates never inflate the count.
+- **Multiple disjoint runs:** `nums = [1, 2, 3, 100, 101]` → two sequence-starts (`1` and `100`), longest correctly returns `3`, not `5`.
+- **A run that starts at the very first number checked but isn't actually the longest:** the `for n in num_set:` iteration order is arbitrary in Python, so the algorithm must (and does) check every sequence-start, not stop at the first one found.
+
+> **Simple rule:** whenever a problem needs "does the *value* X exist?" instead of "does *position* i hold X?", reach for a set before reaching for a sort — sorting is `O(n log n)`, a set turns existence checks into `O(1)`.
+
+---
+
+### Key Takeaway
+
+> Don't count every number — count only from true sequence-starts (`n - 1` missing from the set). That single filter is what turns an apparent nested-loop `O(n²)` shape into real `O(n)` work, because each number only ever gets walked once, as part of the one sequence it belongs to.
+
+---
+
+### Real-World Application
+
+Log timestamp analysis — given a scattered set of second-level timestamps from a server log, finding the longest unbroken stretch of activity (no gaps) is exactly this problem: throw every timestamp into a set, find where each unbroken stretch begins, and count forward. The same pattern shows up in version-number gap detection and in merging fragmented ID ranges during data reconciliation.
+
+---
+
+<ArticleNav
+  prev={{ title: "Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/string/group-anagrams" }}
+  next={null}
+/>
