@@ -543,6 +543,33 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 21 — Python Internals",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-21-python-internals/overview" },
+        ],
+      },
+      {
+        chapter: "Part I — How Python Actually Runs",
+        items: [],
+      },
+      {
+        chapter: "Part II — The Object Model",
+        items: [],
+      },
+      {
+        chapter: "Part III — Language Features Built on the Model",
+        items: [],
+      },
+      {
+        chapter: "Part IV — History and Philosophy",
+        items: [],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>

@@ -1,0 +1,102 @@
+export const metadata = {
+  title: "Python Internals — Overview & Roadmap — ByteWise",
+  description:
+    "A deep dive into how Python actually runs — from source to bytecode, the object model, language features built on that model, and the history and philosophy behind the language's design.",
+  keywords: [
+    "Python internals",
+    "CPython",
+    "bytecode",
+    "ceval.c",
+    "PyObject",
+    "reference counting",
+    "GIL",
+    "Zen of Python",
+    "PEP",
+  ],
+  openGraph: {
+    title: "Python Internals — Overview & Roadmap",
+    description:
+      "Mechanics, internals, and philosophy — how Python actually runs, from the ground up.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Python Internals
+
+Most Python material teaches you *what* to write. This part teaches you what happens **after** you hit run — how your source becomes bytecode, how the interpreter loop executes it, why objects behave the way they do, and why the language was designed this way in the first place.
+
+**This part treats Python like a system you can open up and read** — not a black box you memorize rules about.
+
+---
+
+## What This Part Covers
+
+Four Parts, each its own "era" of understanding — mechanics, then internals, then the features built on top of those internals, then the history and philosophy behind all of it:
+
+| Part | Focus | Chapters |
+|---|---|---|
+| **Part I** | How Python Actually Runs | Source to bytecode, the interpreter loop, control flow at the bytecode level |
+| **Part II** | The Object Model | `PyObject`, reference counting, mutability, name binding |
+| **Part III** | Language Features Built on the Model | Duck typing, the data model, closures, iterators/generators, decorators, the GIL |
+| **Part IV** | History and Philosophy | Why Guido built Python, PEPs and governance, the Zen of Python |
+
+### Part I — How Python Actually Runs
+- Ch 1: Source to Bytecode (tokenizing, parsing, AST, compilation)
+- Ch 2: The Interpreter Loop (stack-based VM, `ceval.c`)
+- Ch 3: Functions, Loops, and Control Flow at the Bytecode Level
+
+### Part II — The Object Model
+- Ch 4: Everything Is an Object (`PyObject`, type pointers)
+- Ch 5: Reference Counting and Memory (`id()`, garbage collection)
+- Ch 6: Mutability and Immutability (why it exists, what it affects)
+- Ch 7: Name Binding vs Copying
+
+### Part III — Language Features Built on the Model
+- Ch 8: Duck Typing
+- Ch 9: The Data Model (dunder methods)
+- Ch 10: Scope and Closures (LEGB)
+- Ch 11: Iterators and Generators
+- Ch 12: Decorators
+- Ch 13: The GIL
+
+### Part IV — History and Philosophy
+- Ch 14: Why Guido Built Python (ABC, the design motivations)
+- Ch 15: PEPs and Governance (BDFL → Steering Council)
+- Ch 16: The Zen of Python — Design Choices Explained
+
+---
+
+## Why Parts, Not a Flat Chapter List
+
+What this part covers naturally clusters into distinct eras of understanding — mechanics, then internals, then the language features built on those internals, then history and philosophy. A flat chapter list wouldn't show that grouping to a reader; grouping chapters under a Part does.
+
+Each Part opens with a short "why this matters" intro before diving into its chapters — context before mechanics.
+
+---
+
+## Who This Is For
+
+- **Python developers** who write the language daily but have never seen what's underneath it
+- **Anyone coming from a compiled language** who wants to understand what "interpreted" actually means in CPython's case
+- **Anyone curious why Python behaves the way it does** — why lists are mutable and tuples aren't, why the GIL exists, why `is` and `==` differ
+
+No prior systems or compiler background required. Every mechanism is built up from first principles.
+
+---
+
+## How to Use This Part
+
+Read Part I and Part II in order — Part II's object model explanations lean on Part I's bytecode mechanics. Part III's language features can be read in any order once Parts I and II are done. Part IV stands alone and can be read any time, including first, for readers who want the "why" before the "how."
+
+---
+
+**Material Reference:** <a href="https://claude.ai/chat/2a202ea9-7191-4fd9-b80f-043faabed5d6" target="_blank" rel="noopener noreferrer">Claude.ai chat</a>
+
+---
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>
