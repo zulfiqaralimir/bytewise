@@ -373,6 +373,7 @@ const chapters = [
           { title: "Blind 75 #4: Product of Array Except Self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/product-of-array-except-self" },
           { title: "Blind 75 #30: Longest Consecutive Sequence", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/longest-consecutive-sequence" },
           { title: "Blind 75 #52: Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/string/group-anagrams" },
+          { title: "Blind-75 Misc #1: Trapping Rain Water", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/misc/trapping-rain-water" },
         ],
       },
     ],
