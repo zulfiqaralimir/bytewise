@@ -223,7 +223,7 @@ def trap(height):
 - `left_max, right_max = height[left], height[right]` — <span style={{ color: "#2563eb", fontWeight: 700 }}>instead of full arrays, track just the single tallest value seen so far on each side.</span>
 - `while left < right:` — continue until the pointers meet.
 - `if left_max < right_max:` — always move the pointer on the **shorter** side. The water level there is capped by the shorter wall, and we already know which side is currently shorter.
-- Moving the left pointer: update `left_max` if the new bar is taller, then add `left_max - height[left]` as water trapped at this position. Since `left_max < right_max` on this branch, the water level is safely capped by `left_max` alone.
+- Moving the left pointer: update `left_max` if the new bar is taller, then add `left_max - height[left]` as water trapped at this position. <span style={{ color: "#2563eb", fontWeight: 700 }}>Since `left_max < right_max` on this branch, the water level is safely capped by `left_max` alone.</span>
 - The `else` branch mirrors this logic for the right side.
 
 **Why moving the shorter side is always safe:** if `left_max < right_max`, there's guaranteed to be a wall somewhere on the right at least as tall as `right_max`. So no matter what lies between the current `left` position and the actual right edge, the water level at `left` can never be limited by anything on the right — `right_max` alone already exceeds `left_max`. This is what allows resolving the left side using only `left_max`, without needing the precise right-side maximum — the entire trick behind O(1) space.
