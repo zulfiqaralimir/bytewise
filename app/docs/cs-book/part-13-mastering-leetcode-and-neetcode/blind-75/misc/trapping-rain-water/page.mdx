@@ -220,7 +220,7 @@ def trap(height):
 
 **Breaking it down:**
 - `left, right = 0, len(height) - 1` — two pointers starting at opposite ends.
-- `left_max, right_max = height[left], height[right]` — instead of full arrays, track just the single tallest value seen so far on each side.
+- `left_max, right_max = height[left], height[right]` — <span style={{ color: "#2563eb", fontWeight: 700 }}>instead of full arrays, track just the single tallest value seen so far on each side.</span>
 - `while left < right:` — continue until the pointers meet.
 - `if left_max < right_max:` — always move the pointer on the **shorter** side. The water level there is capped by the shorter wall, and we already know which side is currently shorter.
 - Moving the left pointer: update `left_max` if the new bar is taller, then add `left_max - height[left]` as water trapped at this position. Since `left_max < right_max` on this branch, the water level is safely capped by `left_max` alone.
