@@ -39,49 +39,13 @@ Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
 Output: 6
 ```
 
-<Figure title="Elevation Map — Trapping Rain Water" caption="height = [0,1,0,2,1,0,1,3,2,1,2,1] — dark bars are the terrain, blue fill is the 6 units of water trapped between them.">
-<svg viewBox="0 0 560 210" xmlns="http://www.w3.org/2000/svg" fontFamily="Arial, Helvetica, sans-serif">
-  <line x1="10" y1="170" x2="545" y2="170" stroke="#9ca3af" strokeWidth="1.5"/>
-
-  <rect x="66" y="144" width="32" height="26" fill="#374151"/>
-
-  <rect x="108" y="144" width="32" height="26" fill="#3b82f6" fillOpacity="0.55" stroke="#2563eb" strokeWidth="1"/>
-
-  <rect x="150" y="118" width="32" height="52" fill="#374151"/>
-
-  <rect x="192" y="144" width="32" height="26" fill="#374151"/>
-  <rect x="192" y="118" width="32" height="26" fill="#3b82f6" fillOpacity="0.55" stroke="#2563eb" strokeWidth="1"/>
-
-  <rect x="234" y="118" width="32" height="52" fill="#3b82f6" fillOpacity="0.55" stroke="#2563eb" strokeWidth="1"/>
-
-  <rect x="276" y="144" width="32" height="26" fill="#374151"/>
-  <rect x="276" y="118" width="32" height="26" fill="#3b82f6" fillOpacity="0.55" stroke="#2563eb" strokeWidth="1"/>
-
-  <rect x="318" y="92" width="32" height="78" fill="#374151"/>
-
-  <rect x="360" y="118" width="32" height="52" fill="#374151"/>
-
-  <rect x="402" y="144" width="32" height="26" fill="#374151"/>
-  <rect x="402" y="118" width="32" height="26" fill="#3b82f6" fillOpacity="0.55" stroke="#2563eb" strokeWidth="1"/>
-
-  <rect x="444" y="118" width="32" height="52" fill="#374151"/>
-
-  <rect x="486" y="144" width="32" height="26" fill="#374151"/>
-
-  <text x="40" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">0</text>
-  <text x="82" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">1</text>
-  <text x="124" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">2</text>
-  <text x="166" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">3</text>
-  <text x="208" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">4</text>
-  <text x="250" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">5</text>
-  <text x="292" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">6</text>
-  <text x="334" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">7</text>
-  <text x="376" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">8</text>
-  <text x="418" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">9</text>
-  <text x="460" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">10</text>
-  <text x="502" y="186" textAnchor="middle" fontSize="11" fill="#6b7280">11</text>
-</svg>
-</Figure>
+<Figure
+  src="/images/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/misc/trapping-rain-water/elevation-map.png"
+  alt="Elevation map showing trapped rain water for height = [0,1,0,2,1,0,1,3,2,1,2,1]"
+  width={723}
+  height={296}
+  caption="The black section is the elevation map given by height = [0,1,0,2,1,0,1,3,2,1,2,1]. The blue section shows the 6 units of rainwater trapped between the bars."
+/>
 
 **Constraints:**
 - `n == height.length`
@@ -231,9 +195,9 @@ i=2: min(2,1) - height[2] = 1 - 1 = 0
 
 #### <span style={{ color: "#16a34a", fontWeight: 700 }}>Approach 3: Two Pointers (Optimal)</span>
 
-The precomputed-arrays version is already O(n) time, but still uses O(n) space. The two-pointer trick eliminates that extra memory entirely.
+<span style={{ color: "#2563eb", fontWeight: 700 }}>The precomputed-arrays version is already O(n) time, but still uses O(n) space. The two-pointer trick eliminates that extra memory entirely.</span>
 
-**The key realization:** we don't need to know the *exact* `left_max` and `right_max` for every position ahead of time — only which side is currently shorter, which can be tracked as two pointers move toward each other from opposite ends.
+**The key realization:** <span style={{ color: "#2563eb", fontWeight: 700 }}>we don't need to know the *exact* `left_max` and `right_max` for every position ahead of time</span> — only which side is currently shorter, which can be tracked as two pointers move toward each other from opposite ends.
 
 ```python
 def trap(height):
