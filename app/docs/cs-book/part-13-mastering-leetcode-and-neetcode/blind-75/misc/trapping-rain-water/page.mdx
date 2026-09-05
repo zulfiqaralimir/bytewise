@@ -300,7 +300,7 @@ Iteration 3: left(0) < right(0)? No → loop ends.
 - **Auxiliary arrays** (`left_max`, `right_max`) — only in Approach 2. The same prefix/suffix array pattern first introduced in Product of Array Except Self, just applied to a `max()` running value instead of a running product.
 - **Plain variables, no hash structure** — in the optimal Approach 3, there's no `set()` or `dict` at all, unlike Contains Duplicate (a `set`), Group Anagrams (a `dict`), or Longest Consecutive Sequence (a `set`). This problem is solved with array indexing and a handful of tracking variables instead — a reminder that not every optimal solution needs a hash-based structure.
 
-**Pattern used:** **Two Pointers** — specifically the *converging* variant, where one pointer starts at the far left, one starts at the far right, and they move **toward each other** until they meet.
+**Pattern used:** <span style={{ color: "#2563eb", fontWeight: 700 }}>**Two Pointers**</span> — specifically the *converging* variant, where one pointer starts at the far left, one starts at the far right, and they move **toward each other** until they meet.
 
 - **Converging pointers** (used here) — start at both ends, move inward. Also used in Valid Palindrome, Two Sum II (sorted input), 3Sum, and Container With Most Water.
 - **Same-direction pointers / sliding window** — both pointers start at the same end and expand/shrink a window as they move forward together.
