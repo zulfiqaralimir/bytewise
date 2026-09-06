@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Container With Most Water — Blind 75 — ByteWise",
   description:
-    "LeetCode #11 Container With Most Water — problem walkthrough coming soon.",
+    "LeetCode #11 Container With Most Water — why checking every pair is O(n²), and the O(n) two-pointer trick that always moves the shorter wall inward, with full traces.",
   keywords: [
     "container with most water",
     "LeetCode 11",
@@ -12,12 +12,14 @@ export const metadata = {
   ],
   openGraph: {
     title: "Container With Most Water",
-    description: "LeetCode #11 · Medium — Blind 75 Array problem.",
+    description:
+      "LeetCode #11 · Medium — two pointers from both ends, always move the shorter wall inward, O(n) time.",
     type: "article",
   },
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
 
 # Container With Most Water
 
@@ -34,16 +36,59 @@ import { ArticleNav } from "@/app/components/ArticleNav";
 You cannot slant the container — the two lines you pick must stay vertical, so the water level is capped by whichever of the two lines is **shorter**.
 
 ```python
-# Example 1
-Input: height = [1,8,6,2,5,4,8,3,7]
-Output: 49
-# Lines at index 1 (height 8) and index 8 (height 7):
-# width = 8 - 1 = 7, height = min(8,7) = 7, area = 49
-
-# Example 2
-Input: height = [1,1]
-Output: 1
+# Example
+Input: height = [1,7,2,5,4,7,3,6]
+Output: 36
+# Bars at indices 1 and 7 have heights 7 and 6.
+# width = 7 - 1 = 6, height = min(7,6) = 6, area = 36
 ```
+
+<Figure title="Container With Most Water" caption="height = [1,7,2,5,4,7,3,6] — indices 1 and 7 (teal) form the widest container whose height isn't capped too low: width 6 × height min(7,6)=6 = 36.">
+  <svg width="680" height="320" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+    <line x1="10" y1="260" x2="670" y2="260" stroke="#94a3b8" strokeWidth="1.5" />
+
+    <rect x="100" y="56" width="510" height="204" fill="#93c5fd" fillOpacity="0.45" />
+    <line x1="100" y1="56" x2="610" y2="56" stroke="#2563eb" strokeWidth="1.5" strokeDasharray="6 4" />
+    <text x="60" y="60" fontSize="14" fill="#1d4ed8" textAnchor="end">6</text>
+
+    <rect x="20" y="226" width="60" height="34" fill="#cbd5e1" stroke="#94a3b8" />
+    <text x="50" y="216" fontSize="14" fill="#334155" textAnchor="middle">1</text>
+    <text x="50" y="278" fontSize="12" fill="#64748b" textAnchor="middle">0</text>
+
+    <rect x="100" y="22" width="60" height="238" fill="#0d9488" stroke="#0f766e" strokeWidth="2" />
+    <text x="130" y="14" fontSize="14" fill="#0f766e" fontWeight="700" textAnchor="middle">7</text>
+    <text x="130" y="278" fontSize="12" fill="#0f766e" fontWeight="700" textAnchor="middle">1</text>
+
+    <rect x="180" y="192" width="60" height="68" fill="#cbd5e1" stroke="#94a3b8" />
+    <text x="210" y="182" fontSize="14" fill="#334155" textAnchor="middle">2</text>
+    <text x="210" y="278" fontSize="12" fill="#64748b" textAnchor="middle">2</text>
+
+    <rect x="260" y="90" width="60" height="170" fill="#cbd5e1" stroke="#94a3b8" />
+    <text x="290" y="80" fontSize="14" fill="#334155" textAnchor="middle">5</text>
+    <text x="290" y="278" fontSize="12" fill="#64748b" textAnchor="middle">3</text>
+
+    <rect x="340" y="124" width="60" height="136" fill="#cbd5e1" stroke="#94a3b8" />
+    <text x="370" y="114" fontSize="14" fill="#334155" textAnchor="middle">4</text>
+    <text x="370" y="278" fontSize="12" fill="#64748b" textAnchor="middle">4</text>
+
+    <rect x="420" y="22" width="60" height="238" fill="#cbd5e1" stroke="#94a3b8" />
+    <text x="450" y="14" fontSize="14" fill="#334155" textAnchor="middle">7</text>
+    <text x="450" y="278" fontSize="12" fill="#64748b" textAnchor="middle">5</text>
+
+    <rect x="500" y="158" width="60" height="102" fill="#cbd5e1" stroke="#94a3b8" />
+    <text x="530" y="148" fontSize="14" fill="#334155" textAnchor="middle">3</text>
+    <text x="530" y="278" fontSize="12" fill="#64748b" textAnchor="middle">6</text>
+
+    <rect x="580" y="56" width="60" height="204" fill="#0d9488" stroke="#0f766e" strokeWidth="2" />
+    <text x="610" y="46" fontSize="14" fill="#0f766e" fontWeight="700" textAnchor="middle">6</text>
+    <text x="610" y="278" fontSize="12" fill="#0f766e" fontWeight="700" textAnchor="middle">7</text>
+
+    <line x1="130" y1="300" x2="610" y2="300" stroke="#334155" strokeWidth="1.5" />
+    <line x1="130" y1="294" x2="130" y2="306" stroke="#334155" strokeWidth="1.5" />
+    <line x1="610" y1="294" x2="610" y2="306" stroke="#334155" strokeWidth="1.5" />
+    <text x="370" y="316" fontSize="12" fill="#334155" textAnchor="middle">width = 7 - 1 = 6</text>
+  </svg>
+</Figure>
 
 **Constraints:**
 - `n == height.length`
@@ -66,7 +111,162 @@ Output: 1
 
 ### Complete Walkthrough
 
-*(Walkthrough — brute force, intuition, and optimized approach — coming soon.)*
+#### The Formula
+
+This problem asks for the "amount of water," which in real life would mean **volume** (`length × width × height`). But the chart here is entirely 2D — there's no depth dimension given anywhere.
+
+What the problem is actually calculating is the **cross-sectional area** — imagine slicing the container down the middle and looking at that flat side-view slice. That's a 2D rectangle:
+
+```python
+area = width × height
+```
+
+The problem implicitly assumes every possible container shares the same fixed depth (say, 1 unit). Since that depth is identical no matter which two lines you pick, comparing volumes and comparing areas give the exact same ranking — the depth is a constant that never changes which pair wins. So the problem simplifies to comparing area directly.
+
+```python
+water = min(height[i], height[j]) × (j - i)
+```
+
+Two parts:
+- **Height** — the shorter of the two lines. Water spills over the shorter side, so it can never rise higher than that.
+- **Width** — the distance between the two lines, `j - i`.
+
+**Checking it on the example** — indices `1` (height `7`) and `7` (height `6`):
+
+```python
+water = min(7, 6) × (7 - 1) = 6 × 6 = 36
+```
+
+Matches the expected output.
+
+---
+
+#### <span style={{ color: "#dc2626", fontWeight: 700 }}>Brute Force Approach</span>
+
+Check every possible pair of lines, calculate the area for each, and keep track of the biggest one found.
+
+```python
+def maxArea(height):
+    n = len(height)
+    best = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            area = min(height[i], height[j]) * (j - i)
+            best = max(best, area)
+    return best
+```
+
+**Breaking it down:**
+- `for i in range(n):` and `for j in range(i + 1, n):` — check every pair of positions without repeating any pair twice.
+- `area = min(height[i], height[j]) * (j - i)` — apply the formula.
+- `best = max(best, area)` — keep the largest area seen so far.
+
+**Trace it**, using `height = [1,7,2,5,4,7,3,6]` — a few key pairs:
+
+```
+i=1 (h=7), j=5 (h=7): area = min(7,7) * (5-1) = 7*4 = 28
+i=1 (h=7), j=7 (h=6): area = min(7,6) * (7-1) = 6*6 = 36  ← best
+i=5 (h=7), j=7 (h=6): area = min(7,6) * (7-5) = 6*2 = 12
+```
+
+Checking all pairs, the maximum found is `36`, using indices `1` and `7` — matching the expected output.
+
+**Time Complexity: O(n²)** — checking every pair means roughly `n × n` combinations.
+
+**Space Complexity: O(1)** — just a few tracking variables, no extra data structures.
+
+**Why it fails:** correct, but with `n` up to `100,000`, `n²` is far too slow. The real challenge is finding a way to skip most pairs without ever computing their area.
+
+---
+
+#### Intuition
+
+Start with two pointers at the far ends — the widest possible container. At each step, **move the pointer at the shorter line inward** — because that shorter line is the limiting factor, and moving the taller one could never help (width only shrinks, while height stays capped by the same short wall).
+
+---
+
+#### <span style={{ color: "#16a34a", fontWeight: 700 }}>Optimized Approach — Two Pointers</span>
+
+```python
+def maxArea(height):
+    left, right = 0, len(height) - 1
+    best = 0
+    while left < right:
+        area = min(height[left], height[right]) * (right - left)
+        best = max(best, area)
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    return best
+```
+
+**Breaking it down:**
+- `left, right = 0, len(height) - 1` — two pointers starting at opposite ends.
+- `while left < right:` — continue until the pointers meet.
+- `area = min(height[left], height[right]) * (right - left)` — the same formula, applied at the current pointer positions.
+- `if height[left] < height[right]:` — move the pointer standing at the **shorter** line inward.
+- Otherwise, move `right` inward.
+
+**Trace it**, using `height = [1,7,2,5,4,7,3,6]`:
+
+```
+left=0, right=7, best=0
+
+height[0]=1, height[7]=6: area = min(1,6)*(7-0) = 1*7 = 7        → best=7
+  height[left]=1 < height[right]=6 → move left → left=1
+
+height[1]=7, height[7]=6: area = min(7,6)*(7-1) = 6*6 = 36       → best=36
+  height[left]=7 >= height[right]=6 → move right → right=6
+
+height[1]=7, height[6]=3: area = min(7,3)*(6-1) = 3*5 = 15       → best=36
+  height[left]=7 >= height[right]=3 → move right → right=5
+
+height[1]=7, height[5]=7: area = min(7,7)*(5-1) = 7*4 = 28       → best=36
+  height[left]=7 >= height[right]=7 → move right → right=4
+
+height[1]=7, height[4]=4: area = min(7,4)*(4-1) = 4*3 = 12       → best=36
+  height[left]=7 >= height[right]=4 → move right → right=3
+
+height[1]=7, height[3]=5: area = min(7,5)*(3-1) = 5*2 = 10       → best=36
+  height[left]=7 >= height[right]=5 → move right → right=2
+
+height[1]=7, height[2]=2: area = min(7,2)*(2-1) = 2*1 = 2        → best=36
+  height[left]=7 >= height[right]=2 → move right → right=1
+
+left(1) < right(1)? No → loop ends
+```
+
+**Final result:** `best = 36` — matches, found in 7 steps instead of checking all 28 possible pairs.
+
+**Why moving the shorter side is safe:** say `height[left]` is the shorter line. If `left` stayed fixed and only `right` moved inward, the width would only shrink, while the height stays capped by `height[left]` regardless — still the limiting wall. So no container using this same `left` paired with anything further from `right` could ever beat what's already been calculated. It's only by moving `left` itself that a taller wall (and possibly a better answer) could be found. That's what makes it safe to move the shorter pointer and never miss the true best answer.
+
+---
+
+### Complexity Analysis
+
+| Approach | Time | Space |
+|---|---|---|
+| Brute force, check every pair | O(n²) | O(1) |
+| Two pointers | O(n) | O(1) |
+
+---
+
+### Edge Cases
+
+*(Coming soon.)*
+
+---
+
+### Key Takeaway
+
+*(Coming soon.)*
+
+---
+
+### Real-World Application
+
+*(Coming soon.)*
 
 ---
 
