@@ -254,19 +254,33 @@ left(1) < right(1)? No → loop ends
 
 ### Edge Cases
 
-*(Coming soon.)*
+**Universal checklist:**
+- **Minimum size array:** `height = [1,1]` → only one possible pair; `left` and `right` meet immediately after computing its area.
+- **All identical values:** `height = [4,4,4,4]` → every pair has `h = 4`; the widest pair (first and last) always wins, since width is what varies.
+- **Already sorted / reverse sorted:** `height = [1,2,3,4,5]` or its reverse → the algorithm still works, since it never relies on the array being unsorted.
+- **Zero height:** `height = [0,3,0,5]` → a line of height `0` can never be the limiting wall in a *winning* pair (area would be `0`), so the pointer sitting on it always advances immediately.
+- **Answer uses the very first and last elements:** `height = [9,1,1,1,9]` → the initial widest pair is also the best one; `best` is set correctly on the very first iteration.
+
+**Section-Specific Edge Cases:**
+- **Tie in height at `left` and `right`:** the code moves `right` (the `else` branch) when heights are equal — either pointer would be safe to move here, since both walls are equally short.
+- **A tall wall trapped between two short ones:** `height = [8,1,1,1,1,1,8]` → the middle values never matter; both pointers race past them, since neither can beat the outer pair's height cap without also losing width.
+- **Descending-then-ascending shape:** `height = [5,4,3,2,3,4,5]` → confirms the two-pointer approach doesn't get fooled by a "valley" shape; it still finds the outer pair `(5,5)` as the best width-6 option to compare against.
+
+> **Simple rule:** whenever an answer is defined by `min(a, b) × distance`, and moving toward a wider pair can only hurt one side of that formula, check whether provably discarding the "obviously worse" pointer move turns an `O(n²)` all-pairs scan into an `O(n)` two-pointer sweep.
 
 ---
 
 ### Key Takeaway
 
-*(Coming soon.)*
+> Start at maximum width and only ever move the shorter wall — moving the taller wall can never increase the area, since it can only shrink the width while the limiting height stays the same or gets worse. That one-directional guarantee is what makes the greedy two-pointer sweep correct, not just fast.
 
 ---
 
 ### Real-World Application
 
-*(Coming soon.)*
+Reservoir and tank capacity planning: given a row of support pillars or dam walls at fixed positions with fixed heights, engineers use the same shrink-from-both-ends logic to quickly identify which pair of walls could hold the most volume between them, without testing every possible pair. The same two-pointer "give up the constrained side" pattern also shows up in histogram-based bandwidth allocation, where you're picking two time slots bounded by the narrower of two capacity limits.
+
+> **Why this algorithm?** The two-pointer sweep is the right choice specifically because moving the taller wall is *provably* never better — that guarantee is what lets the algorithm safely skip most of the O(n²) search space instead of just being a faster heuristic.
 
 ---
 
