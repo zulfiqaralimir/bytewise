@@ -1,0 +1,225 @@
+export const metadata = {
+  title: "Container With Most Water — Blind 75 — ByteWise",
+  description:
+    "LeetCode #11 Container With Most Water — why checking every pair is O(n²), and the O(n) two-pointer trick that always moves the shorter wall inward, with full traces.",
+  keywords: [
+    "container with most water",
+    "LeetCode 11",
+    "two pointers",
+    "Blind 75",
+    "array problems",
+    "coding interview",
+  ],
+  openGraph: {
+    title: "Container With Most Water",
+    description:
+      "LeetCode #11 · Medium — two pointers from both ends, always move the shorter wall inward, O(n) time.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Container With Most Water
+
+**LeetCode #11 · 🟡 Medium**
+
+*Blind 75 Problem 10 of 75 · Array*
+
+---
+
+### Problem Statement
+
+> You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of line `i` are `(i, 0)` and `(i, height[i])`. Find two lines that together with the x-axis form a container that holds the most water. Return the maximum amount of water a container can store.
+
+You cannot slant the container — the two lines you pick must stay vertical, so the water level is capped by whichever of the two lines is **shorter**.
+
+```python
+# Example 1
+Input: height = [1,8,6,2,5,4,8,3,7]
+Output: 49
+# Lines at index 1 (height 8) and index 8 (height 7):
+# width = 8 - 1 = 7, height = min(8,7) = 7, area = 49
+
+# Example 2
+Input: height = [1,1]
+Output: 1
+```
+
+**Constraints:**
+- `n == height.length`
+- `2 <= n <= 10⁵`
+- `0 <= height[i] <= 10⁴`
+
+---
+
+### Hint
+
+Checking every pair of lines works but costs `O(n²)`. What if you started with the **widest possible container** — the first and last line — and only gave up width when you had a good reason to? Which pointer would you move: the taller line, or the shorter one?
+
+---
+
+### Your Attempt
+
+> Take a few minutes to try this yourself before reading on. Think about what happens to the water level if you move the taller pointer inward versus the shorter one.
+
+---
+
+### Complete Walkthrough
+
+#### <span style={{ color: "#dc2626", fontWeight: 700 }}>Brute Force Approach</span>
+
+The natural first idea: check every possible pair of lines, compute the area each pair would hold, and keep the best one.
+
+```python
+def maxArea(height):
+    n = len(height)
+    best = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            width = j - i
+            h = min(height[i], height[j])
+            best = max(best, width * h)
+    return best
+```
+
+**Breaking it down:**
+- The outer loop fixes the left line `i`, the inner loop fixes the right line `j`.
+- `width = j - i` — the horizontal distance between the two lines.
+- `h = min(height[i], height[j])` — water can never rise above the shorter of the two walls, or it would spill over.
+- `best` tracks the largest area seen across every pair checked.
+
+**Time Complexity: O(n²)** — every pair of lines gets checked.
+
+**Space Complexity: O(1)**.
+
+**Why it fails:** correct, but with `n` up to `100,000`, `n²` is up to 10 billion pair checks — far too slow. The real challenge is finding a way to skip most pairs without ever computing their area.
+
+---
+
+#### Intuition
+
+Start with the two pointers as far apart as possible — `left = 0` and `right = n - 1` — because **width is at its maximum right at the start**, and width can only shrink as the pointers move toward each other. Every choice from here on is a trade: give up width, hoping to gain height.
+
+At each step, the area is capped by the **shorter** of the two lines. So ask: which pointer, if moved, could possibly lead to a *taller* limiting wall?
+
+- If you move the **taller** pointer inward, the width shrinks, and the shorter line is still just as short (or even shorter) — the area can only stay the same or get worse. There's no way moving the taller line ever helps.
+- If you move the **shorter** pointer inward, the width still shrinks, but there's now a *chance* the next line is taller than the wall you just gave up — a chance to raise the limiting height enough to make up for the lost width.
+
+So the rule is simple: **always move the pointer at the shorter line inward.** It's the only move that has any chance of improving the result; moving the taller pointer is a move that can never win.
+
+---
+
+#### <span style={{ color: "#16a34a", fontWeight: 700 }}>Optimized Approach — Two Pointers</span>
+
+1. Place `left` at index `0` and `right` at index `n - 1` — the widest container possible.
+2. Compute the area for the current `left`/`right` pair, and update `best` if it's larger.
+3. Move whichever pointer points at the **shorter** line, one step inward.
+4. Repeat until `left` and `right` meet.
+
+```python
+def maxArea(height):
+    left, right = 0, len(height) - 1
+    best = 0
+
+    while left < right:
+        width = right - left
+        h = min(height[left], height[right])
+        best = max(best, width * h)
+
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+
+    return best
+```
+
+**Breaking it down:**
+- `left, right = 0, len(height) - 1` — start at maximum width.
+- `while left < right:` — keep going until the pointers meet; a container needs two distinct lines.
+- `width = right - left` and `h = min(height[left], height[right])` — same area formula as the brute force, just computed once per step instead of once per pair.
+- `if height[left] < height[right]: left += 1` — the left wall is the shorter one, so it's the one that might get replaced by something taller.
+- `else: right -= 1` — otherwise the right wall is shorter (or equal), so move it instead.
+
+**Trace it**, using `height = [1,8,6,2,5,4,8,3,7]`:
+
+```
+left=0, right=8, best=0
+
+left=0(1), right=8(7): width=8, h=min(1,7)=1, area=8   → best=8
+  height[left]=1 < height[right]=7 → move left
+left=1(8), right=8(7): width=7, h=min(8,7)=7, area=49  → best=49
+  height[left]=8 >= height[right]=7 → move right
+left=1(8), right=7(3): width=6, h=min(8,3)=3, area=18  → best=49
+  height[left]=8 >= height[right]=3 → move right
+left=1(8), right=6(8): width=5, h=min(8,8)=5, area=40  → best=49
+  height[left]=8 >= height[right]=8 → move right
+left=1(8), right=5(4): width=4, h=min(8,4)=4, area=16  → best=49
+  height[left]=8 >= height[right]=4 → move right
+left=1(8), right=4(5): width=3, h=min(8,5)=5, area=15  → best=49
+  height[left]=8 >= height[right]=5 → move right
+left=1(8), right=3(2): width=2, h=min(8,2)=2, area=4   → best=49
+  height[left]=8 >= height[right]=2 → move right
+left=1(8), right=2(6): width=1, h=min(8,6)=6, area=6   → best=49
+  height[left]=8 >= height[right]=6 → move right
+left=1, right=1 → loop ends
+```
+
+**Final result:** `best = 49` — matches the expected output.
+
+**Why this is fast:** every step moves either `left` forward or `right` backward, and they never move apart — so the pointers can only take a combined total of `n` steps before meeting. No pair gets revisited, and no potential answer gets skipped, because the "move the taller pointer" case is provably never the one that produces a better area.
+
+---
+
+### Complexity Analysis
+
+| Approach | Time | Space |
+|---|---|---|
+| Brute force, all pairs | O(n²) | O(1) |
+| Two pointers, shrink from both ends | O(n) | O(1) |
+
+---
+
+### Edge Cases
+
+**Universal checklist:**
+- **Minimum size array:** `height = [1,1]` → only one possible pair, `left` and `right` meet immediately after computing its area.
+- **All identical values:** `height = [4,4,4,4]` → every pair has `h = 4`; the widest pair (first and last) always wins, since width is what varies.
+- **Already sorted / reverse sorted:** `height = [1,2,3,4,5]` or its reverse → the algorithm still works, since it never relies on the array being unsorted.
+- **Zero height:** `height = [0,3,0,5]` → a line of height `0` can never be the limiting wall in a *winning* pair (area would be `0`), so the pointer sitting on it always advances immediately.
+- **Answer uses the very first and last elements:** `height = [9,1,1,1,9]` → the initial widest pair is also the best one; `best` is set correctly on the very first iteration.
+
+**Section-Specific Edge Cases:**
+- **Tie in height at `left` and `right`:** the code moves `right` (the `else` branch) when heights are equal — either pointer would be safe to move here, since both walls are equally short.
+- **A tall wall trapped between two short ones:** `height = [8,1,1,1,1,1,8]` → the middle values never matter; both pointers race past them, since neither can beat the outer pair's height cap without also losing width.
+- **Descending-then-ascending shape:** `height = [5,4,3,2,3,4,5]` → confirms the two-pointer approach doesn't get fooled by a "valley" shape; it still finds the outer pair `(5,5)` as the best width-7 option to compare against.
+
+> **Simple rule:** whenever an answer is defined by `min(a, b) × distance`, and moving toward a wider pair can only hurt one side of that formula, check whether provably discarding the "obviously worse" pointer move turns an `O(n²)` all-pairs scan into an `O(n)` two-pointer sweep.
+
+---
+
+### Key Takeaway
+
+> Start at maximum width and only ever move the shorter wall — moving the taller wall can never increase the area, since it can only shrink the width while the limiting height stays the same or gets worse. That one-directional guarantee is what makes the greedy two-pointer sweep correct, not just fast.
+
+---
+
+### Real-World Application
+
+Reservoir and tank capacity planning: given a row of support pillars or dam walls at fixed positions with fixed heights, engineers use the same shrink-from-both-ends logic to quickly identify which pair of walls could hold the most volume between them, without testing every possible pair. The same two-pointer "give up the constrained side" pattern also shows up in histogram-based bandwidth allocation, where you're picking two time slots bounded by the narrower of two capacity limits.
+
+> **Why this algorithm?** The two-pointer sweep is the right choice specifically because moving the taller wall is *provably* never better — that guarantee is what lets the algorithm safely skip most of the O(n²) search space instead of just being a faster heuristic.
+
+---
+
+**Reference video:** <a href="https://www.youtube.com/watch?v=UuiTKBwPgAo&list=PLot-Xpze53ldVwtstag2TL4HQhAnC8ATf&index=10" target="_blank" rel="noopener noreferrer">Container With Most Water — NeetCode</a> · <a href="https://bytewise-one.vercel.app/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/container-with-most-water" target="_blank" rel="noopener noreferrer">ByteWise page</a>
+
+**Material Preparation Reference:** <a href="https://claude.ai/chat/976f6746-eaf7-460e-abd5-01a492e85dc6" target="_blank" rel="noopener noreferrer">Claude.ai chat</a>
+
+---
+
+<ArticleNav
+  prev={{ title: "Trapping Rain Water", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/misc/trapping-rain-water" }}
+  next={null}
+/>
