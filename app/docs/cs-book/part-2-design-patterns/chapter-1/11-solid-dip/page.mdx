@@ -56,7 +56,7 @@ class OrderProcessor:
         self.notifier.send("Your order was processed!")
 ```
 
-**Technical:** `OrderProcessor` directly creates and depends on the concrete class `EmailNotifier`. This is a **hardwired connection** — like the lamp soldered into the wall.
+**Technical:** <Revision>`OrderProcessor` directly creates and depends on the concrete class `EmailNotifier`. This is a **hardwired connection**</Revision> — like the lamp soldered into the wall.
 
 <Callout type="warning" title="⚠️ What's Wrong Here">
 - If tomorrow you also want SMS notifications, or want to swap email for a different provider, you must **open up and edit `OrderProcessor`** — the exact "reopening tested code" problem from Section 0.
