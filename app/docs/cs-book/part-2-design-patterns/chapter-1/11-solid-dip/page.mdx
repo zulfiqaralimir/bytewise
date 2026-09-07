@@ -60,7 +60,7 @@ class OrderProcessor:
 
 <Callout type="warning" title="⚠️ What's Wrong Here">
 - If tomorrow you also want SMS notifications, or want to swap email for a different provider, you must **open up and edit `OrderProcessor`** — the exact "reopening tested code" problem from Section 0.
-- `OrderProcessor`'s job is supposed to be "process orders" — but it's now also tightly stuck to one specific way of sending notifications. It shouldn't need to know or care about *how* notifications are sent.
+- `OrderProcessor`'s job is supposed to be "process orders" — but it's <Revision>now also tightly stuck to one specific way of sending notifications</Revision>. It shouldn't need to know or care about *how* notifications are sent.
 </Callout>
 
 ### Step 2 — Recall the tools you already have (Abstraction Type 2 + Polymorphism)
