@@ -585,6 +585,7 @@ const chapters = [
         chapter: "Problems",
         items: [
           { title: "Problem 1: Multiples of 3 or 5", href: "/docs/cs-book/part-22-project-euler/problem-1-multiples-of-3-or-5" },
+          { title: "Problem 2: Even Fibonacci Numbers", href: "/docs/cs-book/part-22-project-euler/problem-2-even-fibonacci-numbers" },
         ],
       },
     ],
