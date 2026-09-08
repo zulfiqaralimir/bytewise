@@ -1,0 +1,66 @@
+export const metadata = {
+  title: "Project Euler — Overview & Roadmap — ByteWise",
+  description:
+    "Solving Project Euler problems as a track for sharpening math-driven programming: number theory, combinatorics, and brute-force-to-elegant optimization.",
+  keywords: [
+    "Project Euler",
+    "number theory",
+    "combinatorics",
+    "algorithmic problem solving",
+    "mathematical programming",
+    "brute force optimization",
+  ],
+  openGraph: {
+    title: "Project Euler — Overview & Roadmap",
+    description:
+      "Math-driven programming problems, solved one at a time — from brute force to elegant.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Project Euler
+
+[Project Euler](https://projecteuler.net/) is a series of problems that sit at the intersection of mathematics and programming. Each one starts simple enough to brute-force, then punishes brute force the moment the numbers get large — forcing you to find the underlying mathematical structure instead.
+
+**This part treats each problem as a short case study** — not just "here's code that works," but why the naive approach fails, what insight fixes it, and what the resulting solution teaches about algorithmic thinking.
+
+---
+
+## What This Part Covers
+
+- Problems worked in roughly increasing difficulty, following Project Euler's own numbering
+- Each page: the problem statement, a naive/brute-force attempt, why it doesn't scale, the key insight, and the optimized solution
+- Recurring mathematical tools as they come up: divisibility and primes, modular arithmetic, combinatorics, dynamic programming, big-number arithmetic
+
+---
+
+## Why This Track Exists
+
+LeetCode and NeetCode (Part 14) train interview-style pattern recognition — arrays, hashing, two pointers. Project Euler trains something adjacent but different: turning a math problem into an efficient algorithm from scratch, with no hint about which technique applies. That gap — "brute force works but times out, now what?" — is where most of the learning happens.
+
+> **Simple takeaway:** Project Euler is where "make it correct" and "make it fast enough" stop being the same conversation.
+
+---
+
+## Who This Is For
+
+- Anyone who wants deliberate practice turning math into working, efficient code
+- LeetCode practitioners who want problems that reward mathematical insight over memorized patterns
+- Anyone curious about number theory, combinatorics, or big-number computation through concrete, checkable problems
+
+No advanced math background required — each problem introduces the math it needs, when it needs it.
+
+---
+
+## How to Use This Part
+
+Problems are added one at a time, in order, as they're solved and written up. There's no fixed chapter grouping the way CLRS or Python Internals have — Project Euler's own numbering is the spine.
+
+---
+
+<ArticleNav
+  prev={null}
+  next={null}
+/>

@@ -572,6 +572,21 @@ const chapters = [
       },
     ],
   },
+  {
+    part: "Part 22 — Project Euler",
+    chapters: [
+      {
+        chapter: "Overview",
+        items: [
+          { title: "Overview & Roadmap", href: "/docs/cs-book/part-22-project-euler/overview" },
+        ],
+      },
+      {
+        chapter: "Problems",
+        items: [],
+      },
+    ],
+  },
 ];
 
 const allHrefs = chapters.flatMap((c) =>
