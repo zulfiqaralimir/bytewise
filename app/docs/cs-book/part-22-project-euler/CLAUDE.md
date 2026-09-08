@@ -38,11 +38,22 @@ Example: `problem-1-multiples-of-3-or-5/`.
 
 ## Page Template
 
-Not yet fixed — decide per the first problem actually drafted, then document
-it here for consistency. Likely shape, given the subject (math + optimization):
-Problem Statement → Naive/Brute-Force Approach → Why It Doesn't Scale → The
-Key Insight → Optimized Solution (with code) → Complexity Comparison → What
-This Teaches. Confirm with the user before locking this in.
+Fixed as of Problem 1. Every problem page uses these sections, in this order:
+
+1. **Problem Statement** — the exact problem, quoted/paraphrased
+2. **Think Before You Code** — build intuition with a small hand-worked example before any code
+3. **Algorithm** — the solution as a numbered, plain-English list of steps, no code yet
+4. **Python Solution** — the code block
+5. **Explain the Code** — line-by-line (or block-by-block) walkthrough of what each line does and why
+6. **Time and Space Complexity** — Big-O for both, with a "why this matters" paragraph tying it to larger inputs
+7. **Applications** — 4-6 bullets on where this pattern shows up outside Project Euler
+8. **Connection to LeetCode & DSA** — explicit bullets tying the technique back to Part 14 (LeetCode/NeetCode) patterns
+9. **Algorithmic Thinking** — the reusable pattern/rhythm behind the solution (e.g. "Loop → Check → Select → Add → Repeat → Result"), plus the math → algorithm → code translation framing
+10. **Practice Challenges** — 2-4 variations the reader can solve by tweaking the same code
+
+Tone: conversational, beginner-friendly, explain every symbol/operator the first
+time it appears (e.g. modulo, `range()` bounds) — same register as the CLRS
+track's "smart non-specialist" audience.
 
 ## Sidebar Registration
 

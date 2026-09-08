@@ -1,0 +1,221 @@
+export const metadata = {
+  title: "Project Euler #1 — Multiples of 3 or 5 — ByteWise",
+  description:
+    "Solving Project Euler Problem 1 — sum of all multiples of 3 or 5 below 1000 — with a plain-English algorithm, a line-by-line Python walkthrough, and a complexity analysis.",
+  keywords: [
+    "Project Euler",
+    "Project Euler Problem 1",
+    "multiples of 3 or 5",
+    "modulo operator",
+    "Python for loop",
+    "algorithmic thinking",
+    "time complexity",
+  ],
+  openGraph: {
+    title: "Project Euler #1 — Multiples of 3 or 5",
+    description:
+      "Sum of all multiples of 3 or 5 below 1000 — algorithm, code, and complexity, explained line by line.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# Problem 1 — Multiples of 3 or 5
+
+## Problem Statement
+
+Find the sum of all the natural numbers below 1000 that are multiples of 3 or 5.
+
+---
+
+## Think Before You Code
+
+Before writing any code, let's understand what the problem is actually asking.
+
+We need to look at every natural number smaller than 1000, and pick out the ones that are multiples of 3 **or** multiples of 5. Then we add all of those picked numbers together.
+
+A smaller example makes this easy to see. Let's do the same thing, but only for numbers below 10 instead of below 1000.
+
+The numbers below 10 are: 1, 2, 3, 4, 5, 6, 7, 8, 9
+
+Now check each one:
+
+- 3 → multiple of 3 ✅
+- 5 → multiple of 5 ✅
+- 6 → multiple of 3 ✅
+- 9 → multiple of 3 ✅
+
+All the others (1, 2, 4, 7, 8) are not multiples of 3 or 5, so we skip them.
+
+So the qualifying numbers are:
+
+```
+3, 5, 6, 9
+```
+
+And their sum is:
+
+```
+3 + 5 + 6 + 9 = 23
+```
+
+That's the entire idea of the problem — just scaled up from "below 10" to "below 1000." Once you can solve the small version by hand, you already understand the big version. The computer just does the repetitive checking faster than we can.
+
+---
+
+## Algorithm
+
+Before touching Python, let's write the solution as a plain-English algorithm — a numbered list of steps a computer (or a very literal-minded person) could follow without needing to understand math, only instructions.
+
+1. Start with `total = 0`.
+2. Loop through the numbers from 1 to 999.
+3. Check whether the number is divisible by 3 OR 5.
+4. Use the modulo operator `%` to perform the divisibility check.
+5. If the condition is true, add the number to `total`.
+6. Continue until all numbers have been checked.
+7. Print the final total.
+
+Notice that this algorithm doesn't mention Python at all yet. That's intentional — an algorithm is the *idea* of the solution, independent of any programming language. Once the idea is solid, translating it into code becomes almost mechanical.
+
+---
+
+## Python Solution
+
+```python
+total = 0
+
+for number in range(1, 1000):
+    if number % 3 == 0 or number % 5 == 0:
+        total += number
+
+print(total)
+```
+
+---
+
+## Explain the Code
+
+Let's break this down line by line, so nothing feels like "magic."
+
+- **`total = 0`**
+  This creates a variable called `total` and sets it to zero. Think of it as an empty basket that will collect numbers as we find them. We must start it at 0, because if we started it at, say, 5, our final answer would be wrong by 5.
+
+- **`for number in range(1, 1000)`**
+  This is a loop. It tells Python: "take each number, one at a time, starting from 1, and keep going up to (but not including) 1000." Each time through the loop, the variable `number` holds the current value — first 1, then 2, then 3, and so on, up to 999.
+
+- **`number % 3 == 0`**
+  The `%` symbol is the **modulo operator**. It gives you the *remainder* after division. So `10 % 3` is `1`, because 10 divided by 3 leaves a remainder of 1. When a number is **perfectly divisible** by 3, the remainder is 0 — which is exactly what `number % 3 == 0` is checking for. In plain English: "is `number` a multiple of 3?"
+
+- **`number % 5 == 0`**
+  Same idea, but checking divisibility by 5 instead of 3. In plain English: "is `number` a multiple of 5?"
+
+- **`or`**
+  This combines the two checks above. It means: "if *either* of these conditions is true (or both are), the whole thing counts as true." We want numbers that are multiples of 3 **or** multiples of 5 — not just numbers that are multiples of both.
+
+- **`total += number`**
+  This is shorthand for `total = total + number`. It means: "take whatever is currently in `total`, add the current `number` to it, and store the result back into `total`." This is how our basket keeps growing as the loop finds qualifying numbers.
+
+- **`print(total)`**
+  Once the loop has finished checking every number from 1 to 999, this prints the final value stored in `total` — our answer.
+
+**A special note on `range(1, 1000)`:**
+In Python, `range(start, stop)` includes the `start` value but **excludes** the `stop` value. So `range(1, 1000)` produces the numbers 1, 2, 3, ..., all the way up to 999 — it stops *before* reaching 1000. This matches the problem exactly, since we want numbers **below** 1000, not including 1000 itself. This "excludes the ending value" behavior is one of the most common sources of confusion for beginners, so it's worth remembering clearly: whatever number you put as the second argument to `range()`, Python will stop *just before* it.
+
+---
+
+## Time and Space Complexity
+
+It's worth pausing here to ask: how "expensive" is this solution, in terms of both time and memory? This is something every Project Euler problem in this book will ask, because it builds the habit of thinking about *efficiency*, not just *correctness*.
+
+**Time Complexity: O(n)**
+
+The loop runs once for every number from 1 up to 999 — that is, roughly `n` times, where `n` is the upper limit (1000 in this case). Inside the loop, the work being done (the two modulo checks and the possible addition) takes a fixed, constant amount of time no matter how big `number` gets. So the total amount of work grows in direct proportion to `n`.
+
+This is called **linear time**, written as **O(n)**. In plain English: if you double the upper limit (say, from 1,000 to 2,000), the loop will take roughly twice as long, because it has twice as many numbers to check. Nothing in the code causes the work to grow faster than that.
+
+**Space Complexity: O(1)**
+
+Space complexity asks a different question: how much extra memory does the solution need, beyond the input itself? Here, we only ever store two things — `total` and `number` — regardless of whether the limit is 1,000 or 1,000,000,000. We never build a list, array, or any other structure that grows with `n`.
+
+Because the memory used stays fixed no matter how large the input gets, this is called **constant space**, written as **O(1)**.
+
+**Why this matters**
+
+For Problem 1's small range (below 1000), this efficiency question barely matters — any reasonable approach finishes instantly. But the practice challenges push the limit up to 1,000,000, and later Project Euler problems push into the billions. At that scale, the difference between an O(n) solution and something slower (or an O(n) solution and a smarter O(1) mathematical shortcut, which we'll explore in a later problem) becomes very real — sometimes the difference between a program finishing in a blink versus taking minutes or longer.
+
+Getting into the habit of asking "how does this scale?" for every solution — even the easy ones — is what separates writing code that merely *works* from writing code that *works well*.
+
+---
+
+## Applications
+
+It's easy to look at "sum of multiples of 3 or 5" and think of it as a pure math puzzle with no real-world use. In practice, the *pattern* behind this problem shows up constantly — only the specific rule changes.
+
+- **Billing and discounts** — a system that applies a discount to every order that's a multiple of a certain amount (e.g., "$5 off every $50 spent") is running the same loop-check-select-add logic.
+- **Scheduling and reminders** — a task that runs "every 3rd day or every 5th day" (like alternating maintenance checks) uses the same modulo logic to decide which days qualify.
+- **Data filtering** — filtering a large dataset to keep only rows that meet one of several conditions (e.g., "flag transactions divisible by a certain batch size, or above a threshold") is structurally identical: loop through the data, check a condition, select the matches, accumulate a result.
+- **Game and grid logic** — many games use modulo checks to decide events on a grid (e.g., "place a checkpoint every 5th tile, or a hazard every 3rd tile").
+- **Financial and quant workflows** — periodic rebalancing rules, coupon payment schedules, or sampling every nth data point in a time series all rely on the exact same divisibility-based selection idea.
+
+The specific numbers 3, 5, and 1000 are almost irrelevant. What actually transfers to real work is the underlying skill: scanning a range or dataset, applying a divisibility (or membership) rule, and accumulating a result. Recognizing that skill inside an "easy" problem like this one is exactly what makes it worth solving carefully, rather than skipping ahead.
+
+---
+
+## Connection to LeetCode & DSA
+
+Project Euler and LeetCode-style DSA problems can feel like two different worlds — one is "math puzzles," the other is "coding interview prep." In reality, they train the same muscle from two different angles, and Problem 1 is a good place to see that overlap early.
+
+- **Brute-force first, optimize second** — just like in LeetCode, we started with the most direct, easy-to-understand solution (loop through everything, check a condition) before asking whether it scales. That habit — get something correct, then interrogate its complexity — is exactly the mindset expected in coding interviews.
+- **Same complexity vocabulary** — the O(n) time / O(1) space analysis we just did is the identical language used to evaluate every LeetCode solution. Practicing that analysis on a simple problem like this one builds the reflex you'll need on much harder ones.
+- **The "loop and condition" pattern** — many easy-to-medium LeetCode array problems (e.g., summing elements that meet a condition, counting elements divisible by a value, filtering a list) are structurally this same problem wearing a different costume.
+- **A preview of optimization technique** — later, when we revisit this problem using a closed-form arithmetic series formula to get O(1) time, it mirrors a very common LeetCode pattern: replacing a loop with a mathematical shortcut (similar to how problems like "sum of range" or "missing number" can be solved with formulas instead of iteration).
+- **Precursor to modular arithmetic problems** — the `%` operator used here reappears constantly in DSA problems involving cycles, hashing, and remainder-based grouping (e.g., "group numbers by remainder," "find repeated cycle length").
+
+The takeaway: don't treat this chapter as disconnected from your NeetCode/LeetCode practice. The core skill — translate a rule into a loop-and-condition check, then reason about its complexity — is the same skill, just applied to a math-flavored problem instead of an interview-flavored one.
+
+---
+
+## Algorithmic Thinking
+
+Every solution in this chapter follows the same underlying rhythm. For this problem, it looks like:
+
+```
+Loop → Check → Select → Add → Repeat → Result
+```
+
+- **Loop** — go through the numbers one at a time.
+- **Check** — test whether the current number meets our condition (divisible by 3 or 5).
+- **Select** — decide whether this number qualifies.
+- **Add** — if it qualifies, include it in our running total.
+- **Repeat** — go back and do this again for the next number.
+- **Result** — once nothing is left to check, report the final answer.
+
+This pattern is worth memorizing, because it isn't unique to this problem — it's the backbone of a huge number of Project Euler problems and real-world programming tasks: scan a collection, test each item against a rule, and accumulate something based on the result.
+
+What this problem really teaches is the *translation process*:
+
+1. **Math problem** → "sum of numbers below 1000 divisible by 3 or 5"
+2. **Algorithm** → a numbered list of plain-English steps
+3. **Code** → Python that a computer can actually execute
+
+Learning to move confidently through these three stages — math → algorithm → code — is a far more valuable skill than memorizing any single solution. Once this translation habit is automatic, far harder problems become approachable, because you already know how to break them down.
+
+---
+
+## Practice Challenges
+
+Once Problem 1 feels comfortable, try these variations. Each one uses the exact same algorithm — only the numbers change — which is a good way to prove to yourself that you understand the *pattern*, not just this one problem.
+
+1. Find the sum of multiples of 3 or 5 below 10,000.
+2. Find the sum of multiples of 7 or 11 below 100,000.
+3. Find the sum of numbers divisible by 3, 5, or 7 below 1,000,000.
+
+Try solving each one by adjusting only the loop's range and the divisibility checks in the code above, before looking for any shortcuts. Getting comfortable with the direct, "brute-force" approach first makes it much easier to appreciate faster techniques later on.
+
+---
+
+<ArticleNav
+  prev={{ title: "Project Euler — Overview & Roadmap", href: "/docs/cs-book/part-22-project-euler/overview" }}
+  next={null}
+/>

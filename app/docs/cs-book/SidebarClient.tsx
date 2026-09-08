@@ -583,7 +583,9 @@ const chapters = [
       },
       {
         chapter: "Problems",
-        items: [],
+        items: [
+          { title: "Problem 1: Multiples of 3 or 5", href: "/docs/cs-book/part-22-project-euler/problem-1-multiples-of-3-or-5" },
+        ],
       },
     ],
   },
