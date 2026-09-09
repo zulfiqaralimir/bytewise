@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "building-a-3-year-financial-model",
+    title: "How to Build a 3-Year Financial Model for a Startup",
+    description:
+      "A tab-by-tab, dependency-ordered guide to building a startup financial model — from the ZulfiQode / Black Iron Quantum AI case study, including a real bug the Balance Check row caught.",
+    date: "September 9, 2026",
+    tag: "Finance",
+  },
+  {
     slug: "introduction-to-cge-modelling-part-1",
     title: "Introduction to CGE Modelling (Part 1 of 13): What Is CGE Modelling?",
     description:

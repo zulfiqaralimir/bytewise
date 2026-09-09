@@ -1,0 +1,350 @@
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+export const metadata = {
+  title:
+    "How to Build a 3-Year Financial Model for a Startup — ByteWise",
+  description:
+    "A tab-by-tab, dependency-ordered guide to building a 3-year startup financial model — from the ZulfiQode / Black Iron Quantum AI case study, with a real bug and how the Balance Check row caught it.",
+  keywords: [
+    "financial model",
+    "startup financial model",
+    "3 statement model",
+    "income statement",
+    "balance sheet",
+    "cash flow statement",
+    "Excel financial model",
+    "ZulfiQode",
+    "Black Iron Quantum AI",
+    "NIC Islamabad",
+    "financial modeling for startups",
+  ],
+  openGraph: {
+    title: "How to Build a 3-Year Financial Model for a Startup",
+    description:
+      "Build the model tab by tab, in a fixed dependency order, verify each tab before moving to the next, and let the Balance Sheet prove — not assert — that the numbers hold together.",
+    type: "article",
+  },
+};
+
+# How to Build a 3-Year Financial Model for a Startup
+### A Practical, Step-by-Step Guide — ZulfiQode / Black Iron Quantum AI Case Study
+
+<div className="not-prose my-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 flex items-center justify-between gap-4 flex-wrap">
+  <span className="text-sm text-emerald-900">
+    Follow along in the actual model — the real 3-year ZulfiQode build referenced throughout this guide.
+  </span>
+  <a
+    href="/files/blog/building-a-3-year-financial-model/ZulfiQode-Financial-Model.xlsx"
+    download
+    className="inline-flex items-center gap-2 rounded-md bg-emerald-600 text-white text-sm font-semibold px-4 py-2 no-underline hover:bg-emerald-700 transition-colors whitespace-nowrap"
+  >
+    Download the Excel Model (.xlsx)
+  </a>
+</div>
+
+---
+
+## Why This Guide Exists
+
+Most founders treat the financial model as a box to check before an investor meeting — a
+spreadsheet full of numbers nobody, including the founder, can defend under questioning.
+
+This guide documents a different approach: build the model **tab by tab, in a fixed
+dependency order**, verify each tab before moving to the next, and let the final Balance
+Sheet prove — not assert — that the numbers hold together.
+
+It was written up after building a real 3-year financial model for **ZulfiQode**, the
+crisis-prediction AI product from Black Iron Quantum AI (Private) Limited, following the
+structure taught in a National Incubation Center (NIC) Islamabad financial modeling
+workshop. The goal here is to turn that one real build into a reusable template for the
+next startup, the next pitch, the next model.
+
+---
+
+## Before You Open Excel
+
+Have three things ready:
+
+1. **A revenue logic you can explain in one sentence.** For ZulfiQode: *"corporate clients
+   pay an annual license; smaller funds pay a monthly subscription."* If you can't state
+   your revenue logic that simply, the model will be guesswork dressed up as precision.
+2. **A reference model or workshop template**, if one exists. Don't reinvent the tab
+   structure — reuse a proven one and adapt the numbers.
+3. **A willingness to guess, mark the guess, and fix it later.** Nobody has real client
+   counts and pricing before they've closed a client. The discipline is not in having real
+   numbers on day one — it's in making every guess *visible* (so it can be corrected) and
+   never hard-coding a guess where a formula should be.
+
+---
+
+## The Tab-by-Tab Blueprint
+
+Build tabs in this order — each one depends on the tab before it, so building out of order
+means broken links or, worse, numbers that look plausible but are quietly wrong.
+
+| # | Tab | Depends on | Produces |
+|---|-----|-----------|----------|
+| 1 | **Assumptions** | Nothing | Revenue and cost drivers, month by month |
+| 2 | **Salary** | Nothing (headcount is its own input) | Total payroll cost |
+| 3 | **Depreciation** | Nothing (asset register is its own input) | Depreciation expense, equipment book value |
+| 4 | **Income Statement** | Assumptions, Salary, Depreciation | Net Profit |
+| 5 | **Balance Sheet** | Assumptions, Depreciation, Income Statement | Assets, Liabilities, Equity (cash still a placeholder) |
+| 6 | **Cashflow Statement** | Income Statement, Balance Sheet, Depreciation | Real cash balance — linked back into the Balance Sheet |
+| 7 | **Dashboard** | Everything above | One-page summary for investors |
+
+Notice tab 5 is deliberately incomplete when you build it — more on that below.
+
+<MermaidDiagram title="Tab Dependency Order" chart={`
+flowchart LR
+  A[Assumptions] --> D[Income Statement]
+  S[Salary] --> D
+  P[Depreciation] --> D
+  D --> B[Balance Sheet]
+  A --> B
+  P --> B
+  D --> C[Cashflow Statement]
+  B --> C
+  P --> C
+  C -. Ending Cash .-> B
+  B --> E[Dashboard]
+  D --> E
+  C --> E
+`} />
+
+---
+
+## Step 1 — Assumptions: Revenue Drivers
+
+This is the tab everything else depends on, so get the *structure* right even if the
+*numbers* are placeholders.
+
+For each revenue stream, build a chain of four rows, left to right across your time
+periods (we used 36 monthly columns):
+
+1. **New units added this period** (input) — new clients signed, new subscribers joined
+2. **Cumulative units** (formula) — a running total: `=previous_month + this_month's_new`
+3. **Price per unit** (input) — can escalate year over year
+4. **Revenue this period** (formula) — `= cumulative units × price`
+
+Repeat this chain for every revenue stream, then sum them into a **Total Revenue** row.
+
+**Practical tip:** if you're not sure how a contract is billed (upfront vs. spread across
+the year), default to spreading it monthly. It's simpler, and it matches how most
+subscription and model tabs are built anyway.
+
+**Color convention** (carry this through every tab):
+- **Blue text** = input, safe to edit
+- **Black text** = formula, don't overtype
+- **Yellow fill** = a key assumption worth a second look before you present
+
+---
+
+## Step 2 — Cost Assumptions: COGS + the Salary Tab
+
+Split costs into two categories, because they behave differently:
+
+- **Costs that scale with customers** (data feeds, cloud/API costs, hosting) belong in the
+  Assumptions tab as a "cost per unit" row, multiplied by the same cumulative-client rows
+  from Step 1.
+- **Costs that scale with your team** (salaries) get their own tab, because a team has
+  structure — multiple roles, headcount changes, salary escalation — that clutters a
+  general assumptions tab.
+
+**Salary tab structure:**
+1. Headcount by role, by month (input)
+2. Salary per person, by role, by month (input, can escalate yearly)
+3. Total cost per role (formula = headcount × salary)
+4. Grand total salary expense (formula = sum of all roles)
+
+Also add, while you're in the Assumptions tab: a **marketing expense** (often simplest as
+a % of revenue), a **fixed G&A cost** (rent, legal, admin), and a **bad-debt %** (a small
+buffer for late or missed payments — enterprise clients are usually more reliable than
+retail, so this can be small, 2–3%).
+
+---
+
+## Step 3 — Depreciation & Capex
+
+Any equipment you buy (laptops, servers, office setup) isn't a one-time expense on the
+Income Statement — it's spread over its useful life. Build this as two blocks:
+
+**Asset register** (a small static table):
+
+| Asset | Purchase Month | Price | Useful Life (months) | Monthly Depreciation |
+|---|---|---|---|---|
+| Laptops (batch 1) | 1 | 1,000,000 | 36 | =Price / Life |
+
+**Monthly schedule**, driven off that register:
+- Depreciation expense per asset per month:
+  `=IF(AND(month >= purchase_month, month < purchase_month + life), monthly_depreciation, 0)`
+- Total depreciation this month = sum across all assets
+- Accumulated depreciation = running total
+- **Net Book Value** = *(cost of everything purchased so far)* − accumulated depreciation
+
+### The mistake we made here — and how it showed up later
+
+The first version of this tab calculated Net Book Value as:
+
+> Total cost of **every asset in the register** − accumulated depreciation
+
+That's wrong if some assets haven't been purchased yet. It silently counted equipment we
+hadn't bought yet (a Year 2 and a Year 3 laptop batch) as if it already existed on the
+books. The fix:
+
+> Net Book Value = cost of assets **purchased by this month** − accumulated depreciation
+
+using `SUMPRODUCT((purchase_month_range <= this_month) * price_range)` instead of a fixed
+total. This single-line bug created a PKR 1,500,000 phantom asset that didn't surface until
+the Balance Sheet refused to balance three steps later — which is exactly why the next two
+steps matter.
+
+---
+
+## Step 4 — Income Statement
+
+This is where everything built so far comes together:
+
+```
+Revenue                              (from Assumptions)
+(–) Cost of Revenue (COGS)           (from Assumptions)
+= Gross Profit
+
+(–) Marketing Expense                (from Assumptions)
+(–) Salary Expense                   (from Salary tab)
+(–) G&A Expense                      (from Assumptions)
+(–) Bad Debts                        (from Assumptions)
+(–) Depreciation Expense             (from Depreciation tab)
+= Total Operating Expenses
+
+Gross Profit – Total Operating Expenses = Profit Before Tax
+
+Tax = IF(Profit Before Tax > 0, PBT × tax rate, 0)   ← never tax a loss
+
+Profit Before Tax – Tax = Net Profit
+```
+
+**Color convention addition:** use a different color (we used green) for any number that
+links in from another tab, versus black for a formula calculated within the same tab. It
+makes it instantly obvious, months later, where a number actually comes from.
+
+---
+
+## Step 5 — Balance Sheet (Yes, Leave Cash Blank)
+
+Build everything on the Balance Sheet **except Cash**, and mark Cash clearly as a
+placeholder (we set it to 0 with an orange/highlighted fill and a note). This mirrors how
+the numbers actually get built in practice — you can't know the real cash balance until
+you've built the Cashflow Statement, so don't pretend otherwise.
+
+```
+ASSETS
+  Cash                     ← placeholder (0), to be linked in Step 6
+  Accounts Receivable      = Revenue × (Days Sales Outstanding ÷ 30)
+  Equipment, Net Book Value  (linked from Depreciation)
+  = Total Assets
+
+LIABILITIES
+  Accounts Payable         = COGS × (Days Payable Outstanding ÷ 30)
+  = Total Liabilities
+
+EQUITY
+  Paid-in Capital           (input — your seed/founder investment)
+  Retained Earnings        = running total of Net Profit from the Income Statement
+  = Total Equity
+```
+
+Add one more row: a **Balance Check** = Total Assets − (Total Liabilities + Equity). With
+Cash at 0, this row won't be zero — and that's useful information. It's telling you exactly
+how much cash the business needs at each point in time to stay solvent. Don't hide this
+number; it previews the story the Cashflow Statement is about to tell.
+
+---
+
+## Step 6 — Cashflow Statement (and Closing the Loop)
+
+Build this using the **indirect method** — starting from Net Profit and adjusting for
+non-cash items and working-capital changes:
+
+```
+OPERATING ACTIVITIES
+  Net Profit                              (from Income Statement)
+  (+) Depreciation                        (non-cash, from Depreciation tab)
+  (–) Increase in Accounts Receivable     (change in AR, from Balance Sheet)
+  (+) Increase in Accounts Payable        (change in AP, from Balance Sheet)
+  = Net Cash from Operating Activities
+
+INVESTING ACTIVITIES
+  (–) Purchase of Equipment (Capex)       (from the Depreciation asset register,
+                                            matched to the actual purchase month)
+  = Net Cash from Investing Activities
+
+FINANCING ACTIVITIES
+  (+) Paid-in Capital raised this month   (change in capital, from Balance Sheet)
+  = Net Cash from Financing Activities
+
+Net Change in Cash = Operating + Investing + Financing
+Beginning Cash = last month's Ending Cash (0 in month 1)
+Ending Cash = Beginning Cash + Net Change in Cash
+```
+
+**Now go back and fix the Balance Sheet:** replace the Cash placeholder with a link to
+`Ending Cash` from this tab. If Steps 1–6 were all done correctly, the **Balance Check row
+on the Balance Sheet should now read exactly 0 in every single month.**
+
+This is the real test of the entire model — not "does it run without errors," but "does it
+balance." A model with formula errors is obviously broken. A model that *runs fine* but
+doesn't balance is far more dangerous, because it looks trustworthy right up until someone
+asks the wrong question in a due-diligence meeting.
+
+---
+
+## Step 7 — Dashboard
+
+Once everything ties out, build a one-page summary — this is what gets glanced at first,
+whether by you, a mentor, or an investor:
+
+- **Key metrics strip**: total 3-year revenue, total 3-year net profit, ending cash,
+  breakeven month, lowest cash point (this tells you your minimum funding need), and
+  headline client/user counts.
+- **Annual summary table**: Year 1 / Year 2 / Year 3 side by side for Revenue, COGS, Gross
+  Profit, OpEx, Net Profit, Ending Cash — the story at a glance.
+- **Trend charts**: monthly revenue, monthly net profit, and cash balance across the full
+  period. Native spreadsheet charts (not screenshots) so they update automatically when you
+  change an assumption.
+
+A useful formula trick for the "breakeven month" metric, without needing an array formula:
+`=COUNTIF(PBT_range, "<=0") + 1` — this counts the unprofitable months and adds one,
+which works cleanly as long as profitability, once achieved, doesn't dip negative again.
+
+---
+
+## The Reusable Checklist
+
+Use this on the next model, whatever the business:
+
+- [ ] State your revenue logic in one sentence before opening Excel
+- [ ] Build tabs in dependency order: Assumptions → Salary → Depreciation → Income
+      Statement → Balance Sheet → Cashflow Statement → Dashboard
+- [ ] Every revenue/cost driver follows: new-this-period → cumulative → price/cost →
+      revenue/expense
+- [ ] Color-code consistently: blue = input, black = same-tab formula, green = cross-tab
+      link, yellow fill = key assumption to review
+- [ ] Leave Cash as a marked placeholder on the Balance Sheet until the Cashflow Statement
+      is built
+- [ ] Add a Balance Check row and don't consider the model done until it reads 0 everywhere
+- [ ] Never hard-code a number that should be a formula — even a "final" number like total
+      capex should sum from its inputs, so a later correction cascades automatically
+- [ ] Recalculate and scan for formula errors after every tab, not just at the end
+- [ ] Build the Dashboard last, once every number underneath it is proven correct
+
+---
+
+## Closing Note
+
+Treat every number in this model as provisional. The structure is the durable part — the
+dependency order, the formula discipline, the balance check. The actual client counts,
+pricing, and salaries should be replaced the moment real conversations (with a client, a
+ministry contact, an investor) produce a firmer number. That's not a flaw in the model —
+it's the model doing its job: giving you a living structure that gets more accurate every
+time you feed it real information, instead of a static document that's wrong the day after
+you print it.
