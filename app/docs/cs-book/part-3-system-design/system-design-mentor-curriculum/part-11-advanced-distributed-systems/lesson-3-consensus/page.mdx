@@ -196,7 +196,7 @@ If one of three nodes fails (`2/3` remain), the system may still be able to cont
 
 ## 11. Why Can't We Simply Use Majority Voting?
 
-Suppose three nodes vote `A → X`, `B → X`, `C → Y` — majority says X wins. That sounds easy. But distributed systems have harder problems: what if A receives X, B receives Y, and C receives nothing? Or a **network partition** occurs, and the nodes cannot communicate at all:
+Suppose three nodes vote `A → X`, `B → X`, `C → Y` — majority says X wins. That sounds easy. <Revision>But distributed systems have harder problems: what if A receives X, B receives Y, and C receives nothing? Or a **network partition** occurs, and the nodes cannot communicate at all:</Revision>
 
 <MermaidDiagram title="A Partition Splits Opinion" chart={`
 graph LR
