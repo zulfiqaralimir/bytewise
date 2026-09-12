@@ -1,0 +1,228 @@
+export const metadata = {
+  title: "Lesson 2 — Distributed Hash Tables (DHTs) | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 2: what a Distributed Hash Table is, how it differs from consistent hashing, how routing finds a key without asking every node, and where DHTs show up in the real world.",
+  keywords: [
+    "distributed hash table",
+    "DHT",
+    "consistent hashing",
+    "Chord",
+    "Kademlia",
+    "BitTorrent DHT",
+    "peer-to-peer",
+    "distributed systems",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 2 — Distributed Hash Tables (DHTs) | Mentor Curriculum Part 11",
+    description:
+      "Key → hash → responsible node → data — how many computers collectively behave like one giant key-value table.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 2**
+
+# Lesson 2 — Distributed Hash Tables (DHTs)
+
+Let's build this from what you already learned about **hashing and consistent hashing**.
+
+## 1. First: What Is a Hash Table?
+
+A normal hash table stores:
+
+```text
+Key → Value
+
+user101 → Zulfiqar
+user102 → Ali
+user103 → Ahmed
+```
+
+A hash function determines where the data should be stored. The problem is that a normal hash table usually exists **inside one machine**.
+
+## 2. What If the Data Is Enormous?
+
+Imagine we have **millions of computers**, and we want them to collectively store data:
+
+```text
+Computer A → some data
+Computer B → some data
+Computer C → some data
+Computer D → some data
+```
+
+Now we need a mechanism that answers:
+
+> **"Which computer is responsible for this particular key?"**
+
+That's where a **Distributed Hash Table (DHT)** comes in.
+
+## 3. Simple Definition
+
+> **A DHT is a distributed system that lets many independent computers collectively behave like one giant key-value table.**
+
+Instead of:
+
+```text
+Key → location inside ONE computer
+```
+
+we have:
+
+```text
+Key → responsible COMPUTER
+```
+
+## 4. Real-Life Analogy
+
+Imagine a huge warehouse with **100 storage rooms**. You receive:
+
+> "Find product #5832."
+
+You don't ask every room, "Do you have #5832?" Instead, you have a **rule** that tells you which room is responsible.
+
+<MermaidDiagram title="Finding the Responsible Room" chart={`
+graph TD
+  PID[Product ID] --> HF[Hash Function]
+  HF --> ROOM[Room / Computer]
+`} />
+
+That's the basic idea of a DHT.
+
+## 5. How Does It Work?
+
+Suppose we have `Node A`, `Node B`, `Node C`, and `Node D` — **node** simply means a participating computer/server. Each node has an identifier, and we hash both the node ID and the data key onto the same logical space.
+
+<Figure title="Nodes on the Logical Space" caption="Both node IDs and data keys are hashed into the same space. The exact structure — a ring, a tree, or something else — depends on the DHT algorithm.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#0d9488" strokeWidth="2"/>
+  <circle cx="150" cy="40" r="7" fill="#0d9488"/>
+  <text x="150" y="24" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node A</text>
+  <circle cx="260" cy="150" r="7" fill="#0d9488"/>
+  <text x="286" y="154" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node B</text>
+  <circle cx="150" cy="260" r="7" fill="#0d9488"/>
+  <text x="150" y="282" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node C</text>
+  <circle cx="40" cy="150" r="7" fill="#0d9488"/>
+  <text x="14" y="154" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node D</text>
+</svg>
+</Figure>
+
+The important thing is: the system has a deterministic method for finding which node owns a key.
+
+## 6. DHT vs. Consistent Hashing
+
+This is important because you just learned consistent hashing.
+
+**Consistent Hashing** primarily answers: *"Which server should handle this key?"*
+
+```text
+Key → Hash Ring → Server
+```
+
+**DHT** provides a **distributed key-value lookup system**, where nodes themselves participate in maintaining the mapping and routing requests.
+
+<MermaidDiagram title="From Consistent Hashing to a DHT" chart={`
+graph LR
+  CH[Consistent Hashing] --> KD[Key Distribution Idea]
+  KD --> DHT[Distributed Hash Table]
+  DHT --> LU[Distributed Key-Value Lookup]
+`} />
+
+Many DHT designs use ideas related to consistent hashing, but **DHT is a broader distributed protocol/system**, not simply another name for consistent hashing.
+
+## 7. What Happens If a Node Fails?
+
+Suppose we have `A`, `B`, `C`, `D` — and `C` fails. A good DHT is designed so that the remaining nodes can still locate the data. Depending on the DHT design, keys previously associated with `C` can be handled by other nodes.
+
+This gives us: **decentralization + scalability + fault tolerance**.
+
+## 8. Where Is DHT Used?
+
+DHTs are particularly associated with **peer-to-peer (P2P) systems**. Examples include systems/protocols such as:
+
+- BitTorrent's DHT
+- Chord
+- Kademlia
+- Distributed peer-to-peer storage/discovery systems
+
+The important idea is that there is **no single central machine responsible for all lookups**.
+
+## 9. Programming & DSA Connection
+
+This connects directly to your earlier question.
+
+**DSA:** Hashing → IDs → Lookup → Routing
+
+**Programming:** a real DHT implementation involves:
+
+- Network communication
+- Node discovery
+- Routing tables
+- Failure detection
+- Joining/leaving nodes
+- Data lookup
+- Replication
+
+So this is where **DSA + networking + distributed systems** start coming together.
+
+## 10. The Big Picture
+
+You can now see the progression:
+
+<MermaidDiagram title="The Progression" chart={`
+graph LR
+  H[Hashing] --> HT[Hash Table]
+  HT --> CH[Consistent Hashing]
+  CH --> DHT[Distributed Hash Table]
+  DHT --> DS[Distributed Systems]
+`} />
+
+And this is exactly why we're learning these concepts in this order.
+
+## 11. One Important Concept: Routing
+
+Suppose you ask Node A, "Where is key X?" Node A might not own X. Instead of asking every node, it uses its **routing information** to forward the request toward the node responsible for X.
+
+<MermaidDiagram title="Routing Toward the Owner of Key X" chart={`
+graph LR
+  You --> A[Node A]
+  A --> B[Node B]
+  B --> D[Node D]
+  D --> X[Key X]
+`} />
+
+The goal is to find the data **without contacting every computer**. This routing mechanism is one of the most interesting parts of DHTs.
+
+## Webbook Revision
+
+**DHT:** a decentralized key-value lookup system where multiple computers collectively store and locate data.
+
+**Key idea:**
+
+```text
+Key → Hash → Responsible Node → Data
+```
+
+**Main characteristics:** distributed, decentralized, scalable, fault-tolerant, uses hashing and routing.
+
+**Memory trick:**
+
+> **Hash Table finds data inside one system; DHT finds data across many computers.**
+
+## Quick Check
+
+1. What is the main problem a DHT solves?
+2. What is a **node**?
+3. Why don't we ask every node to find a key?
+4. How is a DHT related to consistent hashing?
+
+Once you're comfortable with these, the next lesson is **Consensus** — one of the hardest and most important concepts in distributed systems.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-1-2-virtual-nodes", title: "Lesson 1.2 — Virtual Nodes" }}
+  next={null}
+/>

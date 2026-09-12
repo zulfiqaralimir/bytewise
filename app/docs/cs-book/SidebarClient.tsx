@@ -107,6 +107,7 @@ const chapters = [
       { title: "System Design Mentor Curriculum", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum" },
       { title: "Mentor Curriculum, Part 11, Lesson 1: Consistent Hashing", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-1-consistent-hashing" },
       { title: "Mentor Curriculum, Part 11, Lesson 1.2: Virtual Nodes", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-1-2-virtual-nodes" },
+      { title: "Mentor Curriculum, Part 11, Lesson 2: Distributed Hash Tables", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-2-distributed-hash-tables" },
     ],
   },
   {
