@@ -306,7 +306,7 @@ Consensus is useful whenever multiple machines need to maintain a common decisio
 
 <Revision>This is one of the most important concepts connected to consensus.</Revision> Imagine three servers that all need to execute the same commands in the same order — `SET X = 10`, `SET X = 20`, `SET X = 30`. If all nodes execute exactly the same sequence, they reach the same final state, `X = 30`.
 
-Consensus can be used to agree on the **ordered sequence of commands**. This idea is called a **Replicated State Machine (RSM)**:
+<Revision>Consensus can be used to agree on the **ordered sequence of commands**. This idea is called a **Replicated State Machine (RSM)**:</Revision>
 
 <MermaidDiagram title="Replicated State Machine" chart={`
 graph TD
