@@ -1,0 +1,289 @@
+export const metadata = {
+  title: "Lesson 1 — Consistent Hashing | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Chapter 1: consistent hashing from zero — the modulo-hashing problem, the hash ring, adding and removing servers, and why virtual nodes exist.",
+  keywords: [
+    "consistent hashing",
+    "hash ring",
+    "distributed systems",
+    "advanced distributed systems",
+    "virtual nodes",
+    "modulo hashing",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 1 — Consistent Hashing | Mentor Curriculum Part 11",
+    description:
+      "From zero: why hash(key) % N breaks when servers change, and how the hash ring fixes it.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 1**
+
+# Lesson 1 — Consistent Hashing
+
+Let's start from **zero**, because consistent hashing becomes easy once you understand the problem it solves.
+
+## 1. What Problem Are We Trying to Solve?
+
+Imagine we have **3 servers** storing cached data:
+
+```text
+Server A
+Server B
+Server C
+```
+
+We need to decide:
+
+> **Where should a particular user's data go?**
+
+A simple approach is:
+
+```text
+server = hash(user_id) % 3
+```
+
+For example:
+
+```text
+User 101 → hash → 0 → Server A
+User 102 → hash → 1 → Server B
+User 103 → hash → 2 → Server C
+```
+
+This works nicely.
+
+### But Now Server D Is Added
+
+We now calculate:
+
+```text
+hash(user_id) % 4
+```
+
+The results change for **many users**. Data that was previously:
+
+```text
+User 101 → Server A
+```
+
+might now become:
+
+```text
+User 101 → Server C
+```
+
+That means the system has to **move and rebuild a huge amount of cached data**.
+
+This is the problem **consistent hashing** tries to solve.
+
+## 2. What Is Consistent Hashing?
+
+**Consistent hashing is a technique for distributing data across multiple servers while minimizing the amount of data that needs to move when servers are added or removed.**
+
+The key idea:
+
+> **When the number of servers changes, only a relatively small portion of the data needs to move.**
+
+## 3. The Basic Logic
+
+Instead of using:
+
+```text
+hash(key) % number_of_servers
+```
+
+we create a **hash ring** — think of it like a circular clock, wrapping from 359° straight back around to 0°:
+
+<Figure title="The Hash Ring" caption="Every possible hash value is arranged around a circle. There is no beginning and no end — position 359° sits right next to position 0°.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#0d9488" strokeWidth="2"/>
+  <circle cx="150" cy="40" r="4" fill="#374151"/>
+  <text x="150" y="24" fill="#374151" fontSize="13" textAnchor="middle">0°</text>
+  <circle cx="260" cy="150" r="4" fill="#374151"/>
+  <text x="278" y="154" fill="#374151" fontSize="13" textAnchor="middle">90°</text>
+  <circle cx="150" cy="260" r="4" fill="#374151"/>
+  <text x="150" y="282" fill="#374151" fontSize="13" textAnchor="middle">180°</text>
+  <circle cx="40" cy="150" r="4" fill="#374151"/>
+  <text x="22" y="154" fill="#374151" fontSize="13" textAnchor="middle">270°</text>
+  <path d="M 150 55 A 95 95 0 0 1 245 150" fill="none" stroke="#9ca3af" strokeWidth="1.5" strokeDasharray="4,3" markerEnd="url(#ring-arrow)"/>
+  <defs>
+    <marker id="ring-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <text x="150" y="150" fill="#6b7280" fontSize="11" textAnchor="middle">clockwise</text>
+</svg>
+</Figure>
+
+Both **servers** and **data keys** are placed on this same ring, using the same hash function. The rule is:
+
+> Hash the data key → find its position on the ring → move clockwise → the first server you encounter owns that data.
+
+## 4. A Worked Example
+
+Suppose:
+
+```text
+Server A → position 50°
+Server B → position 150°
+Server C → position 250°
+```
+
+And `User X` hashes to position `100°`.
+
+<Figure title="Locating User X" caption="Moving clockwise from User X (100°), the first server encountered is Server B (150°) — so User X belongs to Server B.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#d1d5db" strokeWidth="2"/>
+  <circle cx="234" cy="79" r="7" fill="#0d9488"/>
+  <text x="252" y="66" fill="#0f766e" fontSize="12" fontWeight="700">A (50°)</text>
+  <circle cx="205" cy="245" r="7" fill="#0d9488"/>
+  <text x="205" y="268" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">B (150°)</text>
+  <circle cx="47" cy="188" r="7" fill="#0d9488"/>
+  <text x="47" y="212" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">C (250°)</text>
+  <circle cx="258" cy="169" r="6" fill="#dc2626"/>
+  <text x="264" y="150" fill="#b91c1c" fontSize="12" fontWeight="700">User X (100°)</text>
+  <path d="M 256 175 A 110 110 0 0 1 210 244" fill="none" stroke="#dc2626" strokeWidth="2" strokeDasharray="5,4" markerEnd="url(#x-arrow)"/>
+  <defs>
+    <marker id="x-arrow" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+</svg>
+</Figure>
+
+Therefore: **User X → Server B**.
+
+## 5. Now Server D Arrives
+
+Suppose Server D joins the ring at position `125°` — right between User X (100°) and Server B (150°).
+
+<Figure title="Server D Joins the Ring" caption="Only User X's arc shifts — from Server B to the newly arrived Server D. Server A and Server C are completely unaffected.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#d1d5db" strokeWidth="2"/>
+  <circle cx="234" cy="79" r="7" fill="#0d9488"/>
+  <text x="252" y="66" fill="#0f766e" fontSize="12" fontWeight="700">A (50°)</text>
+  <circle cx="205" cy="245" r="7" fill="#0d9488"/>
+  <text x="205" y="268" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">B (150°)</text>
+  <circle cx="47" cy="188" r="7" fill="#0d9488"/>
+  <text x="47" y="212" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">C (250°)</text>
+  <circle cx="240" cy="213" r="7" fill="#7c3aed"/>
+  <text x="256" y="228" fill="#6d28d9" fontSize="12" fontWeight="700">D (125°)</text>
+  <circle cx="258" cy="169" r="6" fill="#dc2626"/>
+  <text x="264" y="152" fill="#b91c1c" fontSize="12" fontWeight="700">User X (100°)</text>
+  <path d="M 256 175 A 110 110 0 0 1 210 244" fill="none" stroke="#d1d5db" strokeWidth="1.5" strokeDasharray="3,3"/>
+  <path d="M 256 176 A 110 110 0 0 1 244 208" fill="none" stroke="#dc2626" strokeWidth="2" markerEnd="url(#d-arrow)"/>
+  <defs>
+    <marker id="d-arrow" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+</svg>
+</Figure>
+
+Before: `User X → Server B`. After: `User X → Server D`.
+
+Only the data sitting between Server D's new position and its nearest predecessor needs to move. **We don't have to redistribute everything** — that's the major advantage.
+
+## 6. Why Is This Important in System Design?
+
+This is particularly useful when we have **distributed caches or distributed storage**:
+
+<MermaidDiagram title="Where the Ring Sits in the Stack" chart={`
+graph TD
+  U[Users] --> AS[Application Servers]
+  AS --> DC[Distributed Cache]
+  DC --> A[Server A]
+  DC --> B[Server B]
+  DC --> C[Server C]
+`} />
+
+If we add another cache server (`Server D`), we want to avoid completely rearranging the cache. **Consistent hashing minimizes that movement.**
+
+## 7. Where Is Consistent Hashing Used?
+
+You'll encounter it in systems involving:
+
+- Distributed caches
+- Distributed databases
+- Key-value stores
+- Load distribution
+- Large-scale storage systems
+
+The important system-design question is:
+
+> **"How do I distribute keys across many servers while keeping the system stable when servers change?"**
+
+Consistent hashing is one answer.
+
+## 8. Programming / DSA Connection
+
+Consistent hashing uses concepts such as:
+
+**Hashing → Hash function → Key mapping → Searching for the next server**
+
+A practical implementation commonly uses a **sorted structure** to find the next server on the ring efficiently.
+
+<MermaidDiagram title="From a Hash Function to a Distributed System" chart={`
+graph LR
+  H[Hashing] --> HT[Hash Table]
+  HT --> HD[Hash-Based Distribution]
+  HD --> CH[Consistent Hashing]
+  CH --> DS[Distributed Systems]
+`} />
+
+## 9. The Most Important Difference
+
+Remember this comparison:
+
+| | Normal Hashing | Consistent Hashing |
+|---|---|---|
+| Formula | `hash(key) % N` | Hash ring lookup |
+| Server count changes (e.g. `N = 3 → N = 4`) | Many keys may move | Only a limited portion of keys move |
+
+## 10. One Important Advanced Problem
+
+There is one problem with putting each server only **once** on the ring: the servers may become unevenly distributed.
+
+<Figure title="Uneven Distribution Without Virtual Nodes" caption="Servers A, B, and C landed by chance close together — they cover a small arc, leaving one server to absorb the huge remaining arc of keys.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#d1d5db" strokeWidth="2"/>
+  <path d="M 188 47 A 110 110 0 0 1 258 131" fill="none" stroke="#f59e0b" strokeWidth="6" strokeLinecap="round"/>
+  <circle cx="188" cy="47" r="6" fill="#0d9488"/>
+  <text x="188" y="30" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">A (20°)</text>
+  <circle cx="234" cy="79" r="6" fill="#0d9488"/>
+  <text x="256" y="70" fill="#0f766e" fontSize="12" fontWeight="700">B (50°)</text>
+  <circle cx="258" cy="131" r="6" fill="#0d9488"/>
+  <text x="278" y="135" fill="#0f766e" fontSize="12" fontWeight="700">C (80°)</text>
+  <text x="60" y="230" fill="#b45309" fontSize="12" fontWeight="700">One server owns this</text>
+  <text x="60" y="246" fill="#b45309" fontSize="12" fontWeight="700">entire remaining arc</text>
+</svg>
+</Figure>
+
+One server might receive far more keys than another. To solve this, advanced implementations use **virtual nodes (virtual replicas)** — we'll study those when we go deeper.
+
+## Revision Note
+
+> **Consistent hashing = distributing data among servers using a hash ring, so that adding or removing a server causes only a small amount of data movement.**
+
+**Memory trick:**
+- **Normal hashing:** server changes → lots of data moves.
+- **Consistent hashing:** server changes → little data moves.
+
+## Quick Check — Don't Look at the Answer Yet
+
+1. Why is `hash(key) % N` problematic when we add a new server?
+2. What is the main purpose of consistent hashing?
+3. In consistent hashing, what structure do we use to arrange servers and keys?
+
+Answer these three before moving on to the next lesson.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum", title: "System Design Mentor Curriculum" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-1-2-virtual-nodes", title: "Lesson 1.2 — Virtual Nodes" }}
+/>

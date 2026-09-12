@@ -1,0 +1,137 @@
+export const metadata = {
+  title: "Lesson 1.2 — Virtual Nodes | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 1.2: why an uneven hash ring causes load imbalance, and how virtual nodes fix it — plus how a server failure is absorbed by its neighbors.",
+  keywords: [
+    "virtual nodes",
+    "vnodes",
+    "consistent hashing",
+    "hash ring",
+    "load balancing",
+    "distributed systems",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 1.2 — Virtual Nodes | Mentor Curriculum Part 11",
+    description:
+      "One physical server, many ring positions — how virtual nodes even out the load and make failures cheap to absorb.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 1.2**
+
+# Lesson 1.2 — Virtual Nodes
+
+We previously saw a problem:
+
+> What if the servers are **not evenly distributed** on the hash ring?
+
+<Figure title="Load Imbalance on the Ring" caption="A, B, and C landed close together by chance. B and C each own a thin sliver of the ring, while A is left owning the huge remaining arc.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#d1d5db" strokeWidth="2"/>
+  <path d="M 169.1 41.7 A 110 110 0 1 1 112.4 46.6" fill="none" stroke="#f59e0b" strokeWidth="6" strokeLinecap="round"/>
+  <circle cx="112.4" cy="46.6" r="7" fill="#0d9488"/>
+  <text x="90" y="34" fill="#0f766e" fontSize="12" fontWeight="700">A</text>
+  <circle cx="169.1" cy="41.7" r="7" fill="#2563eb"/>
+  <text x="180" y="30" fill="#1d4ed8" fontSize="12" fontWeight="700">B</text>
+  <circle cx="220.7" cy="65.7" r="7" fill="#b45309"/>
+  <text x="238" y="60" fill="#92400e" fontSize="12" fontWeight="700">C</text>
+  <text x="150" y="230" fill="#b45309" fontSize="12" fontWeight="700" textAnchor="middle">A owns this entire</text>
+  <text x="150" y="246" fill="#b45309" fontSize="12" fontWeight="700" textAnchor="middle">remaining arc</text>
+</svg>
+</Figure>
+
+Server A might receive a very large portion of the keys, while B and C receive very few. That creates a **load imbalance**.
+
+## The Solution: Virtual Nodes
+
+Instead of putting each physical server on the ring only once, we put it **multiple times**:
+
+```text
+Server A → A1, A2, A3
+Server B → B1, B2, B3
+Server C → C1, C2, C3
+```
+
+These are called **virtual nodes (vnodes)**. Each virtual node still belongs to a physical server — it's just another position on the ring.
+
+<Figure title="The Ring With Virtual Nodes" caption="Nine ring positions instead of three, interleaved by color. Each physical server now owns several small, scattered arcs instead of one single arc — so the total workload evens out.">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <circle cx="150" cy="150" r="110" fill="none" stroke="#d1d5db" strokeWidth="2"/>
+  <circle cx="150" cy="40" r="6" fill="#0d9488"/>
+  <text x="150" y="24" fill="#0f766e" fontSize="11" fontWeight="700" textAnchor="middle">A1</text>
+  <circle cx="220.7" cy="65.7" r="6" fill="#2563eb"/>
+  <text x="238" y="60" fill="#1d4ed8" fontSize="11" fontWeight="700">B1</text>
+  <circle cx="258.3" cy="130.9" r="6" fill="#b45309"/>
+  <text x="276" y="134" fill="#92400e" fontSize="11" fontWeight="700">C1</text>
+  <circle cx="245.3" cy="205" r="6" fill="#0d9488"/>
+  <text x="263" y="210" fill="#0f766e" fontSize="11" fontWeight="700">A2</text>
+  <circle cx="187.6" cy="253.4" r="6" fill="#2563eb"/>
+  <text x="187.6" y="274" fill="#1d4ed8" fontSize="11" fontWeight="700" textAnchor="middle">B2</text>
+  <circle cx="112.4" cy="253.4" r="6" fill="#b45309"/>
+  <text x="112.4" y="274" fill="#92400e" fontSize="11" fontWeight="700" textAnchor="middle">C2</text>
+  <circle cx="54.7" cy="205" r="6" fill="#0d9488"/>
+  <text x="24" y="210" fill="#0f766e" fontSize="11" fontWeight="700">A3</text>
+  <circle cx="41.7" cy="130.9" r="6" fill="#2563eb"/>
+  <text x="10" y="134" fill="#1d4ed8" fontSize="11" fontWeight="700">B3</text>
+  <circle cx="79.3" cy="65.7" r="6" fill="#b45309"/>
+  <text x="52" y="60" fill="#92400e" fontSize="11" fontWeight="700">C3</text>
+</svg>
+</Figure>
+
+### Mapping Virtual Nodes Back to Physical Servers
+
+<MermaidDiagram title="Virtual Nodes → Physical Servers" chart={`
+graph LR
+  A1 --> SA[Physical Server A]
+  A2 --> SA
+  A3 --> SA
+  B1 --> SB[Physical Server B]
+  B2 --> SB
+  B3 --> SB
+  C1 --> SC[Physical Server C]
+  C2 --> SC
+  C3 --> SC
+`} />
+
+### Why Do We Do This?
+
+Because it makes the workload **more evenly distributed**.
+
+- Without virtual nodes: one server could accidentally get too much data.
+- With virtual nodes: the data is spread across many positions, giving a more balanced distribution.
+
+### A Very Important Distinction
+
+- **Physical server** = the actual machine.
+- **Virtual node** = a position on the hash ring representing that server.
+
+## What Happens When Server B Fails?
+
+Because B has several virtual nodes — `B1`, `B2`, `B3` — the keys belonging to those positions can be reassigned to neighboring servers instead of the whole ring being reshuffled:
+
+<MermaidDiagram title="Server B Fails — Its Virtual Nodes Fall to Their Neighbors" chart={`
+graph LR
+  B1[B1] --> SA[Server A]
+  B2[B2] --> SC[Server C]
+  B3[B3] --> SA2[Server A]
+`} />
+
+We don't have to reorganize the entire system — only the small arcs that belonged to `B1`, `B2`, and `B3` move, each to whichever server is now next clockwise.
+
+## Webbook Revision
+
+> **Virtual nodes:** multiple positions on the consistent-hashing ring assigned to each physical server, to improve load distribution and make server addition/removal smoother.
+
+**Memory trick:**
+
+> **One physical server gets many virtual positions → better balance.**
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-1-consistent-hashing", title: "Lesson 1 — Consistent Hashing" }}
+  next={null}
+/>
