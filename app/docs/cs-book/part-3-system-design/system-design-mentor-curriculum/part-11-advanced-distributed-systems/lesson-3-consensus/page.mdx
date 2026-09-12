@@ -132,11 +132,11 @@ Suppose all three nodes start at `Balance = 100`, and someone requests `Withdraw
 | B | 100 |
 | C | 100 |
 
-Replication exists, but the nodes don't agree. Consensus helps establish an agreed ordering/decision so the replicated state can converge according to the protocol.
+Replication exists, but the nodes don't agree. <Revision>Consensus helps establish an agreed ordering/decision so the replicated state can converge according to the protocol.</Revision>
 
 ## 7. Consensus Is About Agreement, Not Just Majority
 
-You will often hear "consensus means majority voting." That is a useful beginner intuition, but it is **not the complete definition**. Consensus protocols often use majority/quorum mechanisms, but consensus involves more than simply counting votes.
+You will often hear "consensus means majority voting." That is a useful beginner intuition, but it is **not the complete definition**. <Revision>Consensus protocols often use majority/quorum mechanisms, but consensus involves more than simply counting votes.</Revision>
 
 A proper consensus system needs to handle questions such as: what can be proposed, who proposes it, how do nodes communicate, how is agreement determined, what happens if a node fails or messages are delayed, how is conflicting information handled, and how do nodes maintain the same ordered decisions?
 
