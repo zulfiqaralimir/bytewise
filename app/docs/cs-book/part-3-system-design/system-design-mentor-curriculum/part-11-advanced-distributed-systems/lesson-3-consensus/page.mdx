@@ -22,6 +22,7 @@ export const metadata = {
 
 import { ArticleNav } from "@/app/components/ArticleNav";
 import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+import { Revision } from "@/app/components/Revision";
 
 **[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 3**
 
@@ -41,7 +42,7 @@ That is the **consensus problem**.
 
 ## 2. Start With a Real-Life Example
 
-Imagine five people — Alice, Bob, Charlie, David, and Emma — are deciding where to have dinner. If everyone agrees:
+Imagine five people — Alice, Bob, Charlie, David, and Emma — are deciding where to have dinner. <Revision>If everyone agrees:</Revision>
 
 ```text
 Alice   → X
@@ -61,7 +62,7 @@ David   → X
 Emma    → Y
 ```
 
-Now there is disagreement. The group needs a **rule/procedure** to reach an agreed decision. Distributed systems face the same problem — but with computers and network failures.
+Now there is disagreement. <Revision>The group needs a **rule/procedure** to reach an agreed decision.</Revision> Distributed systems face the same problem — <Revision>but with computers and network failures.</Revision>
 
 ## 3. Why Do We Need Consensus?
 
