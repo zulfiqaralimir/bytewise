@@ -104,6 +104,7 @@ const chapters = [
       { title: "Load Balancing", href: "/docs/cs-book/part-3-system-design/load-balancing" },
       { title: "Consistent Hashing", href: "/docs/cs-book/part-3-system-design/consistent-hashing" },
       { title: "System Design Patterns You Should Master", href: "/docs/cs-book/part-3-system-design/system-design-patterns" },
+      { title: "System Design Mentor Curriculum", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum" },
     ],
   },
   {

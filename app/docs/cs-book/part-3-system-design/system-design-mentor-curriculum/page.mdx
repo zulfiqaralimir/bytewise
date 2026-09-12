@@ -1,0 +1,391 @@
+export const metadata = {
+  title: "System Design Mentor Curriculum — ByteWise CS Book",
+  description:
+    "A complete beginner-to-expert curriculum for System Design, Distributed Systems, Programming, and DSA — 14 parts covering foundations, scalability, databases, caching, distributed systems, microservices, security, observability, and 17 real-world system design walkthroughs.",
+  keywords: [
+    "system design curriculum",
+    "distributed systems",
+    "DSA for system design",
+    "scalability",
+    "database sharding",
+    "caching strategies",
+    "CAP theorem",
+    "microservices",
+    "system design interview",
+    "consistent hashing",
+  ],
+  openGraph: {
+    title: "System Design Mentor Curriculum — ByteWise CS Book",
+    description:
+      "Beginner to expert: the full programming + DSA + distributed systems + real-world architecture curriculum, in one roadmap.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+
+# System Design Mentor Curriculum
+
+**From Beginner → Advanced → Expert**
+
+This is the master roadmap for learning System Design as a *chain*, not a pile of disconnected buzzwords:
+
+> **Programming + DSA → Components → Architecture → Distributed Systems → Large-Scale System Design**
+
+The goal isn't to memorize architecture diagrams for Netflix or Uber. It's to be able to look at any large-scale system and answer: why does this component exist, what problem does it solve, what's the programming and DSA happening inside it, how do the databases and networking work, how does it scale, how does it stay available, what happens when something fails, and what trade-off did the architect accept to get there.
+
+Everything below is taught **one concept at a time** — never all at once. Each part builds on the last, and DSA is introduced exactly when a System Design topic needs it, not before.
+
+## How This Curriculum Is Organized
+
+| Part | Focus |
+|---|---|
+| 1 | Programming & DSA Foundation |
+| 2 | System Design Foundations |
+| 3 | Scalability |
+| 4 | Database System Design |
+| 5 | Caching |
+| 6 | Distributed Systems |
+| 7 | Message Queues & Event-Driven Systems |
+| 8 | Microservices |
+| 9 | API & Network Design |
+| 10 | Reliability & Fault Tolerance |
+| 11 | Advanced Distributed Systems |
+| 12 | Security in System Design |
+| 13 | Observability |
+| 14 | Real-World System Design (17 systems) |
+
+## Part 1 — Programming & DSA Foundation
+
+Before any System Design concept that leans on programming or DSA, the foundation gets taught first.
+
+**Programming:**
+- Functions, Classes and Objects, APIs
+- HTTP/HTTPS, JSON
+- Concurrency, Multithreading, Processes
+- Networking basics
+- Error handling
+- Async/await, Synchronous vs Asynchronous programming
+
+**Data Structures:**
+- Arrays, Strings, Linked Lists
+- Stacks, Queues
+- Hash Tables, Sets
+- Trees, Heaps, Graphs
+
+**Algorithms:**
+- Searching, Sorting, Binary Search
+- Recursion, BFS, DFS
+- Greedy algorithms, Dynamic Programming
+- Hashing, Graph algorithms
+- Time Complexity, Space Complexity
+
+Every DSA concept gets tied explicitly to **"Where is this used in System Design?"** — for example:
+
+- **Hash Table** → Caching → Database indexing → Consistent hashing → Distributed systems
+- **Queue** → Message queues → Asynchronous processing → Event-driven architecture
+- **Heap** → Priority queues → Task scheduling → Distributed job systems
+- **Graph** → Network relationships → Service dependencies → Routing
+
+## Part 2 — System Design Foundations
+
+1. What is System Design?
+2. Functional Requirements
+3. Non-Functional Requirements
+4. Scalability
+5. Performance
+6. Latency
+7. Throughput
+8. Availability
+9. Reliability
+10. Fault Tolerance
+11. Consistency
+12. Durability
+13. Maintainability
+
+For every concept: what it means, why we need it, how it works, where it appears in a real system, what programming and DSA are involved, what database concepts are involved, and what trade-offs exist.
+
+## Part 3 — Scalability
+
+1. Vertical Scaling
+2. Horizontal Scaling
+3. Load Balancing
+4. Stateless Architecture
+5. Stateful Architecture
+6. Auto Scaling
+7. Database Scaling
+8. Read Scaling
+9. Write Scaling
+10. Bottlenecks
+11. Capacity Planning
+
+For every topic, two questions get answered: **"What problem does this solve?"** and **"Where would I use this when designing a real system?"**
+
+## Part 4 — Database System Design
+
+**Database Fundamentals:**
+- SQL, NoSQL
+- Relational databases
+- Document databases
+- Key-value databases
+- Column databases
+- Graph databases
+
+**Advanced Database Design:**
+- Indexing, Transactions, ACID, Isolation levels
+- Replication, Primary/Replica architecture, Read replicas
+- Partitioning, Sharding, Database federation
+- Distributed databases
+
+The three terms that get confused most often are always kept distinct:
+
+| Term | Meaning |
+|---|---|
+| **Replication** | Copying data — the same data lives on multiple servers |
+| **Partitioning** | Dividing data — splitting one dataset into smaller pieces |
+| **Sharding** | Distributing partitions across different database servers |
+
+Each one is taught with exactly when it should be used, not just what it is.
+
+## Part 5 — Caching
+
+- What is caching, and why it improves performance
+- Cache-aside, Read-through, Write-through, Write-back
+- Cache invalidation, TTL, Cache eviction
+- LRU, LFU
+- Distributed caching, Cache consistency
+
+Every caching concept is tied to its underlying DSA. For example:
+
+> **LRU → Hash Map + Doubly Linked List**
+
+...and then connected forward: **"Where would this appear in a real system?"**
+
+## Part 6 — Distributed Systems
+
+The most important section in the curriculum.
+
+1. What is a Distributed System? Why distribute a system?
+2. Communication between services
+3. Network failures, Partial failures
+4. Replication, Partitioning, Sharding
+5. Consistency — Eventual Consistency, Strong Consistency
+6. CAP Theorem
+7. Distributed Transactions, Distributed Locks
+8. Leader Election, Consensus — Raft, Paxos
+9. Split Brain, Network Partition
+10. Fault Tolerance, Failure Recovery
+
+Every concept follows the same chain:
+
+> **Concept → Problem → Solution → Programming → DSA → System Design Application**
+
+## Part 7 — Message Queues & Event-Driven Systems
+
+- Queue, Producer, Consumer, Broker, Message, Topic, Partition, Consumer Group
+- Message Ordering
+- Delivery Guarantees — At-most-once, At-least-once, Exactly-once
+- Retry, Dead Letter Queue
+- Event-driven architecture, Pub/Sub, Stream processing
+
+The evolution is always shown explicitly:
+
+> **DSA Queue → Programming Queue → Message Queue → Distributed Message System**
+
+...tracing how a simple data structure becomes a distributed production system.
+
+## Part 8 — Microservices
+
+- Monolith, Modular monolith, Microservices
+- Service boundaries, API Gateway, Service Discovery
+- Inter-service communication — REST, gRPC
+- Service Mesh, Configuration management, Distributed tracing
+- Fault isolation
+
+Covers when microservices are useful — and just as importantly, when they are **not**.
+
+## Part 9 — API & Network Design
+
+- HTTP, HTTPS, REST, RPC, gRPC, WebSockets
+- TCP, UDP
+- DNS, CDN
+- API Gateway
+- Authentication, Authorization
+- Rate Limiting, Load Balancing
+
+Every networking concept is tied back to: **"How does it affect System Design?"**
+
+## Part 10 — Reliability & Fault Tolerance
+
+- Redundancy, Failover
+- Health Checks, Heartbeats
+- Timeouts, Retries, Exponential Backoff
+- Circuit Breakers, Bulkheads
+- Graceful Degradation
+- Disaster Recovery, Backup, Recovery
+- Multi-region architecture
+
+For every technique: **"What failure does it protect against?"**
+
+## Part 11 — Advanced Distributed Systems
+
+- Consistent Hashing, Distributed Hash Tables
+- Consensus — Raft, Paxos
+- Leader Election, Distributed Locks
+- Vector Clocks, Logical Clocks
+- Eventual Consistency, Conflict Resolution
+- Distributed Transactions — Two-Phase Commit, Saga Pattern
+
+For every advanced concept, five layers get peeled back in order: the simple version, the mathematical/algorithmic idea, the programming implementation, where it's used in production, and its limitations.
+
+## Part 12 — Security in System Design
+
+- Authentication, Authorization, Sessions
+- JWT, OAuth
+- Encryption, Hashing, TLS
+- Secrets, API security
+- DDoS protection, Rate limiting
+- Data protection
+
+Always tied back to: how does this security decision shape the architecture?
+
+## Part 13 — Observability
+
+- Logging, Metrics, Monitoring, Tracing
+- Alerts, Health checks, Distributed tracing
+- SLO, SLA, SLI
+
+Covers how engineers detect problems in systems running across thousands of servers.
+
+## Part 14 — Real-World System Design
+
+Once the fundamentals are in place, full designs get built for:
+
+1. URL Shortener
+2. WhatsApp
+3. Chat Application
+4. YouTube
+5. Netflix
+6. Instagram
+7. Facebook
+8. Uber
+9. Amazon
+10. Google Search
+11. Notification System
+12. Payment System
+13. File Storage System
+14. Distributed Cache
+15. Rate Limiter
+16. Food Delivery System
+17. Real-Time Trading System
+
+**Every system follows the same ten-step process:**
+
+| Step | What Happens |
+|---|---|
+| 1. Requirements | Functional + non-functional requirements |
+| 2. Scale | Estimate users, requests/sec, storage, bandwidth, read/write ratio |
+| 3. High-Level Architecture | `User → API → Services → Cache → Database`, refined toward production-grade |
+| 4. Choose Components | Justify load balancer, cache, database, replicas, shards, queue, CDN, API gateway, microservices |
+| 5. Data Model | The important tables/documents |
+| 6. APIs | The important endpoints |
+| 7. Scaling | How the design holds up from 10 users → 10,000 → 1M → 100M |
+| 8. Failure Scenarios | "What happens if this component fails?" |
+| 9. Trade-offs | Why this architecture over the alternatives |
+| 10. DSA & Programming Connection | Explicit lists: DSA used, programming concepts used, database concepts used, networking concepts used, distributed-system concepts used |
+
+## The Concept Connection Map
+
+Every concept learned gets threaded through the same running map:
+
+> **DSA → Programming → Component → System Design → Real-World Application**
+
+Two worked examples:
+
+**Hash Table** → fast key-value lookup → cache implementation → distributed cache → used in Netflix/Instagram-type systems
+
+**Queue** → FIFO data structure → producer/consumer programming → message queue → asynchronous processing → large-scale notification system
+
+## DSA, on a Need-to-Know Basis
+
+No random LeetCode grinding — DSA problems only show up when a System Design topic actually requires them:
+
+| Before This System Design Topic | Teach This DSA First |
+|---|---|
+| Consistent Hashing | Hashing, hash tables, modular hashing |
+| LRU Cache | Hash Map + Doubly Linked List |
+| Rate Limiting | Queue, Sliding Window, Token Bucket |
+| Distributed graph problems | BFS, DFS, Graphs |
+
+Every time, the reasoning is made explicit: **"You are learning this DSA because it will later be used here in System Design."**
+
+## Format for Every Lesson
+
+1. Simple Definition
+2. Real-Life Analogy
+3. Problem It Solves
+4. How It Works
+5. Simple Diagram
+6. Programming Connection
+7. DSA Connection
+8. Database Connection
+9. Networking Connection
+10. System Design Connection
+11. Real-World Example
+12. Advantages
+13. Disadvantages
+14. Common Mistakes
+15. Comparison With Similar Concepts
+16. Beginner Questions (to check understanding)
+17. Practical Exercise
+18. Interview Question
+19. Revision Notes (Webbook-ready)
+20. Memory Trick — one sentence to remember the concept
+
+## Difficulty Ladder
+
+| Level | What It Covers |
+|---|---|
+| 🟢 Beginner | Simple English and analogies |
+| 🟡 Intermediate | Architecture and practical examples |
+| 🟠 Advanced | Implementation and trade-offs |
+| 🔴 Expert | Distributed algorithms, failure scenarios, scalability, mathematical reasoning |
+
+Levels never get skipped without checking understanding first.
+
+## Commands
+
+| Command | Effect |
+|---|---|
+| `Next` | Move to the next lesson |
+| `I don't understand` | Re-explain with a simpler analogy |
+| `Go deeper` | Explain implementation and technical details |
+| `Show programming` | Walk the relevant code, line by line |
+| `Show DSA` | Explain the data structure/algorithm and its complexity |
+| `Where is this used?` | Show exactly where the concept appears in real System Design |
+| `Connect everything` | Show how the current concept links to everything learned so far |
+| `Revision` | Give Webbook-ready revision notes |
+| `Quiz` | Test understanding without giving answers immediately |
+| `Interview mode` | Give system-design interview questions |
+| `Design a system` | Give a real-world architecture problem to work through |
+
+## Final Objective
+
+By completing this curriculum, looking at a large-scale system should make it possible to understand:
+
+- Why this component exists
+- What problem it solves
+- What programming is happening inside it
+- What DSA is being used
+- How databases are involved
+- How networking is involved
+- How the system scales
+- How the system remains available and reliable
+- What happens when something fails
+- What trade-offs the architect made
+
+> **Simple takeaway:** The goal is not to memorize architecture diagrams — it's to understand the full chain from programming and DSA up through distributed systems and large-scale architecture, well enough to reconstruct any diagram from first principles.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-patterns", title: "System Design Patterns You Should Master" }}
+  next={{ href: "/docs/cs-book/part-4-advanced/cap-theorem", title: "CAP Theorem" }}
+/>
