@@ -1,0 +1,445 @@
+export const metadata = {
+  title: "Lesson 3 — Consensus | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 3: what consensus is, why replication and majority voting alone aren't enough, quorums, network partitions, replicated state machines, and how consensus differs from DHT and blockchain.",
+  keywords: [
+    "consensus",
+    "distributed systems",
+    "quorum",
+    "network partition",
+    "CAP theorem",
+    "replicated state machine",
+    "Raft",
+    "Paxos",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 3 — Consensus | Mentor Curriculum Part 11",
+    description:
+      "DHT finds. Routing reaches. Replication copies. Consensus agrees.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 3**
+
+# Lesson 3 — Consensus
+
+## 1. What Is Consensus?
+
+**Consensus** means:
+
+> **A group of distributed computers agrees on a common decision or state.**
+
+In a distributed system, many computers (nodes) are working together. The problem is:
+
+> **How can all these independent nodes agree when they cannot perfectly see or trust everything happening in the network?**
+
+That is the **consensus problem**.
+
+## 2. Start With a Real-Life Example
+
+Imagine five people — Alice, Bob, Charlie, David, and Emma — are deciding where to have dinner. If everyone agrees:
+
+```text
+Alice   → X
+Bob     → X
+Charlie → X
+David   → X
+Emma    → X
+```
+
+there is consensus. But suppose:
+
+```text
+Alice   → X
+Bob     → X
+Charlie → Y
+David   → X
+Emma    → Y
+```
+
+Now there is disagreement. The group needs a **rule/procedure** to reach an agreed decision. Distributed systems face the same problem — but with computers and network failures.
+
+## 3. Why Do We Need Consensus?
+
+Suppose three servers — `Node A`, `Node B`, `Node C` — maintain `Balance = $100`, and a request arrives: `Withdraw $80`. All nodes need to agree on what happened.
+
+But distributed systems have problems: messages can be delayed or lost, a node can crash or restart, network connections can break, two nodes may receive messages in different orders, and a node may temporarily be unable to communicate with others.
+
+Therefore, simply saying "let's all agree" is not enough. We need a **consensus algorithm/protocol**.
+
+## 4. The Core Problem
+
+<MermaidDiagram title="A Client Writes to Three Nodes" chart={`
+graph TD
+  Client --> A[Node A]
+  Client --> B[Node B]
+  Client --> C[Node C]
+`} />
+
+The client sends `"Set X = 50"`, but perhaps A receives it immediately, B receives it later, and C hasn't received it yet:
+
+| Node | Value |
+|---|---|
+| A | X = 50 |
+| B | X = 50 |
+| C | old value |
+
+The system has temporarily inconsistent information. Consensus provides a mechanism for the nodes to determine: **which value/decision should become the agreed value?**
+
+## 5. Consensus Is NOT the Same as Replication
+
+This distinction is extremely important.
+
+**Replication** means keeping copies of data on multiple nodes:
+
+<MermaidDiagram title="Replication — Multiple Copies" chart={`
+graph TD
+  X2["Data X"] --> NA[Node A]
+  X2 --> NB[Node B]
+  X2 --> NC[Node C]
+`} />
+
+**Consensus** means getting multiple nodes to agree on what the valid state/decision should be:
+
+<MermaidDiagram title="Consensus — Agreement" chart={`
+graph TD
+  P[Proposal] --> A2[A]
+  P --> B2[B]
+  P --> C2[C]
+  A2 --> AG[Agreement]
+  B2 --> AG
+  C2 --> AG
+`} />
+
+So:
+
+> **Replication = multiple copies. Consensus = agreement.**
+
+They are often used together.
+
+## 6. Why Replication Alone Is Not Enough
+
+Suppose all three nodes start at `Balance = 100`, and someone requests `Withdraw $80`. If A processes it first but B and C haven't received the update yet:
+
+| Node | Balance |
+|---|---|
+| A | 20 |
+| B | 100 |
+| C | 100 |
+
+Replication exists, but the nodes don't agree. Consensus helps establish an agreed ordering/decision so the replicated state can converge according to the protocol.
+
+## 7. Consensus Is About Agreement, Not Just Majority
+
+You will often hear "consensus means majority voting." That is a useful beginner intuition, but it is **not the complete definition**. Consensus protocols often use majority/quorum mechanisms, but consensus involves more than simply counting votes.
+
+A proper consensus system needs to handle questions such as: what can be proposed, who proposes it, how do nodes communicate, how is agreement determined, what happens if a node fails or messages are delayed, how is conflicting information handled, and how do nodes maintain the same ordered decisions?
+
+Therefore:
+
+> **Consensus is a protocol for reaching distributed agreement despite certain failures and communication problems.**
+
+## 8. A Simple Consensus Example
+
+Node A proposes `X = 50`. The proposal is sent to B and C. If both agree:
+
+<MermaidDiagram title="Proposal to Commit" chart={`
+graph TD
+  Prop[Proposal] --> A3[A]
+  A3 --> B3[B]
+  A3 --> C3[C]
+  B3 --> Y1[YES]
+  C3 --> Y2[YES]
+  Y1 --> AG2[Agreement]
+  Y2 --> AG2
+`} />
+
+the system can commit the decision. This is simplified — real consensus protocols have much more precise rules.
+
+## 9. What If One Node Fails?
+
+Suppose A proposes a value, but C fails. If the protocol can still obtain the required agreement from the remaining nodes:
+
+<MermaidDiagram title="Remaining Nodes Still Agree" chart={`
+graph LR
+  A4[Node A] --- B4[Node B]
+  C4["Node C ❌"]
+`} />
+
+the system may continue. This is why consensus protocols are designed around **fault tolerance**. A key concept you will encounter repeatedly is:
+
+> **How many failures can the system tolerate while still making progress?**
+
+## 10. Quorum
+
+A **quorum** is the minimum number of nodes whose participation/agreement is required by a protocol for a particular operation. For many consensus systems, the quorum is a **majority**.
+
+```text
+3 nodes → majority quorum = 2/3
+5 nodes → majority quorum = 3/5
+```
+
+If one of three nodes fails (`2/3` remain), the system may still be able to continue. A five-node system can often continue despite two failures, depending on the specific protocol and failure model.
+
+## 11. Why Can't We Simply Use Majority Voting?
+
+Suppose three nodes vote `A → X`, `B → X`, `C → Y` — majority says X wins. That sounds easy. But distributed systems have harder problems: what if A receives X, B receives Y, and C receives nothing? Or a **network partition** occurs, and the nodes cannot communicate at all:
+
+<MermaidDiagram title="A Partition Splits Opinion" chart={`
+graph LR
+  subgraph "Partition 1 — believes X"
+    A5[Node A] --- B5[Node B]
+  end
+  subgraph "Partition 2 — believes Y"
+    C5[Node C]
+  end
+`} />
+
+Now both sides may believe they should continue. This is where distributed consensus becomes much more difficult than ordinary voting.
+
+## 12. Network Partition
+
+A **network partition** occurs when parts of a distributed system cannot communicate with each other, even though the nodes themselves may still be running perfectly:
+
+<MermaidDiagram title="A Network Split Into Two Groups" chart={`
+graph LR
+  subgraph "Group 1"
+    A6[Node A] --- B6[Node B]
+  end
+  subgraph "Group 2"
+    C6[Node C] --- D6[Node D]
+  end
+`} />
+
+The problem is: **they cannot communicate.** One side might think "everything is fine," while the other side thinks "we should make a different decision." Consensus protocols must define how to behave under such conditions.
+
+## 13. Consensus and the CAP Connection
+
+This connects directly to **CAP**. CAP says that in the presence of a network partition, a distributed system cannot simultaneously guarantee both strong consistency and availability in the general case.
+
+<MermaidDiagram title="Why Consensus Can Sacrifice Availability" chart={`
+graph TD
+  NP["Network Partition"] --> Q1["Can nodes communicate?"]
+  Q1 -->|No| Q2["Can both sides safely decide?"]
+  Q2 -->|Often No| W["Consensus may require waiting for a quorum / majority"]
+`} />
+
+This is why consensus can sacrifice **availability** during certain failures in order to preserve agreement.
+
+## 14. Consensus vs. CAP
+
+Don't confuse them.
+
+| Consensus | CAP |
+|---|---|
+| A mechanism/protocol for distributed agreement | A fundamental trade-off in distributed systems |
+| Answers: **How do nodes agree?** | Answers: **What guarantees can we maintain during partition?** |
+| Examples: Raft, Paxos | Consistency, Availability, Partition tolerance |
+| Implemented through algorithms/protocols | Describes system-level limitations |
+
+## 15. Consensus vs. DHT
+
+This connects directly to Lesson 2.
+
+**DHT** asks: *"Which node is responsible for this key?"*
+
+<MermaidDiagram title="DHT" chart={`
+graph LR
+  K[Key] --> H[Hash] --> NC7[Node C]
+`} />
+
+**Consensus** asks: *"What decision/state should the nodes agree on?"*
+
+<MermaidDiagram title="Consensus" chart={`
+graph LR
+  P2[Proposal] --> COM["Nodes Communicate"] --> AG3[Agreement] --> CM["Commit Decision"]
+`} />
+
+Therefore:
+
+> **DHT = distributed lookup. Consensus = distributed agreement.**
+
+## 16. Consensus vs. Blockchain
+
+Now the connection from our previous addendum becomes clear. A blockchain needs participating nodes to agree on things such as the accepted transaction history/state:
+
+<MermaidDiagram title="Consensus Inside a Blockchain" chart={`
+graph LR
+  TX2[Transactions] --> VAL2[Validation] --> CON2[Consensus] --> AG4[Agreement] --> LED[Ledger]
+`} />
+
+Therefore:
+
+> **Consensus is a fundamental building block of many blockchain systems.**
+
+But:
+
+> **Consensus ≠ Blockchain.**
+
+Consensus is a general distributed-systems concept. Blockchain is one type of system that uses consensus.
+
+## 17. Where Is Consensus Used?
+
+Consensus is useful whenever multiple machines need to maintain a common decision/state:
+
+- **Distributed databases** — nodes need agreement about updates.
+- **Leader election** — nodes need to agree, "which node is the leader?"
+- **Distributed configuration** — nodes need agreement about the current configuration.
+- **Replicated state machines** — multiple machines execute the same agreed sequence of commands.
+- **Distributed locks** — nodes need agreement about who currently owns the lock.
+- **Blockchain** — nodes need agreement about which transactions/history should be accepted.
+
+## 18. Replicated State Machine
+
+This is one of the most important concepts connected to consensus. Imagine three servers that all need to execute the same commands in the same order — `SET X = 10`, `SET X = 20`, `SET X = 30`. If all nodes execute exactly the same sequence, they reach the same final state, `X = 30`.
+
+Consensus can be used to agree on the **ordered sequence of commands**. This idea is called a **Replicated State Machine (RSM)**:
+
+<MermaidDiagram title="Replicated State Machine" chart={`
+graph TD
+  CONS3[Consensus] --> LOG["Agreed Command Log"]
+  LOG --> NA2[Node A]
+  LOG --> NB2[Node B]
+  LOG --> NC8[Node C]
+  NA2 --> SA[State]
+  NB2 --> SB[State]
+  NC8 --> SC[State]
+`} />
+
+This is a major reason consensus is so important.
+
+## 19. The Consensus → Raft → Paxos Connection
+
+Your roadmap now becomes very logical:
+
+<MermaidDiagram title="The Roadmap" chart={`
+graph LR
+  L3["Lesson 3: Consensus"] --> L4["Lesson 4: Raft"] --> L5["Lesson 5: Paxos"]
+`} />
+
+| Layer | Question It Answers |
+|---|---|
+| **Consensus** | What problem are we solving — how can distributed nodes agree? |
+| **Raft** | One practical consensus algorithm designed to be relatively understandable (leader, followers, candidates, terms, log replication, elections) |
+| **Paxos** | Another family of consensus algorithms with a more formal/theoretical history |
+
+## 20. Programming Connection
+
+At the programming level, consensus is not simply `vote()`. A real consensus implementation involves networking, messages, state machines, logs, timeouts, failure detection, quorums, and persistent state.
+
+A simplified conceptual interface might look like:
+
+```python
+propose(command)
+```
+
+The system then attempts to make the command part of the agreed sequence. For example:
+
+```python
+propose("SET X = 50")
+```
+
+Eventually the consensus protocol may produce:
+
+```text
+Committed:
+SET X = 50
+```
+
+The important thing is that the **protocol**, not a single function call, provides the distributed agreement.
+
+## 21. DSA Connection
+
+Consensus itself is not primarily a DSA problem like binary search or DFS. But several familiar programming concepts appear inside consensus implementations:
+
+- **Lists/arrays** — used for logs: `[cmd1, cmd2, cmd3, cmd4]`
+- **Hashing** — used for identifying or verifying data in various systems
+- **State machines** — a fundamental programming concept
+- **Queues** — messages and requests may be queued
+- **Timeouts** — used to detect that something may have failed or communication may be delayed
+- **Graphs** — the distributed network can conceptually be represented as a graph:
+
+<MermaidDiagram title="The Network as a Graph" chart={`
+graph LR
+  A7[Node A] --- B7[Node B]
+  A7 --- C7[Node C]
+  B7 --- D7[Node D]
+  C7 --- D7
+`} />
+
+So consensus combines **data structures + networking + distributed algorithms**.
+
+## 22. Common Mistakes
+
+**Mistake 1 — "Consensus means all nodes must always have exactly the same data."** Not necessarily. Consensus is primarily about agreement on decisions/ordered state, while replication is about maintaining copies.
+
+**Mistake 2 — "Consensus means majority voting."** Too simplistic. Majority/quorum is often an important mechanism, but consensus includes proposal, ordering, commitment, failure handling, and other protocol rules.
+
+**Mistake 3 — "Consensus is only used in blockchain."** False. Consensus existed as a distributed-systems problem long before modern blockchains.
+
+**Mistake 4 — "DHT and consensus do the same thing."** No — DHT answers *where is the node/data?*, consensus answers *what do nodes agree on?*
+
+**Mistake 5 — "Replication automatically gives consistency."** No. Replication gives multiple copies. Consensus can help coordinate updates and maintain an agreed sequence/state.
+
+## 23. Interview Questions
+
+**Q1. What is consensus?**
+> Consensus is the process by which distributed nodes reach agreement on a common decision or ordered state despite certain failures and communication problems.
+
+**Q2. Why is consensus difficult?**
+> Because distributed nodes communicate over unreliable networks where messages can be delayed/lost and nodes can fail or become unreachable.
+
+**Q3. Is consensus the same as replication?**
+> No. Replication maintains multiple copies of data, while consensus provides a mechanism for distributed nodes to agree on decisions or state.
+
+**Q4. Is consensus only used in blockchain?**
+> No. Consensus is used in distributed databases, replicated state machines, leader election, distributed coordination systems, and blockchain systems.
+
+**Q5. What is a quorum?**
+> A quorum is the minimum number of nodes whose participation/agreement a distributed protocol requires for a particular operation; many consensus protocols use a majority quorum.
+
+**Q6. What happens during a network partition?**
+> Nodes may become unable to communicate, so a consensus protocol may require a quorum and prevent a disconnected minority from committing conflicting decisions.
+
+## 24. One-Page Revision
+
+<MermaidDiagram title="Consensus, End to End" chart={`
+graph TD
+  CONS4[Consensus] --> DA["Distributed Agreement"]
+  DA --> PR[Proposal]
+  DA --> VA["Voting / Agreement"]
+  DA --> QU[Quorum]
+  PR --> COMMIT[Commit]
+  VA --> COMMIT
+  QU --> COMMIT
+  COMMIT --> STATE["Agreed State / Log"]
+`} />
+
+**Remember:**
+
+| Concept | Question It Answers |
+|---|---|
+| **DHT** | Where? |
+| **Consensus** | What do we agree on? |
+| **Replication** | How many copies? |
+| **Routing** | How do we reach the node? |
+| **Blockchain** | Shared ledger + consensus |
+
+**Ultimate memory trick:**
+
+> **DHT finds. Routing reaches. Replication copies. Consensus agrees.**
+
+And the most important sentence for this lesson:
+
+> **Consensus is a distributed agreement problem: how can multiple independent nodes agree on a common decision or ordered state despite failures, delays, and network problems?**
+
+**Stop point:** Lesson 3 ends here. The next lesson is **Lesson 4 — Raft**, but we will move there only when you give permission.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-2-1-dht-decentralization-p2p-blockchain", title: "Lesson 2.1 — DHT, Decentralization, P2P and Blockchain" }}
+  next={null}
+/>
