@@ -1,13 +1,14 @@
 export const metadata = {
   title: "Lesson 2 — Distributed Hash Tables (DHTs) | Mentor Curriculum Part 11 — ByteWise CS Book",
   description:
-    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 2: what a Distributed Hash Table is, how it differs from consistent hashing, how routing finds a key without asking every node, and where DHTs show up in the real world.",
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 2: what a Distributed Hash Table is, how it differs from routing, replication, and consistent hashing, and where DHTs show up in the real world.",
   keywords: [
     "distributed hash table",
     "DHT",
     "consistent hashing",
-    "Chord",
-    "Kademlia",
+    "routing",
+    "replication",
+    "decentralized systems",
     "BitTorrent DHT",
     "peer-to-peer",
     "distributed systems",
@@ -16,202 +17,355 @@ export const metadata = {
   openGraph: {
     title: "Lesson 2 — Distributed Hash Tables (DHTs) | Mentor Curriculum Part 11",
     description:
-      "Key → hash → responsible node → data — how many computers collectively behave like one giant key-value table.",
+      "DHT finds the destination; routing reaches the destination; replication protects the data.",
   },
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
-import { Figure } from "@/app/components/Figure";
 import { MermaidDiagram } from "@/app/components/MermaidDiagram";
 
 **[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 2**
 
 # Lesson 2 — Distributed Hash Tables (DHTs)
 
-Let's build this from what you already learned about **hashing and consistent hashing**.
-
 ## 1. First: What Is a Hash Table?
 
-A normal hash table stores:
+A normal hash table stores data as:
 
 ```text
-Key → Value
-
-user101 → Zulfiqar
-user102 → Ali
-user103 → Ahmed
+Key       Value
+----------------
+101   →   Ali
+102   →   Ahmed
+103   →   Sara
 ```
 
-A hash function determines where the data should be stored. The problem is that a normal hash table usually exists **inside one machine**.
-
-## 2. What If the Data Is Enormous?
-
-Imagine we have **millions of computers**, and we want them to collectively store data:
+A hash function helps us quickly determine where a key/value should be stored:
 
 ```text
-Computer A → some data
-Computer B → some data
-Computer C → some data
-Computer D → some data
+Key → Hash → Location → Value
 ```
 
-Now we need a mechanism that answers:
+Normally, the hash table could exist on **one computer**.
 
-> **"Which computer is responsible for this particular key?"**
+## 2. The Problem
 
-That's where a **Distributed Hash Table (DHT)** comes in.
+Imagine we have **1 billion pieces of data**. One computer may not have enough storage, memory, CPU, or network capacity. So we distribute the data across multiple computers:
 
-## 3. Simple Definition
-
-> **A DHT is a distributed system that lets many independent computers collectively behave like one giant key-value table.**
-
-Instead of:
-
-```text
-Key → location inside ONE computer
-```
-
-we have:
-
-```text
-Key → responsible COMPUTER
-```
-
-## 4. Real-Life Analogy
-
-Imagine a huge warehouse with **100 storage rooms**. You receive:
-
-> "Find product #5832."
-
-You don't ask every room, "Do you have #5832?" Instead, you have a **rule** that tells you which room is responsible.
-
-<MermaidDiagram title="Finding the Responsible Room" chart={`
+<MermaidDiagram title="Distributing Data Across Nodes" chart={`
 graph TD
-  PID[Product ID] --> HF[Hash Function]
-  HF --> ROOM[Room / Computer]
+  Data --> A[Node A]
+  Data --> B[Node B]
+  Data --> C[Node C]
 `} />
 
-That's the basic idea of a DHT.
+Here, **node = a computer participating in the distributed system.**
 
-## 5. How Does It Work?
+Now we have a new problem:
 
-Suppose we have `Node A`, `Node B`, `Node C`, and `Node D` — **node** simply means a participating computer/server. Each node has an identifier, and we hash both the node ID and the data key onto the same logical space.
+> **When I have a key, how do I know which node contains its data?**
 
-<Figure title="Nodes on the Logical Space" caption="Both node IDs and data keys are hashed into the same space. The exact structure — a ring, a tree, or something else — depends on the DHT algorithm.">
-<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
-  <circle cx="150" cy="150" r="110" fill="none" stroke="#0d9488" strokeWidth="2"/>
-  <circle cx="150" cy="40" r="7" fill="#0d9488"/>
-  <text x="150" y="24" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node A</text>
-  <circle cx="260" cy="150" r="7" fill="#0d9488"/>
-  <text x="286" y="154" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node B</text>
-  <circle cx="150" cy="260" r="7" fill="#0d9488"/>
-  <text x="150" y="282" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node C</text>
-  <circle cx="40" cy="150" r="7" fill="#0d9488"/>
-  <text x="14" y="154" fill="#0f766e" fontSize="13" fontWeight="700" textAnchor="middle">Node D</text>
-</svg>
-</Figure>
+This is where a **Distributed Hash Table (DHT)** comes in.
 
-The important thing is: the system has a deterministic method for finding which node owns a key.
+## 3. What Is a DHT?
 
-## 6. DHT vs. Consistent Hashing
+**DHT = Distributed Hash Table.**
 
-This is important because you just learned consistent hashing.
+> **A DHT is a hash-table-like system whose data is distributed across many computers and which provides a mechanism for locating the node responsible for a particular key.**
 
-**Consistent Hashing** primarily answers: *"Which server should handle this key?"*
+In simple words:
+
+> **DHT = Hash Table distributed among many computers.**
+
+<MermaidDiagram title="A DHT Spreads the Table Across Nodes" chart={`
+graph TD
+  DHT --> A[Node A]
+  DHT --> B[Node B]
+  DHT --> C[Node C]
+`} />
+
+## 4. Simple Example
+
+Suppose we have `Node A`, `Node B`, `Node C`, and keys `Apple`, `Banana`, `Mango`. The DHT uses a hashing/assignment mechanism to determine which node is responsible for each key:
 
 ```text
-Key → Hash Ring → Server
+Apple  → Node B
+Banana → Node A
+Mango  → Node C
 ```
 
-**DHT** provides a **distributed key-value lookup system**, where nodes themselves participate in maintaining the mapping and routing requests.
+If we want Banana:
 
-<MermaidDiagram title="From Consistent Hashing to a DHT" chart={`
-graph LR
-  CH[Consistent Hashing] --> KD[Key Distribution Idea]
-  KD --> DHT[Distributed Hash Table]
-  DHT --> LU[Distributed Key-Value Lookup]
+<MermaidDiagram title="Looking Up Banana" chart={`
+graph TD
+  Banana --> L["Hash / DHT Lookup"]
+  L --> NA[Node A]
+  NA --> D["Banana's Data"]
 `} />
 
-Many DHT designs use ideas related to consistent hashing, but **DHT is a broader distributed protocol/system**, not simply another name for consistent hashing.
+The important point is: **the DHT helps determine the responsible node.**
 
-## 7. What Happens If a Node Fails?
+## 5. What Does "Distributed" Mean?
 
-Suppose we have `A`, `B`, `C`, `D` — and `C` fails. A good DHT is designed so that the remaining nodes can still locate the data. Depending on the DHT design, keys previously associated with `C` can be handled by other nodes.
+It means the data is spread across multiple computers:
 
-This gives us: **decentralization + scalability + fault tolerance**.
+```text
+Node A → Data 1, Data 4, Data 7
+Node B → Data 2, Data 5, Data 8
+Node C → Data 3, Data 6, Data 9
+```
 
-## 8. Where Is DHT Used?
+The data is **distributed**.
 
-DHTs are particularly associated with **peer-to-peer (P2P) systems**. Examples include systems/protocols such as:
+## 6. What Does "Decentralized" Mean?
 
-- BitTorrent's DHT
-- Chord
-- Kademlia
-- Distributed peer-to-peer storage/discovery systems
+This is different from simply being distributed.
 
-The important idea is that there is **no single central machine responsible for all lookups**.
+**Centralized** — one central server coordinates the system and may know where everything is:
 
-## 9. Programming & DSA Connection
-
-This connects directly to your earlier question.
-
-**DSA:** Hashing → IDs → Lookup → Routing
-
-**Programming:** a real DHT implementation involves:
-
-- Network communication
-- Node discovery
-- Routing tables
-- Failure detection
-- Joining/leaving nodes
-- Data lookup
-- Replication
-
-So this is where **DSA + networking + distributed systems** start coming together.
-
-## 10. The Big Picture
-
-You can now see the progression:
-
-<MermaidDiagram title="The Progression" chart={`
-graph LR
-  H[Hashing] --> HT[Hash Table]
-  HT --> CH[Consistent Hashing]
-  CH --> DHT[Distributed Hash Table]
-  DHT --> DS[Distributed Systems]
+<MermaidDiagram title="Centralized" chart={`
+graph TD
+  CS[Central Server] --> A[Node A]
+  CS --> B[Node B]
+  CS --> C[Node C]
 `} />
 
-And this is exactly why we're learning these concepts in this order.
+If that central server fails, it can become a major problem.
 
-## 11. One Important Concept: Routing
+**Decentralized** — participating nodes themselves take part in maintaining the distributed lookup system, and there is **no single central server that must handle every lookup**:
 
-Suppose you ask Node A, "Where is key X?" Node A might not own X. Instead of asking every node, it uses its **routing information** to forward the request toward the node responsible for X.
-
-<MermaidDiagram title="Routing Toward the Owner of Key X" chart={`
+<MermaidDiagram title="Decentralized" chart={`
 graph LR
-  You --> A[Node A]
-  A --> B[Node B]
-  B --> D[Node D]
-  D --> X[Key X]
+  A[Node A] --- B[Node B]
+  A --- C[Node C]
+  B --- D[Node D]
+  C --- D
 `} />
 
-The goal is to find the data **without contacting every computer**. This routing mechanism is one of the most interesting parts of DHTs.
+So remember:
+
+> **Distributed = work/data is spread across many computers.**
+>
+> **Decentralized = there is no single central server responsible for everything.**
+
+A system can be distributed without being fully decentralized.
+
+## 7. DHT vs. Routing
+
+This is extremely important — they are related, but they are **not the same thing**.
+
+Suppose you want `Key = "Ali"`. The DHT determines the responsible node:
+
+<MermaidDiagram title="DHT Lookup" chart={`
+graph TD
+  Ali["Key: Ali"] --> L["DHT Lookup"]
+  L --> NC["Responsible Node = C"]
+`} />
+
+But suppose you are currently connected to Node A, and you need to reach Node C. The process of moving the request from one node to another is **routing**:
+
+<MermaidDiagram title="Routing the Request" chart={`
+graph LR
+  You --> NA[Node A]
+  NA --> NB[Node B]
+  NB --> NC[Node C]
+`} />
+
+Therefore:
+
+- **DHT:** "Which node is responsible for this key?"
+- **Routing:** "How do I get the request to that node?"
+
+## 8. Real-Life Analogy — Google Maps
+
+Imagine you want to travel to Islamabad Airport.
+
+**Finding the destination** — you determine that Islamabad Airport is your destination. This is similar to **DHT lookup**: `Key → Responsible Node`.
+
+**Finding the route** — now you need to travel from your location, down Road A, down Road B, to the airport. This is similar to **routing**:
+
+<MermaidDiagram title="Reaching the Destination" chart={`
+graph LR
+  Loc["Your Location"] --> RA["Road A"]
+  RA --> RB["Road B"]
+  RB --> Airport
+`} />
+
+So remember:
+
+> **DHT helps identify the destination.**
+>
+> **Routing helps reach the destination.**
+
+## 9. How Does Hashing Help?
+
+A hash function converts a key into an identifier, and nodes also have identifiers (`Node A → 200`, `Node B → 500`, `Node C → 800`). The DHT's rules determine which node is responsible for a given identifier:
+
+<MermaidDiagram title="From Key to Responsible Node" chart={`
+graph TD
+  Ali2["Key: Ali"] --> H["Hash Function"]
+  H --> ID["Identifier = 730"]
+  ID --> DHT2[DHT]
+  DHT2 --> NC2[Node C]
+`} />
+
+So hashing helps create a **deterministic way to map keys to nodes**.
+
+## 10. What Happens When a Node Fails?
+
+Suppose Node B fails. An important correction:
+
+> **A DHT does NOT automatically mean the data is safe when a node fails.**
+
+If the only copy of `Data X` was on Node B, and Node B dies, `Data X` may be unavailable. So we need another concept:
+
+### Replication
+
+Replication means keeping **additional copies of the same data**:
+
+<MermaidDiagram title="Replication: A Backup Copy" chart={`
+graph TD
+  X["Data X"] --> Primary["Node B — Primary"]
+  X --> Replica["Node C — Replica"]
+`} />
+
+If Node B fails, the system may retrieve the data from Node C. Therefore:
+
+> **DHT = helps locate data.**
+>
+> **Replication = keeps additional copies of data.**
+
+They are different concepts.
+
+## 11. Does Every DHT Use Replication?
+
+**No.** A DHT's fundamental purpose is **distributed lookup**. A particular DHT-based system may additionally use replication for fault tolerance, availability, or data durability.
+
+So do NOT memorize `DHT = Replication`. Instead remember:
+
+```text
+DHT         → Find the responsible node
+Routing     → Reach that node
+Replication → Keep additional copies
+```
+
+## 12. DHT and Consistent Hashing
+
+You learned **Consistent Hashing** in Lesson 1. They are related, but they are not identical.
+
+**Consistent Hashing** primarily provides a way to distribute keys among servers — it is particularly useful because adding/removing servers causes relatively little key movement:
+
+```text
+Key → Hash → Hash Ring → Responsible Server
+```
+
+**DHT** provides a **distributed lookup system**:
+
+```text
+Key → DHT Lookup → Responsible Node → Value
+```
+
+Some DHTs use ideas related to consistent hashing. But:
+
+> **Consistent hashing is a technique.**
+>
+> **DHT is a distributed lookup system/protocol.**
+
+## 13. Programming Connection
+
+A real DHT implementation combines several areas of computer science: hashing (key → identifier), networking (nodes must communicate), routing (nodes forward requests), and data storage (the responsible node stores the data):
+
+<MermaidDiagram title="What a Real DHT Implementation Involves" chart={`
+graph TD
+  H2[Hashing] --> DHT3[DHT]
+  N2[Networking] --> DHT3
+  R2[Routing] --> DHT3
+  DS[Data Storage] --> DHT3
+`} />
+
+This does NOT mean these are four separate DHTs — it means a real DHT implementation involves all of these areas together.
+
+## 14. Complete Picture
+
+Suppose you want `Key = "Ali"`. The complete process, including a replica for safety, looks like this:
+
+<MermaidDiagram title="The Complete Lookup Path" chart={`
+graph TD
+  Ali3["Key: Ali"] --> Hash2[Hashing]
+  Hash2 --> Lookup2["DHT Lookup"]
+  Lookup2 --> Resp["Responsible Node = C"]
+  Resp --> Route2["Routing: A → B → C"]
+  Route2 --> NodeC[Node C]
+  NodeC --> Data2[Data]
+  NodeC --> Replica2["Replica on Node D"]
+`} />
+
+If Node C fails, the data is still available from the replica on Node D.
+
+## 15. The Four Concepts You Must Keep Separate
+
+| Concept | Main Job |
+|---|---|
+| **Hashing** | Converts a key into an identifier |
+| **DHT** | Determines/locates the responsible node |
+| **Routing** | Moves the request toward that node |
+| **Replication** | Keeps additional copies of data |
+
+**Easy memory trick:**
+
+> **Hash → Find → Route → Retrieve**
+>
+> **Replication → Backup copy for failure**
+
+## 16. Real-World Connection
+
+DHTs are strongly associated with **peer-to-peer (P2P) systems**. For example, BitTorrent uses DHT mechanisms for peer discovery:
+
+<MermaidDiagram title="DHT in a P2P File Download" chart={`
+graph TD
+  Want["You Want a File"] --> Lookup3["DHT Lookup"]
+  Lookup3 --> Peers["Find Peers"]
+  Peers --> Connect["Connect to Peers"]
+  Connect --> Download
+`} />
+
+Instead of relying completely on one central server, participating computers can help maintain the distributed lookup system.
 
 ## Webbook Revision
 
-**DHT:** a decentralized key-value lookup system where multiple computers collectively store and locate data.
+**DHT — one-line definition:**
 
-**Key idea:**
+> **A Distributed Hash Table (DHT) is a decentralized distributed system that spreads key-value data across many nodes and provides an efficient mechanism for locating the node responsible for a key.**
+
+**Remember:**
 
 ```text
-Key → Hash → Responsible Node → Data
+Hash Table
+Key → Value
+
+Consistent Hashing
+Key → Server
+
+DHT
+Key → Responsible Node → Value
+
+Routing
+Current Node → Next Node → Destination
+
+Replication
+Data → Copy 1 + Copy 2 + Copy 3
 ```
 
-**Main characteristics:** distributed, decentralized, scalable, fault-tolerant, uses hashing and routing.
+**Most important distinction:**
+
+- **DHT:** Where is the data?
+- **Routing:** How do I reach that node?
+- **Replication:** What if that node fails?
+- **Decentralization:** No single central server has to handle everything.
 
 **Memory trick:**
 
-> **Hash Table finds data inside one system; DHT finds data across many computers.**
+> **DHT finds the destination; routing reaches the destination; replication protects the data.**
 
 ## Quick Check
 
@@ -219,6 +373,7 @@ Key → Hash → Responsible Node → Data
 2. What is a **node**?
 3. Why don't we ask every node to find a key?
 4. How is a DHT related to consistent hashing?
+5. What is the difference between DHT, routing, and replication?
 
 Once you're comfortable with these, the next lesson is **Consensus** — one of the hardest and most important concepts in distributed systems.
 
