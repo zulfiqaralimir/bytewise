@@ -224,11 +224,11 @@ graph LR
   end
 `} />
 
-The problem is: **they cannot communicate.** One side might think "everything is fine," while the other side thinks "we should make a different decision." Consensus protocols must define how to behave under such conditions.
+The problem is: **they cannot communicate.** One side might think "everything is fine," while the other side thinks "we should make a different decision." <Revision>Consensus protocols must define how to behave under such conditions.</Revision>
 
 ## 13. Consensus and the CAP Connection
 
-This connects directly to **CAP**. CAP says that in the presence of a network partition, a distributed system cannot simultaneously guarantee both strong consistency and availability in the general case.
+This connects directly to **CAP**. CAP says that <Revision>in the presence of a network partition, a distributed system **cannot simultaneously guarantee both strong consistency and availability** in the general case.</Revision>
 
 <MermaidDiagram title="Why Consensus Can Sacrifice Availability" chart={`
 graph TD
