@@ -1,0 +1,509 @@
+export const metadata = {
+  title: "Lesson 2.1 — DHT, Decentralization, P2P and Blockchain | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 2.1: what a distributed lookup mechanism really means, why DHT and routing and P2P and blockchain are not synonyms, and how they all fit together.",
+  keywords: [
+    "distributed hash table",
+    "DHT",
+    "decentralization",
+    "peer-to-peer",
+    "P2P",
+    "BitTorrent",
+    "blockchain",
+    "consensus",
+    "routing",
+    "replication",
+    "consistent hashing",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 2.1 — DHT, Decentralization, P2P and Blockchain | Mentor Curriculum Part 11",
+    description:
+      "DHT solves the decentralized lookup problem — where is the data? Blockchain solves the distributed agreement problem — what should everyone accept as the shared truth?",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 2.1**
+
+# Lesson 2 Addendum: DHT, Decentralization, P2P and Blockchain
+
+## 1. What Does "Distributed Lookup Mechanism" Mean?
+
+The phrase **distributed lookup mechanism** can sound confusing. Let's break it into two words.
+
+**Lookup** simply means:
+
+> **Find something.**
+
+```text
+Key = "Ali.jpg"
+
+Question: "Where can I find Ali.jpg?"
+```
+
+A lookup mechanism helps answer that question.
+
+**Distributed lookup:** now suppose there are many nodes — `Node A`, `Node B`, `Node C`, `Node D`, `Node E` — and the data is distributed among them. We want to find `"Ali.jpg"`.
+
+Instead of asking one central server:
+
+<MermaidDiagram title="Centralized Lookup" chart={`
+graph TD
+  U[User] --> CS["Central Server"]
+  CS --> R["'Ali.jpg' is on Node C"]
+`} />
+
+a DHT allows the participating nodes to collectively perform the lookup:
+
+<MermaidDiagram title="Distributed Lookup" chart={`
+graph TD
+  F["'Ali.jpg'"] --> H[Hash]
+  H --> KI["Key Identifier"]
+  KI --> L["DHT Lookup"]
+  L --> RC["Responsible Node = C"]
+`} />
+
+Therefore:
+
+> **Distributed lookup means finding where a particular piece of distributed data belongs — or which node is responsible for it — using a distributed network of nodes, rather than relying on one central lookup server.**
+
+## 2. But If It Is a "Lookup," Isn't It Centralized?
+
+**No.** This is one of the most important points: a lookup operation does **not** automatically mean that the system is centralized.
+
+**Centralized lookup** — there is one central directory, and you ask it "Where is File X?":
+
+<MermaidDiagram title="Centralized Lookup Directory" chart={`
+graph TD
+  CD["Central Directory"] --> A[Node A]
+  CD --> B[Node B]
+  CD --> C[Node C]
+`} />
+
+The central server is responsible for maintaining the directory.
+
+**Decentralized lookup** — in a DHT, there is no single master directory that must answer every lookup. The nodes themselves participate in the lookup process:
+
+<MermaidDiagram title="Decentralized Mesh" chart={`
+graph LR
+  A[Node A] --- B[Node B]
+  B --- C[Node C]
+  A --- D[Node D]
+  B --- E[Node E]
+  C --- F[Node F]
+  D --- E
+  E --- F
+`} />
+
+<MermaidDiagram title="A Request Forwarded Between Nodes" chart={`
+graph LR
+  NA[Node A] -->|asks / forwards| NB[Node B]
+  NB -->|asks / forwards| NC[Node C]
+`} />
+
+Node C may be responsible for the requested key. Therefore:
+
+> **A decentralized lookup mechanism still performs lookup; it simply performs lookup without depending on one central server.**
+
+**Memory trick:**
+
+> **Centralized = one place performs the lookup. Decentralized = participating nodes perform the lookup collectively.**
+
+## 3. What Does "Decentralized" Actually Mean?
+
+Decentralized does **not** mean "there are no servers," "there is no communication," or "there is no routing." It means:
+
+> **There is no single central authority that must control or perform the entire operation.**
+
+**Centralized** — the master has the central role:
+
+<MermaidDiagram title="Centralized (Master)" chart={`
+graph TD
+  M[Master] --> A[Node A]
+  M --> B[Node B]
+  M --> C[Node C]
+`} />
+
+**Decentralized** — nodes participate in the system themselves:
+
+<MermaidDiagram title="Decentralized (Peers)" chart={`
+graph LR
+  A[Node A] --- B[Node B]
+  B --- C[Node C]
+  A --- D[Node D]
+  B --- E[Node E]
+  C --- F[Node F]
+  D --- E
+  E --- F
+`} />
+
+This is why a DHT can be described as a **decentralized distributed lookup mechanism**.
+
+## 4. DHT and Routing Are NOT the Same
+
+This distinction is extremely important.
+
+**DHT asks:** *"Which node is responsible for this key?"*
+
+**Routing asks:** *"How do I get my request to that node?"*
+
+First we find the destination:
+
+<MermaidDiagram title="Finding the Destination" chart={`
+graph TD
+  F2["'Ali.jpg'"] --> H2[Hash]
+  H2 --> L2["DHT Lookup"]
+  L2 --> RC2["Responsible Node = C"]
+`} />
+
+But the request may currently be at Node A, and it needs to reach Node C — that is **routing**:
+
+<MermaidDiagram title="Reaching the Destination" chart={`
+graph LR
+  A[Node A] --> B[Node B] --> C[Node C]
+`} />
+
+So: **DHT → FIND the responsible node. Routing → GET the request to that node.**
+
+**Real-life analogy:**
+
+| Question | Answered by |
+|---|---|
+| Where is the restaurant? | **DHT** — where is the destination? |
+| How do I get there? | **Routing** — how do I reach the destination? |
+
+**Memory trick:**
+
+> **DHT = FIND. Routing = GET THERE.**
+
+## 5. Why Are DHTs Strongly Associated With P2P Systems?
+
+DHTs are strongly associated with **Peer-to-Peer (P2P)** systems because both are designed around participating computers communicating directly, rather than relying entirely on one central server.
+
+A **peer** is a participating computer/node in the network. Instead of a central server:
+
+<MermaidDiagram title="Central Server Model" chart={`
+graph TD
+  CS2["Central Server"] --> P1[Peer]
+  CS2 --> P2[Peer]
+  CS2 --> P3[Peer]
+`} />
+
+we can have peers that communicate with one another:
+
+<MermaidDiagram title="Peer-to-Peer Model" chart={`
+graph LR
+  P1[Peer] --- P2[Peer]
+  P2 --- P3[Peer]
+  P1 --- P4[Peer]
+  P4 --- P3
+`} />
+
+## 6. Why Does a P2P System Need a DHT?
+
+Suppose thousands of computers are participating in a P2P network, and you want `File = Movie.mp4`. The important question is: *which peer has information about this file?*
+
+If there were a central server, you could ask it directly:
+
+<MermaidDiagram title="Asking a Central Server" chart={`
+graph TD
+  U2[User] --> CS3["Central Server"]
+  CS3 --> Ans["'Peer C has Movie.mp4'"]
+`} />
+
+But P2P systems often want to avoid depending on such a central directory. A DHT can provide a decentralized way to perform this lookup — the peer mesh (Section 5) plus a lookup step:
+
+<MermaidDiagram title="DHT Lookup Inside the P2P Network" chart={`
+graph TD
+  DHT4["DHT Lookup"] --> Q["Which peer is responsible for this key?"]
+  Q --> C2["Peer C"]
+`} />
+
+So:
+
+> **P2P provides the network of participating peers, while the DHT provides a mechanism for efficiently locating the peer responsible for a particular key.**
+
+## 7. BitTorrent Example
+
+A famous example is **BitTorrent**, a P2P file-sharing system. Imagine a file `Ubuntu.iso` available through many participating peers:
+
+<MermaidDiagram title="Peers Sharing a File" chart={`
+graph TD
+  PA[Peer A] --> PB[Peer B]
+  PA --> PC[Peer C]
+  PB --> PD[Peer D]
+  PC --> PD
+`} />
+
+Suppose you want to find peers associated with `Ubuntu.iso`. A DHT mechanism can help perform **peer discovery**:
+
+<MermaidDiagram title="Peer Discovery via DHT" chart={`
+graph TD
+  RI["Resource / Info"] --> H3[Hash]
+  H3 --> K3[Key]
+  K3 --> L3["DHT Lookup"]
+  L3 --> RP["Responsible Peer(s)"]
+  RP --> DP["Discover Peers"]
+`} />
+
+The important point is: **the DHT does not mean that the DHT itself downloads the file** — it helps with finding peers. Once peers are discovered, the P2P protocol can communicate with those peers and exchange the actual file pieces:
+
+<MermaidDiagram title="From Discovery to File Transfer" chart={`
+graph LR
+  D2[DHT] -->|find peers| PP["P2P Protocol"]
+  PP -->|communicate with peers| FT["File Transfer"]
+  FT -->|exchange file pieces| Done((Done))
+`} />
+
+**Very important distinction:**
+
+> **DHT = peer discovery / distributed lookup. BitTorrent = P2P file-sharing system.**
+
+The DHT is a component/mechanism used for discovering peers; it is not the entire BitTorrent system.
+
+## 8. DHT Is Not the Same as P2P
+
+These terms are related but different.
+
+| Concept | Meaning |
+|---|---|
+| **P2P** | Network architecture where peers communicate with one another |
+| **DHT** | Distributed lookup mechanism for locating responsible nodes/keys |
+| **Routing** | Process of forwarding a request toward another node |
+| **Replication** | Keeping additional copies of data |
+| **File sharing** | Actual exchange of file data |
+
+<MermaidDiagram title="How the Layers Stack" chart={`
+graph TD
+  P2P2["P2P — Network of Peers"] --> DHT5["DHT — Find the Relevant Peer"]
+  DHT5 --> R2["Routing — Reach That Peer"]
+  R2 --> FTP["File-Transfer Protocol — Exchange the Data"]
+`} />
+
+## 9. What Happens If a DHT Node Fails?
+
+Suppose `Data X → Node B`, and `Node B` fails. The DHT itself does **not automatically mean that the data still exists** — if there is only one copy, `Data X` becomes unavailable.
+
+To protect against this, the system can use **replication**:
+
+<MermaidDiagram title="Replicating Data X" chart={`
+graph TD
+  X2["Data X"] --> NB2[Node B]
+  X2 --> NC3[Node C]
+  X2 --> ND[Node D]
+`} />
+
+If `Node B` fails, `Node C` and `Node D` can still serve `Data X`. Therefore:
+
+> **DHT helps locate data. Replication provides additional copies for fault tolerance.**
+
+Do not confuse the two.
+
+## 10. DHT vs. Consistent Hashing
+
+**Consistent hashing** is a technique for distributing keys across servers while minimizing data movement when servers join or leave — its main concern is *"how should keys be distributed among changing servers?"*
+
+<Figure title="The Hash Ring, Briefly Revisited" caption="Consistent hashing places servers A, B, and C on a ring so keys move minimally when the server set changes — the technique behind many DHT implementations.">
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" width="240" height="240">
+  <circle cx="120" cy="120" r="90" fill="none" stroke="#0d9488" strokeWidth="2"/>
+  <circle cx="120" cy="30" r="6" fill="#0d9488"/>
+  <text x="120" y="18" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">A</text>
+  <circle cx="197.9" cy="165" r="6" fill="#0d9488"/>
+  <text x="216" y="169" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">B</text>
+  <circle cx="42.1" cy="165" r="6" fill="#0d9488"/>
+  <text x="24" y="169" fill="#0f766e" fontSize="12" fontWeight="700" textAnchor="middle">C</text>
+</svg>
+</Figure>
+
+**DHT** is a distributed lookup system that allows nodes to locate the node responsible for a particular key — its main concern is *"how can I find the node responsible for this key in a distributed network?"*
+
+So:
+
+> **Consistent hashing = key distribution technique. DHT = distributed lookup system/protocol.**
+
+Some DHTs use concepts related to consistent hashing, but they are not synonyms.
+
+## 11. Now Compare DHT With Blockchain
+
+DHTs and blockchains have an important similarity: **both can operate in decentralized distributed networks** — there is not necessarily one central server controlling everything:
+
+<MermaidDiagram title="A Decentralized Network" chart={`
+graph LR
+  A[Node A] --- B[Node B]
+  B --- C[Node C]
+  A --- D[Node D]
+  B --- E[Node E]
+  C --- F[Node F]
+  D --- E
+  E --- F
+`} />
+
+But their primary purposes are different.
+
+## 12. DHT: "Where Is the Data?"
+
+Suppose `Key = "Ali.jpg"`. The DHT helps determine which node is responsible:
+
+<MermaidDiagram title="DHT Answers: Which Node?" chart={`
+graph TD
+  F3["'Ali.jpg'"] --> H4[Hash]
+  H4 --> KI2["Key Identifier"]
+  KI2 --> L4["DHT Lookup"]
+  L4 --> NC4[Node C]
+`} />
+
+Then routing gets the request there:
+
+<MermaidDiagram title="Routing to Node C" chart={`
+graph LR
+  A[Node A] --> B[Node B] --> C[Node C]
+`} />
+
+Therefore: **DHT = where is the data / which node is responsible?**
+
+## 13. Blockchain: "What Is the Agreed Truth?"
+
+Now consider a blockchain. Suppose Alice sends 5 coins to Bob. The important question is not simply *"which node has this transaction?"* — the network needs to determine *"is this transaction valid, and should the network accept it?"* This requires a **consensus mechanism**:
+
+<MermaidDiagram title="Reaching Consensus" chart={`
+graph TD
+  T[Transaction] --> NR["Nodes Receive It"]
+  NR --> NV["Nodes Validate It"]
+  NV --> CO[Consensus]
+  CO --> NA2["Nodes Agree"]
+  NA2 --> SL["Shared Ledger / State Updated"]
+`} />
+
+Therefore: **blockchain = agreement on shared state/history.**
+
+## 14. DHT vs. Blockchain
+
+| DHT | Blockchain |
+|---|---|
+| Distributed lookup system | Distributed ledger system |
+| Main question: **Where is the data?** | Main question: **What is the agreed truth?** |
+| Locates responsible node | Establishes agreement among nodes |
+| Uses hashing and routing | Uses hashing, cryptography, and consensus |
+| Often associated with P2P systems | Usually built on P2P networking |
+| Does not inherently require consensus | Consensus is central to many blockchains |
+| Main focus: efficient lookup | Main focus: shared state/history and agreement |
+
+## 15. Why Both Use Hashing
+
+Hashing is used in both, but for different purposes.
+
+**DHT** — hashing determines where the key belongs:
+
+<MermaidDiagram title="Hashing in a DHT" chart={`
+graph LR
+  K4[Key] --> H5[Hash] --> ID2[Identifier] --> RN[Responsible Node]
+`} />
+
+**Blockchain** — hashing identifies blocks, links blocks, verifies data integrity, and forms cryptographic commitments:
+
+<MermaidDiagram title="Hashing in a Blockchain" chart={`
+graph LR
+  B1[Block 1] -->|hash| B2[Block 2]
+  B2 -->|hash| B3[Block 3]
+`} />
+
+Therefore: **both use hashing, but hashing does not make them the same system.**
+
+## 16. The Complete Distributed-System Picture
+
+<MermaidDiagram title="The Lookup Pipeline" chart={`
+graph TD
+  HA["Hashing — Converts Key to Identifier"] --> DH["DHT — Find Responsible Node"]
+  DH --> RO["Routing — Reach Responsible Node"]
+  RO --> RD["Retrieve Data"]
+  RD --> RE["Replication — Protect Against Failure"]
+`} />
+
+A different problem is:
+
+<MermaidDiagram title="The Agreement Pipeline" chart={`
+graph TD
+  CN["Consensus — Nodes Agree on Shared State"] --> BC["Blockchain — Shared Distributed Ledger"]
+`} />
+
+## 17. The Four Most Important Concepts
+
+Keep these four concepts completely separate:
+
+```text
+HASHING     — "What identifier should this key have?"
+DHT         — "Which node is responsible for this key?"
+ROUTING     — "How do I reach that node?"
+REPLICATION — "Where are additional copies if that node fails?"
+```
+
+And then:
+
+```text
+CONSENSUS — "How do multiple nodes agree?"
+```
+
+## 18. One Complete Example
+
+Suppose we have `A ↔ B ↔ C ↔ D ↔ E` and we want `Key = "Ali.jpg"`:
+
+<MermaidDiagram title="Ali.jpg — From Key to Data, With a Safety Net" chart={`
+graph TD
+  K5["Key: 'Ali.jpg'"] --> H6[Hash]
+  H6 --> ID3["Identifier = 742"]
+  ID3 --> DH2["DHT Lookup"]
+  DH2 --> RN2["Responsible Node = C"]
+  RN2 -->|"routing: A → B → C"| RD2["Retrieve: C → Ali.jpg"]
+  RD2 --> REP["Replica also on Node D"]
+`} />
+
+If `C` fails, `D` can still provide the copy.
+
+**Blockchain would solve a different problem.** Instead of asking *"where is Ali.jpg?"* we might ask *"which transaction history should all nodes agree is valid?"* — that is a **consensus** problem.
+
+## 19. Final Memory Rules
+
+> **DHT** = find the node responsible for a key.
+>
+> **Decentralized lookup** = lookup without depending on one central lookup server.
+>
+> **Routing** = move the request toward the destination node.
+>
+> **P2P** = peers communicate with peers.
+>
+> **BitTorrent** = a P2P file-sharing system that can use DHT mechanisms for peer discovery.
+>
+> **Replication** = keep additional copies to survive failures.
+>
+> **Blockchain** = a distributed ledger system where participating nodes use consensus mechanisms to maintain agreement on shared state/history.
+
+## 20. The Ultimate Mental Model
+
+<MermaidDiagram title="Mental Model: Finding Data" chart={`
+graph TD
+  KEY[Key] --> HASH["Hashing — What identifier?"]
+  HASH --> DHT6["DHT — Which node?"]
+  DHT6 --> ROUTE["Routing — How do I reach it?"]
+  ROUTE --> RETRIEVE["Retrieve — Get the data"]
+  RETRIEVE --> REPL["Replication — What if it fails?"]
+`} />
+
+<MermaidDiagram title="Mental Model: Agreeing on Truth" chart={`
+graph TD
+  TX[Transaction] --> VAL[Validation]
+  VAL --> CONS["Consensus — Do we agree?"]
+  CONS --> LEDGER["Shared Ledger"]
+`} />
+
+**Final one-line distinction:**
+
+> **DHT solves the decentralized lookup problem: "Where is the data?" Blockchain solves the distributed agreement problem: "What should everyone accept as the shared truth?"**
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-2-distributed-hash-tables", title: "Lesson 2 — Distributed Hash Tables" }}
+  next={null}
+/>
