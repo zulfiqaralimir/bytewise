@@ -1,0 +1,456 @@
+export const metadata = {
+  title: "Lesson 5 — Paxos | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 5: the Paxos consensus protocol — proposer, acceptor, and learner roles, proposal numbers, the Prepare and Accept phases, quorum overlap, Basic Paxos vs Multi-Paxos, Paxos vs Raft, and crash vs Byzantine faults.",
+  keywords: [
+    "paxos",
+    "paxos consensus",
+    "proposer acceptor learner",
+    "multi-paxos",
+    "paxos vs raft",
+    "quorum",
+    "byzantine fault tolerance",
+    "distributed consensus",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 5 — Paxos | Mentor Curriculum Part 11",
+    description:
+      "Proposer → Prepare → Accept → Quorum → Chosen.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 5**
+
+# Lesson 5 — Paxos
+
+Now we move from **Raft** to **Paxos**. The most important thing to understand first is:
+
+> **Raft and Paxos are both approaches to solving the distributed consensus problem.**
+
+<MermaidDiagram title="The Roadmap So Far" chart={`
+graph LR
+  L3["Lesson 3: Consensus"] --> L4["Lesson 4: Raft"] --> L5["Lesson 5: Paxos"]
+`} />
+
+If Lesson 3 asked *"How can distributed computers agree?"* — Lesson 4 answered with *"one practical way to solve it."* Lesson 5 answers with *"another important way to solve it."*
+
+## 1. What Is Paxos?
+
+**Paxos is a family of protocols for achieving consensus in a distributed system despite certain failures.**
+
+In simple words:
+
+> **Paxos helps multiple computers agree on a value or decision, even when some computers or network communication may fail.**
+
+<MermaidDiagram title="Nodes Agree on a Decision" chart={`
+graph TD
+  A1[A] --> Ag1["Agree on a decision"]
+  B1[B] --> Ag1
+  C1[C] --> Ag1
+`} />
+
+The decision could be something like `X = 50`, or an entry in an ordered log.
+
+## 2. Why Was Paxos Needed?
+
+Imagine three servers, `A`, `B`, `C`, that need to agree on `Value = X`. But distributed systems have problems:
+
+```text
+A ───→ B     message delayed
+A ───→ C     message lost
+B     ❌      server failure
+```
+
+We cannot assume every node is always online, every message arrives immediately, messages arrive in the same order, or the network is always connected. Yet we want the surviving nodes to reach a **safe agreement**. That's the challenge Paxos addresses.
+
+## 3. The Core Idea
+
+Suppose one node proposes `X = 50`. Other nodes communicate about the proposal. The protocol must ensure that:
+
+> **Two different values are not both chosen as the final consensus decision.**
+
+This property is called **safety**. For example, we don't want `A, B → X = 50` while simultaneously `C, D → X = 100`, with both sides believing their value was officially chosen. Paxos is designed to prevent such conflicting decisions under its assumptions.
+
+## 4. Paxos Has Different Roles
+
+Traditional Paxos describes several roles. The most important ones are:
+
+**Proposer** — the node that proposes a value: *"I propose X = 50."*
+
+**Acceptor** — the nodes that participate in deciding whether a proposal can be accepted.
+
+<MermaidDiagram title="Proposer → Acceptors" chart={`
+graph TD
+  P1[Proposer] --> Ac1[Acceptor]
+  P1 --> Ac2[Acceptor]
+`} />
+
+**Learner** — a node that learns the final chosen value.
+
+<MermaidDiagram title="Acceptors → Chosen Value → Learner" chart={`
+graph LR
+  Ac3[Acceptors] --> Ch1["Chosen value"] --> Le1[Learner]
+`} />
+
+## 5. Simple Analogy
+
+Imagine five people deciding which restaurant to visit. The **proposer** suggests *"Restaurant A."* The **acceptors** evaluate the proposal — Person B accepts, Person C accepts, Person D accepts. Once the required agreement is reached, the **learner** can know: `Decision = Restaurant A`.
+
+This is only an analogy; real Paxos has precise rules involving proposal numbers and phases.
+
+## 6. The Most Important Concept: Proposal Numbers
+
+Paxos uses **proposal numbers** to distinguish proposals:
+
+```text
+Proposal #1
+Proposal #2
+Proposal #3
+Proposal #4
+```
+
+Higher proposal numbers are considered newer than lower ones. This helps nodes distinguish between old and new proposals.
+
+## 7. Why Do We Need Proposal Numbers?
+
+Imagine Node A proposes `X`, then the network delays the message, and later Node B proposes `Y`. Without some way of distinguishing proposals, nodes could become confused. Proposal numbers provide a way to say `Proposal #10` is newer than `Proposal #7`, so nodes can reason about which proposal is current.
+
+## 8. Paxos Has Two Main Phases
+
+At a simplified level, Paxos has two major phases.
+
+<MermaidDiagram title="Prepare, Then Accept" chart={`
+graph LR
+  Ph1["Phase 1: Prepare"] --> Ph2["Phase 2: Accept"]
+`} />
+
+## 9. Phase 1 — Prepare
+
+The proposer sends a **prepare request** with a proposal number.
+
+<MermaidDiagram title="Prepare #10" chart={`
+graph TD
+  P2["Proposer A"] -->|"Prepare #10"| Ac4["Acceptor B"]
+  P2 -->|"Prepare #10"| Ac5["Acceptor C"]
+`} />
+
+The acceptors examine the proposal number. Conceptually they are saying: *"Okay, I recognize proposal number 10, and I will not accept an older proposal in conflict with this promise."* The exact Paxos rules are more precise, but this is the right beginner mental model.
+
+## 10. Phase 2 — Accept
+
+If the proposer successfully completes the prepare phase, it sends an **accept request**.
+
+<MermaidDiagram title="Accept #10, Value X" chart={`
+graph TD
+  P3["Proposer A"] -->|"Accept #10, value X"| Ac6[B]
+  P3 -->|"Accept #10, value X"| Ac7[C]
+`} />
+
+If enough acceptors accept the proposal, the value can become **chosen**.
+
+<MermaidDiagram title="The Full Cycle" chart={`
+graph LR
+  Pr1[Prepare] --> Pr2["Prepare response"] --> Ar1["Accept request"] --> Ma1["Majority accepts"] --> Vc1["Value chosen"]
+`} />
+
+## 11. Quorum
+
+Just like Raft, Paxos relies on the idea of a **quorum**. Suppose there are five acceptors, `A B C D E`. A majority is:
+
+```text
+3 / 5
+```
+
+If three acceptors participate successfully:
+
+```text
+A ✓
+B ✓
+C ✓
+D ❌
+E ❌
+```
+
+the protocol can potentially reach the required decision, depending on the phase and state. This allows Paxos to tolerate some failures.
+
+## 12. Why Majority Is Powerful
+
+Suppose there are 5 nodes, and two different majorities must overlap:
+
+| Majority 1 | Majority 2 |
+|---|---|
+| A, B, C | C, D, E |
+
+They share node `C`. This overlap is extremely important — it helps prevent two conflicting values from both being independently chosen. This is one of the fundamental ideas behind quorum-based consensus.
+
+## 13. What If a Node Fails?
+
+Suppose `A B C D E`, and `D ❌`, `E ❌`. We still have `A B C`, which is `3/5` — the system can potentially continue. This is similar to Raft.
+
+But if `A B C ❌`, `D ❌`, `E ❌`, only two nodes remain — `2/5`, no majority. The system cannot safely choose new consensus decisions. So again:
+
+> **Consensus protocols often sacrifice progress when a quorum is unavailable in order to preserve safety.**
+
+## 14. Paxos and Network Partitions
+
+Imagine the network is partitioned into a 2-node side and a 3-node side, out of five total nodes.
+
+<MermaidDiagram title="Minority vs Majority" chart={`
+graph LR
+  subgraph "Minority — 2/5"
+    A2[A] --- B2[B]
+  end
+  subgraph "Majority — 3/5"
+    C2[C] --- D1[D] --- E1[E]
+  end
+`} />
+
+With five nodes, majority = 3. The right side has a quorum; the left side does not. The majority side can potentially make progress. The minority side cannot safely choose a new value.
+
+## 15. Paxos vs Raft
+
+This is probably the most important comparison in this lesson.
+
+| Raft | Paxos |
+|---|---|
+| Consensus algorithm | Consensus algorithm/family |
+| Designed with understandability as an explicit goal | Historically more difficult to understand |
+| Strong leader-oriented structure | More abstract formulation |
+| Leader, follower, candidate | Proposer, acceptor, learner |
+| Uses replicated logs in common Raft usage | Basic Paxos agrees on values; Multi-Paxos can be used for sequences/logs |
+| Elections are explicit | Leadership can be optimized/implemented in variants |
+| Widely used in distributed systems | Foundational consensus protocol with many variants |
+
+**Memory trick:**
+
+> **Raft = easier-to-follow leader-based consensus.**
+> **Paxos = foundational, more abstract consensus approach.**
+
+Do not conclude that "Paxos is obsolete." It is historically and theoretically very important, and Paxos-derived ideas have influenced many distributed systems.
+
+## 16. Basic Paxos vs Multi-Paxos
+
+This distinction is important.
+
+**Basic Paxos** primarily solves: *"How can the system agree on one value?"* — for example, `Value = X`.
+
+**Multi-Paxos** extends the idea toward agreeing on a sequence of values — for example, an ordered log: `1 → SET X = 10`, `2 → SET X = 20`, `3 → SET Y = 50`. This is much closer to the replicated-log problem we saw with Raft.
+
+<MermaidDiagram title="Basic Paxos → Multi-Paxos" chart={`
+graph TD
+  Px1[Paxos] --> Ov1["Agree on one value"]
+  Mp1["Multi-Paxos"] --> Ov2["Agree on many ordered values"] --> Rl1["Replicated log"]
+`} />
+
+## 17. Raft and Multi-Paxos Connection
+
+This makes the comparison clearer:
+
+<MermaidDiagram title="Both Solve Consensus, Differently" chart={`
+graph TD
+  Cs1[Consensus] --> Ra1[Raft]
+  Cs1 --> Pa1[Paxos]
+  Ra1 --> Rl2["Replicated log"] --> Lb1["Leader-based approach"]
+  Pa1 --> Bp1["Basic Paxos"] --> Mp2["Multi-Paxos"] --> Od1["Ordered decisions"]
+`} />
+
+Both can be used to build systems where replicated machines maintain consistent state.
+
+## 18. Paxos and Replication
+
+Again: **Paxos is not simply replication.**
+
+<MermaidDiagram title="Replication" chart={`
+graph TD
+  D1[Data] --> A3[A]
+  D1 --> B3[B]
+  D1 --> C3[C]
+`} />
+
+<MermaidDiagram title="Paxos" chart={`
+graph LR
+  Pp1[Proposal] --> Pt1[Protocol] --> Qu1[Quorum] --> Ag2[Agreement] --> Cv1["Chosen value"]
+`} />
+
+Paxos can be used as part of a system that replicates state. So:
+
+> **Replication gives multiple copies; consensus coordinates agreement about what should be committed.**
+
+## 19. Paxos and DHT
+
+Let's connect all three concepts now.
+
+<MermaidDiagram title="DHT" chart={`
+graph LR
+  K1[Key] --> H1[Hash] --> Rn1["Responsible node"]
+`} />
+
+Question: *"Where is this data?"*
+
+<MermaidDiagram title="Raft" chart={`
+graph LR
+  Cm1[Command] --> Ld1[Leader] --> Rl3["Replicated log"] --> Qu2[Quorum] --> Cm2[Commit]
+`} />
+
+Question: *"What ordered commands should the cluster agree on?"*
+
+<MermaidDiagram title="Paxos" chart={`
+graph LR
+  Pp2[Proposal] --> Pr3[Prepare] --> Ar2[Accept] --> Qu3[Quorum] --> Cv2["Chosen value"]
+`} />
+
+Question: *"How can distributed nodes safely agree on a value?"*
+
+## 20. Paxos and Blockchain
+
+Blockchain is another interesting connection. A blockchain needs some mechanism for distributed participants to agree on the accepted state/history. But ordinary Paxos assumes a different environment from many permissionless blockchains — Paxos is generally designed for systems where nodes are expected to follow the protocol rather than behave maliciously. Blockchain consensus mechanisms may need to handle **Byzantine or adversarial behavior**, depending on the blockchain.
+
+<MermaidDiagram title="Different Failure Assumptions" chart={`
+graph LR
+  Px2[Paxos] --> Cf1["Crash / communication failures"] --> Cn1[Consensus]
+  Cn2[Consensus] --> Bf1["Adversarial / Byzantine participants"] --> Dm1["Different consensus mechanisms"]
+`} />
+
+This distinction is extremely important.
+
+## 21. Crash Fault vs Byzantine Fault
+
+**Crash failure** — a node simply stops responding:
+
+```text
+A ✓
+B ✓
+C ❌
+```
+
+C has crashed.
+
+**Byzantine failure** — a node may behave incorrectly or maliciously:
+
+```text
+A → X
+B → X
+C → Y
+```
+
+C may deliberately send conflicting information. This is a much harder problem. Traditional Paxos addresses a **crash-failure model**, not arbitrary malicious behavior. That is why blockchain systems often use different **Byzantine Fault Tolerant (BFT)** consensus protocols.
+
+## 22. Programming Connection
+
+A simplified conceptual Paxos system might have:
+
+```python
+proposal_number = 10
+value = "X"
+```
+
+<MermaidDiagram title="Prepare → Accept → Chosen" chart={`
+graph LR
+  Pp3["prepare(10)"] --> Ar3["acceptors respond"] --> Ac8["accept(10, X)"] --> Qu4[quorum] --> Ch2["X chosen"]
+`} />
+
+A real implementation requires network communication, persistent state, proposal numbering, message handling, failure handling, timeouts, quorum calculations, and recovery. So Paxos is much more than a simple voting function.
+
+## 23. DSA Connection
+
+Paxos uses ordinary programming structures underneath the distributed protocol.
+
+- **Maps** — track proposals: `proposal_number → value`
+- **Lists** — track accepted/committed decisions
+- **Sets** — track which acceptors responded: `{A, B, C}`
+- **Counters** — track quorum: `responses = 3, required = 3`
+- **State machines** — nodes transition between different protocol states
+
+So again:
+
+> **Distributed algorithms are built using ordinary programming concepts plus networking and failure handling.**
+
+## 24. Common Mistakes
+
+**Mistake 1 — "Paxos and Raft are completely different problems."** No. Both are approaches to **distributed consensus**.
+
+**Mistake 2 — "Paxos is just majority voting."** No. It uses carefully defined proposal, promise, acceptance, and quorum rules.
+
+**Mistake 3 — "Paxos is only for one database value."** Basic Paxos concerns agreement on a value; variants such as Multi-Paxos can be used to establish a sequence of decisions.
+
+**Mistake 4 — "Paxos handles malicious nodes."** Traditional Paxos is designed around crash/communication failures, not arbitrary Byzantine behavior.
+
+**Mistake 5 — "Consensus means every node must be online."** No. Consensus protocols are specifically designed to tolerate certain failures, provided enough nodes remain to form the required quorum.
+
+## 25. Interview Questions
+
+**Q1. What is Paxos?**
+> Paxos is a family of distributed consensus protocols that allows nodes to agree on a value despite certain failures and communication problems.
+
+**Q2. What are the main Paxos roles?**
+> Proposer, Acceptor, and Learner.
+
+**Q3. What are the two major phases of Paxos?**
+> Prepare and Accept.
+
+**Q4. Why are proposal numbers important?**
+> They distinguish proposals and allow nodes to reason about newer and older proposals.
+
+**Q5. Why does Paxos use quorums?**
+> Quorums allow the system to tolerate some node failures while preserving safety through overlap between majorities.
+
+**Q6. What is Multi-Paxos?**
+> Multi-Paxos is an approach for using Paxos-style consensus repeatedly to establish a sequence of decisions, such as a replicated log.
+
+**Q7. Is Paxos the same as Raft?**
+> No. Both solve distributed consensus, but they use different protocol structures and terminology.
+
+## 26. One-Page Revision
+
+<MermaidDiagram title="Paxos, End to End" chart={`
+graph TD
+  Px3[Paxos] --> Dc1["Distributed Consensus"]
+  Dc1 --> Pp4[Proposer]
+  Dc1 --> Ac9[Acceptors]
+  Pp4 --> Pn1["Prepare #N"] --> Ac9
+  Ac9 --> Rs1[Responses] --> An1["Accept #N"] --> Qu5[Quorum] --> Vc3["Value Chosen"] --> Ln1[Learner]
+`} />
+
+The simplified flow:
+
+<MermaidDiagram title="The Simplified Flow" chart={`
+graph LR
+  Po1[PROPOSE] --> Pe1[PREPARE] --> Pm1["PROMISE / RESPONSE"] --> Ac10[ACCEPT] --> Qu6[QUORUM] --> Ch3[CHOSEN]
+`} />
+
+## 27. The Ultimate Mental Model
+
+You now have three levels:
+
+- **Consensus** — *"What problem are we solving?"* Distributed nodes need to agree.
+- **Raft** — *"How can we solve it using a leader-based replicated-log approach?"* `Leader → Log → Replicate → Quorum → Commit`
+- **Paxos** — *"How can we solve distributed agreement using proposal/acceptance and quorum-based rules?"* `Proposer → Prepare → Accept → Quorum → Chosen`
+
+And the connection to your previous lessons:
+
+<MermaidDiagram title="The Full Roadmap" chart={`
+graph LR
+  D1[DHT] --> Ro1[Routing] --> Rp1[Replication] --> Cn3[Consensus]
+  Cn3 --> Ra2["Raft — leader-based agreement"]
+  Cn3 --> Pa2["Paxos — proposer/acceptor-based agreement"]
+`} />
+
+- **DHT** → *WHERE?* — Which node is responsible?
+- **Routing** → *HOW?* — How do I reach that node?
+- **Replication** → *COPIES?* — Where are additional copies?
+- **Consensus** → *AGREEMENT?* — What should the nodes agree on?
+- **Raft** → Leader-based agreement.
+- **Paxos** → Proposer/acceptor-based agreement.
+
+**Final memory line:**
+
+> **Raft and Paxos solve the same broad problem — distributed consensus — but organize the solution differently. Raft emphasizes a leader and replicated log; Paxos emphasizes proposals, acceptors, phases, and quorum-based agreement.**
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-4-raft-consensus", title: "Lesson 4 — Raft Consensus Algorithm" }}
+  next={null}
+/>

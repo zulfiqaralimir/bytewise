@@ -1,0 +1,592 @@
+export const metadata = {
+  title: "Lesson 4 — Raft Consensus Algorithm | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 4: the Raft consensus algorithm — leader, follower, and candidate roles, replicated logs, commits, terms, election timeouts, heartbeats, quorum, and how Raft compares to DHT, replication, and blockchain.",
+  keywords: [
+    "raft",
+    "raft consensus algorithm",
+    "leader election",
+    "log replication",
+    "quorum",
+    "distributed consensus",
+    "heartbeat",
+    "election timeout",
+    "raft vs paxos",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 4 — Raft Consensus Algorithm | Mentor Curriculum Part 11",
+    description:
+      "Leader → Log → Replicate → Majority → Commit.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 4**
+
+# Lesson 4 — Raft Consensus Algorithm
+
+Now that we understand **what consensus is**, we can learn one of the most important practical consensus algorithms:
+
+> **Raft**
+
+Raft is designed to help a group of distributed servers **agree on an ordered sequence of commands**, even when some servers fail.
+
+## 1. Why Do We Need Raft?
+
+From Lesson 3, we learned:
+
+> **Consensus = distributed nodes agreeing on a common decision/state.**
+
+Now imagine three servers — `A`, `B`, `C` — all maintaining a copy of the same database. A client sends `SET X = 50`. We want:
+
+| Node | Value |
+|---|---|
+| A | X = 50 |
+| B | X = 50 |
+| C | X = 50 |
+
+and, importantly, we want them to agree on **the same order of commands**. Raft provides a structured way to achieve this.
+
+## 2. The Big Idea Behind Raft
+
+Raft makes the distributed system easier to understand by giving nodes different roles. There are **three roles**: Leader, Follower, and Candidate.
+
+<MermaidDiagram title="The Normal Situation" chart={`
+graph TD
+  L1[Leader] --> F1[Follower]
+  L1 --> F2[Follower]
+  L1 --> F3[Follower]
+`} />
+
+The **Leader** coordinates the replicated log. Followers normally accept information from the leader. If the leader disappears, a follower can become a **Candidate** and an election can occur.
+
+## 3. The Three Roles
+
+**Leader** — the leader is responsible for coordinating the system. The client normally sends commands to the leader, and the leader then replicates the command to followers.
+
+<MermaidDiagram title="Client → Leader → Followers" chart={`
+graph TD
+  Cl1[Client] --> Ld1[Leader]
+  Ld1 --> B1[B]
+  Ld1 --> C1[C]
+`} />
+
+**Follower** — followers normally receive messages from the leader, replicate log entries, respond to leader requests, and participate in elections. They generally don't independently make the main replicated decisions while a valid leader exists.
+
+**Candidate** — a candidate appears when a follower believes the leader is no longer functioning. It says, conceptually, *"I want to become the new leader,"* and asks other nodes for votes.
+
+<MermaidDiagram title="Follower → Candidate → Election" chart={`
+graph LR
+  Fo1[Follower] --> Un1["Leader seems unavailable"] --> Ca1[Candidate] --> Rv1["Request votes"] --> El1[Election]
+`} />
+
+## 4. Why Does Raft Need a Leader?
+
+Imagine five nodes all independently accepting commands:
+
+```text
+A → command X
+B → command Y
+C → command Z
+```
+
+Now we have a difficult question: **in what order should these commands appear?** Raft simplifies the problem by having one leader coordinate the ordering.
+
+<MermaidDiagram title="One Leader Proposes the Order" chart={`
+graph TD
+  Ld2[Leader] --> F4[F1]
+  Ld2 --> F5[F2]
+  Ld2 --> F6[F3]
+`} />
+
+So instead of five nodes independently deciding the order, the leader proposes the order. This makes consensus easier to reason about.
+
+## 5. Raft Uses a Log
+
+This is one of the most important ideas. A Raft node maintains a **log** — an ordered sequence of commands.
+
+| Index | Command |
+|---|---|
+| 1 | SET X = 10 |
+| 2 | SET X = 20 |
+| 3 | SET Y = 50 |
+| 4 | DELETE Z |
+
+<MermaidDiagram title="The Log Is an Ordered Sequence" chart={`
+graph LR
+  E1["Entry 1"] --> E2["Entry 2"] --> E3["Entry 3"] --> E4["Entry 4"]
+`} />
+
+The goal is for the cluster to eventually agree on the same committed log.
+
+## 6. Why Does Order Matter?
+
+Suppose the commands are `SET X = 10` followed by `SET X = 20`. If they happen in that order, the final state is `X = 20`. But if they happen in the opposite order, the final state is `X = 10`.
+
+Therefore:
+
+> **Distributed systems often need agreement not only on WHAT commands happened, but also on their ORDER.**
+
+Raft's replicated log helps solve this.
+
+## 7. Raft Log Replication
+
+Suppose the cluster is a leader, `A`, with two followers, `B` and `C`.
+
+<MermaidDiagram title="Leader A With Followers B and C" chart={`
+graph TD
+  Ld3[Leader A] --> B2[B]
+  Ld3 --> C2[C]
+`} />
+
+The client sends `SET X = 50`. The leader puts it into its own log first, then sends the entry to its followers.
+
+<MermaidDiagram title="Leader Replicates the Entry" chart={`
+graph LR
+  Ld4["A: SET X = 50"] --> B3["B: SET X = 50"]
+  Ld4 --> C3["C: SET X = 50"]
+`} />
+
+Once the required majority/quorum has accepted the entry, Raft can consider it **committed**.
+
+## 8. What Does "Committed" Mean?
+
+This word is extremely important. A log entry being **received** is not necessarily the same as being **committed**.
+
+<MermaidDiagram title="Received vs. Not Yet Received" chart={`
+graph TD
+  Ld5[Leader A] --> B4["Follower B ✓"]
+  Ld5 --> C4["Follower C ❌"]
+`} />
+
+The entry exists on A and B. Depending on the cluster size and protocol state, it may have enough replicated support to become committed. Once committed, the command can be applied to the state machine.
+
+<MermaidDiagram title="From Log Entry to State Machine" chart={`
+graph TD
+  Le1["Log entry"] --> Re1[Replicated] --> Ma1["Majority / quorum"] --> Co1[COMMITTED] --> Ap1["Apply to state machine"]
+`} />
+
+## 9. Raft and the Replicated State Machine
+
+Remember the concept from Lesson 3:
+
+```text
+Consensus → Agreed command log → Replicated State Machine
+```
+
+Raft follows this model:
+
+<MermaidDiagram title="Raft's Replicated State Machine" chart={`
+graph TD
+  Ra1[Raft] --> Ag1["Agreed log entries"]
+  Ag1 --> Na1[Node A]
+  Ag1 --> Nb1[Node B]
+  Ag1 --> Nc1[Node C]
+  Na1 --> St1[State]
+  Nb1 --> St2[State]
+  Nc1 --> St3[State]
+`} />
+
+If every node applies the same commands in the same order, they should reach the same state.
+
+## 10. What Happens If the Leader Fails?
+
+Suppose the cluster is Leader A with followers B and C, and A suddenly fails.
+
+<MermaidDiagram title="Before: Leader A" chart={`
+graph TD
+  Ld6["Leader A"] --> B5[B]
+  Ld6 --> C5[C]
+`} />
+
+Now only B and C remain. Neither should simply declare itself leader immediately — instead, an election process begins. A follower becomes a **Candidate**.
+
+<MermaidDiagram title="B Becomes a Candidate" chart={`
+graph LR
+  B6[B] --> Ca2[Candidate] --> Rv2["Request votes"]
+`} />
+
+C may vote for B. If B obtains the required majority, B becomes the new leader. A may later recover and return as a follower.
+
+<MermaidDiagram title="After: Leader B" chart={`
+graph TD
+  Ld7["Leader B"] --> A1[A]
+  Ld7 --> C6[C]
+`} />
+
+## 11. Raft Election
+
+The simplified process is:
+
+<MermaidDiagram title="The Election Process" chart={`
+flowchart TD
+  LF1["Leader fails"] --> To1["Follower timeout"] --> Cd1["Become Candidate"] --> Rq1["Request votes"] --> Vo1["Other nodes vote"] --> Mj1{"Majority obtained?"}
+  Mj1 -->|Yes| Bl1["Become Leader"]
+`} />
+
+This is called **leader election**. Notice how this connects to our roadmap:
+
+<MermaidDiagram title="The Roadmap" chart={`
+graph LR
+  Cs1[Consensus] --> Ra2[Raft] --> Le1["Leader Election"]
+`} />
+
+Leader election is therefore not a completely separate magical process — it is a major component of Raft.
+
+## 12. What Is a Term?
+
+Raft divides time into logical periods called **terms**. Think of a term as an election era.
+
+| Term | Leader |
+|---|---|
+| 1 | Leader A |
+| 2 | Leader B |
+| 3 | Leader C |
+
+Each term has an integer identifier: `1, 2, 3, 4, ...`. A term helps nodes determine which leadership information is newer. For example, if Node A knows `term = 5` and Node B says `term = 4`, A can recognize that B's information is from an older term. This helps prevent confusion between old and new leaders.
+
+## 13. Election Timeout
+
+How does a follower know that the leader might have disappeared? It uses a **timeout**.
+
+<MermaidDiagram title="Heartbeat Resets the Timer" chart={`
+graph LR
+  Ld8[Leader] --> Hb1[heartbeat] --> Fo2[Follower] --> Rt1["reset timer"]
+`} />
+
+If heartbeats stop arriving:
+
+<MermaidDiagram title="No Heartbeat → Election" chart={`
+graph LR
+  Nh1["No heartbeat"] --> To2[Timeout] --> Cd2[Candidate] --> El2[Election]
+`} />
+
+Important: **a timeout does not prove that the leader is dead.** It means: *"I have not heard from the leader within the expected time, so I will start an election."* The leader might actually be alive but unreachable because of a network problem. This distinction becomes very important in distributed systems.
+
+## 14. Heartbeats
+
+The leader periodically sends heartbeat messages.
+
+<MermaidDiagram title="Leader Sends Heartbeats" chart={`
+graph TD
+  Ld9[Leader] -->|heartbeat| B7[Follower B]
+  Ld9 -->|heartbeat| C7[Follower C]
+`} />
+
+These messages communicate: *"I am still the leader and the cluster is operating."* If followers continue receiving heartbeats, they remain followers:
+
+```text
+heartbeat
+heartbeat
+heartbeat
+heartbeat
+```
+
+If they stop, an election may begin:
+
+```text
+heartbeat
+heartbeat
+❌
+❌
+```
+
+## 15. Majority and Quorum in Raft
+
+Suppose we have three nodes, `A`, `B`, `C`. A majority is:
+
+```text
+2 / 3
+```
+
+Suppose A is leader, and:
+
+```text
+A ✓
+B ✓
+C ❌
+```
+
+There are still `2 / 3`, so the cluster may continue making progress, assuming the necessary protocol conditions are satisfied. But if:
+
+```text
+A ❌
+B ❌
+C ✓
+```
+
+only one node remains — `1 / 3`, no majority. The cluster cannot safely continue committing new entries. This is a key Raft principle:
+
+> **Without a quorum, Raft sacrifices progress rather than allowing conflicting decisions to be committed.**
+
+## 16. Why Not Let the Minority Continue?
+
+Imagine the network is partitioned: A and B can communicate, but C cannot reach them.
+
+<MermaidDiagram title="A Network Partition" chart={`
+graph LR
+  subgraph "Majority side — 2/3"
+    A2[Node A] --- B8[Node B]
+  end
+  subgraph "Minority side — 1/3"
+    C8[Node C]
+  end
+`} />
+
+A/B have `2/3`, a majority. C has `1/3`, a minority. Raft allows the majority side to continue; the minority side cannot safely commit new entries. Why? Because allowing C to independently commit decisions could create conflicting histories. This is the connection between:
+
+```text
+Network Partition → Quorum → Consensus → Safety vs availability
+```
+
+## 17. Raft and Network Partition
+
+Consider three nodes where A and B form a majority and C is isolated as a minority.
+
+<MermaidDiagram title="Majority Continues, Minority Waits" chart={`
+graph LR
+  subgraph "A + B = majority"
+    A3[A] --- B9[B]
+  end
+  subgraph "C = minority"
+    C9[C]
+  end
+`} />
+
+A and B can potentially continue. C cannot commit new entries by itself. This helps preserve a single authoritative committed history. When the partition heals, C can synchronize with the current leader.
+
+<MermaidDiagram title="Partition Heals" chart={`
+graph LR
+  A4[A] --- B10[B] --- C10[C]
+`} />
+
+## 18. Raft vs DHT
+
+Now connect Lesson 2 and Lesson 4.
+
+<MermaidDiagram title="DHT" chart={`
+graph LR
+  K1[Key] --> D1[DHT] --> R1["Responsible node"]
+`} />
+
+Main question: **where is the data?**
+
+<MermaidDiagram title="Raft" chart={`
+graph LR
+  Cm1[Command] --> Ld10[Leader] --> Rl1["Replicated log"] --> Mj2[Majority] --> Cm2[Commit]
+`} />
+
+Main question: **what sequence of commands should the cluster agree on?**
+
+So:
+
+> **DHT = distributed lookup.**
+> **Raft = distributed consensus.**
+
+## 19. Raft vs Replication
+
+Again, don't confuse these.
+
+**Replication** means multiple copies exist.
+
+<MermaidDiagram title="Replication" chart={`
+graph TD
+  D2[Data] --> A5[A]
+  D2 --> B11[B]
+  D2 --> C11[C]
+`} />
+
+**Raft** means the nodes coordinate on the same ordered sequence of commands.
+
+<MermaidDiagram title="Raft" chart={`
+graph LR
+  Cm3[Command] --> Ld11[Leader] --> Rl2["Replicate log"] --> Qu1[Quorum] --> Cm4[Commit]
+`} />
+
+Therefore:
+
+> **Raft uses replication as part of achieving consensus.**
+
+## 20. Raft vs Blockchain
+
+Raft and blockchain can both involve multiple nodes, replication, distributed communication, agreement, and fault handling. But they have different goals and assumptions.
+
+**Raft** is typically used in controlled clusters where participating nodes are known/trusted to some degree — examples include distributed databases and coordination systems.
+
+<MermaidDiagram title="Raft — A Known Cluster" chart={`
+graph LR
+  A6[A] --- B12[B] --- C12[C]
+`} />
+
+**Blockchain** — many blockchain systems are designed for decentralized environments where participants may not all be trusted. They use blockchain-specific consensus mechanisms and cryptographic techniques.
+
+<MermaidDiagram title="Blockchain" chart={`
+graph LR
+  P1["P2P network"] --> Cr1[Cryptography] --> Cn1[Consensus] --> Le2[Ledger]
+`} />
+
+Therefore:
+
+> **Raft is a general distributed consensus algorithm; blockchain is a broader system architecture that uses consensus as one of its core components.**
+
+## 21. Programming Connection
+
+A simplified Raft node can be thought of as maintaining state such as:
+
+```python
+role = "follower"
+term = 5
+log = [
+    "SET X = 10",
+    "SET X = 20"
+]
+```
+
+A leader might conceptually handle:
+
+```python
+propose("SET X = 30")
+```
+
+<MermaidDiagram title="From Proposal to Applied Command" chart={`
+graph LR
+  Pr1[propose] --> Ll1["Leader log"] --> Sf1["Send to followers"] --> Ak1["Receive acknowledgements"] --> Qu2[Quorum] --> Cm5[Commit] --> Ap2["Apply command"]
+`} />
+
+Real Raft implementations require substantial networking, persistence, timers, message handling, and failure recovery.
+
+## 22. DSA Connection
+
+Raft is an excellent example of how ordinary programming concepts become part of a distributed algorithm.
+
+- **Array/List** — the replicated log: `[command1, command2, command3]`
+- **State** — `FOLLOWER`, `CANDIDATE`, `LEADER`
+- **Counters** — term, vote count, log index
+- **Timers** — election timeout, heartbeat interval
+- **Networking** — `send()`, `receive()`
+- **State Machine** — command → state transition
+
+So:
+
+> **Raft is not just a theoretical algorithm. It combines data structures, networking, state machines, persistence, and failure handling.**
+
+## 23. The Complete Raft Picture
+
+<MermaidDiagram title="The Raft Cluster" chart={`
+graph TD
+  Ld12[Leader] --> F7[Follower]
+  Ld12 --> F8[Follower]
+  F7 --> Rl3["Replicated Log"]
+  F8 --> Rl3
+  Rl3 --> Qu3[Quorum] --> Cm6[Commit] --> Sm1["State Machine"]
+`} />
+
+If the leader fails:
+
+<MermaidDiagram title="Leader Failure → New Leader → Commit" chart={`
+flowchart TD
+  Lf1["Leader ❌"] --> Et1["Election timeout"] --> Cd3[Candidate] --> Rv3["Request votes"] --> Mj3[Majority] --> Nl1["New Leader"] --> Rp1[Replication] --> Cm7[Commit]
+`} />
+
+## 24. The Most Important Raft Terms
+
+| Term | Simple Meaning |
+|---|---|
+| **Leader** | Coordinates replication and normally handles client commands |
+| **Follower** | Receives replicated information and follows the leader |
+| **Candidate** | Node seeking leadership |
+| **Term** | Logical period associated with leadership/elections |
+| **Log** | Ordered sequence of commands |
+| **Heartbeat** | Leader message indicating it is still active |
+| **Election timeout** | Timeout after which a follower may start an election |
+| **Vote** | A node's election choice |
+| **Quorum** | Required participation, often a majority |
+| **Commit** | Entry is considered safely agreed according to Raft's rules |
+| **State machine** | Applies committed commands to produce application state |
+
+## 25. Common Mistakes
+
+**Mistake 1 — "The leader stores all the data."** Not necessarily. The leader coordinates replication; followers can maintain replicated copies.
+
+**Mistake 2 — "If the leader fails, any follower becomes leader immediately."** No. An election must occur and the candidate must obtain the required votes.
+
+**Mistake 3 — "Heartbeat proves the leader is alive."** Not exactly. It means the follower is receiving communication from the leader. A network problem can make a healthy node appear unreachable.
+
+**Mistake 4 — "Replication is Raft."** No. Raft is a consensus algorithm that uses replicated logs to achieve agreement.
+
+**Mistake 5 — "Raft guarantees availability even if most nodes fail."** No. If the cluster loses its quorum, it cannot safely commit new entries.
+
+## 26. Interview Questions
+
+**Q1. What is Raft?**
+> Raft is a distributed consensus algorithm that helps a cluster of nodes agree on an ordered replicated log, using leader election and quorum-based replication.
+
+**Q2. What are the three Raft states?**
+> Leader, Follower, and Candidate.
+
+**Q3. Why does Raft use a leader?**
+> The leader simplifies coordination by being responsible for ordering and replicating client commands.
+
+**Q4. What happens when the leader fails?**
+> Followers eventually time out, a candidate starts an election, and a node that receives a majority of votes becomes the new leader.
+
+**Q5. What is a Raft log?**
+> An ordered sequence of commands that the cluster replicates across nodes.
+
+**Q6. What is a quorum?**
+> The minimum required participation, commonly a majority, for the protocol to safely make progress or commit decisions.
+
+**Q7. Why can't a minority partition continue committing entries?**
+> Because it lacks a quorum, and allowing it to commit independently could create conflicting histories.
+
+## 27. One-Page Revision
+
+<MermaidDiagram title="Raft, End to End" chart={`
+graph TD
+  Ra3["Leader-based Consensus"] --> Ld13[Leader]
+  Ra3 --> Fo3[Follower]
+  Ra3 --> Cd4[Candidate]
+  Cd4 --> El3[Election]
+  Ld13 --> Rl4["Replicated Log"]
+  Rl4 --> Qu4[Quorum] --> Cm8[Commit] --> Sm2["State Machine"]
+`} />
+
+If Leader Fails:
+
+<MermaidDiagram title="If Leader Fails" chart={`
+graph LR
+  Ld14[Leader] --> Fl1["❌"] --> To3[Timeout] --> Cd5[Candidate] --> Rv4["Request Votes"] --> Mj4[Majority] --> Nl2["New Leader"] --> Rp2[Replication] --> Cm9[Commit]
+`} />
+
+## 28. The Ultimate Memory Trick
+
+Remember these five words:
+
+> **Leader → Log → Replicate → Majority → Commit**
+
+And if the leader fails:
+
+> **Timeout → Candidate → Vote → Majority → New Leader**
+
+Connect the whole roadmap:
+
+<MermaidDiagram title="The Whole Roadmap" chart={`
+graph LR
+  D3[DHT] --> Cn2[Consensus] --> Ra4[Raft]
+`} />
+
+- **DHT** → *"WHERE is the data?"*
+- **Consensus** → *"WHAT should nodes agree on?"*
+- **Raft** → *"HOW can nodes achieve that agreement?"*
+
+And:
+
+> **Raft = Leader + Replicated Log + Quorum + Commit**
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-3-consensus", title: "Lesson 3 — Consensus" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-5-paxos", title: "Lesson 5 — Paxos" }}
+/>
