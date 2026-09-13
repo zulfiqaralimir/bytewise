@@ -21,7 +21,7 @@ export const metadata = {
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
-import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+import { Figure } from "@/app/components/Figure";
 
 **[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 5**
 
@@ -31,10 +31,22 @@ Now we move from **Raft** to **Paxos**. The most important thing to understand f
 
 > **Raft and Paxos are both approaches to solving the distributed consensus problem.**
 
-<MermaidDiagram title="The Roadmap So Far" chart={`
-graph LR
-  L3["Lesson 3: Consensus"] --> L4["Lesson 4: Raft"] --> L5["Lesson 5: Paxos"]
-`} />
+<Figure title="The Roadmap So Far" caption="Each lesson answers a different layer of the same question.">
+  <svg viewBox="0 0 500 70" style={{ width: "100%", maxWidth: 520, height: "auto" }}>
+    <defs>
+      <marker id="p5-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Lesson 3: Consensus", "Lesson 4: Raft", "Lesson 5: Paxos"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 164} y="15" width="148" height="40" rx="8" fill="#fff" stroke={label.includes("Paxos") ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={84 + i * 164} y="39" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={158 + i * 164} y1="35" x2={174 + i * 164} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-1)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 If Lesson 3 asked *"How can distributed computers agree?"* — Lesson 4 answered with *"one practical way to solve it."* Lesson 5 answers with *"another important way to solve it."*
 
@@ -46,12 +58,24 @@ In simple words:
 
 > **Paxos helps multiple computers agree on a value or decision, even when some computers or network communication may fail.**
 
-<MermaidDiagram title="Nodes Agree on a Decision" chart={`
-graph TD
-  A1[A] --> Ag1["Agree on a decision"]
-  B1[B] --> Ag1
-  C1[C] --> Ag1
-`} />
+<Figure title="Nodes Agree on a Decision" caption="Every node's input converges on one agreed outcome.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="p5-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {[60, 150, 240].map((cx, i) => (
+      <g key={i}>
+        <rect x={cx - 35} y="10" width="70" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={cx} y="33" textAnchor="middle" fontSize="13" fill="#1e293b">{["A", "B", "C"][i]}</text>
+        <line x1={cx} y1="46" x2="150" y2="84" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-2)" />
+      </g>
+    ))}
+    <rect x="80" y="86" width="140" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="109" textAnchor="middle" fontSize="11.5" fill="#0f172a">Agree on a decision</text>
+  </svg>
+</Figure>
 
 The decision could be something like `X = 50`, or an entry in an ordered log.
 
@@ -83,18 +107,42 @@ Traditional Paxos describes several roles. The most important ones are:
 
 **Acceptor** — the nodes that participate in deciding whether a proposal can be accepted.
 
-<MermaidDiagram title="Proposer → Acceptors" chart={`
-graph TD
-  P1[Proposer] --> Ac1[Acceptor]
-  P1 --> Ac2[Acceptor]
-`} />
+<Figure title="Proposer → Acceptors" caption="A single proposer addresses every acceptor.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="p5-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#0f172a">Proposer</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-3)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-3)" />
+    <rect x="20" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">Acceptor</text>
+    <rect x="180" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">Acceptor</text>
+  </svg>
+</Figure>
 
 **Learner** — a node that learns the final chosen value.
 
-<MermaidDiagram title="Acceptors → Chosen Value → Learner" chart={`
-graph LR
-  Ac3[Acceptors] --> Ch1["Chosen value"] --> Le1[Learner]
-`} />
+<Figure title="Acceptors → Chosen Value → Learner" caption="The learner only cares about the final outcome.">
+  <svg viewBox="0 0 460 70" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="p5-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Acceptors", "Chosen value", "Learner"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 150} y="15" width="134" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={77 + i * 150} y="39" textAnchor="middle" fontSize="12.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={144 + i * 150} y1="35" x2={160 + i * 150} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-4)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 5. Simple Analogy
 
@@ -123,20 +171,43 @@ Imagine Node A proposes `X`, then the network delays the message, and later Node
 
 At a simplified level, Paxos has two major phases.
 
-<MermaidDiagram title="Prepare, Then Accept" chart={`
-graph LR
-  Ph1["Phase 1: Prepare"] --> Ph2["Phase 2: Accept"]
-`} />
+<Figure title="Prepare, Then Accept" caption="Every Paxos round moves through these two phases.">
+  <svg viewBox="0 0 340 70" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="p5-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="15" width="150" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="85" y="39" textAnchor="middle" fontSize="12.5" fill="#1e293b">Phase 1: Prepare</text>
+    <line x1="160" y1="35" x2="178" y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-5)" />
+    <rect x="180" y="15" width="150" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="255" y="39" textAnchor="middle" fontSize="12.5" fill="#1e293b">Phase 2: Accept</text>
+  </svg>
+</Figure>
 
 ## 9. Phase 1 — Prepare
 
 The proposer sends a **prepare request** with a proposal number.
 
-<MermaidDiagram title="Prepare #10" chart={`
-graph TD
-  P2["Proposer A"] -->|"Prepare #10"| Ac4["Acceptor B"]
-  P2 -->|"Prepare #10"| Ac5["Acceptor C"]
-`} />
+<Figure title="Prepare #10" caption="The proposer announces a proposal number before proposing a value.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="p5-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="12.5" fill="#0f172a">Proposer A</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-6)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-6)" />
+    <text x="150" y="62" textAnchor="middle" fontSize="10" fill="#475569">Prepare #10</text>
+    <rect x="20" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="106" textAnchor="middle" fontSize="11.5" fill="#1e293b">Acceptor B</text>
+    <rect x="180" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="106" textAnchor="middle" fontSize="11.5" fill="#1e293b">Acceptor C</text>
+  </svg>
+</Figure>
 
 The acceptors examine the proposal number. Conceptually they are saying: *"Okay, I recognize proposal number 10, and I will not accept an older proposal in conflict with this promise."* The exact Paxos rules are more precise, but this is the right beginner mental model.
 
@@ -144,18 +215,43 @@ The acceptors examine the proposal number. Conceptually they are saying: *"Okay,
 
 If the proposer successfully completes the prepare phase, it sends an **accept request**.
 
-<MermaidDiagram title="Accept #10, Value X" chart={`
-graph TD
-  P3["Proposer A"] -->|"Accept #10, value X"| Ac6[B]
-  P3 -->|"Accept #10, value X"| Ac7[C]
-`} />
+<Figure title="Accept #10, Value X" caption="Once enough acceptors have promised, the proposer asks them to accept.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="p5-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="12.5" fill="#0f172a">Proposer A</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-7)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-7)" />
+    <text x="150" y="62" textAnchor="middle" fontSize="9.5" fill="#475569">Accept #10, value X</text>
+    <rect x="20" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="180" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 If enough acceptors accept the proposal, the value can become **chosen**.
 
-<MermaidDiagram title="The Full Cycle" chart={`
-graph LR
-  Pr1[Prepare] --> Pr2["Prepare response"] --> Ar1["Accept request"] --> Ma1["Majority accepts"] --> Vc1["Value chosen"]
-`} />
+<Figure title="The Full Cycle" caption="From proposal to a decision the whole cluster agrees is final.">
+  <svg viewBox="0 0 640 70" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="p5-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Prepare", "Prepare response", "Accept request", "Majority accepts", "Value chosen"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="114" height="40" rx="8" fill="#fff" stroke={label === "Value chosen" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={67 + i * 128} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={124 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-8)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 11. Quorum
 
@@ -199,15 +295,25 @@ But if `A B C ❌`, `D ❌`, `E ❌`, only two nodes remain — `2/5`, no majori
 
 Imagine the network is partitioned into a 2-node side and a 3-node side, out of five total nodes.
 
-<MermaidDiagram title="Minority vs Majority" chart={`
-graph LR
-  subgraph "Minority — 2/5"
-    A2[A] --- B2[B]
-  end
-  subgraph "Majority — 3/5"
-    C2[C] --- D1[D] --- E1[E]
-  end
-`} />
+<Figure title="Minority vs Majority" caption="Out of five acceptors, three form a quorum and two do not.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="150" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="85" y="28" textAnchor="middle" fontSize="11" fill="#475569">Minority — 2/5</text>
+    <rect x="25" y="55" width="55" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="52" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">A</text>
+    <rect x="90" y="55" width="55" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="117" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="170" y="10" width="200" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="270" y="28" textAnchor="middle" fontSize="11" fill="#475569">Majority — 3/5</text>
+    <rect x="185" y="55" width="55" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="212" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+    <rect x="250" y="55" width="55" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="277" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">D</text>
+    <rect x="315" y="55" width="45" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="337" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">E</text>
+    <text x="165" y="77" textAnchor="middle" fontSize="14" fill="#dc2626">✕</text>
+  </svg>
+</Figure>
 
 With five nodes, majority = 3. The right side has a quorum; the left side does not. The majority side can potentially make progress. The minority side cannot safely choose a new value.
 
@@ -240,23 +346,60 @@ This distinction is important.
 
 **Multi-Paxos** extends the idea toward agreeing on a sequence of values — for example, an ordered log: `1 → SET X = 10`, `2 → SET X = 20`, `3 → SET Y = 50`. This is much closer to the replicated-log problem we saw with Raft.
 
-<MermaidDiagram title="Basic Paxos → Multi-Paxos" chart={`
-graph TD
-  Px1[Paxos] --> Ov1["Agree on one value"]
-  Mp1["Multi-Paxos"] --> Ov2["Agree on many ordered values"] --> Rl1["Replicated log"]
-`} />
+<Figure title="Basic Paxos → Multi-Paxos" caption="Multi-Paxos repeats the basic protocol to build an ordered log.">
+  <svg viewBox="0 0 460 140" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="p5-9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="90" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="55" y="34" textAnchor="middle" fontSize="12" fill="#1e293b">Paxos</text>
+    <line x1="100" y1="30" x2="130" y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-9)" />
+    <rect x="132" y="10" width="180" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="222" y="34" textAnchor="middle" fontSize="11" fill="#1e293b">Agree on one value</text>
+    <rect x="10" y="90" width="110" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="65" y="114" textAnchor="middle" fontSize="11.5" fill="#0f172a">Multi-Paxos</text>
+    <line x1="120" y1="110" x2="150" y2="110" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-9)" />
+    <rect x="152" y="90" width="180" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="242" y="114" textAnchor="middle" fontSize="10.5" fill="#1e293b">Agree on many ordered values</text>
+    <line x1="332" y1="110" x2="362" y2="110" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-9)" />
+    <rect x="364" y="90" width="90" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="409" y="114" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replicated log</text>
+  </svg>
+</Figure>
 
 ## 17. Raft and Multi-Paxos Connection
 
 This makes the comparison clearer:
 
-<MermaidDiagram title="Both Solve Consensus, Differently" chart={`
-graph TD
-  Cs1[Consensus] --> Ra1[Raft]
-  Cs1 --> Pa1[Paxos]
-  Ra1 --> Rl2["Replicated log"] --> Lb1["Leader-based approach"]
-  Pa1 --> Bp1["Basic Paxos"] --> Mp2["Multi-Paxos"] --> Od1["Ordered decisions"]
-`} />
+<Figure title="Both Solve Consensus, Differently" caption="Raft and Paxos branch from the same problem into different structures.">
+  <svg viewBox="0 0 500 220" style={{ width: "100%", maxWidth: 520, height: "auto" }}>
+    <defs>
+      <marker id="p5-10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="200" y="10" width="100" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="250" y="32" textAnchor="middle" fontSize="12.5" fill="#0f172a">Consensus</text>
+    <line x1="230" y1="46" x2="120" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-10)" />
+    <line x1="270" y1="46" x2="380" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-10)" />
+    <rect x="70" y="82" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="120" y="104" textAnchor="middle" fontSize="12" fill="#1e293b">Raft</text>
+    <rect x="330" y="82" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="380" y="104" textAnchor="middle" fontSize="12" fill="#1e293b">Paxos</text>
+    <line x1="120" y1="118" x2="120" y2="142" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-10)" />
+    <rect x="55" y="144" width="130" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="120" y="165" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replicated log</text>
+    <line x1="120" y1="178" x2="120" y2="196" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-10)" />
+    <text x="120" y="210" textAnchor="middle" fontSize="10" fill="#1e293b">Leader-based approach</text>
+    <line x1="380" y1="118" x2="380" y2="142" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-10)" />
+    <rect x="325" y="144" width="110" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="380" y="165" textAnchor="middle" fontSize="10.5" fill="#1e293b">Basic Paxos</text>
+    <line x1="380" y1="178" x2="380" y2="196" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-10)" />
+    <text x="380" y="210" textAnchor="middle" fontSize="10" fill="#1e293b">Multi-Paxos → ordered decisions</text>
+  </svg>
+</Figure>
 
 Both can be used to build systems where replicated machines maintain consistent state.
 
@@ -264,17 +407,41 @@ Both can be used to build systems where replicated machines maintain consistent 
 
 Again: **Paxos is not simply replication.**
 
-<MermaidDiagram title="Replication" chart={`
-graph TD
-  D1[Data] --> A3[A]
-  D1 --> B3[B]
-  D1 --> C3[C]
-`} />
+<Figure title="Replication" caption="The same data lives on every node.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="p5-11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="110" y="10" width="80" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="12.5" fill="#0f172a">Data</text>
+    {[60, 150, 240].map((cx, i) => (
+      <g key={i}>
+        <line x1="150" y1="48" x2={cx} y2="84" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-11)" />
+        <rect x={cx - 35} y="86" width="70" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={cx} y="108" textAnchor="middle" fontSize="12" fill="#1e293b">{["A", "B", "C"][i]}</text>
+      </g>
+    ))}
+  </svg>
+</Figure>
 
-<MermaidDiagram title="Paxos" chart={`
-graph LR
-  Pp1[Proposal] --> Pt1[Protocol] --> Qu1[Quorum] --> Ag2[Agreement] --> Cv1["Chosen value"]
-`} />
+<Figure title="Paxos" caption="Consensus coordinates what gets committed, on top of replication.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="p5-12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Proposal", "Protocol", "Quorum", "Agreement", "Chosen value"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 112} y="15" width="98" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={59 + i * 112} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={108 + i * 112} y1="35" x2={122 + i * 112} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-12)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Paxos can be used as part of a system that replicates state. So:
 
@@ -284,36 +451,84 @@ Paxos can be used as part of a system that replicates state. So:
 
 Let's connect all three concepts now.
 
-<MermaidDiagram title="DHT" chart={`
-graph LR
-  K1[Key] --> H1[Hash] --> Rn1["Responsible node"]
-`} />
+<Figure title="DHT" caption="Question: where is this data?">
+  <svg viewBox="0 0 380 70" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="p5-13" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Key", "Hash", "Responsible node"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="112" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={66 + i * 128} y="39" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={122 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-13)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
-Question: *"Where is this data?"*
+<Figure title="Raft" caption="Question: what ordered commands should the cluster agree on?">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="p5-14" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Command", "Leader", "Replicated log", "Quorum", "Commit"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 124} y="15" width="108" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={64 + i * 124} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={118 + i * 124} y1="35" x2={134 + i * 124} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-14)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
-<MermaidDiagram title="Raft" chart={`
-graph LR
-  Cm1[Command] --> Ld1[Leader] --> Rl3["Replicated log"] --> Qu2[Quorum] --> Cm2[Commit]
-`} />
-
-Question: *"What ordered commands should the cluster agree on?"*
-
-<MermaidDiagram title="Paxos" chart={`
-graph LR
-  Pp2[Proposal] --> Pr3[Prepare] --> Ar2[Accept] --> Qu3[Quorum] --> Cv2["Chosen value"]
-`} />
-
-Question: *"How can distributed nodes safely agree on a value?"*
+<Figure title="Paxos" caption="Question: how can distributed nodes safely agree on a value?">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="p5-15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Proposal", "Prepare", "Accept", "Quorum", "Chosen value"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 112} y="15" width="98" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={59 + i * 112} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={108 + i * 112} y1="35" x2={122 + i * 112} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-15)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 20. Paxos and Blockchain
 
 Blockchain is another interesting connection. A blockchain needs some mechanism for distributed participants to agree on the accepted state/history. But ordinary Paxos assumes a different environment from many permissionless blockchains — Paxos is generally designed for systems where nodes are expected to follow the protocol rather than behave maliciously. Blockchain consensus mechanisms may need to handle **Byzantine or adversarial behavior**, depending on the blockchain.
 
-<MermaidDiagram title="Different Failure Assumptions" chart={`
-graph LR
-  Px2[Paxos] --> Cf1["Crash / communication failures"] --> Cn1[Consensus]
-  Cn2[Consensus] --> Bf1["Adversarial / Byzantine participants"] --> Dm1["Different consensus mechanisms"]
-`} />
+<Figure title="Different Failure Assumptions" caption="Paxos assumes honest nodes; some blockchains cannot.">
+  <svg viewBox="0 0 460 130" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="p5-16" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Paxos", "Crash / comm failures", "Consensus"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 150} y="10" width="134" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={77 + i * 150} y="34" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={144 + i * 150} y1="30" x2={160 + i * 150} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-16)" />}
+      </g>
+    ))}
+    {["Consensus", "Adversarial / Byzantine", "Different mechanisms"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 150} y="80" width="134" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={77 + i * 150} y="104" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={144 + i * 150} y1="100" x2={160 + i * 150} y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-16)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 This distinction is extremely important.
 
@@ -348,10 +563,22 @@ proposal_number = 10
 value = "X"
 ```
 
-<MermaidDiagram title="Prepare → Accept → Chosen" chart={`
-graph LR
-  Pp3["prepare(10)"] --> Ar3["acceptors respond"] --> Ac8["accept(10, X)"] --> Qu4[quorum] --> Ch2["X chosen"]
-`} />
+<Figure title="Prepare → Accept → Chosen" caption="The conceptual call sequence behind a Paxos round.">
+  <svg viewBox="0 0 640 70" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="p5-17" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["prepare(10)", "acceptors respond", "accept(10, X)", "quorum", "X chosen"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="114" height="40" rx="8" fill="#fff" stroke={label === "X chosen" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={67 + i * 128} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={124 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-17)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 A real implementation requires network communication, persistent state, proposal numbering, message handling, failure handling, timeouts, quorum calculations, and recovery. So Paxos is much more than a simple voting function.
 
@@ -406,21 +633,55 @@ So again:
 
 ## 26. One-Page Revision
 
-<MermaidDiagram title="Paxos, End to End" chart={`
-graph TD
-  Px3[Paxos] --> Dc1["Distributed Consensus"]
-  Dc1 --> Pp4[Proposer]
-  Dc1 --> Ac9[Acceptors]
-  Pp4 --> Pn1["Prepare #N"] --> Ac9
-  Ac9 --> Rs1[Responses] --> An1["Accept #N"] --> Qu5[Quorum] --> Vc3["Value Chosen"] --> Ln1[Learner]
-`} />
+<Figure title="Paxos, End to End" caption="Every role and phase in one picture.">
+  <svg viewBox="0 0 480 220" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="p5-18" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="10" width="180" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="240" y="32" textAnchor="middle" fontSize="12" fill="#0f172a">Distributed Consensus</text>
+    <line x1="210" y1="46" x2="130" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <line x1="270" y1="46" x2="350" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <rect x="80" y="82" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="130" y="103" textAnchor="middle" fontSize="11.5" fill="#1e293b">Proposer</text>
+    <rect x="300" y="82" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="350" y="103" textAnchor="middle" fontSize="11.5" fill="#1e293b">Acceptors</text>
+    <line x1="180" y1="99" x2="296" y2="99" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <text x="240" y="92" textAnchor="middle" fontSize="9.5" fill="#475569">Prepare #N</text>
+    <line x1="350" y1="116" x2="350" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <rect x="305" y="142" width="90" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="350" y="161" textAnchor="middle" fontSize="10.5" fill="#1e293b">Responses</text>
+    <line x1="305" y1="157" x2="200" y2="157" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <rect x="120" y="142" width="80" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="160" y="161" textAnchor="middle" fontSize="10" fill="#1e293b">Accept #N</text>
+    <line x1="120" y1="157" x2="90" y2="157" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <rect x="15" y="142" width="70" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="50" y="161" textAnchor="middle" fontSize="10" fill="#1e293b">Quorum</text>
+    <line x1="50" y1="172" x2="50" y2="196" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-18)" />
+    <text x="115" y="212" textAnchor="middle" fontSize="10" fill="#1e293b">Value Chosen → Learner</text>
+  </svg>
+</Figure>
 
 The simplified flow:
 
-<MermaidDiagram title="The Simplified Flow" chart={`
-graph LR
-  Po1[PROPOSE] --> Pe1[PREPARE] --> Pm1["PROMISE / RESPONSE"] --> Ac10[ACCEPT] --> Qu6[QUORUM] --> Ch3[CHOSEN]
-`} />
+<Figure title="The Simplified Flow" caption="The essential Paxos round, stripped to its steps.">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="p5-19" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["PROPOSE", "PREPARE", "PROMISE / RESPONSE", "ACCEPT", "QUORUM", "CHOSEN"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 102} y="15" width="88" height="40" rx="8" fill="#fff" stroke={label === "CHOSEN" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={54 + i * 102} y="39" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 5 && <line x1={98 + i * 102} y1="35" x2={112 + i * 102} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-19)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 27. The Ultimate Mental Model
 
@@ -432,12 +693,28 @@ You now have three levels:
 
 And the connection to your previous lessons:
 
-<MermaidDiagram title="The Full Roadmap" chart={`
-graph LR
-  D1[DHT] --> Ro1[Routing] --> Rp1[Replication] --> Cn3[Consensus]
-  Cn3 --> Ra2["Raft — leader-based agreement"]
-  Cn3 --> Pa2["Paxos — proposer/acceptor-based agreement"]
-`} />
+<Figure title="The Full Roadmap" caption="Two different answers to the same 'how do we agree?' question.">
+  <svg viewBox="0 0 560 160" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="p5-20" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["DHT", "Routing", "Replication", "Consensus"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 130} y="10" width="114" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={67 + i * 130} y="34" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={124 + i * 130} y1="30" x2={140 + i * 130} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-20)" />}
+      </g>
+    ))}
+    <line x1="460" y1="50" x2="200" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-20)" />
+    <line x1="460" y1="50" x2="420" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#p5-20)" />
+    <rect x="90" y="92" width="220" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="200" y="114" textAnchor="middle" fontSize="10.5" fill="#1e293b">Raft — leader-based agreement</text>
+    <rect x="330" y="92" width="220" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="440" y="114" textAnchor="middle" fontSize="9.5" fill="#1e293b">Paxos — proposer/acceptor-based</text>
+  </svg>
+</Figure>
 
 - **DHT** → *WHERE?* — Which node is responsible?
 - **Routing** → *HOW?* — How do I reach that node?
@@ -452,5 +729,5 @@ graph LR
 
 <ArticleNav
   prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-4-raft-consensus", title: "Lesson 4 — Raft Consensus Algorithm" }}
-  next={null}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-6-leader-election", title: "Lesson 6 — Leader Election" }}
 />

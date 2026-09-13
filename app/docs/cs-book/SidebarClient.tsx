@@ -112,6 +112,7 @@ const chapters = [
       { title: "Mentor Curriculum, Part 11, Lesson 3: Consensus", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-3-consensus" },
       { title: "Mentor Curriculum, Part 11, Lesson 4: Raft Consensus Algorithm", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-4-raft-consensus" },
       { title: "Mentor Curriculum, Part 11, Lesson 5: Paxos", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-5-paxos" },
+      { title: "Mentor Curriculum, Part 11, Lesson 6: Leader Election", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-6-leader-election" },
     ],
   },
   {

@@ -22,7 +22,7 @@ export const metadata = {
 };
 
 import { ArticleNav } from "@/app/components/ArticleNav";
-import { MermaidDiagram } from "@/app/components/MermaidDiagram";
+import { Figure } from "@/app/components/Figure";
 
 **[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 4**
 
@@ -54,12 +54,24 @@ and, importantly, we want them to agree on **the same order of commands**. Raft 
 
 Raft makes the distributed system easier to understand by giving nodes different roles. There are **three roles**: Leader, Follower, and Candidate.
 
-<MermaidDiagram title="The Normal Situation" chart={`
-graph TD
-  L1[Leader] --> F1[Follower]
-  L1 --> F2[Follower]
-  L1 --> F3[Follower]
-`} />
+<Figure title="The Normal Situation" caption="One leader coordinates every follower.">
+  <svg viewBox="0 0 400 160" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="ah4-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="15" width="100" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="200" y="39" textAnchor="middle" fontSize="13" fill="#0f172a">Leader</text>
+    {[60, 200, 340].map((cx, i) => (
+      <g key={i}>
+        <line x1="200" y1="55" x2={cx} y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-1)" />
+        <rect x={cx - 55} y="105" width="110" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={cx} y="129" textAnchor="middle" fontSize="13" fill="#1e293b">Follower</text>
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 The **Leader** coordinates the replicated log. Followers normally accept information from the leader. If the leader disappears, a follower can become a **Candidate** and an election can occur.
 
@@ -67,21 +79,47 @@ The **Leader** coordinates the replicated log. Followers normally accept informa
 
 **Leader** — the leader is responsible for coordinating the system. The client normally sends commands to the leader, and the leader then replicates the command to followers.
 
-<MermaidDiagram title="Client → Leader → Followers" chart={`
-graph TD
-  Cl1[Client] --> Ld1[Leader]
-  Ld1 --> B1[B]
-  Ld1 --> C1[C]
-`} />
+<Figure title="Client → Leader → Followers" caption="The client only ever talks to the current leader.">
+  <svg viewBox="0 0 300 200" style={{ width: "100%", maxWidth: 340, height: "auto" }}>
+    <defs>
+      <marker id="ah4-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#1e293b">Client</text>
+    <line x1="150" y1="48" x2="150" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-2)" />
+    <rect x="100" y="92" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="115" textAnchor="middle" fontSize="13" fill="#0f172a">Leader</text>
+    <line x1="130" y1="130" x2="70" y2="162" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-2)" />
+    <line x1="170" y1="130" x2="230" y2="162" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-2)" />
+    <rect x="20" y="164" width="80" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="60" y="185" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="200" y="164" width="80" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="240" y="185" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 **Follower** — followers normally receive messages from the leader, replicate log entries, respond to leader requests, and participate in elections. They generally don't independently make the main replicated decisions while a valid leader exists.
 
 **Candidate** — a candidate appears when a follower believes the leader is no longer functioning. It says, conceptually, *"I want to become the new leader,"* and asks other nodes for votes.
 
-<MermaidDiagram title="Follower → Candidate → Election" chart={`
-graph LR
-  Fo1[Follower] --> Un1["Leader seems unavailable"] --> Ca1[Candidate] --> Rv1["Request votes"] --> El1[Election]
-`} />
+<Figure title="Follower → Candidate → Election" caption="A follower nominates itself once the leader looks gone.">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="ah4-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Follower", "Leader unavailable", "Candidate", "Request votes", "Election"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 124} y="15" width="110" height="40" rx="8" fill="#fff" stroke={i === 2 ? "#b45309" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={65 + i * 124} y="39" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={120 + i * 124} y1="35" x2={134 + i * 124} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-3)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 4. Why Does Raft Need a Leader?
 
@@ -95,12 +133,27 @@ C → command Z
 
 Now we have a difficult question: **in what order should these commands appear?** Raft simplifies the problem by having one leader coordinate the ordering.
 
-<MermaidDiagram title="One Leader Proposes the Order" chart={`
-graph TD
-  Ld2[Leader] --> F4[F1]
-  Ld2 --> F5[F2]
-  Ld2 --> F6[F3]
-`} />
+<Figure title="One Leader Proposes the Order" caption="A single leader removes the ambiguity about ordering.">
+  <svg viewBox="0 0 400 160" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="ah4-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="15" width="100" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="200" y="39" textAnchor="middle" fontSize="13" fill="#0f172a">Leader</text>
+    {["F1", "F2", "F3"].map((label, i) => {
+      const cx = [60, 200, 340][i];
+      return (
+        <g key={i}>
+          <line x1="200" y1="55" x2={cx} y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-4)" />
+          <rect x={cx - 40} y="105" width="80" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="129" textAnchor="middle" fontSize="13" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
 
 So instead of five nodes independently deciding the order, the leader proposes the order. This makes consensus easier to reason about.
 
@@ -115,10 +168,22 @@ This is one of the most important ideas. A Raft node maintains a **log** — an 
 | 3 | SET Y = 50 |
 | 4 | DELETE Z |
 
-<MermaidDiagram title="The Log Is an Ordered Sequence" chart={`
-graph LR
-  E1["Entry 1"] --> E2["Entry 2"] --> E3["Entry 3"] --> E4["Entry 4"]
-`} />
+<Figure title="The Log Is an Ordered Sequence" caption="Each entry has a fixed position in the sequence.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="ah4-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Entry 1", "Entry 2", "Entry 3", "Entry 4"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 140} y="15" width="110" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={65 + i * 140} y="39" textAnchor="middle" fontSize="13" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={120 + i * 140} y1="35" x2={150 + i * 140} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-5)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 The goal is for the cluster to eventually agree on the same committed log.
 
@@ -136,19 +201,43 @@ Raft's replicated log helps solve this.
 
 Suppose the cluster is a leader, `A`, with two followers, `B` and `C`.
 
-<MermaidDiagram title="Leader A With Followers B and C" chart={`
-graph TD
-  Ld3[Leader A] --> B2[B]
-  Ld3 --> C2[C]
-`} />
+<Figure title="Leader A With Followers B and C" caption="Before any command has been proposed.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="ah4-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#0f172a">Leader A</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-6)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-6)" />
+    <rect x="20" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="60" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="200" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="240" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 The client sends `SET X = 50`. The leader puts it into its own log first, then sends the entry to its followers.
 
-<MermaidDiagram title="Leader Replicates the Entry" chart={`
-graph LR
-  Ld4["A: SET X = 50"] --> B3["B: SET X = 50"]
-  Ld4 --> C3["C: SET X = 50"]
-`} />
+<Figure title="Leader Replicates the Entry" caption="The entry is copied from the leader's log to every follower.">
+  <svg viewBox="0 0 420 100" style={{ width: "100%", maxWidth: 440, height: "auto" }}>
+    <defs>
+      <marker id="ah4-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="30" width="140" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="80" y="54" textAnchor="middle" fontSize="12" fill="#0f172a">A: SET X = 50</text>
+    <line x1="150" y1="42" x2="260" y2="18" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-7)" />
+    <line x1="150" y1="58" x2="260" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-7)" />
+    <rect x="262" y="0" width="150" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="337" y="22" textAnchor="middle" fontSize="12" fill="#1e293b">B: SET X = 50</text>
+    <rect x="262" y="64" width="150" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="337" y="86" textAnchor="middle" fontSize="12" fill="#1e293b">C: SET X = 50</text>
+  </svg>
+</Figure>
 
 Once the required majority/quorum has accepted the entry, Raft can consider it **committed**.
 
@@ -156,18 +245,42 @@ Once the required majority/quorum has accepted the entry, Raft can consider it *
 
 This word is extremely important. A log entry being **received** is not necessarily the same as being **committed**.
 
-<MermaidDiagram title="Received vs. Not Yet Received" chart={`
-graph TD
-  Ld5[Leader A] --> B4["Follower B ✓"]
-  Ld5 --> C4["Follower C ❌"]
-`} />
+<Figure title="Received vs. Not Yet Received" caption="The entry has support from A and B, but not from C.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="ah4-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#0f172a">Leader A</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-8)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-8)" />
+    <rect x="10" y="84" width="110" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="65" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">Follower B ✓</text>
+    <rect x="180" y="84" width="110" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="235" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">Follower C ❌</text>
+  </svg>
+</Figure>
 
 The entry exists on A and B. Depending on the cluster size and protocol state, it may have enough replicated support to become committed. Once committed, the command can be applied to the state machine.
 
-<MermaidDiagram title="From Log Entry to State Machine" chart={`
-graph TD
-  Le1["Log entry"] --> Re1[Replicated] --> Ma1["Majority / quorum"] --> Co1[COMMITTED] --> Ap1["Apply to state machine"]
-`} />
+<Figure title="From Log Entry to State Machine" caption="Commitment happens once a majority has replicated the entry.">
+  <svg viewBox="0 0 640 70" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="ah4-9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Log entry", "Replicated", "Majority / quorum", "COMMITTED", "Apply to state machine"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="114" height="40" rx="8" fill="#fff" stroke={label === "COMMITTED" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={67 + i * 128} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={124 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-9)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 9. Raft and the Replicated State Machine
 
@@ -179,16 +292,33 @@ Consensus → Agreed command log → Replicated State Machine
 
 Raft follows this model:
 
-<MermaidDiagram title="Raft's Replicated State Machine" chart={`
-graph TD
-  Ra1[Raft] --> Ag1["Agreed log entries"]
-  Ag1 --> Na1[Node A]
-  Ag1 --> Nb1[Node B]
-  Ag1 --> Nc1[Node C]
-  Na1 --> St1[State]
-  Nb1 --> St2[State]
-  Nc1 --> St3[State]
-`} />
+<Figure title="Raft's Replicated State Machine" caption="Every node applies the same agreed log to reach the same state.">
+  <svg viewBox="0 0 420 220" style={{ width: "100%", maxWidth: 440, height: "auto" }}>
+    <defs>
+      <marker id="ah4-10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="160" y="10" width="100" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="210" y="32" textAnchor="middle" fontSize="13" fill="#0f172a">Raft</text>
+    <line x1="210" y1="46" x2="210" y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-10)" />
+    <rect x="120" y="72" width="180" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="210" y="94" textAnchor="middle" fontSize="11.5" fill="#1e293b">Agreed log entries</text>
+    {["Node A", "Node B", "Node C"].map((label, i) => {
+      const cx = [60, 210, 360][i];
+      return (
+        <g key={i}>
+          <line x1="210" y1="108" x2={cx} y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-10)" />
+          <rect x={cx - 45} y="142" width="90" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="163" textAnchor="middle" fontSize="12" fill="#1e293b">{label}</text>
+          <line x1={cx} y1="176" x2={cx} y2="190" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-10)" />
+          <rect x={cx - 32} y="192" width="64" height="26" rx="6" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="209" textAnchor="middle" fontSize="11" fill="#1e293b">State</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
 
 If every node applies the same commands in the same order, they should reach the same state.
 
@@ -196,43 +326,112 @@ If every node applies the same commands in the same order, they should reach the
 
 Suppose the cluster is Leader A with followers B and C, and A suddenly fails.
 
-<MermaidDiagram title="Before: Leader A" chart={`
-graph TD
-  Ld6["Leader A"] --> B5[B]
-  Ld6 --> C5[C]
-`} />
+<Figure title="Before: Leader A" caption="The cluster before any failure.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="ah4-11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#0f172a">Leader A</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-11)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-11)" />
+    <rect x="20" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="60" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="200" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="240" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 Now only B and C remain. Neither should simply declare itself leader immediately — instead, an election process begins. A follower becomes a **Candidate**.
 
-<MermaidDiagram title="B Becomes a Candidate" chart={`
-graph LR
-  B6[B] --> Ca2[Candidate] --> Rv2["Request votes"]
-`} />
+<Figure title="B Becomes a Candidate" caption="B nominates itself and asks for votes.">
+  <svg viewBox="0 0 380 70" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="ah4-12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["B", "Candidate", "Request votes"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="112" height="40" rx="8" fill="#fff" stroke={label === "Candidate" ? "#b45309" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={66 + i * 128} y="39" textAnchor="middle" fontSize="12" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={122 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-12)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 C may vote for B. If B obtains the required majority, B becomes the new leader. A may later recover and return as a follower.
 
-<MermaidDiagram title="After: Leader B" chart={`
-graph TD
-  Ld7["Leader B"] --> A1[A]
-  Ld7 --> C6[C]
-`} />
+<Figure title="After: Leader B" caption="B is now the leader; A rejoins as a follower once it recovers.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="ah4-13" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#0f172a">Leader B</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-13)" />
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-13)" />
+    <rect x="20" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="60" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">A</text>
+    <rect x="200" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="240" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 ## 11. Raft Election
 
 The simplified process is:
 
-<MermaidDiagram title="The Election Process" chart={`
-flowchart TD
-  LF1["Leader fails"] --> To1["Follower timeout"] --> Cd1["Become Candidate"] --> Rq1["Request votes"] --> Vo1["Other nodes vote"] --> Mj1{"Majority obtained?"}
-  Mj1 -->|Yes| Bl1["Become Leader"]
-`} />
+<Figure title="The Election Process" caption="A candidate becomes leader only after collecting a majority of votes.">
+  <svg viewBox="0 0 640 160" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="ah4-14" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Leader fails", "Follower timeout", "Become Candidate", "Request votes"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="10" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={80 + i * 158} y="34" textAnchor="middle" fontSize="12" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="30" x2={168 + i * 158} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-14)" />}
+      </g>
+    ))}
+    <line x1="80" y1="50" x2="80" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-14)" />
+    <rect x="10" y="92" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="116" textAnchor="middle" fontSize="12" fill="#1e293b">Other nodes vote</text>
+    <line x1="150" y1="112" x2="180" y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-14)" />
+    <polygon points="180,92 250,112 180,132 110,112" fill="#fff" stroke="#b45309" strokeWidth="1.5" />
+    <text x="180" y="116" textAnchor="middle" fontSize="10.5" fill="#1e293b">Majority?</text>
+    <line x1="250" y1="112" x2="290" y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-14)" />
+    <text x="270" y="102" textAnchor="middle" fontSize="10" fill="#475569">Yes</text>
+    <rect x="292" y="92" width="140" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="362" y="116" textAnchor="middle" fontSize="12" fill="#0f172a">Become Leader</text>
+  </svg>
+</Figure>
 
 This is called **leader election**. Notice how this connects to our roadmap:
 
-<MermaidDiagram title="The Roadmap" chart={`
-graph LR
-  Cs1[Consensus] --> Ra2[Raft] --> Le1["Leader Election"]
-`} />
+<Figure title="The Roadmap" caption="Leader election is one piece of the larger Raft protocol.">
+  <svg viewBox="0 0 480 70" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="ah4-15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Consensus", "Raft", "Leader Election"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="15" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={80 + i * 158} y="39" textAnchor="middle" fontSize="12.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={150 + i * 158} y1="35" x2={168 + i * 158} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-15)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Leader election is therefore not a completely separate magical process — it is a major component of Raft.
 
@@ -252,17 +451,41 @@ Each term has an integer identifier: `1, 2, 3, 4, ...`. A term helps nodes deter
 
 How does a follower know that the leader might have disappeared? It uses a **timeout**.
 
-<MermaidDiagram title="Heartbeat Resets the Timer" chart={`
-graph LR
-  Ld8[Leader] --> Hb1[heartbeat] --> Fo2[Follower] --> Rt1["reset timer"]
-`} />
+<Figure title="Heartbeat Resets the Timer" caption="Every heartbeat received restarts the follower's countdown.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="ah4-16" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Leader", "heartbeat", "Follower", "reset timer"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 140} y="15" width="120" height="40" rx="8" fill="#fff" stroke={label === "heartbeat" || label === "reset timer" ? "#cbd5e1" : "#94a3b8"} strokeWidth="1.5" strokeDasharray={label === "heartbeat" || label === "reset timer" ? "4 3" : undefined} />
+        <text x={70 + i * 140} y="39" textAnchor="middle" fontSize="12" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={130 + i * 140} y1="35" x2={150 + i * 140} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-16)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 If heartbeats stop arriving:
 
-<MermaidDiagram title="No Heartbeat → Election" chart={`
-graph LR
-  Nh1["No heartbeat"] --> To2[Timeout] --> Cd2[Candidate] --> El2[Election]
-`} />
+<Figure title="No Heartbeat → Election" caption="A stalled timer is what actually triggers a candidacy.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="ah4-17" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["No heartbeat", "Timeout", "Candidate", "Election"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 140} y="15" width="120" height="40" rx="8" fill="#fff" stroke={label === "Candidate" ? "#b45309" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={70 + i * 140} y="39" textAnchor="middle" fontSize="12" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={130 + i * 140} y1="35" x2={150 + i * 140} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-17)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Important: **a timeout does not prove that the leader is dead.** It means: *"I have not heard from the leader within the expected time, so I will start an election."* The leader might actually be alive but unreachable because of a network problem. This distinction becomes very important in distributed systems.
 
@@ -270,11 +493,25 @@ Important: **a timeout does not prove that the leader is dead.** It means: *"I h
 
 The leader periodically sends heartbeat messages.
 
-<MermaidDiagram title="Leader Sends Heartbeats" chart={`
-graph TD
-  Ld9[Leader] -->|heartbeat| B7[Follower B]
-  Ld9 -->|heartbeat| C7[Follower C]
-`} />
+<Figure title="Leader Sends Heartbeats" caption="A regular heartbeat says: the cluster is operating normally.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="ah4-18" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="13" fill="#0f172a">Leader</text>
+    <line x1="130" y1="48" x2="70" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-18)" />
+    <text x="75" y="65" fontSize="10" fill="#475569">heartbeat</text>
+    <line x1="170" y1="48" x2="230" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-18)" />
+    <text x="195" y="65" fontSize="10" fill="#475569">heartbeat</text>
+    <rect x="20" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="60" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="200" y="84" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="240" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 These messages communicate: *"I am still the leader and the cluster is operating."* If followers continue receiving heartbeats, they remain followers:
 
@@ -326,15 +563,22 @@ only one node remains — `1 / 3`, no majority. The cluster cannot safely contin
 
 Imagine the network is partitioned: A and B can communicate, but C cannot reach them.
 
-<MermaidDiagram title="A Network Partition" chart={`
-graph LR
-  subgraph "Majority side — 2/3"
-    A2[Node A] --- B8[Node B]
-  end
-  subgraph "Minority side — 1/3"
-    C8[Node C]
-  end
-`} />
+<Figure title="A Network Partition" caption="The majority side can act; the isolated side cannot.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="180" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="100" y="28" textAnchor="middle" fontSize="11" fill="#475569">Majority side — 2/3</text>
+    <rect x="30" y="55" width="60" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="60" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">A</text>
+    <line x1="90" y1="73" x2="110" y2="73" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="112" y="55" width="60" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="142" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="200" y="10" width="170" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="285" y="28" textAnchor="middle" fontSize="11" fill="#475569">Minority side — 1/3</text>
+    <rect x="250" y="55" width="60" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="280" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+    <text x="195" y="77" textAnchor="middle" fontSize="14" fill="#dc2626">✕</text>
+  </svg>
+</Figure>
 
 A/B have `2/3`, a majority. C has `1/3`, a minority. Raft allows the majority side to continue; the minority side cannot safely commit new entries. Why? Because allowing C to independently commit decisions could create conflicting histories. This is the connection between:
 
@@ -346,38 +590,77 @@ Network Partition → Quorum → Consensus → Safety vs availability
 
 Consider three nodes where A and B form a majority and C is isolated as a minority.
 
-<MermaidDiagram title="Majority Continues, Minority Waits" chart={`
-graph LR
-  subgraph "A + B = majority"
-    A3[A] --- B9[B]
-  end
-  subgraph "C = minority"
-    C9[C]
-  end
-`} />
+<Figure title="Majority Continues, Minority Waits" caption="Only the side with a quorum may commit.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="180" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="100" y="28" textAnchor="middle" fontSize="11" fill="#475569">A + B = majority</text>
+    <rect x="30" y="55" width="60" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="60" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">A</text>
+    <line x1="90" y1="73" x2="110" y2="73" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="112" y="55" width="60" height="36" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="142" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <rect x="200" y="10" width="170" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="285" y="28" textAnchor="middle" fontSize="11" fill="#475569">C = minority</text>
+    <rect x="250" y="55" width="60" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="280" y="77" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+    <text x="195" y="77" textAnchor="middle" fontSize="14" fill="#dc2626">✕</text>
+  </svg>
+</Figure>
 
 A and B can potentially continue. C cannot commit new entries by itself. This helps preserve a single authoritative committed history. When the partition heals, C can synchronize with the current leader.
 
-<MermaidDiagram title="Partition Heals" chart={`
-graph LR
-  A4[A] --- B10[B] --- C10[C]
-`} />
+<Figure title="Partition Heals" caption="Once C can reach the cluster again, it catches up.">
+  <svg viewBox="0 0 300 70" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <rect x="10" y="15" width="70" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="45" y="39" textAnchor="middle" fontSize="12" fill="#1e293b">A</text>
+    <line x1="80" y1="35" x2="110" y2="35" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="115" y="15" width="70" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="39" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <line x1="185" y1="35" x2="215" y2="35" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="220" y="15" width="70" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="255" y="39" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 ## 18. Raft vs DHT
 
 Now connect Lesson 2 and Lesson 4.
 
-<MermaidDiagram title="DHT" chart={`
-graph LR
-  K1[Key] --> D1[DHT] --> R1["Responsible node"]
-`} />
+<Figure title="DHT" caption="Question: where is the data?">
+  <svg viewBox="0 0 380 70" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="ah4-19" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Key", "DHT", "Responsible node"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="112" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={66 + i * 128} y="39" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={122 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-19)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Main question: **where is the data?**
 
-<MermaidDiagram title="Raft" chart={`
-graph LR
-  Cm1[Command] --> Ld10[Leader] --> Rl1["Replicated log"] --> Mj2[Majority] --> Cm2[Commit]
-`} />
+<Figure title="Raft" caption="Question: what sequence of commands should the cluster agree on?">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="ah4-20" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Command", "Leader", "Replicated log", "Majority", "Commit"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 124} y="15" width="108" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={64 + i * 124} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={118 + i * 124} y1="35" x2={134 + i * 124} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-20)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Main question: **what sequence of commands should the cluster agree on?**
 
@@ -392,19 +675,43 @@ Again, don't confuse these.
 
 **Replication** means multiple copies exist.
 
-<MermaidDiagram title="Replication" chart={`
-graph TD
-  D2[Data] --> A5[A]
-  D2 --> B11[B]
-  D2 --> C11[C]
-`} />
+<Figure title="Replication" caption="The same data lives on every node.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="ah4-21" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="110" y="10" width="80" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="33" textAnchor="middle" fontSize="12.5" fill="#0f172a">Data</text>
+    {[60, 150, 240].map((cx, i) => (
+      <g key={i}>
+        <line x1="150" y1="48" x2={cx} y2="84" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-21)" />
+        <rect x={cx - 35} y="86" width="70" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={cx} y="108" textAnchor="middle" fontSize="12" fill="#1e293b">{["A", "B", "C"][i]}</text>
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 **Raft** means the nodes coordinate on the same ordered sequence of commands.
 
-<MermaidDiagram title="Raft" chart={`
-graph LR
-  Cm3[Command] --> Ld11[Leader] --> Rl2["Replicate log"] --> Qu1[Quorum] --> Cm4[Commit]
-`} />
+<Figure title="Raft" caption="Replication is used, but coordinated through one leader and a quorum.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="ah4-22" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Command", "Leader", "Replicate log", "Quorum", "Commit"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 112} y="15" width="98" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={59 + i * 112} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={108 + i * 112} y1="35" x2={122 + i * 112} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-22)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Therefore:
 
@@ -416,17 +723,37 @@ Raft and blockchain can both involve multiple nodes, replication, distributed co
 
 **Raft** is typically used in controlled clusters where participating nodes are known/trusted to some degree — examples include distributed databases and coordination systems.
 
-<MermaidDiagram title="Raft — A Known Cluster" chart={`
-graph LR
-  A6[A] --- B12[B] --- C12[C]
-`} />
+<Figure title="Raft — A Known Cluster" caption="Participants are known and generally trusted.">
+  <svg viewBox="0 0 300 70" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <rect x="10" y="15" width="70" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="45" y="39" textAnchor="middle" fontSize="12" fill="#1e293b">A</text>
+    <line x1="80" y1="35" x2="110" y2="35" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="115" y="15" width="70" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="39" textAnchor="middle" fontSize="12" fill="#1e293b">B</text>
+    <line x1="185" y1="35" x2="215" y2="35" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="220" y="15" width="70" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="255" y="39" textAnchor="middle" fontSize="12" fill="#1e293b">C</text>
+  </svg>
+</Figure>
 
 **Blockchain** — many blockchain systems are designed for decentralized environments where participants may not all be trusted. They use blockchain-specific consensus mechanisms and cryptographic techniques.
 
-<MermaidDiagram title="Blockchain" chart={`
-graph LR
-  P1["P2P network"] --> Cr1[Cryptography] --> Cn1[Consensus] --> Le2[Ledger]
-`} />
+<Figure title="Blockchain" caption="Trust is established through cryptography and consensus, not a known cluster.">
+  <svg viewBox="0 0 500 70" style={{ width: "100%", maxWidth: 520, height: "auto" }}>
+    <defs>
+      <marker id="ah4-23" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["P2P network", "Cryptography", "Consensus", "Ledger"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 124} y="15" width="108" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={64 + i * 124} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={118 + i * 124} y1="35" x2={134 + i * 124} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-23)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Therefore:
 
@@ -451,10 +778,30 @@ A leader might conceptually handle:
 propose("SET X = 30")
 ```
 
-<MermaidDiagram title="From Proposal to Applied Command" chart={`
-graph LR
-  Pr1[propose] --> Ll1["Leader log"] --> Sf1["Send to followers"] --> Ak1["Receive acknowledgements"] --> Qu2[Quorum] --> Cm5[Commit] --> Ap2["Apply command"]
-`} />
+<Figure title="From Proposal to Applied Command" caption="Every step between a client call and the command taking effect.">
+  <svg viewBox="0 0 640 140" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="ah4-24" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["propose", "Leader log", "Send to followers", "Receive acks"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="10" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={80 + i * 158} y="34" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="30" x2={168 + i * 158} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-24)" />}
+      </g>
+    ))}
+    <line x1="80" y1="50" x2="80" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-24)" />
+    {["Quorum", "Commit", "Apply command"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="92" width="140" height="40" rx="8" fill="#fff" stroke={label === "Apply command" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="116" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={150 + i * 158} y1="112" x2={168 + i * 158} y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-24)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 Real Raft implementations require substantial networking, persistence, timers, message handling, and failure recovery.
 
@@ -475,21 +822,62 @@ So:
 
 ## 23. The Complete Raft Picture
 
-<MermaidDiagram title="The Raft Cluster" chart={`
-graph TD
-  Ld12[Leader] --> F7[Follower]
-  Ld12 --> F8[Follower]
-  F7 --> Rl3["Replicated Log"]
-  F8 --> Rl3
-  Rl3 --> Qu3[Quorum] --> Cm6[Commit] --> Sm1["State Machine"]
-`} />
+<Figure title="The Raft Cluster" caption="Every follower feeds the same replicated log toward one commit pipeline.">
+  <svg viewBox="0 0 560 220" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="ah4-25" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="120" y="10" width="100" height="38" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="170" y="33" textAnchor="middle" fontSize="12.5" fill="#0f172a">Leader</text>
+    <line x1="150" y1="48" x2="90" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <line x1="190" y1="48" x2="250" y2="82" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <rect x="40" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="90" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">Follower</text>
+    <rect x="200" y="84" width="100" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="250" y="106" textAnchor="middle" fontSize="12" fill="#1e293b">Follower</text>
+    <line x1="90" y1="120" x2="170" y2="150" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <line x1="250" y1="120" x2="190" y2="150" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <rect x="120" y="152" width="120" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="180" y="174" textAnchor="middle" fontSize="11" fill="#1e293b">Replicated Log</text>
+    <line x1="240" y1="170" x2="280" y2="170" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <rect x="282" y="152" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="322" y="174" textAnchor="middle" fontSize="11" fill="#1e293b">Quorum</text>
+    <line x1="362" y1="170" x2="402" y2="170" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <rect x="404" y="152" width="80" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="444" y="174" textAnchor="middle" fontSize="11" fill="#1e293b">Commit</text>
+    <line x1="444" y1="188" x2="444" y2="205" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-25)" />
+    <text x="444" y="215" textAnchor="middle" fontSize="10.5" fill="#1e293b">State Machine</text>
+  </svg>
+</Figure>
 
 If the leader fails:
 
-<MermaidDiagram title="Leader Failure → New Leader → Commit" chart={`
-flowchart TD
-  Lf1["Leader ❌"] --> Et1["Election timeout"] --> Cd3[Candidate] --> Rv3["Request votes"] --> Mj3[Majority] --> Nl1["New Leader"] --> Rp1[Replication] --> Cm7[Commit]
-`} />
+<Figure title="Leader Failure → New Leader → Commit" caption="Recovery is a single well-defined chain of steps.">
+  <svg viewBox="0 0 640 160" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="ah4-26" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Leader ❌", "Election timeout", "Candidate", "Request votes"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="10" width="140" height="40" rx="8" fill="#fff" stroke={label === "Leader ❌" ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="34" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="30" x2={168 + i * 158} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-26)" />}
+      </g>
+    ))}
+    <line x1="80" y1="50" x2="80" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-26)" />
+    {["Majority", "New Leader", "Replication", "Commit"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="92" width="140" height="40" rx="8" fill="#fff" stroke={label === "Commit" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="116" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="112" x2={168 + i * 158} y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-26)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 24. The Most Important Raft Terms
 
@@ -544,22 +932,55 @@ flowchart TD
 
 ## 27. One-Page Revision
 
-<MermaidDiagram title="Raft, End to End" chart={`
-graph TD
-  Ra3["Leader-based Consensus"] --> Ld13[Leader]
-  Ra3 --> Fo3[Follower]
-  Ra3 --> Cd4[Candidate]
-  Cd4 --> El3[Election]
-  Ld13 --> Rl4["Replicated Log"]
-  Rl4 --> Qu4[Quorum] --> Cm8[Commit] --> Sm2["State Machine"]
-`} />
+<Figure title="Raft, End to End" caption="Every path in Raft eventually leads to the state machine.">
+  <svg viewBox="0 0 480 220" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="ah4-27" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="10" width="180" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="240" y="32" textAnchor="middle" fontSize="12" fill="#0f172a">Leader-based Consensus</text>
+    {["Leader", "Follower", "Candidate"].map((label, i) => {
+      const cx = [70, 240, 410][i];
+      return (
+        <g key={i}>
+          <line x1="240" y1="46" x2={cx} y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-27)" />
+          <rect x={cx - 45} y="82" width="90" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="103" textAnchor="middle" fontSize="11.5" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+    <line x1="410" y1="116" x2="410" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-27)" />
+    <rect x="370" y="142" width="80" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="410" y="161" textAnchor="middle" fontSize="11" fill="#1e293b">Election</text>
+    <line x1="70" y1="116" x2="70" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-27)" />
+    <rect x="15" y="142" width="110" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="161" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replicated Log</text>
+    <line x1="70" y1="172" x2="70" y2="196" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-27)" />
+    <rect x="15" y="198" width="110" height="20" rx="6" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="212" textAnchor="middle" fontSize="10" fill="#1e293b">Quorum → Commit → State Machine</text>
+  </svg>
+</Figure>
 
 If Leader Fails:
 
-<MermaidDiagram title="If Leader Fails" chart={`
-graph LR
-  Ld14[Leader] --> Fl1["❌"] --> To3[Timeout] --> Cd5[Candidate] --> Rv4["Request Votes"] --> Mj4[Majority] --> Nl2["New Leader"] --> Rp2[Replication] --> Cm9[Commit]
-`} />
+<Figure title="If Leader Fails" caption="The same recovery chain as section 23, restated for revision.">
+  <svg viewBox="0 0 640 70" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="ah4-28" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Leader ❌", "Timeout", "Candidate", "Majority", "New Leader", "Commit"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 104} y="15" width="90" height="40" rx="8" fill="#fff" stroke={label === "Commit" ? "#0d9488" : label === "Leader ❌" ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={55 + i * 104} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 5 && <line x1={100 + i * 104} y1="35" x2={114 + i * 104} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-28)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 ## 28. The Ultimate Memory Trick
 
@@ -573,10 +994,22 @@ And if the leader fails:
 
 Connect the whole roadmap:
 
-<MermaidDiagram title="The Whole Roadmap" chart={`
-graph LR
-  D3[DHT] --> Cn2[Consensus] --> Ra4[Raft]
-`} />
+<Figure title="The Whole Roadmap" caption="Each layer answers a different question about the same problem.">
+  <svg viewBox="0 0 400 70" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="ah4-29" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["DHT", "Consensus", "Raft"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="112" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={66 + i * 128} y="39" textAnchor="middle" fontSize="13" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={122 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#ah4-29)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
 
 - **DHT** → *"WHERE is the data?"*
 - **Consensus** → *"WHAT should nodes agree on?"*

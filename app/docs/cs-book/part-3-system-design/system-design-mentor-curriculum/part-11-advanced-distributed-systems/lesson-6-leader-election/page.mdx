@@ -1,0 +1,495 @@
+export const metadata = {
+  title: "Lesson 6 — Leader Election | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 6: leader election — why systems need a coordinator, split brain, how Raft's terms and quorum prevent it, randomized election timeouts and split votes, and how leader election compares to load balancing, DHT, and consensus.",
+  keywords: [
+    "leader election",
+    "split brain",
+    "election timeout",
+    "split vote",
+    "raft terms",
+    "quorum",
+    "distributed coordination",
+    "leader vs primary",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 6 — Leader Election | Mentor Curriculum Part 11",
+    description:
+      "Leader election chooses WHO coordinates. Consensus determines WHAT the cluster agrees on.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 6**
+
+# Lesson 6 — Leader Election
+
+Now we move to the next concept in the roadmap:
+
+> **Leader Election**
+
+This follows naturally from **Consensus → Raft → Leader Election**.
+
+## 1. What Is Leader Election?
+
+**Leader election** is the process by which nodes in a distributed system **agree on which node should become the leader**.
+
+<Figure title="One Coordinator" caption="Five nodes; one of them needs to become the leader.">
+  <svg viewBox="0 0 400 160" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="l6-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="15" width="100" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="200" y="39" textAnchor="middle" fontSize="13" fill="#0f172a">Leader</text>
+    {["B", "C", "D"].map((label, i) => {
+      const cx = [60, 200, 340][i];
+      return (
+        <g key={i}>
+          <line x1="200" y1="55" x2={cx} y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-1)" />
+          <rect x={cx - 40} y="105" width="80" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="129" textAnchor="middle" fontSize="13" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+The question is: **how do all these independent nodes agree on who the leader is?** That is the **leader-election problem**.
+
+## 2. Why Do We Need a Leader?
+
+A leader can simplify coordination. Imagine five servers all independently trying to coordinate writes:
+
+```text
+A → write X
+B → write Y
+C → write Z
+```
+
+Now everyone has to determine which operation comes first. Instead, we can choose one coordinator:
+
+<Figure title="Leader A Coordinates Writes" caption="Clients send requests to the leader, and the leader coordinates the operation.">
+  <svg viewBox="0 0 400 160" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="l6-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="15" width="100" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="200" y="39" textAnchor="middle" fontSize="12.5" fill="#0f172a">Leader A</text>
+    {["B", "C", "D"].map((label, i) => {
+      const cx = [60, 200, 340][i];
+      return (
+        <g key={i}>
+          <line x1="200" y1="55" x2={cx} y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-2)" />
+          <rect x={cx - 40} y="105" width="80" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="129" textAnchor="middle" fontSize="13" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+This dramatically simplifies many distributed protocols.
+
+## 3. Real-Life Analogy
+
+Imagine a classroom with 30 students. If every student tries to coordinate the class, it's chaos — *"Do this!" "No, do this!" "Wait!" "I decide!"* Instead, the class selects one representative who coordinates communication. But what happens if the leader leaves? The class needs to select another leader. That's leader election.
+
+## 4. Leader Election Is Different From Consensus
+
+These concepts are closely related but not identical.
+
+**Consensus** asks: *how do distributed nodes agree on a decision?*
+
+**Leader Election** asks: *how do distributed nodes agree on who the leader should be?*
+
+<Figure title="From Consensus to a Leader" caption="Electing a leader is one specific decision consensus can be used to reach.">
+  <svg viewBox="0 0 300 160" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l6-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="80" y="10" width="140" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="32" textAnchor="middle" fontSize="12" fill="#1e293b">Consensus</text>
+    <line x1="150" y1="46" x2="150" y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-3)" />
+    <rect x="60" y="72" width="180" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="94" textAnchor="middle" fontSize="10" fill="#1e293b">"Node B should be leader"</text>
+    <line x1="150" y1="112" x2="150" y2="136" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-3)" />
+    <rect x="70" y="138" width="160" height="20" rx="6" fill="#f8fafc" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="152" textAnchor="middle" fontSize="10.5" fill="#0f172a">Leader Election</text>
+  </svg>
+</Figure>
+
+In many systems, leader election itself uses consensus principles.
+
+## 5. Leader Election in Raft
+
+This connects directly to the previous lesson. Raft has three states: Follower → Candidate → Leader.
+
+<Figure title="If the Leader Fails" caption="The same election chain from Lesson 4, restated for this lesson.">
+  <svg viewBox="0 0 640 70" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="l6-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Leader ❌", "Election timeout", "Candidate", "Request votes", "Majority?", "New Leader"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 104} y="15" width="90" height="40" rx="8" fill="#fff" stroke={label === "New Leader" ? "#0d9488" : label === "Leader ❌" ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={55 + i * 104} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 5 && <line x1={100 + i * 104} y1="35" x2={114 + i * 104} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-4)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+## 6. Why Can't a Follower Just Become Leader?
+
+Suppose A is leader and disappears. B might say *"I'm the leader now,"* while C simultaneously says *"No, I'm the leader."* Now we have **two leaders**. This is called **split brain**, and it can be extremely dangerous. Therefore, leader election needs rules that prevent conflicting leaders from being accepted.
+
+## 7. Split Brain
+
+Imagine A is the leader of B and C, and the network partitions so B and C can't reach each other. If B thinks A has failed, and C also thinks A has failed, and both independently become leaders:
+
+<Figure title="Split Brain" caption="Two isolated parts of the system each believe they have authority.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="170" height="110" rx="10" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="5 4" />
+    <rect x="45" y="55" width="100" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="95" y="77" textAnchor="middle" fontSize="11.5" fill="#1e293b">Leader B</text>
+    <rect x="200" y="10" width="170" height="110" rx="10" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="5 4" />
+    <rect x="235" y="55" width="100" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="285" y="77" textAnchor="middle" fontSize="11.5" fill="#1e293b">Leader C</text>
+    <text x="190" y="77" textAnchor="middle" fontSize="14" fill="#dc2626">✕</text>
+  </svg>
+</Figure>
+
+Two parts of the system believe they have authority. A good distributed system must prevent this from causing conflicting committed decisions.
+
+## 8. How Does Raft Prevent Split Brain?
+
+Raft uses **terms and majority voting**. Suppose we have five nodes, `A B C D E`. A leader fails and B becomes candidate. B needs a majority — `3 / 5`. If B gets `B ✓ C ✓ D ✓`, that's `3/5`, so B can become leader. Now imagine E independently tries to become leader but only has itself — `1/5`. Not enough. Therefore:
+
+> **A candidate needs the required quorum/majority to establish leadership.**
+
+## 9. Why Majority Helps
+
+Suppose there are five nodes and majority is 3. One candidate might get `A B C`. Another candidate cannot simultaneously obtain a separate majority without overlapping with that first group. This overlap is important — it makes it much harder for two conflicting candidates to both legitimately obtain majority support in the same election term.
+
+## 10. Election Timeout
+
+How does a node decide that it should start an election? It uses an **election timeout**.
+
+<Figure title="Heartbeat Resets, Then Stops" caption="A missed heartbeat is what starts the countdown to candidacy.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="l6-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Heartbeat", "Heartbeat", "❌", "Timeout"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 140} y="15" width="120" height="40" rx="8" fill="#fff" stroke={label === "❌" ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={70 + i * 140} y="39" textAnchor="middle" fontSize="12.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={130 + i * 140} y1="35" x2={150 + i * 140} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-5)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+the follower may become a candidate.
+
+## 11. Why Use Randomized Election Timeouts?
+
+Imagine B, C, and D all detect the leader failure at exactly the same moment and all become candidates. Votes may then be divided — `B → 2 votes`, `C → 2 votes`, `D → 1 vote` — and no candidate has a majority. This is called a **split vote**.
+
+Randomized election timeouts reduce the probability that many nodes start elections simultaneously:
+
+```text
+B → timeout = 150 ms
+C → timeout = 230 ms
+D → timeout = 190 ms
+```
+
+B starts first. It may obtain votes before the others start elections.
+
+## 12. Split Vote
+
+Suppose leader A fails and B and C both become candidates at once, splitting the vote — `B → 2`, `C → 2`, `D → 1`. No majority.
+
+<Figure title="Split Vote → Another Election" caption="A tie forces a fresh round with a new term.">
+  <svg viewBox="0 0 500 70" style={{ width: "100%", maxWidth: 520, height: "auto" }}>
+    <defs>
+      <marker id="l6-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["No winner", "Another election", "New term", "Candidate retries"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 124} y="15" width="108" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={64 + i * 124} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={118 + i * 124} y1="35" x2={134 + i * 124} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-6)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Randomized timeouts help reduce repeated split votes.
+
+## 13. The Election Process
+
+Let's put everything together. Suppose A is leader and B, C, D, E are followers.
+
+**Step 1 — Leader fails:** `A ❌`
+
+**Step 2 — Followers wait:** each of B, C, D, E is running its own timer.
+
+**Step 3 — One timeout occurs first:** `B → timeout`
+
+**Step 4 — B becomes Candidate.**
+
+**Step 5 — B requests votes:** `B → C: Vote for me?`, `B → D: Vote for me?`, `B → E: Vote for me?`
+
+**Step 6 — Majority:** suppose `B ✓ C ✓ D ✓` — that's `3 / 5`.
+
+**Step 7 — B becomes leader:**
+
+<Figure title="B Becomes the New Leader" caption="The cluster after a successful election.">
+  <svg viewBox="0 0 420 160" style={{ width: "100%", maxWidth: 440, height: "auto" }}>
+    <defs>
+      <marker id="l6-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="160" y="15" width="100" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="210" y="39" textAnchor="middle" fontSize="12.5" fill="#0f172a">Leader B</text>
+    {["C", "D", "E"].map((label, i) => {
+      const cx = [60, 210, 360][i];
+      return (
+        <g key={i}>
+          <line x1="210" y1="55" x2={cx} y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-7)" />
+          <rect x={cx - 40} y="105" width="80" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="129" textAnchor="middle" fontSize="13" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+## 14. What Happens to the Old Leader?
+
+Suppose A wasn't actually dead — maybe there was only a temporary network problem. After recovering, A discovers the current term (say `8`) is newer than what it remembers (`7`). A learns that its information is outdated. It steps down and becomes a follower. This is one reason **terms** are so important.
+
+## 15. Leader Election and Terms
+
+Recall from Raft: each election is associated with a term.
+
+| Term | Leader |
+|---|---|
+| 1 | Leader A |
+| 2 | Leader B |
+| 3 | Leader C |
+
+A node can use the term number to recognize stale leadership information. If Node A knows `term = 5` and Node B says `term = 7`, A knows B's information is from a newer term.
+
+## 16. Leader Election Is Not Just About Raft
+
+Leader election is a general distributed-systems problem. It can be used whenever a system needs one node to coordinate an operation:
+
+- **Distributed databases** — a leader coordinates writes.
+- **Distributed coordination** — a leader coordinates cluster state.
+- **Job scheduling** — a leader assigns jobs.
+- **Distributed locks** — a leader/coordinator coordinates ownership.
+- **Replicated state machines** — a leader orders commands.
+
+## 17. Leader vs Primary
+
+You may hear different terminology — Leader, Primary, Master, Coordinator. These words can have different meanings depending on the system. In many distributed databases, a **Primary** accepts writes and replicates to **Replicas**. In Raft, a **Leader** replicates its log to **Followers**. They can perform similar coordination roles, but **don't assume the words are universally interchangeable**.
+
+## 18. Leader Election vs Load Balancing
+
+**Load balancing** asks: *which server should handle this request?* — requests are distributed across multiple servers.
+
+**Leader election** asks: *which node should be the coordinator/leader?*
+
+So:
+
+> **Load balancing distributes requests. Leader election chooses a coordinator.**
+
+## 19. Leader Election vs DHT
+
+Remember Lesson 2. **DHT** asks *where is the data?* — key → responsible node. **Leader election** asks *who should coordinate?* — nodes → election → leader. Very different problems.
+
+## 20. Leader Election vs Consensus
+
+This distinction is especially important. **Consensus** is the general agreement problem. **Leader election** is agreement about leadership specifically. Leader election can be **part of a consensus algorithm** — inside Raft, it sits alongside log replication and commitment.
+
+<Figure title="Leader Election Is One Piece of Raft" caption="Raft is made of three cooperating pieces, not one.">
+  <svg viewBox="0 0 400 130" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="l6-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="10" width="100" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="200" y="32" textAnchor="middle" fontSize="12.5" fill="#0f172a">Raft</text>
+    {["Leader Election", "Log Replication", "Commitment"].map((label, i) => {
+      const cx = [70, 200, 330][i];
+      return (
+        <g key={i}>
+          <line x1="200" y1="46" x2={cx} y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-8)" />
+          <rect x={cx - 60} y="82" width="120" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="104" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+So:
+
+> **Leader election is one component of Raft, while consensus is the broader problem Raft is designed to solve.**
+
+## 21. Programming Connection
+
+A simplified node might have:
+
+```python
+role = "follower"
+term = 5
+votes = 0
+```
+
+When timeout occurs:
+
+```python
+role = "candidate"
+term += 1
+votes = 1
+```
+
+Then the candidate requests votes with `requestVote()`. If majority is reached, `role = "leader"`, and the leader begins sending heartbeats with `heartbeat()`. This is only a conceptual model; a real implementation needs persistent state, network messaging, timers, concurrency, and careful protocol rules.
+
+## 22. DSA Connection
+
+Leader election uses several familiar concepts.
+
+- **Counters** — `votes = 3`
+- **Sets** — track who has voted: `{B, C, D}`
+- **State machines** — `FOLLOWER → CANDIDATE → LEADER`
+- **Timers** — `election_timeout`, `heartbeat_interval`
+- **Networking** — `send_vote_request()`, `receive_vote()`, `send_heartbeat()`
+
+This is another excellent example of:
+
+> **DSA + networking + distributed algorithms = distributed systems.**
+
+## 23. Common Mistakes
+
+**Mistake 1 — "Leader election means finding the fastest server."** No. It means selecting a node according to the distributed protocol's rules.
+
+**Mistake 2 — "The leader is permanently fixed."** No. Leadership can change because of failures, elections, configuration changes, or other protocol events.
+
+**Mistake 3 — "A node becomes leader as soon as the old leader disappears."** No. It normally must go through the election process and obtain the required support.
+
+**Mistake 4 — "Two leaders can never temporarily exist."** In real distributed systems, temporary conflicting perceptions can occur during failures/partitions; protocols such as Raft use terms and quorum rules to prevent conflicting leaders from safely committing conflicting decisions.
+
+**Mistake 5 — "Leader election and load balancing are the same."** No — load balancing distributes requests, leader election selects a coordinator.
+
+## 24. Interview Questions
+
+**Q1. What is leader election?**
+> Leader election is the process by which distributed nodes select one node to act as the coordinator or leader.
+
+**Q2. Why do distributed systems need leader election?**
+> A leader can simplify coordination, ordering, replication, and decision-making among distributed nodes.
+
+**Q3. What happens when a Raft leader fails?**
+> Followers eventually time out, one becomes a candidate, requests votes, and can become leader after obtaining a majority.
+
+**Q4. What is split brain?**
+> A condition where different parts of a distributed system believe they have independent leadership or authority.
+
+**Q5. Why does Raft use randomized election timeouts?**
+> To reduce the probability that multiple followers become candidates simultaneously and split the vote.
+
+**Q6. Why are terms important?**
+> Terms allow nodes to distinguish newer leadership/election information from stale information.
+
+**Q7. What happens if there is no quorum?**
+> The system cannot safely establish/commit new consensus decisions, so it may sacrifice availability for safety.
+
+## 25. One-Page Revision
+
+<Figure title="Leader Election, End to End" caption="From a healthy leader to a fresh election and back.">
+  <svg viewBox="0 0 460 260" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l6-9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="180" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="31" textAnchor="middle" fontSize="12" fill="#0f172a">Leader</text>
+    <line x1="230" y1="44" x2="230" y2="66" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-9)" />
+    <text x="230" y="60" textAnchor="middle" fontSize="9.5" fill="#475569">heartbeats</text>
+    <rect x="170" y="68" width="120" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="87" textAnchor="middle" fontSize="11" fill="#1e293b">Followers</text>
+    <line x1="230" y1="98" x2="230" y2="122" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-9)" />
+    <text x="230" y="114" textAnchor="middle" fontSize="9" fill="#475569">leader stops responding</text>
+    <rect x="150" y="124" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="143" textAnchor="middle" fontSize="10.5" fill="#1e293b">Election Timeout</text>
+    <line x1="230" y1="154" x2="230" y2="176" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-9)" />
+    <rect x="170" y="178" width="120" height="30" rx="8" fill="#fff" stroke="#b45309" strokeWidth="1.5" />
+    <text x="230" y="197" textAnchor="middle" fontSize="11" fill="#1e293b">Candidate</text>
+    <line x1="230" y1="208" x2="230" y2="230" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-9)" />
+    <polygon points="230,224 290,246 230,268 170,246" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="250" textAnchor="middle" fontSize="10" fill="#1e293b">Quorum?</text>
+    <line x1="290" y1="246" x2="330" y2="246" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-9)" />
+    <text x="330" y="240" textAnchor="middle" fontSize="10.5" fill="#1e293b">Yes → Leader</text>
+    <line x1="170" y1="246" x2="130" y2="246" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-9)" />
+    <text x="130" y="240" textAnchor="middle" fontSize="10.5" fill="#1e293b">No → New Election</text>
+  </svg>
+</Figure>
+
+## 26. The Complete Connection
+
+We now have: **DHT** asks *which node is responsible for this key?* **Consensus** asks *how do distributed nodes agree?* **Raft** asks *how can we achieve consensus using a leader-based approach?* **Leader Election** asks *how do we select that leader?*
+
+<Figure title="Inside Raft" caption="Election, replication, and commitment work together, not in isolation.">
+  <svg viewBox="0 0 400 130" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="l6-10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="10" width="100" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="200" y="32" textAnchor="middle" fontSize="12.5" fill="#0f172a">Raft</text>
+    {["Election", "Log Replication", "Quorum"].map((label, i) => {
+      const cx = [70, 200, 330][i];
+      return (
+        <g key={i}>
+          <line x1="200" y1="46" x2={cx} y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l6-10)" />
+          <rect x={cx - 55} y="82" width="110" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="104" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+**Ultimate Memory Trick:**
+
+> **Leader election chooses WHO coordinates.**
+> **Consensus determines WHAT the cluster agrees on.**
+> **Raft uses leader election + replicated logs + quorum to achieve consensus.**
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-5-paxos", title: "Lesson 5 — Paxos" }}
+  next={null}
+/>
