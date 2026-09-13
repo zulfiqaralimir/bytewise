@@ -1,0 +1,718 @@
+export const metadata = {
+  title: "Lesson 7 — Distributed Locks | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 7: distributed locks — lock ownership, leases, the stale-owner problem, fencing tokens, safety vs liveness, common implementations (database, Redis-style, ZooKeeper/etcd/Consul), and how locks compare to leader election, DHT, and replication.",
+  keywords: [
+    "distributed lock",
+    "lease",
+    "fencing token",
+    "stale owner problem",
+    "safety vs liveness",
+    "redis lock",
+    "zookeeper etcd consul",
+    "mutex vs distributed lock",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 7 — Distributed Locks | Mentor Curriculum Part 11",
+    description:
+      "Lock = one owner. Lease = temporary owner. Fencing token = stale owner cannot act.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 7**
+
+# Lesson 7 — Distributed Locks
+
+We now move from **Leader Election** to **Distributed Locks**. This lesson is important because distributed locks combine several ideas we have already learned:
+
+> **Leader Election + Consensus + Leases + Failure Handling**
+
+## 1. What Is a Distributed Lock?
+
+A **distributed lock** is a mechanism that ensures that **only one process/node at a time can access or modify a particular shared resource** across a distributed system.
+
+> **A distributed lock coordinates exclusive access to a shared resource among multiple computers or processes.**
+
+Imagine two application servers both receive the job *"Generate the monthly financial report."* If both execute it simultaneously, you get conflicting, duplicated work.
+
+<Figure title="Without a Lock" caption="Both servers run the same job at the same time.">
+  <svg viewBox="0 0 340 100" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l7-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="120" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="32" textAnchor="middle" fontSize="11" fill="#1e293b">Server A</text>
+    <rect x="10" y="54" width="120" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="76" textAnchor="middle" fontSize="11" fill="#1e293b">Server B</text>
+    <line x1="130" y1="28" x2="200" y2="46" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-1)" />
+    <line x1="130" y1="72" x2="200" y2="54" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-1)" />
+    <rect x="202" y="30" width="128" height="40" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="266" y="54" textAnchor="middle" fontSize="10" fill="#1e293b">Conflict / duplicate work</text>
+  </svg>
+</Figure>
+
+We want a lock that says: **"Only one participant may own this resource right now."**
+
+<Figure title="With a Lock" caption="One server works while the other waits, then swaps roles once the lock is released.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l7-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="32" textAnchor="middle" fontSize="12" fill="#0f172a">Lock</text>
+    <line x1="170" y1="46" x2="100" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-2)" />
+    <line x1="210" y1="46" x2="280" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-2)" />
+    <rect x="50" y="82" width="100" height="34" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="100" y="103" textAnchor="middle" fontSize="11" fill="#1e293b">Server A: WORK</text>
+    <rect x="230" y="82" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="280" y="103" textAnchor="middle" fontSize="11" fill="#1e293b">Server B: WAIT</text>
+    <line x1="100" y1="116" x2="100" y2="136" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-2)" />
+    <text x="100" y="150" textAnchor="middle" fontSize="10" fill="#1e293b">RELEASE</text>
+    <line x1="140" y1="140" x2="260" y2="116" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-2)" />
+  </svg>
+</Figure>
+
+## 2. Why Do We Need a Distributed Lock?
+
+On a single computer, we can use a normal mutex — two threads sharing the same memory can both see it.
+
+<Figure title="A Local Mutex" caption="Works because both threads share the same memory.">
+  <svg viewBox="0 0 340 100" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l7-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="90" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="55" y="31" textAnchor="middle" fontSize="10.5" fill="#1e293b">Thread A</text>
+    <rect x="10" y="54" width="90" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="55" y="75" textAnchor="middle" fontSize="10.5" fill="#1e293b">Thread B</text>
+    <line x1="100" y1="27" x2="150" y2="45" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-3)" />
+    <line x1="100" y1="71" x2="150" y2="53" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-3)" />
+    <rect x="152" y="30" width="70" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="187" y="54" textAnchor="middle" fontSize="10.5" fill="#0f172a">Mutex</text>
+    <line x1="222" y1="50" x2="252" y2="50" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-3)" />
+    <rect x="254" y="30" width="80" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="294" y="54" textAnchor="middle" fontSize="9.5" fill="#1e293b">Shared Resource</text>
+  </svg>
+</Figure>
+
+But across two different computers, a local mutex on Computer A cannot stop a process on Computer B — they only share a resource over the network, such as a database.
+
+<Figure title="Two Machines, One Shared Database" caption="A local mutex has no reach onto the other machine.">
+  <svg viewBox="0 0 380 140" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="120" height="60" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="35" textAnchor="middle" fontSize="10.5" fill="#1e293b">Computer A</text>
+    <text x="70" y="53" textAnchor="middle" fontSize="10.5" fill="#1e293b">Process A</text>
+    <rect x="250" y="10" width="120" height="60" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="310" y="35" textAnchor="middle" fontSize="10.5" fill="#1e293b">Computer B</text>
+    <text x="310" y="53" textAnchor="middle" fontSize="10.5" fill="#1e293b">Process B</text>
+    <line x1="130" y1="40" x2="250" y2="40" stroke="#64748b" strokeWidth="1.5" />
+    <text x="190" y="34" textAnchor="middle" fontSize="9" fill="#475569">network</text>
+    <line x1="190" y1="70" x2="190" y2="100" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="120" y="102" width="140" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="123" textAnchor="middle" fontSize="10.5" fill="#0f172a">Shared Database</text>
+  </svg>
+</Figure>
+
+Therefore:
+
+> **Local mutex → protects within one process/machine.**
+> **Distributed lock → coordinates across machines/processes.**
+
+## 3. Real-Life Analogy
+
+Imagine a meeting room with only one key. Alice gets the key and enters; Bob waits. When Alice returns the key, Bob gets it. The key represents the lock. In distributed computing, the "key" is maintained by some coordination mechanism rather than physically sitting in someone's hand.
+
+## 4. Basic Distributed Lock Architecture
+
+A simplified system looks like this:
+
+<Figure title="Lock Service Architecture" caption="The lock service is the authority that determines ownership.">
+  <svg viewBox="0 0 380 200" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l7-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="130" y="10" width="120" height="40" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="34" textAnchor="middle" fontSize="11" fill="#0f172a">Lock Service</text>
+    <line x1="160" y1="50" x2="100" y2="84" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-4)" />
+    <line x1="220" y1="50" x2="280" y2="84" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-4)" />
+    <rect x="50" y="86" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="100" y="107" textAnchor="middle" fontSize="11" fill="#1e293b">Client A</text>
+    <rect x="230" y="86" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="280" y="107" textAnchor="middle" fontSize="11" fill="#1e293b">Client B</text>
+    <line x1="100" y1="120" x2="100" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-4)" />
+    <rect x="55" y="142" width="90" height="28" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="100" y="160" textAnchor="middle" fontSize="10" fill="#1e293b">SUCCESS → Work</text>
+    <line x1="280" y1="120" x2="280" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-4)" />
+    <rect x="235" y="142" width="90" height="28" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="280" y="160" textAnchor="middle" fontSize="10" fill="#1e293b">WAIT</text>
+    <line x1="100" y1="170" x2="100" y2="186" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-4)" />
+    <text x="100" y="196" textAnchor="middle" fontSize="9.5" fill="#1e293b">Release lock</text>
+  </svg>
+</Figure>
+
+## 5. What Does "Lock Ownership" Mean?
+
+Suppose the resource is `payment:12345`. Client A successfully acquires its lock, so `Owner = A`. Client B asks *"Can I acquire payment:12345?"* and the lock service says no — A currently owns it, so A works while B waits. After A releases, `Owner = B`.
+
+## 6. Distributed Lock ≠ Database Transaction
+
+These concepts are related but different. A **distributed lock** answers *"who is allowed to work on this resource right now?"* A **database transaction** answers *"how do I perform a group of database operations atomically and consistently?"*
+
+```text
+Lock:
+    "Only one worker processes Order #100."
+
+Transaction:
+    UPDATE orders
+    UPDATE payments
+    INSERT audit_record
+
+    COMMIT
+```
+
+A transaction doesn't automatically solve every distributed coordination problem. Likewise, a lock isn't a replacement for transaction semantics.
+
+## 7. Distributed Lock vs Leader Election
+
+This distinction is extremely important.
+
+**Leader Election** chooses *who should coordinate?*
+
+<Figure title="Leader Election" caption="An election selects one coordinator for the cluster.">
+  <svg viewBox="0 0 300 70" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l7-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Node A", "Node B", "Node C"].map((label, i) => (
+      <rect key={i} x={10 + i * 96} y="15" width="80" height="34" rx="8" fill="#fff" stroke={label === "Node B" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+    ))}
+    {["Node A", "Node B", "Node C"].map((label, i) => (
+      <text key={i} x={50 + i * 96} y="37" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label === "Node B" ? "Leader B" : label}</text>
+    ))}
+  </svg>
+</Figure>
+
+**Distributed Lock** chooses *who currently owns a particular resource?*
+
+<Figure title="Distributed Lock" caption="Whoever holds the lock owns this specific resource, not the cluster.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l7-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {[60, 150, 240].map((cx, i) => (
+      <g key={i}>
+        <rect x={cx - 35} y="10" width="70" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={cx} y="31" textAnchor="middle" fontSize="12" fill="#1e293b">{["A", "B", "C"][i]}</text>
+        <line x1={cx} y1="44" x2="150" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-6)" />
+      </g>
+    ))}
+    <rect x="90" y="82" width="120" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="103" textAnchor="middle" fontSize="10.5" fill="#0f172a">Lock → owner = B</text>
+  </svg>
+</Figure>
+
+So remember: **Leader Election → who coordinates the cluster? Distributed Lock → who owns this resource?** A leader itself may also be protected by a lease/lock, but the concepts are distinct.
+
+## 8. The Big Problem: What If the Lock Holder Crashes?
+
+Suppose Client A acquires the lock, starts work, and crashes. If the lock remains forever, `Owner = A` even though A is dead.
+
+<Figure title="A Lock With No Owner Left to Release It" caption="Without a time limit, the resource is stuck.">
+  <svg viewBox="0 0 340 130" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l7-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="120" y="10" width="100" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="170" y="32" textAnchor="middle" fontSize="10.5" fill="#1e293b">Owner = A ❌</text>
+    <line x1="150" y1="46" x2="90" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-7)" />
+    <line x1="190" y1="46" x2="250" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-7)" />
+    <rect x="30" y="82" width="120" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="90" y="103" textAnchor="middle" fontSize="10" fill="#1e293b">B → acquire: DENIED</text>
+    <rect x="190" y="82" width="120" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="250" y="103" textAnchor="middle" fontSize="10" fill="#1e293b">C → acquire: DENIED</text>
+  </svg>
+</Figure>
+
+The system is stuck. This is one of the fundamental problems with distributed locking.
+
+## 9. Solution: Lease
+
+A **lease** is a lock that is valid only for a limited amount of time. Instead of `LOCK FOREVER`, we say `LOCK, valid for 10 seconds`. If A continues working, it periodically renews with a heartbeat.
+
+<Figure title="Lease Granted, Then Renewed" caption="Renewal keeps ownership alive past the original expiry.">
+  <svg viewBox="0 0 480 70" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="l7-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Client A", "Lock Service", "Lease = 10s", "Client A"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 118} y="15" width="102" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={61 + i * 118} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={112 + i * 118} y1="35" x2={128 + i * 118} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-8)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+But if A crashes, there's no renewal, the lease expires, and the lock becomes available again.
+
+<Figure title="Crash → No Renewal → Lock Freed" caption="A lease turns a silent crash into an eventual recovery.">
+  <svg viewBox="0 0 480 70" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="l7-9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["A crashes", "No renewal", "Lease expires", "Lock available"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 118} y="15" width="102" height="40" rx="8" fill="#fff" stroke={label === "A crashes" ? "#dc2626" : label === "Lock available" ? "#16a34a" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={61 + i * 118} y="39" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={112 + i * 118} y1="35" x2={128 + i * 118} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-9)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Leases therefore help with **liveness** — a failed client does not necessarily block everyone forever.
+
+## 10. Lease vs Lock
+
+An ordinary conceptual lock is `Acquire → Owner → Release`. A lease is `Acquire → Owner → Valid until T → Renew → Valid until T'`. If renewal stops, the lease expires and ownership ends.
+
+> **Lock = ownership.**
+> **Lease = time-limited ownership.**
+
+## 11. But There Is a Dangerous Problem
+
+Suppose Client A acquires the lock and starts working, then becomes paused — maybe a garbage-collection pause, CPU starvation, a suspended VM, or a temporary network failure. The lock service doesn't hear from A, so its lease expires, and Client B acquires the lock. Now A eventually wakes up still believing it holds the lock, and tries to write to the database — but B is now the legitimate owner.
+
+<Figure title="The Stale-Owner Problem" caption="A pause, not a crash, is what makes this dangerous.">
+  <svg viewBox="0 0 700 140" style={{ width: "100%", maxWidth: 720, height: "auto" }}>
+    <defs>
+      <marker id="l7-10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["A acquires", "A pauses", "Lease expires", "B acquires"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 172} y="10" width="156" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={88 + i * 172} y="34" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={166 + i * 172} y1="30" x2={182 + i * 172} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-10)" />}
+      </g>
+    ))}
+    <line x1="88" y1="50" x2="88" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-10)" />
+    {["A wakes up", "A writes (stale)"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 172} y="92" width="156" height="40" rx="8" fill="#fff" stroke={label.includes("stale") ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={88 + i * 172} y="116" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 1 && <line x1={166 + i * 172} y1="112" x2={182 + i * 172} y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-10)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+This creates a **stale owner** problem. A lease expiration by itself does not physically stop an already-running client from attempting an operation later.
+
+## 12. Fencing Tokens
+
+The advanced solution is a **fencing token** — a monotonically increasing number associated with each successful lock acquisition.
+
+<Figure title="Tokens Only Ever Increase" caption="Client A gets 41, Client B later gets 42.">
+  <svg viewBox="0 0 400 70" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="l7-11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["41", "42", "43", "44"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 96} y="15" width="80" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={50 + i * 96} y="39" textAnchor="middle" fontSize="14" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={90 + i * 96} y1="35" x2={106 + i * 96} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-11)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+## 13. How Fencing Solves the Stale Client Problem
+
+A acquires the lock with `token = 41`, then pauses. The lease expires. B acquires with `token = 42` and writes to the database, which now remembers `highest token = 42`. When A wakes up and writes with `token = 41`, the database checks `41 < 42` and rejects it.
+
+<Figure title="Fencing Rejects the Stale Write" caption="The database, not the lock service, is what actually stops A.">
+  <svg viewBox="0 0 400 220" style={{ width: "100%", maxWidth: 420, height: "auto" }}>
+    <defs>
+      <marker id="l7-12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="20" y="10" width="150" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="95" y="32" textAnchor="middle" fontSize="10.5" fill="#1e293b">B writes, token 42</text>
+    <line x1="95" y1="46" x2="95" y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-12)" />
+    <rect x="20" y="72" width="150" height="34" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="95" y="93" textAnchor="middle" fontSize="10.5" fill="#1e293b">DB: highest = 42</text>
+    <rect x="230" y="10" width="150" height="36" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="305" y="32" textAnchor="middle" fontSize="10.5" fill="#1e293b">A wakes, token 41</text>
+    <line x1="305" y1="46" x2="305" y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-12)" />
+    <rect x="230" y="72" width="150" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="305" y="93" textAnchor="middle" fontSize="10" fill="#1e293b">A writes, token 41</text>
+    <line x1="230" y1="89" x2="180" y2="89" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-12)" />
+    <line x1="305" y1="106" x2="305" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-12)" />
+    <rect x="230" y="142" width="150" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="305" y="163" textAnchor="middle" fontSize="10" fill="#1e293b">DB checks: 41 &lt; 42</text>
+    <line x1="305" y1="176" x2="305" y2="196" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-12)" />
+    <rect x="255" y="198" width="100" height="30" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="305" y="217" textAnchor="middle" fontSize="11" fill="#1e293b">REJECT</text>
+  </svg>
+</Figure>
+
+A's stale operation cannot overwrite B's newer work. This is the core purpose of fencing tokens.
+
+## 14. Complete Picture
+
+<Figure title="Lock Service, Lease, and Token Together" caption="Ownership, time limit, and a tie-breaker for staleness — all three at once.">
+  <svg viewBox="0 0 300 200" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l7-13" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="60" y="10" width="180" height="56" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="30" textAnchor="middle" fontSize="10.5" fill="#0f172a">Ownership · Lease · Token</text>
+    <text x="150" y="46" textAnchor="middle" fontSize="9.5" fill="#475569">Lock Service</text>
+    <line x1="150" y1="66" x2="150" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-13)" />
+    <rect x="90" y="92" width="120" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="113" textAnchor="middle" fontSize="10" fill="#1e293b">Client A, token 41</text>
+    <line x1="150" y1="126" x2="150" y2="150" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-13)" />
+    <rect x="90" y="152" width="120" height="34" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="150" y="173" textAnchor="middle" fontSize="9.5" fill="#1e293b">Resource accepts 41</text>
+  </svg>
+</Figure>
+
+Later, A's lease expires, B acquires with `token = 42` and its write is accepted; when old A returns with `token = 41`, the resource sees `41 < 42` and rejects it. That's **fencing**.
+
+## 15. Why the Resource Must Check the Token
+
+It is not enough for the lock service to say *"A no longer owns the lock."* A may already be executing code, and the lock service cannot reach into A's process and erase its instructions.
+
+<Figure title="Enforcement Happens at the Resource" caption="The lock service informs; the resource enforces.">
+  <svg viewBox="0 0 460 70" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l7-14" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Lock Service", "Client", "Protected Resource"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 150} y="15" width="134" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={77 + i * 150} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={144 + i * 150} y1="35" x2={160 + i * 150} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-14)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+The protected resource must enforce the fencing rule for correctness.
+
+## 16. Safety vs Liveness
+
+**Safety** — *something bad must never happen.* For a lock: two valid owners must not simultaneously perform protected operations.
+
+**Liveness** — *something good should eventually happen.* For a lock: if the current owner crashes, another client should eventually be able to acquire the lock.
+
+Leases primarily help with liveness, while fencing helps protect correctness against stale owners.
+
+## 17. Common Implementations
+
+Distributed locks can be implemented using different coordination/storage systems.
+
+**Database** — a locks table can coordinate acquisition through a transaction or unique constraint:
+
+| resource_id | owner | token |
+|---|---|---|
+| job-123 | A | 41 |
+
+**Redis-style systems** — a common pattern uses an atomic "set if not exists" operation with an expiration:
+
+```text
+SET lock:job123 owner=A NX PX=10000
+```
+
+Meaning roughly: set the lock only if it doesn't exist, and give it a limited lifetime. But correctness-sensitive distributed locking has subtle failure cases, so simply putting a TTL on a key is not the same thing as having a fully safe locking design.
+
+**ZooKeeper / etcd / Consul-style coordination** — dedicated coordination systems can provide primitives for locks, leases, leader election, sessions, and coordination. Consensus-backed coordination is especially useful when the lock state itself needs a strongly consistent authority.
+
+## 18. Distributed Lock and Consensus
+
+We learned that Raft provides consensus so nodes agree on state. A distributed lock service may use a consensus-backed store.
+
+<Figure title="A Lock Service Backed by Raft" caption="The lock state itself is just another thing the cluster agrees on.">
+  <svg viewBox="0 0 300 200" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l7-15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="90" y="10" width="120" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="31" textAnchor="middle" fontSize="11" fill="#1e293b">Client A</text>
+    <line x1="150" y1="44" x2="150" y2="66" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-15)" />
+    <rect x="80" y="68" width="140" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="89" textAnchor="middle" fontSize="10.5" fill="#0f172a">Lock Service</text>
+    {[70, 150, 230].map((cx, i) => (
+      <g key={i}>
+        <line x1="150" y1="102" x2={cx} y2="126" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-15)" />
+        <rect x={cx - 35} y="128" width="70" height="30" rx="6" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={cx} y="147" textAnchor="middle" fontSize="9.5" fill="#1e293b">Node {i + 1}</text>
+      </g>
+    ))}
+    <line x1="150" y1="158" x2="150" y2="176" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-15)" />
+    <text x="150" y="190" textAnchor="middle" fontSize="10" fill="#1e293b">Raft → agreed lock state</text>
+  </svg>
+</Figure>
+
+So: **consensus can provide a reliable foundation for the lock service.** But **distributed lock ≠ consensus** — consensus is the mechanism for agreement, and the lock is the coordination primitive built on top.
+
+## 19. Distributed Lock vs DHT
+
+**DHT** asks *which node is responsible for this key?*
+
+<Figure title="DHT" caption="Question: where?">
+  <svg viewBox="0 0 380 70" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l7-16" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Key", "Hash", "Responsible Node"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="112" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={66 + i * 128} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={122 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-16)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+**Distributed Lock** asks *which client currently owns this resource?*
+
+<Figure title="Distributed Lock" caption="Question: who?">
+  <svg viewBox="0 0 380 70" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l7-17" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Resource", "Lock", "Current Owner"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 128} y="15" width="112" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={66 + i * 128} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={122 + i * 128} y1="35" x2={138 + i * 128} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-17)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Therefore: **DHT → where? Distributed Lock → who?**
+
+## 20. Distributed Lock vs Replication
+
+**Replication** creates multiple copies of data across nodes. **Distributed Lock** controls ownership — only one node may operate while the others wait. Replication does not automatically provide mutual exclusion.
+
+## 21. Real-World Examples
+
+Distributed locks are useful when we want **one worker to perform a particular action**.
+
+**Scheduled job** — three servers run the same application. Without a lock, all three run *"daily cleanup"* at once. With a distributed lock, one server gets the lock and runs cleanup while the others wait.
+
+**Database migration** — you don't want three servers running a migration simultaneously. A lock ensures one server performs the migration, then releases it.
+
+**Singleton worker** — suppose only one server should refresh an expensive cache. A cache-refresh lock ensures only one of A, B, or C actually does the refresh.
+
+## 22. The Most Important Failure Scenario
+
+Memorize this one.
+
+<Figure title="The Full Fencing Sequence" caption="Every lesson in this chapter compressed into one chain.">
+  <svg viewBox="0 0 700 160" style={{ width: "100%", maxWidth: 720, height: "auto" }}>
+    <defs>
+      <marker id="l7-18" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["A gets lock, token 41", "A pauses", "Lease expires", "B gets lock, token 42"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 172} y="10" width="156" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={88 + i * 172} y="34" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={166 + i * 172} y1="30" x2={182 + i * 172} y2="30" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-18)" />}
+      </g>
+    ))}
+    <line x1="88" y1="50" x2="88" y2="90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-18)" />
+    {["B writes (accepted)", "A wakes, writes 41", "Resource sees 41 < 42", "REJECT"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 172} y="92" width="156" height="40" rx="8" fill="#fff" stroke={label === "REJECT" ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={88 + i * 172} y="116" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={166 + i * 172} y1="112" x2={182 + i * 172} y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-18)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+This is the reason **fencing tokens** matter.
+
+## 23. Connection to Raft Terms
+
+There is a beautiful connection with our previous lesson. Raft has terms (`1, 2, 3, ...`); distributed locks have tokens (`41, 42, 43, ...`). Both provide a way to distinguish **older authority from newer authority** — old authority must not override new authority. But they are not the same mechanism.
+
+## 24. Programming Connection
+
+If you implemented a distributed lock, you would need concepts such as `lock_id`, `owner_id`, `lease_id`, `expiration`, `token`, `heartbeat`, `acquire()`, `release()`, and `renew()`.
+
+```python
+lock = acquire("job-123")
+
+if lock.acquired:
+    token = lock.fencing_token
+
+    do_work(token)
+
+    release(lock)
+```
+
+<Figure title="Acquire → Work → Release" caption="The conceptual shape of using a fenced lock.">
+  <svg viewBox="0 0 480 70" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="l7-19" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["acquire()", "got token", "do_work(token)", "release()"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 118} y="15" width="102" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={61 + i * 118} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={112 + i * 118} y1="35" x2={128 + i * 118} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-19)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+The important distributed-systems part is not the syntax. It is answering: *what happens if the process crashes, pauses, the network fails, or another process acquires the lock?* That is where distributed systems become difficult.
+
+## 25. Common Mistakes
+
+**Mistake 1 — "I used a mutex, so my distributed system is protected."** No. A process-local mutex does not coordinate another machine.
+
+**Mistake 2 — "I added a TTL, so the lock is completely safe."** Not necessarily. TTL/lease expiration helps recovery, but a stale client can still wake up and attempt an operation.
+
+**Mistake 3 — "The lock service knows A lost the lock, so A can't do anything."** Not automatically. The stale client may still execute code.
+
+**Mistake 4 — "Replication makes the lock safe."** No. Replication gives copies. Coordination determines ownership.
+
+**Mistake 5 — "Leader election and distributed locking are the same."** No — leader election chooses a coordinator; a distributed lock gives exclusive ownership of a resource.
+
+## 26. Interview Questions
+
+**Q1. What is a distributed lock?**
+> A mechanism that provides coordinated exclusive access to a shared resource across multiple processes or machines.
+
+**Q2. Why isn't a normal mutex enough?**
+> Because a normal mutex generally protects shared state within one process/machine and cannot coordinate independent machines.
+
+**Q3. What is a lease?**
+> A time-limited lock that expires if it is not renewed.
+
+**Q4. Why use leases?**
+> To prevent a crashed lock holder from holding the resource forever.
+
+**Q5. What is a fencing token?**
+> A monotonically increasing value issued with lock ownership so the protected resource can reject stale owners.
+
+**Q6. Why isn't a lease alone enough?**
+> A client can pause, lose its lease, and later resume believing it still has authority.
+
+**Q7. What is the difference between safety and liveness?**
+> Safety means bad things never happen; liveness means good things eventually happen.
+
+**Q8. How can consensus help distributed locking?**
+> A consensus-backed coordination service can maintain a consistent authoritative lock state across failures.
+
+## 27. The Complete Mental Model
+
+At this point, our distributed-systems chain is becoming powerful.
+
+<Figure title="The Full Chain" caption="Every lesson in Part 11 builds on the one before it.">
+  <svg viewBox="0 0 460 380" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l7-20" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="130" y="10" width="200" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="32" textAnchor="middle" fontSize="12" fill="#0f172a">Distributed System</text>
+    {["DHT", "Consensus", "Replication"].map((label, i) => {
+      const cx = [60, 230, 400][i];
+      return (
+        <g key={i}>
+          <line x1="230" y1="46" x2={cx} y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-20)" />
+          <rect x={cx - 55} y="82" width="110" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="103" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+    <line x1="230" y1="116" x2="230" y2="140" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-20)" />
+    <rect x="150" y="142" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="161" textAnchor="middle" fontSize="10.5" fill="#1e293b">Raft / Paxos</text>
+    <line x1="230" y1="172" x2="230" y2="196" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-20)" />
+    <rect x="150" y="198" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="217" textAnchor="middle" fontSize="10.5" fill="#1e293b">Leader Election</text>
+    <line x1="230" y1="228" x2="230" y2="252" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-20)" />
+    <rect x="150" y="254" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="273" textAnchor="middle" fontSize="10.5" fill="#1e293b">Distributed Lock</text>
+    <line x1="230" y1="284" x2="230" y2="308" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-20)" />
+    <rect x="150" y="310" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="329" textAnchor="middle" fontSize="10.5" fill="#1e293b">Lease</text>
+    <line x1="230" y1="340" x2="230" y2="352" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l7-20)" />
+    <rect x="140" y="354" width="180" height="24" rx="6" fill="#f8fafc" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="370" textAnchor="middle" fontSize="10" fill="#0f172a">Fencing Token</text>
+  </svg>
+</Figure>
+
+**Ultimate memory trick:**
+
+> **DHT = WHERE?**
+> **Routing = HOW do I get there?**
+> **Replication = HOW MANY copies?**
+> **Consensus = WHAT do we agree on?**
+> **Leader Election = WHO coordinates?**
+> **Distributed Lock = WHO owns the resource?**
+> **Lease = FOR HOW LONG?**
+> **Fencing Token = WHICH owner is newer?**
+
+**One-line memory:**
+
+> **Lock = one owner. Lease = temporary owner. Fencing token = stale owner cannot act.**
+
+That last concept — **fencing tokens** — is one of the most important ideas to retain from this lesson.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-6-leader-election", title: "Lesson 6 — Leader Election" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-8-vector-clocks", title: "Lesson 8 — Vector Clocks" }}
+/>

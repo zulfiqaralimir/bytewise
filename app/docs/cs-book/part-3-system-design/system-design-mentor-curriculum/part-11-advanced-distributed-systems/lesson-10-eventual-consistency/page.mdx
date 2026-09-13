@@ -1,0 +1,424 @@
+export const metadata = {
+  title: "Lesson 10 — Eventual Consistency | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 10: eventual consistency — why replicas temporarily diverge, the inconsistency window, anti-entropy and read/write repair, eventual consistency vs strong consistency vs consensus vs CAP, strong eventual consistency and CRDTs, and when eventual consistency is dangerous.",
+  keywords: [
+    "eventual consistency",
+    "strong eventual consistency",
+    "anti-entropy",
+    "read repair",
+    "CRDT",
+    "consistency vs availability",
+    "stale reads",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 10 — Eventual Consistency | Mentor Curriculum Part 11",
+    description:
+      "Not necessarily the same now, but eventually the same once updates stop and the system can reconcile them.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 10**
+
+# Lesson 10 — Eventual Consistency
+
+Now we connect several things we have already learned: replication creates multiple copies, network delay and partitions mean replicas may temporarily disagree, and eventual consistency is the guarantee that they'll converge. The central idea is:
+
+> **Eventual consistency allows replicas to disagree temporarily, as long as they eventually converge to the same state when updates stop.**
+
+## 1. Why Do We Have Multiple Replicas?
+
+A single-server database is a single point of failure — if it crashes, the data may become unavailable. So we replicate.
+
+<Figure title="One Server vs Three Replicas" caption="Losing Node A no longer means losing the data.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l10-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="150" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="200" y="31" textAnchor="middle" fontSize="11" fill="#1e293b">Database</text>
+    {["Node A ❌", "Node B ✓", "Node C ✓"].map((label, i) => {
+      const cx = [60, 200, 340][i];
+      return (
+        <g key={i}>
+          <line x1="200" y1="44" x2={cx} y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-1)" />
+          <rect x={cx - 45} y="82" width="90" height="34" rx="8" fill="#fff" stroke={label.includes("❌") ? "#dc2626" : "#16a34a"} strokeWidth="1.5" />
+          <text x={cx} y="103" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+Replication improves availability, fault tolerance, geographic locality, and scalability. But it creates a new problem: **how do we keep all those copies synchronized?**
+
+## 2. The Perfect World (and the Real One)
+
+Imagine three replicas all at `$100`. A user deposits `$20`. Ideally all three become `$120` instantly. But the write reaches A first — for a short period `A = $120` while `B = C = $100`. Eventually the update propagates and all three converge. This is the basic idea of **eventual consistency**.
+
+## 3–4. The Core Definition
+
+> **If no new updates occur, all correct replicas will eventually converge to the same state.**
+
+Notice the word **eventually** — it does not mean *immediately*. It means: temporary disagreement, then replication/reconciliation, then **convergence** — replicas eventually reach the same state.
+
+## 5. Eventual Consistency Does NOT Mean "Always Consistent"
+
+This is probably the most common misunderstanding.
+
+**Strong consistency:** `WRITE → all relevant reads see the new value.`
+
+**Eventual consistency:** `WRITE → some replicas may still have the old value → updates propagate → replicas converge.`
+
+> **Strong consistency → agreement now. Eventual consistency → agreement eventually.**
+
+Eventual consistency intentionally permits temporary divergence.
+
+## 6. Real-Life Analogy: Newspaper Distribution
+
+A newspaper's headline changes at 9:00 AM. City A gets the new edition at 9:01, City B at 9:05, City C at 9:10. The system eventually converges — that is the basic intuition behind eventual consistency.
+
+## 7–8. Why Would We Accept Temporary Inconsistency?
+
+Because **strong coordination is expensive**. If a server must wait for every replica to confirm before responding, the operation gets slower — and what if one replica is unreachable? A strongly consistent design may need to refuse the write; an eventually consistent design can often accept the local update and synchronize later.
+
+<Figure title="The Trade-Off" caption="More coordination buys consistency; less coordination buys latency and availability.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="15" width="170" height="100" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="95" y="38" textAnchor="middle" fontSize="10.5" fill="#1e293b">More coordination</text>
+    <text x="95" y="58" textAnchor="middle" fontSize="9.5" fill="#475569">Stronger consistency</text>
+    <text x="95" y="76" textAnchor="middle" fontSize="9.5" fill="#475569">Higher latency</text>
+    <text x="95" y="94" textAnchor="middle" fontSize="9.5" fill="#475569">Lower availability</text>
+    <rect x="200" y="15" width="170" height="100" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="285" y="38" textAnchor="middle" fontSize="10.5" fill="#0f172a">Less coordination</text>
+    <text x="285" y="58" textAnchor="middle" fontSize="9.5" fill="#475569">Eventual consistency</text>
+    <text x="285" y="76" textAnchor="middle" fontSize="9.5" fill="#475569">Lower latency</text>
+    <text x="285" y="94" textAnchor="middle" fontSize="9.5" fill="#475569">Higher availability</text>
+  </svg>
+</Figure>
+
+This captures the fundamental design trade-off, though not every system behaves identically.
+
+## 9. The "Inconsistency Window"
+
+<Figure title="Write → Divergence → Convergence" caption="Between the write and the replica catching up, the two disagree.">
+  <svg viewBox="0 0 480 70" style={{ width: "100%", maxWidth: 500, height: "auto" }}>
+    <defs>
+      <marker id="l10-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["t0: A=100, B=100", "t1: A=120, B=100", "t2: A=120, B=120"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="15" width="140" height="40" rx="8" fill="#fff" stroke={i === 2 ? "#16a34a" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="39" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={150 + i * 158} y1="35" x2={168 + i * 158} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-2)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Between `t1` and `t2`, `A ≠ B` — this period is often called the **convergence window** or inconsistency window. Its exact duration isn't guaranteed by the basic model; "eventually" specifies convergence, not a universal fixed time limit.
+
+## 10. Why Do Replicas Become Different?
+
+Network delay, network partitions, independent writes accepted by different replicas, and replication lag are all normal distributed-system challenges that cause temporary divergence.
+
+## 11. A Very Important Example
+
+Two replicas both hold `name = Ali`. The network partitions. User 1 reaches A and sets `name = Ahmed`; User 2 reaches B and sets `name = Zain`.
+
+<Figure title="A Conflicting Concurrent Write" caption="Both writes are valid locally — the system must decide what happens when they meet again.">
+  <svg viewBox="0 0 340 100" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <rect x="10" y="30" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="54" textAnchor="middle" fontSize="10.5" fill="#1e293b">A: name = Ahmed</text>
+    <rect x="190" y="30" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="260" y="54" textAnchor="middle" fontSize="10.5" fill="#1e293b">B: name = Zain</text>
+    <text x="170" y="55" textAnchor="middle" fontSize="14" fill="#b45309">✕</text>
+  </svg>
+</Figure>
+
+This is a **conflict**, and this is where eventual consistency becomes more complicated.
+
+## 12. Eventual Consistency Does NOT Automatically Tell Us the Final Value
+
+Eventual consistency only says *the replicas should eventually converge* — it does not by itself tell us the application's desired conflict-resolution policy. Possible policies include last-writer-wins, first-writer-wins, an application-specific rule, merging both updates, CRDTs, or manual resolution. The choice depends on the application.
+
+## 13. This Connects Directly to Vector Clocks
+
+<Figure title="From Concurrency to Conflict Resolution" caption="Detecting a conflict is only half the problem; resolving it is Lesson 11.">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="l10-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Vector Clock", "Detect concurrency", "Concurrent updates → Conflict", "Conflict Resolution"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="15" width="140" height="40" rx="8" fill="#fff" stroke={label === "Conflict Resolution" ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="39" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="35" x2={168 + i * 158} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-3)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Recall Lesson 8: if `Update X = [2,1]` and `Update Y = [1,2]`, neither vector dominates the other, so `X || Y` — a concurrent conflict that needs reconciliation. **Lesson 11** studies conflict resolution in detail.
+
+## 14. How Do Updates Reach Other Replicas?
+
+<Figure title="Asynchronous Replication" caption="Replicas don't need to coordinate synchronously for every update.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l10-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">Replica A</text>
+    <line x1="130" y1="44" x2="70" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-4)" />
+    <line x1="170" y1="44" x2="230" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-4)" />
+    <rect x="20" y="82" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="103" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replica B</text>
+    <rect x="200" y="82" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="250" y="103" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replica C</text>
+  </svg>
+</Figure>
+
+Updates may propagate through replication streams, message queues, gossip/anti-entropy, or other synchronization protocols.
+
+## 15. Anti-Entropy, Read Repair, Write Repair
+
+**Anti-entropy:** replicas periodically compare their states or histories and exchange missing updates — *"Which updates do you have?" → "I only have X." → "Here is Y." → caught up.*
+
+**Read repair:** a client reads from several replicas, notices one is stale, and repairs it in the process.
+
+**Write repair / asynchronous repair:** the write path (or a background process) proactively finds and updates lagging replicas.
+
+<Figure title="Three Ways Replicas Catch Up" caption="Different repair strategies for the same convergence goal.">
+  <svg viewBox="0 0 500 70" style={{ width: "100%", maxWidth: 520, height: "auto" }}>
+    {["Anti-entropy", "Read repair", "Write / async repair"].map((label, i) => (
+      <rect key={i} x={10 + i * 164} y="15" width="148" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    ))}
+    {["Anti-entropy", "Read repair", "Write / async repair"].map((label, i) => (
+      <text key={i} x={84 + i * 164} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+    ))}
+  </svg>
+</Figure>
+
+These read, write, and asynchronous repair strategies are common ways of moving replicas toward convergence.
+
+## 16. Eventual Consistency vs Strong Consistency vs Consensus vs Replication
+
+| Concept | Question It Answers |
+|---|---|
+| **Replication** | How many copies exist? |
+| **Consensus** | Can nodes agree on a decision/state despite failures? |
+| **Eventual Consistency** | Can replicated states eventually converge, without requiring immediate global agreement? |
+| **Strong Consistency** | Does every read see the most recent write, right now? |
+
+Replication is architecture/mechanism; consistency is a behavioral guarantee about what those copies promise. Consensus solves agreement through coordination; eventual consistency allows convergence without requiring that coordination up front.
+
+## 17. Eventual Consistency vs CAP
+
+During a network partition, if both sides of the partition keep accepting writes, they can temporarily diverge.
+
+<Figure title="Both Sides Keep Accepting Writes" caption="Availability is preserved on both sides; consistency is temporarily sacrificed.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="170" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="95" y="28" textAnchor="middle" fontSize="10.5" fill="#475569">A / B accept writes</text>
+    <rect x="200" y="10" width="170" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="285" y="28" textAnchor="middle" fontSize="10.5" fill="#475569">C / D accept writes</text>
+    <text x="190" y="70" textAnchor="middle" fontSize="14" fill="#dc2626">✕</text>
+  </svg>
+</Figure>
+
+Eventual consistency is commonly associated with highly available systems operating under partitions — but CAP's formal statement is more precise than "pick two of three": in the presence of a partition, the trade-off is between consistency and availability under the relevant definitions.
+
+## 18. A Full Example — and Where It Breaks
+
+Three replicas hold `stock = 10`. A customer buys one at Replica A (`A = 9`) before propagation — temporarily `A=9, B=10, C=10` — then replication catches up and all converge to `9`. Simple case handled.
+
+But suppose two customers buy at the *same time*, at *different* replicas: Customer 1 at A (`A = 9`), Customer 2 at B (`B = 9`), simultaneously.
+
+<Figure title="A Lost Update" caption="Naively picking one version loses one of the two purchases.">
+  <svg viewBox="0 0 340 130" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l10-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">A: 10 → 9</text>
+    <rect x="190" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="260" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">B: 10 → 9</text>
+    <line x1="80" y1="44" x2="170" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-5)" />
+    <line x1="260" y1="44" x2="190" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-5)" />
+    <rect x="120" y="82" width="140" height="34" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="190" y="103" textAnchor="middle" fontSize="9.5" fill="#1e293b">Converged to 9 — but 2 sold!</text>
+  </svg>
+</Figure>
+
+> **Eventual convergence does not automatically mean application correctness.** The system must have a conflict-resolution or merge strategy appropriate for the data — which is exactly why the next lesson, Conflict Resolution, matters.
+
+## 19. Strong Eventual Consistency (SEC)
+
+A stronger idea: if two replicas have received the same set of updates, they should be in the same state, without needing additional reconciliation later. A common way to achieve this is through **CRDTs** — Conflict-free Replicated Data Types — specifically designed so replicas can merge updates while converging. We'll encounter CRDT ideas in the conflict-resolution lesson.
+
+## 20. Eventual Consistency Does Not Guarantee Fresh Reads
+
+If `Primary = 500` and `Replica = 450`, a client reading from the replica gets a **stale read** of `450` even though the system already accepted `500`. Eventual consistency allows stale reads during the convergence period.
+
+## 21. When Is Eventual Consistency Useful — and When Dangerous?
+
+**Useful:** social media (a comment can appear on one server before another), product catalogs, DNS-like systems, and large distributed storage that prioritizes availability and low latency.
+
+**Dangerous:** bank balances, medical critical state, strict inventory correctness, payment authorization — a stale read here can have serious consequences.
+
+<Figure title="The Real Question" caption="Not 'is eventual consistency good?' but 'does this read need the latest state?'">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l10-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <polygon points="190,10 300,50 190,90 80,50" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="190" y="55" textAnchor="middle" fontSize="9.5" fill="#1e293b">Needs latest state?</text>
+    <line x1="300" y1="50" x2="330" y2="50" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-6)" />
+    <text x="345" y="46" textAnchor="middle" fontSize="9.5" fill="#1e293b">Yes</text>
+    <rect x="285" y="95" width="90" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="330" y="114" textAnchor="middle" fontSize="8.5" fill="#1e293b">Stronger</text>
+    <line x1="80" y1="50" x2="30" y2="50" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-6)" />
+    <text x="45" y="46" textAnchor="middle" fontSize="9.5" fill="#1e293b">No</text>
+    <rect x="5" y="95" width="90" height="30" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="50" y="114" textAnchor="middle" fontSize="8.5" fill="#0f172a">Eventual</text>
+  </svg>
+</Figure>
+
+## 22. Connection to Our Previous Lessons
+
+<Figure title="The Full Chain" caption="Every lesson so far funnels into this one problem: keeping copies honest.">
+  <svg viewBox="0 0 460 380" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l10-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Replication → multiple copies", "Network delay / partition", "Replicas temporarily differ", "Eventual Consistency", "Updates propagate", "Concurrent updates? → Vector Clocks", "Conflict Resolution → Converged state"].map((label, i) => (
+      <g key={i}>
+        <rect x="30" y={10 + i * 52} width="400" height="36" rx="8" fill="#fff" stroke={i === 3 ? "#0d9488" : i === 6 ? "#16a34a" : "#94a3b8"} strokeWidth="1.5" />
+        <text x="230" y={33 + i * 52} textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 6 && <line x1="230" y1={46 + i * 52} x2="230" y2={62 + i * 52} stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-7)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+That is why the order of our lessons matters.
+
+## 23. Programming Connection
+
+```python
+replica_A = {"x": 10}
+replica_B = {"x": 10}
+
+replica_A["x"] = 20
+# A → 20, B → 10 (temporarily)
+# background replication eventually sets replica_B["x"] = 20
+```
+
+The programming challenge isn't the assignment itself — it's answering: what if B also changed x? Which version is newer? What if updates arrive out of order, get duplicated, or get lost? What if a replica is offline? How do we detect concurrent updates and resolve conflicts? Those are distributed-systems problems, not syntax problems.
+
+## 24. Common Mistakes
+
+**Mistake 1 — "Eventually consistent means inconsistent forever."** No. The goal is convergence.
+
+**Mistake 2 — "Eventually means after exactly 5 seconds."** No. Basic eventual consistency doesn't specify a universal fixed convergence time.
+
+**Mistake 3 — "All replicas always have the same value."** That's closer to a stronger consistency guarantee — eventual consistency permits temporary differences.
+
+**Mistake 4 — "Replication automatically means eventual consistency."** No. Replication tells us there are copies; the consistency model tells us what guarantees exist between them.
+
+**Mistake 5 — "Eventual consistency automatically resolves conflicts correctly."** No. Convergence requires a reconciliation/merge strategy when concurrent updates conflict.
+
+**Mistake 6 — "Stale reads mean the database is broken."** Not necessarily — a stale read may be expected behavior under an eventual-consistency model; the question is whether that's acceptable for the application.
+
+## 25. Interview Questions
+
+**Q1. What is eventual consistency?**
+> A consistency model in which, if no new updates occur, replicas eventually converge to the same state.
+
+**Q2. Does eventual consistency guarantee immediate reads of the latest value?**
+> No — reads may temporarily return stale data.
+
+**Q3. Why use eventual consistency?**
+> To reduce coordination and often improve availability, latency, and scalability.
+
+**Q4. What is convergence?**
+> The process by which replicas eventually reach the same state.
+
+**Q5. What happens when concurrent writes occur?**
+> The system needs a reconciliation/conflict-resolution strategy.
+
+**Q6. How are vector clocks related?**
+> Vector clocks can help identify whether two updates are causally related or concurrent.
+
+**Q7. Is replication the same as eventual consistency?**
+> No — replication is about multiple copies; eventual consistency is a consistency guarantee about those copies.
+
+**Q8. What is strong eventual consistency?**
+> A stronger form in which replicas that have received the same updates converge to the same state without requiring additional reconciliation steps.
+
+## 26. The Ultimate Mental Model
+
+<Figure title="Replicated Data, End to End" caption="From an imperfect network to a converged state.">
+  <svg viewBox="0 0 460 320" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l10-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="130" y="10" width="200" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="31" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replicated Data (A, B, C)</text>
+    <line x1="230" y1="44" x2="230" y2="66" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <rect x="150" y="68" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="87" textAnchor="middle" fontSize="10" fill="#1e293b">Network is imperfect</text>
+    <line x1="230" y1="98" x2="230" y2="120" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <rect x="150" y="122" width="160" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="141" textAnchor="middle" fontSize="10" fill="#1e293b">Temporary divergence</text>
+    <line x1="230" y1="152" x2="230" y2="174" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <rect x="130" y="176" width="200" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="197" textAnchor="middle" fontSize="10.5" fill="#0f172a">EVENTUAL CONSISTENCY</text>
+    <line x1="230" y1="210" x2="150" y2="234" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <line x1="230" y1="210" x2="310" y2="234" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <rect x="80" y="236" width="140" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="255" textAnchor="middle" fontSize="9.5" fill="#1e293b">Causal update</text>
+    <rect x="240" y="236" width="140" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="310" y="255" textAnchor="middle" fontSize="9.5" fill="#1e293b">Concurrent update</text>
+    <line x1="150" y1="266" x2="220" y2="288" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <line x1="310" y1="266" x2="250" y2="288" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l10-8)" />
+    <rect x="140" y="290" width="180" height="26" rx="6" fill="#f8fafc" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="230" y="307" textAnchor="middle" fontSize="10" fill="#0f172a">Conflict Resolution → Convergence</text>
+  </svg>
+</Figure>
+
+## 27. Memory Trick
+
+> **Eventual Consistency = "Not necessarily the same now, but eventually the same if updates stop and the system can propagate/reconcile them."**
+
+```text
+REPLICATE → DIVERGE → PROPAGATE → RECONCILE → CONVERGE
+```
+
+And connecting the previous lessons: **Vector Clock** detects concurrency, **Eventual Consistency** allows temporary divergence, **Conflict Resolution** decides how concurrent updates are reconciled — the conceptual bridge to the next lesson.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-9-logical-clocks", title: "Lesson 9 — Logical Clocks (Lamport Clocks)" }}
+  next={null}
+/>

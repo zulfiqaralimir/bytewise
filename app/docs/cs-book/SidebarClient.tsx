@@ -113,6 +113,10 @@ const chapters = [
       { title: "Mentor Curriculum, Part 11, Lesson 4: Raft Consensus Algorithm", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-4-raft-consensus" },
       { title: "Mentor Curriculum, Part 11, Lesson 5: Paxos", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-5-paxos" },
       { title: "Mentor Curriculum, Part 11, Lesson 6: Leader Election", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-6-leader-election" },
+      { title: "Mentor Curriculum, Part 11, Lesson 7: Distributed Locks", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-7-distributed-locks" },
+      { title: "Mentor Curriculum, Part 11, Lesson 8: Vector Clocks", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-8-vector-clocks" },
+      { title: "Mentor Curriculum, Part 11, Lesson 9: Logical Clocks (Lamport Clocks)", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-9-logical-clocks" },
+      { title: "Mentor Curriculum, Part 11, Lesson 10: Eventual Consistency", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-10-eventual-consistency" },
     ],
   },
   {
