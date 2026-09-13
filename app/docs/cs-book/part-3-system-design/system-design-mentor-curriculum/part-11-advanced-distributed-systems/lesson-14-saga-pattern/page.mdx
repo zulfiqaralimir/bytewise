@@ -1,0 +1,457 @@
+export const metadata = {
+  title: "Lesson 14 — Saga Pattern | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 14: the Saga Pattern — local transactions plus compensation, forward vs backward recovery, choreography vs orchestration, Saga vs 2PC, the transactional outbox problem, and why Saga provides business-level eventual consistency rather than global ACID.",
+  keywords: [
+    "saga pattern",
+    "saga vs two-phase commit",
+    "choreography vs orchestration",
+    "compensating transaction",
+    "transactional outbox",
+    "distributed transaction",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 14 — Saga Pattern | Mentor Curriculum Part 11",
+    description:
+      "2PC tries to make multiple systems behave like one atomic transaction. Saga coordinates their business actions and compensations instead.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 14**
+
+# Lesson 14 — Saga Pattern
+
+We now reach the second major approach to distributed transactions. In Lesson 13 we saw Two-Phase Commit, which can involve coordination, resource holding, and blocking when the coordinator fails. The **Saga Pattern** takes a different approach:
+
+> **Break one large distributed transaction into a sequence of smaller local transactions, and use compensating transactions when something later fails.**
+
+## 1. The Basic Problem
+
+<Figure title="One Order, Four Independent Services" caption="No single database transaction can span all four.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l14-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">Place Order</text>
+    {["Order", "Inventory", "Payment", "Shipping"].map((label, i) => {
+      const cx = [20, 140, 260, 360][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-1)" />
+          <rect x={cx - 38} y="80" width="76" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="99" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+We cannot simply `BEGIN`, touch all four databases, and `COMMIT` — they're independent services. We need another strategy.
+
+## 2–3. The Big Idea, and Compensation vs Rollback
+
+Instead of one huge transaction, Saga creates a chain of local transactions, each committing on its own: `Create Order → Reserve Inventory → Charge Payment → Create Shipment`. If everything succeeds, we're done. If something fails, we **compensate** the previous steps — and compensation is not the same as rollback.
+
+<Figure title="Rollback vs Compensation" caption="One undoes uncommitted state; the other performs a new action.">
+  <svg viewBox="0 0 380 100" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="15" width="170" height="70" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="95" y="38" textAnchor="middle" fontSize="10.5" fill="#1e293b">Rollback</text>
+    <text x="95" y="58" textAnchor="middle" fontSize="9" fill="#475569">Undo an uncommitted</text>
+    <text x="95" y="72" textAnchor="middle" fontSize="9" fill="#475569">local transaction</text>
+    <rect x="200" y="15" width="170" height="70" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="285" y="38" textAnchor="middle" fontSize="10.5" fill="#0f172a">Compensation</text>
+    <text x="285" y="58" textAnchor="middle" fontSize="9" fill="#475569">A new transaction that reverses</text>
+    <text x="285" y="72" textAnchor="middle" fontSize="9" fill="#475569">an earlier committed action</text>
+  </svg>
+</Figure>
+
+Charging `$100` and later issuing a `$100` refund doesn't roll back the original payment — it's a new transaction. **Saga = compensation, not global rollback.**
+
+## 4–5. The E-Commerce Example and the Complete Picture
+
+Order creation, inventory reservation, and payment all commit successfully — but shipping fails.
+
+<Figure title="Saga: Success, Then Compensation on Failure" caption="Compensation walks backward through the steps that already succeeded.">
+  <svg viewBox="0 0 380 320" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l14-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Create Order ✓", "Reserve Inventory ✓", "Charge Payment ✓", "Create Shipment ✗"].map((label, i) => (
+      <g key={i}>
+        <rect x="90" y={10 + i * 54} width="200" height="34" rx="8" fill="#fff" stroke={label.includes("✗") ? "#dc2626" : "#16a34a"} strokeWidth="1.5" />
+        <text x="190" y={31 + i * 54} textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        <line x1="190" y1={44 + i * 54} x2="190" y2={64 + i * 54} stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-2)" />
+      </g>
+    ))}
+    <rect x="130" y="226" width="120" height="30" rx="8" fill="#fff" stroke="#b45309" strokeWidth="1.5" />
+    <text x="190" y="245" textAnchor="middle" fontSize="10" fill="#1e293b">COMPENSATE</text>
+    <line x1="150" y1="256" x2="80" y2="280" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-2)" />
+    <line x1="190" y1="256" x2="190" y2="280" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-2)" />
+    <line x1="230" y1="256" x2="300" y2="280" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-2)" />
+    <rect x="30" y="282" width="100" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="301" textAnchor="middle" fontSize="9.5" fill="#1e293b">Refund Payment</text>
+    <rect x="140" y="282" width="100" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="190" y="301" textAnchor="middle" fontSize="9.5" fill="#1e293b">Release Inv.</text>
+    <rect x="250" y="282" width="100" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="300" y="301" textAnchor="middle" fontSize="9.5" fill="#1e293b">Cancel Order</text>
+  </svg>
+</Figure>
+
+## 6. Forward Recovery vs Backward Recovery
+
+<Figure title="Two Recovery Directions" caption="Success keeps moving forward; failure walks the compensation chain backward.">
+  <svg viewBox="0 0 460 130" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l14-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["T1", "T2", "T3", "T4"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 108} y="15" width="88" height="32" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+        <text x={54 + i * 108} y="35" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={98 + i * 108} y1="31" x2={118 + i * 108} y2="31" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-3)" />}
+      </g>
+    ))}
+    {["T1", "T2", "T3", "✗"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 108} y="80" width="88" height="32" rx="8" fill="#fff" stroke={label === "✗" ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={54 + i * 108} y="100" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={98 + i * 108} y1="96" x2={118 + i * 108} y2="96" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-3)" />}
+      </g>
+    ))}
+    <line x1="334" y1="112" x2="230" y2="112" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-3)" />
+    <text x="280" y="126" textAnchor="middle" fontSize="9" fill="#475569">compensate C3 → C2 → C1</text>
+  </svg>
+</Figure>
+
+AWS describes this as continuation/forward recovery and compensation/backward recovery.
+
+## 7. Each Step Needs a Compensation
+
+| Action | Compensation |
+|---|---|
+| Create order | Cancel order |
+| Reserve inventory | Release inventory |
+| Charge payment | Refund payment |
+| Reserve hotel | Cancel reservation |
+| Book flight | Cancel booking |
+
+For every Saga step, ask: *"if a later step fails, how do I compensate this step?"*
+
+## 8. But Compensation Isn't Always Perfect
+
+You can't "unsend" an email that already told the customer *"your order has shipped."* You could send a correction, but that's not the same thing. **Not every business operation has a perfect compensation** — this affects the order in which Saga steps should occur.
+
+## 9. The Point of No Return
+
+<Figure title="Ordering Steps by Reversibility" caption="Put the hardest-to-undo action last, once everything else has already succeeded.">
+  <svg viewBox="0 0 460 70" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l14-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Easy to compensate", "Easy to compensate", "Hard to compensate", "POINT OF NO RETURN"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 112} y="15" width="98" height="40" rx="8" fill="#fff" stroke={i === 3 ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={59 + i * 112} y="39" textAnchor="middle" fontSize="9" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={108 + i * 112} y1="35" x2={122 + i * 112} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-4)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Shipping a physical package is hard to reverse once it's left the warehouse — so you generally want irreversible actions to happen after the earlier, more compensatable steps have already succeeded.
+
+## 10. Two Ways to Coordinate a Saga
+
+There are two major Saga styles: **choreography** and **orchestration**.
+
+## 11–12. Choreography
+
+In choreography there's no central controller — services communicate through events.
+
+<Figure title="Choreography" caption="Each service reacts to the previous one's event; nobody directs the whole flow.">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="l14-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Order Service", "Inventory Service", "Payment Service", "Shipping Service"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="15" width="140" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={80 + i * 158} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="35" x2={168 + i * 158} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-5)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Like dancers with no one shouting cues — everyone follows the choreography: `OrderCreated → Inventory reacts → InventoryReserved → Payment reacts → PaymentCompleted → Shipping reacts.`
+
+## 13. Choreography Failure
+
+<Figure title="A Failure Event Fans Out" caption="Two services independently react to the same PaymentFailed event.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l14-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="150" y="31" textAnchor="middle" fontSize="9.5" fill="#1e293b">PaymentFailed</text>
+    <line x1="130" y1="44" x2="70" y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-6)" />
+    <line x1="170" y1="44" x2="230" y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-6)" />
+    <rect x="20" y="80" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="70" y="101" textAnchor="middle" fontSize="9.5" fill="#1e293b">Release Stock</text>
+    <rect x="180" y="80" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="101" textAnchor="middle" fontSize="9.5" fill="#1e293b">Cancel Order</text>
+  </svg>
+</Figure>
+
+No central controller told them — the events drive the workflow.
+
+## 14. The Problem with Choreography
+
+Three services (`A → B → C`) is easy to follow. But once a workflow grows to seven or more interacting services, each reacting to several possible events, the overall picture becomes genuinely hard to trace. As the number of participants grows, choreography can become harder to understand, debug, and maintain.
+
+## 15–16. Orchestration
+
+<Figure title="Orchestration" caption="Like a conductor — one component knows and drives the whole sequence.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l14-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="130" y="10" width="120" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10" fill="#0f172a">Saga Orchestrator</text>
+    {["Order", "Inventory", "Payment"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-7)" />
+          <rect x={cx - 40} y="80" width="80" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="99" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+    <line x1="320" y1="110" x2="320" y2="130" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-7)" />
+    <rect x="270" y="132" width="100" height="26" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="320" y="149" textAnchor="middle" fontSize="10" fill="#1e293b">Shipping</text>
+  </svg>
+</Figure>
+
+The orchestrator tells each participant what to do and tracks the Saga's state, determining what compensation should happen after a failure.
+
+## 17. Choreography vs Orchestration
+
+| | Choreography | Orchestration |
+|---|---|---|
+| Coordinator | No central orchestrator | Central orchestrator |
+| Communication | Events | Commands/messages |
+| Workflow | Distributed | Explicit in orchestrator |
+| Coupling | More decentralized | More centralized |
+| Visibility | Harder to see globally | Easier to see |
+| Best fit | Smaller/simple flows | Complex/long workflows |
+
+The core distinction is **who decides the next step.**
+
+## 18. Saga vs 2PC
+
+**2PC** coordinates participants toward one atomic commit decision, requiring unanimous YES before anyone commits.
+
+<Figure title="Saga's Failure Path" caption="Each local transaction already committed — failure triggers compensation, not abort.">
+  <svg viewBox="0 0 560 70" style={{ width: "100%", maxWidth: 580, height: "auto" }}>
+    <defs>
+      <marker id="l14-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["T1 ✓", "T2 ✓", "T3 ✗", "C2", "C1"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 112} y="15" width="98" height="40" rx="8" fill="#fff" stroke={label === "T3 ✗" ? "#dc2626" : label.startsWith("C") ? "#b45309" : "#16a34a"} strokeWidth="1.5" />
+        <text x={59 + i * 112} y="39" textAnchor="middle" fontSize="11" fill="#1e293b">{label}</text>
+        {i < 4 && <line x1={108 + i * 112} y1="35" x2={122 + i * 112} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-8)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+## 19–20. The Fundamental Trade-off, and Saga Does NOT Give Global ACID
+
+**2PC:** strong atomic commit, more coordination, potential blocking. **Saga:** independent local commits, compensation, temporary inconsistency possible. Between the inventory reservation succeeding and the compensation completing, the system may briefly be `Inventory = reserved, Payment = unpaid, Order = pending` — a genuinely inconsistent intermediate state. So:
+
+> **Saga generally provides business-level eventual consistency, not the same global atomic isolation as a single ACID transaction.**
+
+## 21. Saga and Eventual Consistency
+
+This mirrors Lesson 10's chain (`Divergence → Propagation → Reconciliation → Convergence`): Saga goes through `Local commits → Temporary distributed state → Failure detected → Compensation → Desired final state`. Saga is closely related to the idea of eventual convergence of *business* state.
+
+## 22–24. Saga, Idempotency, and Message Delivery
+
+If a `Release Inventory` call succeeds but its response is lost, the orchestrator may retry it — and if the operation isn't safe to repeat, releasing the same items twice could corrupt inventory counts. Messages passing through a broker can also be delayed, duplicated, retried, or arrive out of order. So Saga steps and compensations should generally be designed with **safe retry/idempotency** in mind — this is one reason real Saga implementations become significantly more complicated than the happy-path diagram suggests.
+
+## 25. A Critical Problem: Database + Message
+
+If Inventory Service updates its database and then crashes before publishing `InventoryReserved`, the inventory is reserved but the next Saga step never happens. One common solution is the **Transactional Outbox** pattern: within the same local database transaction, update the business data *and* store the outgoing event; a separate process then reliably publishes the stored event. This avoids needing a distributed transaction between the database and the message broker.
+
+## 26. Long-Running Transactions
+
+A travel booking (`Flight → Hotel → Car → Insurance`) might take minutes; holding distributed locks the whole time is undesirable. Saga lets each booking commit independently and compensates only if something later fails — making it well suited to long-lived business workflows.
+
+## 27. Real-World Examples
+
+E-commerce (`Order → Inventory → Payment → Shipping`), travel (`Flight → Hotel → Car Rental`), banking (`Loan Application → Credit Check → Account Creation → Disbursement`), and food delivery (`Order → Restaurant Acceptance → Payment → Driver Assignment → Delivery`) all involve multiple services and failure points that fit the Saga model.
+
+## 28. Saga Is Not Magic
+
+Saga doesn't "solve" distributed transactions — it provides a strategy for managing distributed business workflows and recovering from partial failures through local transactions and compensation. You still need to handle network failures, retries, duplicate messages, timeouts, ordering, idempotency, partial failure, compensation failure, and observability. Complexity grows with the workflow.
+
+## 29. What If Compensation Fails?
+
+If `Refund Payment` itself fails after payment and inventory both succeeded but shipping didn't, you can't simply "roll back" — the payment was already committed. The compensation itself must usually be retried, tracked, idempotent, and recoverable, which is why production Saga systems need durable state and strong observability.
+
+## 30–31. Saga State Machine
+
+<Figure title="Saga as a State Machine" caption="The happy path and the compensation path are two branches of the same machine.">
+  <svg viewBox="0 0 380 280" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l14-9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["START", "ORDER_CREATED", "INVENTORY_RESERVED", "PAYMENT_COMPLETED", "SHIPPING_CREATED", "SUCCESS"].map((label, i) => (
+      <g key={i}>
+        <rect x="110" y={10 + i * 42} width="160" height="30" rx="8" fill="#fff" stroke={label === "SUCCESS" ? "#16a34a" : "#94a3b8"} strokeWidth="1.5" />
+        <text x="190" y={29 + i * 42} textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 5 && <line x1="190" y1={40 + i * 42} x2="190" y2={52 + i * 42} stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-9)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+The failure path is symmetric: `PAYMENT_FAILED → RELEASE_INVENTORY → CANCEL_ORDER → FAILED`. This is essentially a state machine — a Saga can be implemented as a distributed workflow/state machine, connecting back to our earlier programming/DSA discussions.
+
+## 32. Choreography vs Eventual Spaghetti
+
+A small choreography (`A → B → C`) is elegant. A large one, where each service reacts to several possible events from several other services, can leave you asking *"why did Service F do this?"* with an answer that traces through five indirect events. This is sometimes called **event-driven complexity**.
+
+## 33. Why Orchestration Can Help
+
+With an explicit orchestrator, you can inspect one place and see the whole flow: create order, reserve inventory, charge payment, create shipping, and what to compensate on failure. This can make complex workflows easier to reason about and monitor — at the cost of a central coordination component that concentrates the workflow logic.
+
+## 34. The Most Important Comparison in Part 11
+
+| Concept | Main Question |
+|---|---|
+| Distributed Transaction | How do multiple systems participate in one business operation? |
+| 2PC | Can all participants atomically commit or abort together? |
+| Saga | How can we complete/recover a multi-service workflow using local transactions and compensation? |
+| Distributed Lock | Who owns a resource right now? |
+| Consensus | What should distributed nodes agree on? |
+| Replication | How do we maintain multiple copies? |
+| Conflict Resolution | What do we do when concurrent updates conflict? |
+
+## 35. The Complete Part 11 Mental Map
+
+<Figure title="Everything We've Built" caption="From data location up through business-level coordination.">
+  <svg viewBox="0 0 460 300" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l14-10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="130" y="10" width="200" height="32" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="30" textAnchor="middle" fontSize="10.5" fill="#0f172a">Distributed Systems</text>
+    {["Data Location — DHT", "Agreement — Consensus", "Coordination — Leader Election"].map((label, i) => {
+      const cx = [80, 230, 380][i];
+      return (
+        <g key={i}>
+          <line x1="230" y1="42" x2={cx} y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+          <rect x={cx - 70} y="72" width="140" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="91" textAnchor="middle" fontSize="9" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+    <line x1="230" y1="102" x2="230" y2="124" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+    <rect x="150" y="126" width="160" height="28" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="144" textAnchor="middle" fontSize="9.5" fill="#1e293b">Replication</text>
+    <line x1="230" y1="154" x2="230" y2="176" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+    <rect x="150" y="178" width="160" height="28" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="196" textAnchor="middle" fontSize="9.5" fill="#1e293b">Eventual Consistency</text>
+    <line x1="230" y1="206" x2="230" y2="228" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+    <rect x="150" y="230" width="160" height="28" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="248" textAnchor="middle" fontSize="9.5" fill="#1e293b">Conflict Resolution</text>
+    <line x1="230" y1="258" x2="230" y2="266" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+    <line x1="230" y1="266" x2="170" y2="284" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+    <line x1="230" y1="266" x2="290" y2="284" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l14-10)" />
+  </svg>
+</Figure>
+
+Distributed Transactions sit at the bottom of that chain, splitting into **2PC** and **Saga**.
+
+## 36. The Four Golden Memories
+
+**2PC** — `Prepare → Vote → Commit/Abort`, `ALL YES → COMMIT`, `ANY NO → ABORT`.
+
+**Saga** — `Local Transactions → Compensation`, `T1 → T2 → T3 → FAILURE → C2 → C1`.
+
+**Choreography** — events tell services what happens next: `A → event → B → event → C`.
+
+**Orchestration** — a central orchestrator tells services what to do.
+
+## 37. The Most Important Interview Question
+
+**"Explain Saga vs 2PC."**
+
+> Two-Phase Commit coordinates multiple participants toward an atomic commit or abort decision. Saga instead decomposes a distributed business transaction into a sequence of local transactions and uses compensating transactions when later steps fail. 2PC provides stronger atomicity but can introduce coordination and blocking concerns, while Saga accepts temporary inconsistency and requires application-level compensation.
+
+## 38. Common Mistakes
+
+**Mistake — "Saga is rollback."** No — rollback ≠ compensation.
+
+**Mistake — "Saga guarantees ACID."** No — Saga generally sacrifices global atomicity/isolation in favor of independently committed steps and business-level recovery.
+
+**Mistake — "Choreography has no communication."** Wrong — it has lots of communication, usually through events.
+
+**Mistake — "Orchestration means one database."** No — the orchestrator coordinates multiple independent services.
+
+**Mistake — "Compensation always perfectly reverses an action."** No — some real-world effects cannot be perfectly undone.
+
+**Mistake — "Saga eliminates failures."** No — it gives you a structured way to handle failures.
+
+## 39. Final Memory Formula
+
+```text
+2PC:   PREPARE → VOTE → COMMIT/ABORT
+SAGA:  LOCAL COMMIT → LOCAL COMMIT → FAILURE → COMPENSATE
+CHOREOGRAPHY:  EVENT → SERVICE → EVENT → SERVICE
+ORCHESTRATION: ORCHESTRATOR → COMMAND → COMMAND → COMMAND
+```
+
+And the deepest idea:
+
+> **2PC tries to make multiple systems behave like one atomic transaction. Saga accepts that they are separate systems and coordinates their business actions and compensations instead.**
+
+## Part 11 Complete
+
+You have now completed all fourteen lessons: Consistent Hashing, DHT, Consensus, Raft, Paxos, Leader Election, Distributed Locks, Vector Clocks, Logical Clocks, Eventual Consistency, Conflict Resolution, Distributed Transactions, Two-Phase Commit, and Saga Pattern.
+
+**Part 11 is complete.** The next step should be **Part 12**, where we can move into the next level of advanced distributed-system concepts.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-13-two-phase-commit", title: "Lesson 13 — Two-Phase Commit (2PC)" }}
+  next={null}
+/>

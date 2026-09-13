@@ -117,6 +117,10 @@ const chapters = [
       { title: "Mentor Curriculum, Part 11, Lesson 8: Vector Clocks", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-8-vector-clocks" },
       { title: "Mentor Curriculum, Part 11, Lesson 9: Logical Clocks (Lamport Clocks)", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-9-logical-clocks" },
       { title: "Mentor Curriculum, Part 11, Lesson 10: Eventual Consistency", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-10-eventual-consistency" },
+      { title: "Mentor Curriculum, Part 11, Lesson 11: Conflict Resolution", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-11-conflict-resolution" },
+      { title: "Mentor Curriculum, Part 11, Lesson 12: Distributed Transactions", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-12-distributed-transactions" },
+      { title: "Mentor Curriculum, Part 11, Lesson 13: Two-Phase Commit (2PC)", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-13-two-phase-commit" },
+      { title: "Mentor Curriculum, Part 11, Lesson 14: Saga Pattern", href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-14-saga-pattern" },
     ],
   },
   {

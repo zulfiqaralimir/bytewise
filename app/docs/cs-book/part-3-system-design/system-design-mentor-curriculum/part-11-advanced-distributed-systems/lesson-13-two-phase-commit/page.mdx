@@ -1,0 +1,314 @@
+export const metadata = {
+  title: "Lesson 13 — Two-Phase Commit (2PC) | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 13: Two-Phase Commit — the prepare and commit phases, why 2PC needs unanimity instead of majority, what 'prepared' really means, the coordinator-crash blocking problem, durable logging and recovery, and 2PC vs Raft vs Saga.",
+  keywords: [
+    "two-phase commit",
+    "2PC",
+    "atomic commit protocol",
+    "coordinator participant",
+    "2PC blocking problem",
+    "2PC vs raft",
+    "2PC vs saga",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 13 — Two-Phase Commit (2PC) | Mentor Curriculum Part 11",
+    description:
+      "ALL YES → COMMIT. ANY NO → ABORT.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 13**
+
+# Lesson 13 — Two-Phase Commit (2PC)
+
+We have reached the first major solution to the distributed transaction problem from Lesson 12. We want: **either everybody commits, or everybody aborts.** Two-Phase Commit, or **2PC**, is a protocol designed to coordinate exactly this kind of atomic commit across multiple transaction participants.
+
+## 1. What Is 2PC?
+
+**Two-Phase Commit is a distributed transaction protocol in which a coordinator asks all participants to prepare first, and then tells them all to either commit or abort.** The two phases are `Phase 1 → PREPARE / VOTE` and `Phase 2 → COMMIT / ABORT`. The key rule: `ALL YES → COMMIT`, `ANY NO → ABORT`.
+
+> **2PC requires unanimity, not majority.** This is different from Raft and Paxos.
+
+## 2. The Main Players
+
+The **coordinator** manages the distributed transaction — *"I will ask everyone whether they are ready, then announce the final decision."* The **participants** are the databases/services that actually perform parts of the transaction.
+
+<Figure title="Coordinator and Participants" caption="The coordinator doesn't necessarily store the business data — it coordinates the decision.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l13-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">Coordinator</text>
+    {["Order DB", "Inventory DB", "Payment DB"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-1)" />
+          <rect x={cx - 55} y="82" width="110" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="103" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+## 3. Real-Life Analogy
+
+Three people are buying a house together. Before signing, the coordinator asks each *"are you ready?"* If everyone says yes, everyone signs. If even one says no, nobody signs. That's the basic idea of 2PC.
+
+## 4. Example: Online Order
+
+A laptop purchase needs `create order`, `reserve laptop`, `charge customer`. We want all three to succeed or all three to fail — never a state where order and inventory succeed but payment fails.
+
+## 5. Phase 1 — PREPARE
+
+The coordinator asks: **"Can everyone prepare to commit?"**
+
+<Figure title="Phase 1 — Everyone Votes" caption="Each participant checks whether it can complete its part.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l13-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">Coordinator</text>
+    {["Order DB", "Inventory DB", "Payment DB"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="72" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-2)" />
+          <text x={(190 + cx) / 2} y="60" textAnchor="middle" fontSize="9" fill="#475569">PREPARE</text>
+          <rect x={cx - 55} y="74" width="110" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="93" textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+          <line x1={cx} y1="104" x2="190" y2="130" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-2)" />
+        </g>
+      );
+    })}
+    <rect x="150" y="132" width="80" height="26" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="190" y="150" textAnchor="middle" fontSize="10" fill="#1e293b">YES × 3</text>
+  </svg>
+</Figure>
+
+Each participant records enough durable information to survive a crash before responding YES — this is a durable promise that it can complete the transaction if the coordinator later says commit.
+
+## 6. What Does "Prepared" Actually Mean?
+
+**Prepared does NOT mean committed.** It means *"I have done the necessary work and recorded enough information that I can commit later if instructed."* A participant may have performed local checks, recorded transaction information durably, and acquired necessary locks/resources — but it has **not yet made the final commit decision.**
+
+## 7–8. Phase 1 Responses and What If One Says NO
+
+If Order, Inventory, and Payment all vote YES, the coordinator proceeds to Phase 2. But if Inventory votes NO (say, the laptop is unavailable), the rule is `ANY NO → ABORT`, and the coordinator tells every participant to abort.
+
+## 9. Phase 2 — COMMIT
+
+If everyone said YES, the coordinator makes the final decision and broadcasts `COMMIT` to every participant, which then commits its local transaction.
+
+## 10. The Complete 2PC Flow
+
+<Figure title="Prepare → Vote → Decide → Commit or Abort" caption="The whole protocol in one picture.">
+  <svg viewBox="0 0 460 320" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l13-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="180" y="10" width="100" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="30" textAnchor="middle" fontSize="10.5" fill="#1e293b">Client</text>
+    <line x1="230" y1="42" x2="230" y2="64" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <rect x="170" y="66" width="120" height="32" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="86" textAnchor="middle" fontSize="10.5" fill="#0f172a">Coordinator</text>
+    <line x1="230" y1="98" x2="130" y2="122" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <line x1="230" y1="98" x2="330" y2="122" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <rect x="70" y="124" width="120" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="130" y="143" textAnchor="middle" fontSize="9.5" fill="#1e293b">DB-A, DB-B → YES</text>
+    <rect x="270" y="124" width="120" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="330" y="143" textAnchor="middle" fontSize="9.5" fill="#1e293b">DB-C → YES</text>
+    <line x1="130" y1="154" x2="220" y2="178" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <line x1="330" y1="154" x2="240" y2="178" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <polygon points="230,172 300,192 230,212 160,192" fill="#fff" stroke="#b45309" strokeWidth="1.5" />
+    <text x="230" y="196" textAnchor="middle" fontSize="10" fill="#1e293b">All YES?</text>
+    <line x1="230" y1="212" x2="230" y2="234" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <text x="245" y="228" fontSize="9.5" fill="#475569">Yes</text>
+    <rect x="180" y="236" width="100" height="30" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="230" y="255" textAnchor="middle" fontSize="10.5" fill="#1e293b">COMMIT</text>
+    <line x1="160" y1="192" x2="70" y2="234" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <text x="100" y="222" fontSize="9.5" fill="#475569">No</text>
+    <rect x="20" y="236" width="100" height="30" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="70" y="255" textAnchor="middle" fontSize="10.5" fill="#1e293b">ABORT</text>
+    <line x1="230" y1="266" x2="230" y2="290" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-3)" />
+    <text x="230" y="304" textAnchor="middle" fontSize="9.5" fill="#1e293b">DB-A, DB-B, DB-C all commit</text>
+  </svg>
+</Figure>
+
+**Memory rule:** `Prepare → Vote → Decide → Commit/Abort`
+
+## 11–12. The Most Important Rule
+
+`ALL participants = YES → COMMIT`, but `ANY participant = NO → ABORT`. Unlike Raft's *"majority can make progress,"* 2PC needs **everyone** to agree. With three participants `A, B, C`, even `A=YES, B=YES, C=NO` cannot commit as "2 out of 3" — C is part of the transaction, and letting A and B commit while C aborts is exactly the partial-commit problem 2PC exists to prevent.
+
+## 13. 2PC vs Raft
+
+| | Raft | 2PC |
+|---|---|---|
+| Question | What should the replicated cluster agree on? | Can every participant commit this transaction? |
+| Requirement | Majority / quorum (e.g. 3/5) | Unanimous — all participants YES |
+| Goal | Consensus / replicated state machine | Atomic commit across resources |
+
+Don't confuse them.
+
+## 14–15. The Big Problem: Coordinator Crash and Blocking
+
+Suppose all three participants have voted YES and are `PREPARED`, and then the coordinator crashes before telling anyone the final decision.
+
+<Figure title="Participants Stuck After a Coordinator Crash" caption="Neither committing nor aborting is safe without knowing the coordinator's decision.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l13-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">Coordinator ❌</text>
+    {["DB-A", "DB-B", "DB-C"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <rect x={cx - 45} y="82" width="90" height="34" rx="8" fill="#fff" stroke="#b45309" strokeWidth="1.5" />
+          <text x={cx} y="103" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+    <rect x="120" y="128" width="140" height="24" rx="6" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="190" y="144" textAnchor="middle" fontSize="9.5" fill="#1e293b">PREPARED — blocked, waiting</text>
+  </svg>
+</Figure>
+
+They can't safely commit (the coordinator might have decided abort) and can't safely abort (it might have decided commit) — this **blocking behavior** is one of the major limitations of classic 2PC.
+
+## 16. Why Do Participants Hold Locks?
+
+If Inventory releases its reservation on `Laptop #123` immediately after preparing, another transaction could grab it — then the coordinator says COMMIT and the original transaction can no longer safely complete as intended. So participants hold resources/locks while prepared, which means a slow or unavailable coordinator makes other transactions wait too, hurting latency and availability.
+
+## 17–19. Failure Scenario and Durable Logs
+
+If the coordinator decides COMMIT and then crashes before every participant hears it, you can end up with `A → maybe committed, B → prepared, C → prepared`. The system must use durable logs to recover consistently — both participants (*"I had prepared transaction T"*) and the coordinator (*"T123 → COMMIT"*) need to survive a crash and resume from where they left off. This durability requirement is a major reason 2PC is more complicated than simply sending messages back and forth.
+
+## 20. 2PC State Machine
+
+<Figure title="A Participant's States" caption="PREPARED is the dangerous state — it depends entirely on hearing back from the coordinator.">
+  <svg viewBox="0 0 380 260" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l13-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="190" y="29" textAnchor="middle" fontSize="10" fill="#1e293b">START</text>
+    <line x1="190" y1="40" x2="190" y2="62" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-5)" />
+    <rect x="140" y="64" width="100" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="190" y="83" textAnchor="middle" fontSize="10" fill="#1e293b">PREPARE</text>
+    <line x1="160" y1="94" x2="110" y2="118" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-5)" />
+    <line x1="220" y1="94" x2="270" y2="118" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-5)" />
+    <rect x="60" y="120" width="100" height="28" rx="8" fill="#fff" stroke="#b45309" strokeWidth="1.5" />
+    <text x="110" y="138" textAnchor="middle" fontSize="10" fill="#1e293b">PREPARED</text>
+    <rect x="240" y="120" width="100" height="28" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="290" y="138" textAnchor="middle" fontSize="10" fill="#1e293b">ABORT</text>
+    <line x1="110" y1="148" x2="110" y2="172" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-5)" />
+    <rect x="60" y="174" width="100" height="26" rx="8" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="110" y="191" textAnchor="middle" fontSize="9.5" fill="#1e293b">wait for decision</text>
+    <line x1="90" y1="200" x2="70" y2="224" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-5)" />
+    <line x1="130" y1="200" x2="150" y2="224" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l13-5)" />
+    <rect x="20" y="226" width="90" height="26" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="65" y="243" textAnchor="middle" fontSize="9.5" fill="#1e293b">COMMIT → DONE</text>
+    <rect x="120" y="226" width="90" height="26" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="165" y="243" textAnchor="middle" fontSize="9.5" fill="#1e293b">ABORT → DONE</text>
+  </svg>
+</Figure>
+
+## 21–22. 2PC Is Not "Two Servers" or "Two Transactions"
+
+"Two-phase" refers to **two protocol phases** (prepare, then commit/abort) — not two servers. You could have one coordinator and three participants, or one coordinator and twenty. Likewise, there aren't literally "two transactions" — several local transactions participate in **one** distributed transaction, and the phases are coordination stages around that single logical operation.
+
+## 23. 2PC and ACID
+
+2PC is particularly related to **Atomicity** across multiple resource managers. Without coordination you could get `DB-A → COMMIT, DB-B → ABORT`; with 2PC, the distributed transaction is given an atomic commit/abort outcome across participating resources, assuming the protocol's required assumptions and recovery mechanisms hold.
+
+## 24. 2PC vs Saga
+
+**2PC:** `Prepare → Everyone ready? → Commit together` — strong atomic commit across transaction-aware participants.
+
+**Saga:** `Local transaction → Local transaction → Failure → Compensating transactions` — business-level recovery without keeping one global atomic transaction open.
+
+> **2PC = "Everyone commit together." Saga = "Commit locally, compensate if necessary."**
+
+## 25–26. When Is 2PC Useful — and Why Microservices Often Prefer Sagas
+
+2PC makes sense when participants support distributed transactions, atomicity is genuinely required, resources are under controlled infrastructure, and partial commit is unacceptable — think controlled enterprise databases behind a transaction manager. But it's expensive: coordination, network round trips, durable logging, held locks, blocking, and coordinator dependency all add cost. Can you force an external payment gateway or courier API to participate in your 2PC protocol, holding a prepared state until you say commit? Usually not — which is why systems spanning external services tend toward the Saga model: charge payment, and if something later fails, refund it.
+
+## 27. The Deep Connection to Consensus
+
+Both **Consensus** (*"what value/decision should the distributed system agree on?"*) and **2PC** (*"can all participants commit this transaction, and then carry out the same commit/abort decision?"*) involve distributed nodes reaching agreement — but 2PC's classic coordinator-based design has a blocking weakness that consensus algorithms such as Raft are designed differently around.
+
+## 28. The 2PC Memory Formula
+
+> **PREPARE → VOTE → DECIDE → COMMIT/ABORT**
+
+```text
+ALL YES → COMMIT
+ANY NO  → ABORT
+```
+
+And the weakness: coordinator failure → participants may block → locks/resources may remain held.
+
+## 29. Interview Questions
+
+**Q1. What is Two-Phase Commit?**
+> A distributed atomic-commit protocol that coordinates multiple transaction participants so they either all commit or all abort.
+
+**Q2. What are the two phases?**
+> Prepare/Voting, then Commit/Abort.
+
+**Q3. What happens if one participant votes NO?**
+> Any NO leads to an abort for everyone.
+
+**Q4. Does 2PC use majority voting?**
+> No — a successful commit requires all participants to vote YES.
+
+**Q5. What happens if the coordinator fails?**
+> Prepared participants may be unable to determine the final decision and can become blocked until recovery/decision information becomes available.
+
+**Q6. Why are logs necessary?**
+> To make transaction state and decisions durable across crashes and allow recovery.
+
+**Q7. Why can 2PC hurt performance?**
+> It requires coordination, network communication, durable logging, and may keep locks/resources held while waiting for the final decision.
+
+**Q8. Is 2PC the same as Raft?**
+> No — Raft is consensus/replicated state machine; 2PC is distributed atomic commit.
+
+**Q9. Is 2PC the same as Saga?**
+> No — 2PC is atomic commit/abort; Saga is local transactions plus compensation.
+
+## Final Mental Model
+
+If you remember only five things: **(1)** coordinator + participants, **(2)** Phase 1: PREPARE → YES/NO, **(3)** Phase 2: COMMIT/ABORT, **(4)** ALL YES → COMMIT, ANY NO → ABORT, **(5)** coordinator failure → possible blocking.
+
+**One-line exam definition:**
+
+> **Two-Phase Commit (2PC) is a distributed transaction protocol in which a coordinator first prepares and collects votes from all participants, then instructs all participants to either commit or abort based on the unanimous result.**
+
+The next lesson is **Lesson 14 — Saga Pattern**, where we'll see how distributed systems handle multi-service transactions without requiring all services to stay locked in a global 2PC transaction.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-12-distributed-transactions", title: "Lesson 12 — Distributed Transactions" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-14-saga-pattern", title: "Lesson 14 — Saga Pattern" }}
+/>

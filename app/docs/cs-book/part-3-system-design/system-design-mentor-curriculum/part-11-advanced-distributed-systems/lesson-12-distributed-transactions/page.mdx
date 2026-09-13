@@ -1,0 +1,396 @@
+export const metadata = {
+  title: "Lesson 12 — Distributed Transactions | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 12: distributed transactions — local vs distributed transactions, partial failure and the unknown-outcome problem, idempotency, Two-Phase Commit vs Saga, rollback vs compensation, choreography vs orchestration, and how transactions differ from locks, consensus, and replication.",
+  keywords: [
+    "distributed transaction",
+    "two-phase commit",
+    "saga pattern",
+    "partial failure",
+    "idempotency",
+    "rollback vs compensation",
+    "saga choreography orchestration",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 12 — Distributed Transactions | Mentor Curriculum Part 11",
+    description:
+      "Rollback undoes uncommitted work. Compensation undoes the business effect of already-committed work.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 12**
+
+# Lesson 12 — Distributed Transactions
+
+We now move from **conflict resolution** to one of the most important problems in distributed systems:
+
+> **What happens when one business operation needs to update multiple independent databases or services?**
+
+## 1. First: What Is a Transaction?
+
+A **transaction** is a group of operations that should behave as one logical unit. Transferring Rs. 10,000 means `Account A: -10,000` and `Account B: +10,000` — we don't want A debited while B never receives it. We want **all-or-nothing** behavior. A traditional database gives us the **ACID** properties: Atomicity, Consistency, Isolation, Durability.
+
+## 2. Local Transaction vs Distributed Transaction
+
+A **local transaction** happens inside one database, which can control the whole thing itself.
+
+<Figure title="A Local Transaction" caption="One database, one transaction boundary.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l12-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="100" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="150" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">PostgreSQL</text>
+    <line x1="130" y1="44" x2="80" y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-1)" />
+    <line x1="170" y1="44" x2="220" y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-1)" />
+    <rect x="30" y="80" width="100" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="100" textAnchor="middle" fontSize="10" fill="#1e293b">Update A</text>
+    <rect x="170" y="80" width="100" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="220" y="100" textAnchor="middle" fontSize="10" fill="#1e293b">Update B</text>
+  </svg>
+</Figure>
+
+A **distributed transaction** spans multiple independent services and databases — an online order touches an Order Service, Inventory Service, and Payment Service, each with its own database.
+
+<Figure title="A Distributed Transaction" caption="No single ordinary database transaction covers all three databases.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l12-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">Place Order</text>
+    {["Order Svc", "Inventory Svc", "Payment Svc"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-2)" />
+          <rect x={cx - 55} y="80" width="110" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="99" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+          <line x1={cx} y1="110" x2={cx} y2="126" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-2)" />
+          <rect x={cx - 30} y="128" width="60" height="24" rx="6" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="144" textAnchor="middle" fontSize="9.5" fill="#1e293b">DB-{["A", "B", "C"][i]}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+## 3–4. Why Is This Difficult? The Partial Failure Problem
+
+Consider a four-step operation: create order, reserve inventory, charge customer, create shipment. Suppose three succeed and the last fails.
+
+<Figure title="Partial Failure" caption="The whole system hasn't failed — only part of the operation has.">
+  <svg viewBox="0 0 460 70" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    {["Order ✓", "Inventory ✓", "Payment ✓", "Shipping ✗"].map((label, i) => (
+      <rect key={i} x={10 + i * 112} y="15" width="98" height="40" rx="8" fill="#fff" stroke={label.includes("✗") ? "#dc2626" : "#16a34a"} strokeWidth="1.5" />
+    ))}
+    {["Order ✓", "Inventory ✓", "Payment ✓", "Shipping ✗"].map((label, i) => (
+      <text key={i} x={59 + i * 112} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+    ))}
+  </svg>
+</Figure>
+
+We have already changed three different systems. The problem: **how do we recover from a partial failure?** This can happen because of a server crash, network failure, timeout, database failure, service restart, duplicate request, coordinator failure, or message loss.
+
+## 5. The Most Dangerous Situation: Unknown Outcome
+
+The payment service successfully charges the card, but the response is lost on the way back.
+
+<Figure title="Timeout ≠ Failure" caption="The client genuinely doesn't know whether the charge happened.">
+  <svg viewBox="0 0 500 70" style={{ width: "100%", maxWidth: 520, height: "auto" }}>
+    <defs>
+      <marker id="l12-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["CHARGE $100", "Payment succeeds", "Response lost", "Client sees TIMEOUT"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 124} y="15" width="108" height="40" rx="8" fill="#fff" stroke={label.includes("lost") ? "#dc2626" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={64 + i * 124} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={118 + i * 124} y1="35" x2={134 + i * 124} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-3)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+A timeout means *"I don't know what happened"* — not necessarily *"the operation failed."* Blindly retrying can turn `Charge $100 → timeout → retry` into `Charge another $100`. This is why distributed systems heavily use **idempotency** mechanisms such as idempotency keys for operations that may be retried.
+
+## 6. What Are We Trying to Achieve?
+
+<Figure title="Everything Commits, or Nothing Does" caption="The atomicity goal, restated for a multi-system operation.">
+  <svg viewBox="0 0 300 130" style={{ width: "100%", maxWidth: 320, height: "auto" }}>
+    <defs>
+      <marker id="l12-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="80" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="150" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">Distributed Transaction</text>
+    <line x1="120" y1="44" x2="80" y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-4)" />
+    <line x1="180" y1="44" x2="220" y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-4)" />
+    <rect x="20" y="80" width="120" height="34" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="80" y="101" textAnchor="middle" fontSize="10" fill="#1e293b">Everything commits</text>
+    <rect x="160" y="80" width="120" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="220" y="101" textAnchor="middle" fontSize="10" fill="#1e293b">Nothing commits</text>
+  </svg>
+</Figure>
+
+This is much harder across independent systems than inside one database.
+
+## 7. The Basic Architecture
+
+<Figure title="Coordinator and Participants" caption="The coordinator manages the transaction; the databases are the participants.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l12-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10.5" fill="#1e293b">Client</text>
+    <line x1="190" y1="44" x2="190" y2="68" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-5)" />
+    <rect x="130" y="70" width="120" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="91" textAnchor="middle" fontSize="10.5" fill="#0f172a">Coordinator</text>
+    {["DB-A", "DB-B", "DB-C"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="104" x2={cx} y2="128" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-5)" />
+          <rect x={cx - 35} y="130" width="70" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="149" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+The coordinator needs to determine: can everyone successfully complete this transaction? That question leads to two major approaches.
+
+## 8. Approach 1 — Two-Phase Commit
+
+<Figure title="Two-Phase Commit" caption="Every participant must say yes before anyone commits.">
+  <svg viewBox="0 0 380 160" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l12-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="140" y="10" width="100" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10.5" fill="#0f172a">Coordinator</text>
+    {["DB-A", "DB-B", "DB-C"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="72" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-6)" />
+          <rect x={cx - 35} y="74" width="70" height="30" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="93" textAnchor="middle" fontSize="10" fill="#1e293b">{label}: YES</text>
+          <line x1={cx} y1="104" x2="190" y2="130" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-6)" />
+        </g>
+      );
+    })}
+    <rect x="140" y="132" width="100" height="26" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="190" y="150" textAnchor="middle" fontSize="10" fill="#1e293b">COMMIT</text>
+  </svg>
+</Figure>
+
+2PC tries to achieve atomic commit across participants in two phases: `Phase 1 → Prepare`, `Phase 2 → Commit / Abort`. We'll study this deeply in **Lesson 13**.
+
+## 9. Approach 2 — Saga
+
+A **Saga** takes a different approach: instead of one giant open transaction, break the work into local transactions that each commit independently, and if something later fails, run a **compensating transaction**.
+
+<Figure title="Compensation After a Failure" caption="Each step already committed — so undoing means acting, not rolling back.">
+  <svg viewBox="0 0 640 70" style={{ width: "100%", maxWidth: 660, height: "auto" }}>
+    <defs>
+      <marker id="l12-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Create Order", "Reserve Inventory", "Charge Payment", "Shipping FAILS"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="15" width="140" height="40" rx="8" fill="#fff" stroke={label.includes("FAILS") ? "#dc2626" : "#16a34a"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="35" x2={168 + i * 158} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-7)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+We'd then execute `Cancel Payment → Release Inventory → Cancel Order`. **Saga doesn't roll back the database across all services — it performs new actions that compensate for previously committed actions.** We'll study Saga in **Lesson 14**.
+
+## 10. Rollback vs Compensation
+
+<Figure title="Two Different Kinds of Undo" caption="One reverses uncommitted state; the other performs a new action.">
+  <svg viewBox="0 0 380 100" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="15" width="170" height="70" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="95" y="38" textAnchor="middle" fontSize="10.5" fill="#1e293b">Rollback</text>
+    <text x="95" y="58" textAnchor="middle" fontSize="9" fill="#475569">Undo uncommitted</text>
+    <text x="95" y="72" textAnchor="middle" fontSize="9" fill="#475569">database work</text>
+    <rect x="200" y="15" width="170" height="70" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="285" y="38" textAnchor="middle" fontSize="10.5" fill="#0f172a">Compensation</text>
+    <text x="285" y="58" textAnchor="middle" fontSize="9" fill="#475569">New transaction reverses</text>
+    <text x="285" y="72" textAnchor="middle" fontSize="9" fill="#475569">a committed business effect</text>
+  </svg>
+</Figure>
+
+Charging a customer $100 and then issuing a $100 refund isn't literally rolling back the original payment — it's a **new business operation**.
+
+> **Rollback = undo the transaction. Compensation = perform an action that undoes the business effect.**
+
+## 11. Distributed Transactions and Isolation
+
+Suppose stock is `1` and two customers both try to buy it. If both services independently see `Stock = 1` and both reserve successfully, we now have one item and two successful reservations. So distributed transactions aren't just about "did everything commit?" — they also involve concurrency, isolation, ordering, locking, retries, duplicate requests, and failure recovery.
+
+## 12–14. Distributed Transactions vs Locks, Consensus, and Replication
+
+A **distributed lock** answers *"who is allowed to access this resource right now?"* A **distributed transaction** answers *"how do multiple independent operations succeed or recover as one business operation?"* A transaction may use locks, but a lock by itself doesn't create a transaction.
+
+**Consensus** asks *"what value/decision should the distributed nodes agree on?"* A distributed transaction asks *"how do multiple resource changes achieve the required business consistency?"* Consensus can be used inside infrastructure supporting transactions, but consensus ≠ distributed transaction — and 2PC specifically is an atomic-commit protocol, not simply general consensus.
+
+**Replication** answers *"how do I maintain multiple copies?"* A distributed transaction answers *"how do I coordinate a multi-resource business operation?"*
+
+## 15. The E-Commerce Example
+
+A `BUY` click needs: create order, reserve inventory, charge payment, create shipment — spanning an Order DB, Inventory DB, and Payment DB behind a payment gateway. If `Order ✓, Inventory ✓, Payment ✓, Shipment ✗`, the system needs a recovery strategy: **2PC** (atomic commit) or **Saga** (compensation).
+
+## 16. Why Sagas Become Important
+
+Imagine a transaction lasting 30 minutes — flight, hotel, car rental, insurance. Keeping distributed locks/resources held for the entire process is undesirable. A Saga instead lets each booking commit independently: if the car booking fails after flight and hotel succeeded, compensate with `Cancel hotel → Release flight`. This allows each local transaction to complete independently while the overall process recovers through compensating actions — but remember, **Saga does NOT give the same atomicity as one ACID transaction**; there can be a temporary inconsistent state while compensation is happening.
+
+## 17. Saga: Choreography vs Orchestration
+
+<Figure title="Choreography" caption="Services react to events — no central controller.">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="l12-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Order Created", "Inventory Reserved", "Payment Completed"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 210} y="15" width="190" height="40" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x={105 + i * 210} y="39" textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 2 && <line x1={200 + i * 210} y1="35" x2={220 + i * 210} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-8)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+<Figure title="Orchestration" caption="A central orchestrator tells every service what to do.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l12-9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="130" y="10" width="120" height="34" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="190" y="31" textAnchor="middle" fontSize="10" fill="#0f172a">Saga Orchestrator</text>
+    {["Order", "Inventory", "Payment"].map((label, i) => {
+      const cx = [60, 190, 320][i];
+      return (
+        <g key={i}>
+          <line x1="190" y1="44" x2={cx} y2="78" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-9)" />
+          <rect x={cx - 40} y="80" width="80" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+          <text x={cx} y="100" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</Figure>
+
+AWS describes orchestration as using a central coordinator to manage the distributed workflow. We'll study both forms more in Lesson 14.
+
+## 18. The Three Most Important Ideas
+
+**Partial failure** — some operations can succeed while others fail (`✓ ✓ ✗ ✓`). **Unknown outcome** — a timeout doesn't tell you whether the operation actually happened. **Compensation** — sometimes you cannot literally roll back, so instead you issue a new action (like a refund) that reverses the business effect.
+
+## 19. Common Mistakes
+
+**Mistake 1 — "Distributed transaction means calling several APIs."** Not necessarily — the important part is the coordination and consistency requirements across independent resources.
+
+**Mistake 2 — "A Saga gives atomicity."** No — Saga manages multi-step workflows using local transactions and compensation, generally accepting eventual consistency.
+
+**Mistake 3 — "Timeout means the operation failed."** No — it may have succeeded but the response was lost.
+
+**Mistake 4 — "Compensation is rollback."** Not exactly — rollback undoes uncommitted state; compensation is a new transaction that reverses a committed business effect.
+
+**Mistake 5 — "Retry everything."** Dangerous — a retry can duplicate an operation (`Charge $100 → timeout → retry → another charge`). Use idempotency where appropriate.
+
+## 20. Big Picture: Where We Are
+
+<Figure title="The Full Journey" caption="Every lesson in Part 11 answers one more layer of 'how do distributed systems coordinate?'">
+  <svg viewBox="0 0 460 440" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l12-10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {[
+      "DHT — WHERE is the data?",
+      "Consensus — WHAT do nodes agree on?",
+      "Raft / Paxos — HOW do nodes agree?",
+      "Leader Election — WHO coordinates?",
+      "Distributed Lock — WHO owns the resource?",
+      "Vector / Logical Clocks — WHAT happened before what?",
+      "Eventual Consistency — HOW do replicas converge?",
+      "Conflict Resolution — WHAT do we do when updates conflict?",
+      "Distributed Transaction — HOW do systems coordinate one operation?",
+    ].map((label, i) => (
+      <g key={i}>
+        <rect x="20" y={10 + i * 46} width="420" height="32" rx="8" fill="#fff" stroke={i === 8 ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x="230" y={31 + i * 46} textAnchor="middle" fontSize="9.5" fill="#1e293b">{label}</text>
+        {i < 8 && <line x1="230" y1={42 + i * 46} x2="230" y2={56 + i * 46} stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l12-10)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+And now the next two lessons: **Lesson 13 → Two-Phase Commit**, **Lesson 14 → Saga Pattern**.
+
+## 21. Memory Trick
+
+> **Distributed Transaction = One business operation across multiple independent systems.**
+
+`2PC: Prepare → Commit/Abort`, while `Saga: Local Transactions → Compensation`.
+
+> **Rollback undoes uncommitted work. Compensation undoes the business effect of already-committed work.**
+
+## Interview Questions
+
+**Q1. What is a distributed transaction?**
+> A transaction whose operations span multiple independent services, databases, or resource managers and therefore require coordination.
+
+**Q2. Why are distributed transactions difficult?**
+> Because components can fail independently, messages can be delayed/lost, and there is no single local database transaction controlling all resources.
+
+**Q3. What is partial failure?**
+> A situation where some components succeed while others fail during the same logical operation.
+
+**Q4. Is timeout equal to failure?**
+> No — a timeout can mean the operation's outcome is unknown.
+
+**Q5. What is the difference between rollback and compensation?**
+> Rollback reverses uncommitted transactional work; compensation is a new operation designed to reverse a previously committed business effect.
+
+**Q6. What are the two major approaches we'll study?**
+> Two-Phase Commit (2PC) and the Saga Pattern.
+
+**Q7. Does Saga provide true atomicity?**
+> No — Saga uses local transactions and compensating actions, generally providing eventual rather than global ACID atomicity.
+
+**One-line exam answer:**
+
+> **A distributed transaction is a logical business transaction whose operations span multiple independent services or databases and therefore require coordination to maintain the required consistency and failure-handling guarantees.**
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-11-conflict-resolution", title: "Lesson 11 — Conflict Resolution" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-13-two-phase-commit", title: "Lesson 13 — Two-Phase Commit (2PC)" }}
+/>

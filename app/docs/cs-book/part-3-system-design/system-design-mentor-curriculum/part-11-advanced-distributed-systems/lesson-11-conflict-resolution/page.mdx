@@ -1,0 +1,366 @@
+export const metadata = {
+  title: "Lesson 11 — Conflict Resolution | Mentor Curriculum Part 11 — ByteWise CS Book",
+  description:
+    "Mentor Curriculum, Part 11 (Advanced Distributed Systems), Lesson 11: conflict resolution — Last-Write-Wins and its pitfalls, application-level merging, CRDTs and why merges must be commutative/associative/idempotent, version vectors, the lost-update problem, add-wins vs remove-wins, and why CRDTs can't replace coordination for global invariants.",
+  keywords: [
+    "conflict resolution",
+    "last-write-wins",
+    "CRDT",
+    "conflict-free replicated data type",
+    "version vector",
+    "lost update problem",
+    "add-wins remove-wins",
+    "system design mentor curriculum",
+  ],
+  openGraph: {
+    title: "Lesson 11 — Conflict Resolution | Mentor Curriculum Part 11",
+    description:
+      "Vector clocks tell us whether updates conflict; conflict-resolution rules tell us what to do.",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+**[System Design Mentor Curriculum](/docs/cs-book/part-3-system-design/system-design-mentor-curriculum) → Part 11 — Advanced Distributed Systems → Lesson 11**
+
+# Lesson 11 — Conflict Resolution
+
+In Lesson 10, we reached the difficult part of eventual consistency: replicas can independently accept different updates to the same data.
+
+<Figure title="Two Independent Updates Meet" caption="Neither replica knew about the other's change.">
+  <svg viewBox="0 0 340 100" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l11-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="31" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replica A: Update X</text>
+    <rect x="190" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="260" y="31" textAnchor="middle" fontSize="10.5" fill="#1e293b">Replica B: Update Y</text>
+    <line x1="80" y1="44" x2="150" y2="76" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-1)" />
+    <line x1="260" y1="44" x2="190" y2="76" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-1)" />
+    <rect x="120" y="78" width="100" height="20" rx="6" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="170" y="93" textAnchor="middle" fontSize="10" fill="#1e293b">CONFLICT</text>
+  </svg>
+</Figure>
+
+> **When two replicas independently modify the same data, how do we decide what the final state should be?** This is **conflict resolution**.
+
+## 1. What Is a Conflict?
+
+A conflict occurs when replicas have different versions of the same logical data and those versions cannot simply be treated as "one is an older copy of the other." Two disconnected replicas both start at `name = Ali`; one becomes `Ahmed`, the other `Zain`. Which one should win? There is no universal answer — the system needs a **conflict-resolution policy**. Reconciliation generally involves both exchanging updates/versions and deciding what to do when concurrent updates exist.
+
+## 2–3. Stale vs Conflicting
+
+Not every difference is a conflict. If `A = version 2` and `B = version 1`, and `version 1 → version 2`, then B is simply **behind** — B just needs to receive version 2, no conflict. But if `A = version X` and `B = version Y` and `X || Y`, they are **concurrent**, and now we potentially have a real conflict. This is why the vector clock lesson mattered: `X=[2,1], Y=[3,1]` compares as `X → Y` (Y supersedes X, no conflict), but `X=[2,1], Y=[1,3]` gives `X || Y` — concurrent, and **now we need conflict resolution.**
+
+## 4. The Complete Pipeline
+
+<Figure title="From Divergence to Final State" caption="One of the most important diagrams in this lesson.">
+  <svg viewBox="0 0 460 300" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l11-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Replicated Data", "Updates occur", "Replicas diverge", "Compare versions"].map((label, i) => (
+      <g key={i}>
+        <rect x="130" y={10 + i * 54} width="200" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+        <text x="230" y={31 + i * 54} textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        <line x1="230" y1={44 + i * 54} x2="230" y2={64 + i * 54} stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-2)" />
+      </g>
+    ))}
+    <line x1="230" y1="226" x2="120" y2="248" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-2)" />
+    <line x1="230" y1="226" x2="340" y2="248" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-2)" />
+    <rect x="60" y="250" width="120" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="120" y="270" textAnchor="middle" fontSize="9.5" fill="#1e293b">Causally ordered</text>
+    <rect x="280" y="250" width="120" height="32" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="340" y="270" textAnchor="middle" fontSize="10" fill="#1e293b">CONFLICT</text>
+  </svg>
+</Figure>
+
+Causally ordered updates let the newer one simply supersede the older; concurrent ones need conflict resolution before both paths converge on a final state.
+
+## 5–7. Strategy 1 — Last-Write-Wins
+
+The simplest approach: **choose the update with the latest timestamp.** If `A: Ahmed @ 10:05` and `B: Zain @ 10:07`, then `10:07 > 10:05` and the winner is Zain. **LWW** is simple, deterministic, and inexpensive — fine for something like a UI theme setting. But it can **silently discard a valid update**: if two users independently edit a document (`A: "Hello Ali"`, `B: "Hello Ahmed"`) and LWW picks B, A's valid edit simply disappears. The system converged, but it may have **lost information**.
+
+> **Convergence does not automatically mean correctness.**
+
+## 8. Physical Timestamps Are Not Perfect
+
+If `Replica A clock = 10:05:10` and `Replica B clock = 10:05:09`, LWW says A wins — but perhaps B's operation actually happened later; physical clocks on different machines can differ. `Physical timestamp ≠ Perfect causal ordering.` This is precisely why logical clocks and vector clocks are useful.
+
+## 9. Strategy 2 — First-Write-Wins
+
+The opposite rule: the earliest update wins. Useful when the first accepted value should be preserved, but it has the same fundamental issue — why should physical time determine the correct business outcome? The answer depends entirely on the application.
+
+## 10–11. Strategy 3 — Application-Level Conflict Resolution
+
+Sometimes the application itself knows the correct merge. A shared cart starts with `{Phone}`; User A adds `Laptop`, User B adds `Headphones`. LWW would keep only one addition — but the application may know **both should survive**.
+
+<Figure title="Merge Instead of Choosing One" caption="Sometimes the right answer is A + B, not A or B.">
+  <svg viewBox="0 0 340 130" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l11-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">A: Add Laptop</text>
+    <rect x="190" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="260" y="31" textAnchor="middle" fontSize="9.5" fill="#1e293b">B: Add Headphones</text>
+    <line x1="80" y1="44" x2="170" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-3)" />
+    <line x1="260" y1="44" x2="190" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-3)" />
+    <rect x="100" y="82" width="160" height="36" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="180" y="104" textAnchor="middle" fontSize="9.5" fill="#0f172a">Phone + Laptop + Headphones</text>
+  </svg>
+</Figure>
+
+## 12–13. Strategy 4 — CRDTs
+
+A **CRDT (Conflict-free Replicated Data Type)** is a data structure specifically designed so replicas can accept updates independently and still merge them into a consistent state. Instead of inventing a conflict-resolution rule after the conflict occurs, you design the data structure so concurrent updates can be merged safely.
+
+<Figure title="Ordinary Structure vs CRDT" caption="A CRDT builds the merge rule into the type itself.">
+  <svg viewBox="0 0 380 100" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <defs>
+      <marker id="l11-4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="15" width="170" height="70" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="95" y="38" textAnchor="middle" fontSize="10" fill="#1e293b">Ordinary structure</text>
+    <text x="95" y="58" textAnchor="middle" fontSize="9.5" fill="#475569">Conflict → special logic</text>
+    <rect x="200" y="15" width="170" height="70" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="285" y="38" textAnchor="middle" fontSize="10" fill="#0f172a">CRDT</text>
+    <text x="285" y="58" textAnchor="middle" fontSize="9.5" fill="#475569">Merge → deterministic state</text>
+  </svg>
+</Figure>
+
+## 14–17. The Three Mathematical Properties
+
+For many state-based CRDTs, the merge operation is designed to be:
+
+- **Commutative** — `merge(A, B) = merge(B, A)`. Order doesn't matter, useful because messages may arrive in different orders.
+- **Associative** — `merge(A, merge(B,C)) = merge(merge(A,B), C)`. Grouping doesn't matter, so replicas don't have to coordinate the exact order of merges.
+- **Idempotent** — `merge(A,A) = A`. Merging something with itself doesn't change it, which makes duplicate delivery harmless.
+
+These properties allow replicas to exchange states in different orders, potentially receive duplicates, and still converge.
+
+## 18–19. Replicated Set and Counter Examples
+
+Starting from `{}`, Replica A independently adds `Laptop` and Replica B adds `Phone`. Merging via set union, `A ∪ B = {Laptop, Phone}` — and set union is commutative, associative, and idempotent, which makes it a natural foundation for certain CRDTs. A replicated counter works similarly: if A increments by `+3` and B by `+5`, and the semantics allow combining independent increments, `3 + 5 = 5 + 3 = 8` — order doesn't matter.
+
+## 20. But CRDTs Don't Solve Every Problem
+
+You cannot simply say *"we'll use a CRDT for everything."* Some data has **business invariants** that require coordination.
+
+<Figure title="A CRDT Merge That Breaks an Invariant" caption="Naive merging can violate a rule the business actually needs enforced.">
+  <svg viewBox="0 0 340 130" style={{ width: "100%", maxWidth: 360, height: "auto" }}>
+    <defs>
+      <marker id="l11-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="10" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="80" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">A: withdraw $80</text>
+    <rect x="190" y="10" width="140" height="34" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="260" y="31" textAnchor="middle" fontSize="10" fill="#1e293b">B: withdraw $80</text>
+    <line x1="80" y1="44" x2="170" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-5)" />
+    <line x1="260" y1="44" x2="190" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-5)" />
+    <rect x="100" y="82" width="160" height="36" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="180" y="104" textAnchor="middle" fontSize="9.5" fill="#1e293b">$100 - $80 - $80 = -$60</text>
+  </svg>
+</Figure>
+
+`Balance cannot go below zero` is a global invariant — the problem isn't merely merging data, it's maintaining that invariant. CRDTs are powerful for suitable data types, but they don't magically eliminate coordination requirements for every application invariant.
+
+## 21. Detection vs Resolution
+
+<Figure title="Two Different Jobs" caption="Vector clocks detect; a policy decides.">
+  <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
+    <defs>
+      <marker id="l11-6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Vector Clock", "DETECT concurrency", "Conflict Resolution", "MERGE / SELECT / ASK"].map((label, i) => (
+      <g key={i}>
+        <rect x={10 + i * 158} y="15" width="140" height="40" rx="8" fill="#fff" stroke={label.startsWith("Conflict") ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x={80 + i * 158} y="39" textAnchor="middle" fontSize="10" fill="#1e293b">{label}</text>
+        {i < 3 && <line x1={150 + i * 158} y1="35" x2={168 + i * 158} y2="35" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-6)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Vector clocks answer *"are these updates causally related or concurrent?"* Conflict resolution answers *"what should we do about the concurrent updates?"* Vector clocks don't decide the business result for you.
+
+## 22. Version Vectors
+
+A **version vector** is closely related to a vector clock, but is often used specifically to track the versions/causal history of a particular replicated object — e.g. `Replica A → [3,2,0]`, `Replica B → [3,3,0]`. This is why version vectors commonly appear in eventually consistent storage systems; terminology varies by system, but the mental model is the same: a vector clock tracks general causal events, a version vector often tracks causal/version history for one replicated object.
+
+## 23–24. The "Lost Update" Problem and Operation Semantics
+
+Starting at `X = 10`, both A and B read `10` and each write `X = 11` (intending an increment). If the correct answer should have been `X = 12`, naive last-write-wins gives `11` — one increment silently disappeared. This is a **lost update**, and it happens because both writes were derived independently from the same old value. Compare `SET balance = 100` — two concurrent assignments genuinely need a winner — with `balance += 10` and `balance += 20`, where the right answer is often to combine them (`+30`). **Conflict resolution depends heavily on what the operation means.**
+
+## 25. Strategy Comparison
+
+| Strategy | Basic Idea | Advantage | Main Problem |
+|---|---|---|---|
+| Last-Write-Wins | Latest timestamp wins | Very simple | Can lose valid updates |
+| First-Write-Wins | Earliest wins | Simple | May discard later valid change |
+| Application Merge | Business logic combines updates | Semantically accurate | More application complexity |
+| User Resolution | Ask user | Good for ambiguous data | Slow/manual |
+| CRDT | Data structure designed for automatic convergence | Strong automatic merging | Not suitable for every invariant |
+| Vector Clock + Resolver | Detect concurrency, then apply policy | More informed | More metadata/complexity |
+
+## 26–28. User Resolution and the Git Analogy
+
+Sometimes the computer simply cannot know what the user intended — two people editing the same paragraph differently is a case for **human-assisted conflict resolution**, presenting both versions and letting a person choose or edit manually. Git faces a conceptually similar problem: when it can't automatically merge two branches' changes to the same lines, it reports a `CONFLICT` and leaves `<<<<<<< / ======= / >>>>>>>` markers for a human to resolve. The difference from a distributed database is that databases may need automatic reconciliation continuously and at much larger scale — Git says *"here are conflicting versions, please decide,"* while a CRDT tries to make the data structure itself support automatic convergence.
+
+## 29. Add-Wins vs Remove-Wins
+
+Sets create an interesting problem: starting from `{Phone}`, Replica A does `ADD Laptop` while Replica B (which hasn't seen A's add) does `REMOVE Laptop`. Which wins? CRDT designs can define specific semantics such as **add-wins** or **remove-wins** — the data type defines the meaning of concurrent operations, which is far more sophisticated than "latest timestamp wins."
+
+## 30. A General Conflict-Resolution Framework
+
+When designing a system, ask: can updates be concurrent? Can we detect concurrency (vector clocks, version vectors, other causal metadata)? What does the business operation mean (`SET`? `ADD`? `REMOVE`? `INCREMENT`? `TRANSFER`?)? Can updates be safely merged automatically, or do they need an application resolver, coordination, or a user? And finally — what invariant must never be violated (`balance >= 0`, `stock >= 0`, `username unique`)? If an invariant can't be preserved without coordination, eventual consistency alone may not be enough.
+
+## 31. Connection to CAP
+
+<Figure title="Independent Writes During a Partition" caption="CAP explains why divergence happens; conflict resolution is what happens next.">
+  <svg viewBox="0 0 380 130" style={{ width: "100%", maxWidth: 400, height: "auto" }}>
+    <rect x="10" y="10" width="170" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="95" y="28" textAnchor="middle" fontSize="10" fill="#475569">Replica A: accept write X</text>
+    <rect x="200" y="10" width="170" height="110" rx="10" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5 4" />
+    <text x="285" y="28" textAnchor="middle" fontSize="10" fill="#475569">Replica B: accept write Y</text>
+    <text x="190" y="70" textAnchor="middle" fontSize="14" fill="#dc2626">✕</text>
+  </svg>
+</Figure>
+
+When the partition heals, `A = X` and `B = Y`, and the system must reconcile — X wins, Y wins, merge X+Y, ask the application, ask the user, or a CRDT merge. CAP doesn't end the story; it creates the next problem: **if we allow independent writes during a partition, how do we reconcile them afterward?**
+
+## 32–33. Connection to Eventual Consistency and Vector Clocks
+
+<Figure title="Lessons 8 Through 11, One Chain" caption="This is exactly why these lessons were placed next to each other.">
+  <svg viewBox="0 0 460 380" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l11-7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    {["Lesson 8: Vector Clocks", "Track causal history", "Detect concurrency", "Lesson 10: Eventual Consistency", "Replicas may diverge", "Lesson 11: Conflict Resolution"].map((label, i) => (
+      <g key={i}>
+        <rect x="30" y={10 + i * 58} width="400" height="38" rx="8" fill="#fff" stroke={label.startsWith("Lesson") ? "#0d9488" : "#94a3b8"} strokeWidth="1.5" />
+        <text x="230" y={34 + i * 58} textAnchor="middle" fontSize="10.5" fill="#1e293b">{label}</text>
+        {i < 5 && <line x1="230" y1={48 + i * 58} x2="230" y2={68 + i * 58} stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-7)" />}
+      </g>
+    ))}
+  </svg>
+</Figure>
+
+Reconciliation is the *reconcile* step from Lesson 10's chain — without an appropriate reconciliation mechanism, simply exchanging data doesn't guarantee the desired final state.
+
+## 34. Programming Connection
+
+```python
+update_a = {"value": "Ahmed", "vector_clock": {"A": 3, "B": 1}}
+update_b = {"value": "Zain", "vector_clock": {"A": 2, "B": 3}}
+```
+
+Comparing `[3,1]` and `[2,3]`, neither dominates — **concurrent**. The application needs a resolver, `resolve(update_a, update_b)`, which might return the latest, merge the values, keep both as siblings, or ask the user. The distributed-systems challenge is designing the correct semantics, not writing the comparison.
+
+## 35. Common Mistakes
+
+**Mistake 1 — "Vector clocks resolve conflicts."** No — they help detect causal relationships and concurrency.
+
+**Mistake 2 — "Last-write-wins always gives the correct answer."** No — it gives a deterministic rule, not necessarily the correct business result.
+
+**Mistake 3 — "If replicas converge, no data was lost."** No — they can converge to a state that silently discarded an update.
+
+**Mistake 4 — "CRDT means conflicts don't exist."** CRDTs are designed so concurrent updates can be merged without coordination and replicas converge under the model — they don't mean every business-level disagreement disappears.
+
+**Mistake 5 — "CRDT can solve banking transactions."** Not automatically — global invariants may require coordination.
+
+**Mistake 6 — "Concurrent means incorrect."** No — concurrent simply means neither update causally depended on the other; both may be perfectly valid.
+
+## 36. Interview Questions
+
+**Q1. What is conflict resolution?**
+> The process of reconciling divergent concurrent updates so replicas can reach an appropriate common state.
+
+**Q2. What is Last-Write-Wins?**
+> A policy that selects the version considered latest according to a timestamp/order.
+
+**Q3. What is the major disadvantage of LWW?**
+> It can silently discard valid concurrent updates.
+
+**Q4. What does a vector clock provide?**
+> Information that can distinguish causally ordered updates from concurrent updates.
+
+**Q5. Does a vector clock resolve the conflict?**
+> No — it helps detect concurrency; another policy must decide how to resolve it.
+
+**Q6. What is a CRDT?**
+> A replicated data type designed so independently applied concurrent updates can be merged in a way that guarantees convergence under its specified semantics.
+
+**Q7. What are the three important merge properties?**
+> Commutative, associative, and idempotent.
+
+**Q8. Why is idempotence useful?**
+> It makes duplicate application/merging harmless.
+
+**Q9. When might CRDTs not be enough?**
+> When the application requires global invariants or semantics that cannot safely be maintained through independent merges.
+
+## 37. The Ultimate Mental Model
+
+<Figure title="From Two Updates to Convergence" caption="Every conflict eventually funnels into one of these strategies.">
+  <svg viewBox="0 0 460 280" style={{ width: "100%", maxWidth: 480, height: "auto" }}>
+    <defs>
+      <marker id="l11-8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#64748b" />
+      </marker>
+    </defs>
+    <rect x="50" y="10" width="150" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="125" y="30" textAnchor="middle" fontSize="10" fill="#1e293b">Update A</text>
+    <rect x="260" y="10" width="150" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="335" y="30" textAnchor="middle" fontSize="10" fill="#1e293b">Update B</text>
+    <line x1="125" y1="42" x2="230" y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-8)" />
+    <line x1="335" y1="42" x2="230" y2="70" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-8)" />
+    <rect x="130" y="72" width="200" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="92" textAnchor="middle" fontSize="10" fill="#1e293b">Are they related?</text>
+    <line x1="200" y1="104" x2="140" y2="128" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-8)" />
+    <line x1="260" y1="104" x2="320" y2="128" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-8)" />
+    <rect x="60" y="130" width="160" height="30" rx="8" fill="#fff" stroke="#16a34a" strokeWidth="1.5" />
+    <text x="140" y="149" textAnchor="middle" fontSize="9.5" fill="#1e293b">Causal → newer supersedes</text>
+    <rect x="240" y="130" width="160" height="30" rx="8" fill="#fff" stroke="#dc2626" strokeWidth="1.5" />
+    <text x="320" y="149" textAnchor="middle" fontSize="10" fill="#1e293b">Concurrent → CONFLICT</text>
+    <line x1="320" y1="160" x2="230" y2="190" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-8)" />
+    <rect x="60" y="192" width="340" height="32" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="1.5" />
+    <text x="230" y="212" textAnchor="middle" fontSize="9.5" fill="#1e293b">LWW · Application Merge · User · CRDT</text>
+    <line x1="230" y1="224" x2="230" y2="246" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#l11-8)" />
+    <rect x="140" y="248" width="180" height="30" rx="8" fill="#fff" stroke="#0d9488" strokeWidth="1.5" />
+    <text x="230" y="267" textAnchor="middle" fontSize="10.5" fill="#0f172a">CONVERGENCE</text>
+  </svg>
+</Figure>
+
+## 38. The Most Important Memory Trick
+
+> **Detect → Decide → Merge → Converge**
+
+**Vector Clock** — DETECT: are the updates concurrent? **Conflict Policy** — DECIDE: which semantics should apply? **Merge** — COMBINE: create the resulting state. **Eventual Consistency** — CONVERGE: all replicas eventually reach the appropriate common state.
+
+**One-line master memory:**
+
+> **Vector clocks tell us whether updates conflict; conflict-resolution rules tell us what to do; CRDTs build the merge rules into the data structure so replicas can converge automatically.**
+
+We have now completed Consistent Hashing, DHT, Consensus, Raft, Paxos, Leader Election, Distributed Locks, Vector Clocks, Logical Clocks, Eventual Consistency, and Conflict Resolution.
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-10-eventual-consistency", title: "Lesson 10 — Eventual Consistency" }}
+  next={{ href: "/docs/cs-book/part-3-system-design/system-design-mentor-curriculum/part-11-advanced-distributed-systems/lesson-12-distributed-transactions", title: "Lesson 12 — Distributed Transactions" }}
+/>
