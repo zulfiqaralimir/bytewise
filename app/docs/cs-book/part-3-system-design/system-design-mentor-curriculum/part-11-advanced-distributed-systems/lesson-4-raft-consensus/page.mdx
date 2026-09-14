@@ -102,7 +102,7 @@ The <span style={{ color: "#0d9488", fontWeight: 700 }}>Leader</span> coordinate
 
 **Follower** — followers normally receive messages from the leader, <span style={{ color: "#0d9488", fontWeight: 700 }}>replicate log entries</span>, respond to leader requests, and participate in elections. They generally don't independently make the main replicated decisions while a valid leader exists.
 
-**Candidate** — a candidate appears when a follower believes the leader is no longer functioning. It says, conceptually, *"I want to become the new leader,"* and asks other nodes for votes.
+**Candidate** — <span style={{ color: "#b45309", fontWeight: 700 }}>a candidate appears when a follower believes the leader is no longer functioning</span>. It says, conceptually, *"I want to become the new leader,"* and asks other nodes for votes.
 
 <Figure title="Follower → Candidate → Election" caption="A follower nominates itself once the leader looks gone.">
   <svg viewBox="0 0 620 70" style={{ width: "100%", maxWidth: 640, height: "auto" }}>
