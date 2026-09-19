@@ -1,0 +1,386 @@
+export const metadata = {
+  title: "11.1: Linked List — Introduction & Concepts — Algorithms by Abdul Bari — ByteWise",
+  description:
+    "Why arrays' fixed size is a problem, the idea behind a linked list, the self-referential Node structure, creating and accessing nodes in C/C++, and the three essential pointer statements used to traverse a list.",
+  keywords: [
+    "linked list",
+    "self-referential structure",
+    "node",
+    "pointer",
+    "dynamic memory allocation",
+    "heap allocation",
+    "malloc",
+    "struct Node",
+    "Abdul Bari algorithms",
+  ],
+  openGraph: {
+    title: "Algorithms by Abdul Bari — 11.1: Linked List — Introduction & Concepts",
+    description:
+      "Why arrays' fixed size is a problem, the idea behind a linked list, the self-referential Node structure, and the three essential pointer statements used to traverse a list.",
+    type: "article",
+  },
+};
+
+import { ArticleNav } from "@/app/components/ArticleNav";
+import { Figure } from "@/app/components/Figure";
+
+# 11.1: Linked List — Introduction & Concepts
+
+---
+
+## 1. The Problem With Arrays
+
+Before we can appreciate why linked lists exist, it helps to see exactly where arrays fall short.
+
+**An array has a fixed size.** The moment you create one, you must state how many elements it can hold — and that number can never change afterward. This is the core problem, and here's why it matters in practice:
+
+- As programmers, we write programs for *users* — and it's the user, not us, who decides how many elements they'll actually need to store.
+- We don't know that number in advance. It's only determined at **runtime**, once the program is actually running.
+- But an array's size has to be fixed at **compile time** (or at least at the moment of creation) — long before we know what the user will need.
+
+This creates a lose-lose situation:
+
+- **Declare it too small**, and once the user has more elements than that, there's simply nowhere to put them.
+- **Declare it too large** "just to be safe," and most of that space sits wasted, unused, for the entire life of the program.
+
+<Figure title="The Problem With a Fixed-Size Array" caption="Two arrays: one too small to hold everything, one far larger than needed">
+<svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" width="700" height="360" fontFamily="Georgia, 'Times New Roman', serif"><rect x="0" y="0" width="700" height="360" fill="#fdfdfb"/><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2b2b2b"/></marker><marker id="arrowAccent" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#8a2323"/></marker></defs>
+<text x="350" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">The Problem With a Fixed-Size Array</text>
+<text x="190" y="78" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle">int A[3];  — declared with room for 3</text>
+<rect x="130.0" y="100.0" width="40" height="40" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<circle cx="150.0" cy="120.0" r="9" fill="#8a2323"/>
+<rect x="170.0" y="100.0" width="40" height="40" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<circle cx="190.0" cy="120.0" r="9" fill="#8a2323"/>
+<rect x="210.0" y="100.0" width="40" height="40" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<circle cx="230.0" cy="120.0" r="9" fill="#8a2323"/>
+<circle cx="274.0" cy="120.0" r="9" fill="none" stroke="#8a2323" strokeWidth="2" strokeDasharray="3,3"/>
+<circle cx="300.0" cy="120.0" r="9" fill="none" stroke="#8a2323" strokeWidth="2" strokeDasharray="3,3"/>
+<text x="190" y="166" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle">3 elements fit — 2 more have nowhere to go</text>
+<text x="470" y="208" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle">int A[10];  — declared with room for 10</text>
+<rect x="270.0" y="230.0" width="40" height="40" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<circle cx="290.0" cy="250.0" r="9" fill="#8a2323"/>
+<rect x="310.0" y="230.0" width="40" height="40" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<circle cx="330.0" cy="250.0" r="9" fill="#8a2323"/>
+<rect x="350.0" y="230.0" width="40" height="40" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<circle cx="370.0" cy="250.0" r="9" fill="#8a2323"/>
+<rect x="390.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<rect x="430.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<rect x="470.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<rect x="510.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<rect x="550.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<rect x="590.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<rect x="630.0" y="230.0" width="40" height="40" fill="#f1efe6" stroke="#b8b4a4" strokeWidth="2"/>
+<text x="470" y="296" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle">only 3 used — 7 cells wasted</text>
+<text x="350" y="335" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">The size must be fixed at compile time — but the real need is only known at runtime</text></svg>
+</Figure>
+
+**Analogy:** think of an array like a bench with a fixed number of seats. The moment you build the bench, you commit to its capacity. If five people show up but the bench only seats three, two people are left standing. If only two people show up to a ten-seat bench, eight seats sit empty. Either way, the fixed size works against you.
+
+---
+
+## 2. A Quick Reminder: Arrays in Stack vs. Heap
+
+We can create an array in two places:
+
+- **On the stack:** e.g. `int A[5];` — this array lives inside the activation record of the function that declared it.
+- **On the heap:** e.g. `int *P = new int[5];` — here, a pointer `P` lives on the stack, but it points to array memory that was dynamically allocated on the heap. The nice part is that the size can be decided at runtime and passed in.
+
+Either way, though, once that array is created — whether on the stack or the heap — **its size is locked in**. Creating it on the heap lets you *choose* the size dynamically, but it still can't grow or shrink afterward.
+
+**The one real benefit of arrays:** all their elements sit in **contiguous memory** — side by side. This is exactly what lets you jump straight to any element using an index (`A[0]`, `A[1]`, `A[2]`, …), with no need to walk through the array to find something. This is efficient, but it comes bundled with that same fixed-size limitation.
+
+---
+
+## 3. The Idea Behind a Linked List
+
+What we actually want is a data structure that can **grow when the user adds elements** and **shrink when they remove elements** — a genuinely variable-size structure.
+
+Here's the shift in thinking: instead of reserving one big fixed block of memory up front (like the array's bench), what if **each element brought its own small piece of memory** with it, only when it's actually needed?
+
+Picture it like this: instead of a bench with a fixed number of seats, imagine an open room where anyone who wants to join **brings their own chair**. The first person sits down. When a second person arrives, the first person's chair "links" to the new person's chair. The third person's chair links from the second, and so on — forming a chain.
+
+- Want to remove someone from the middle? Just take their chair away, and re-link the chair before them directly to the chair after them.
+- Want to insert someone new in the middle? Create their chair, and re-link the chairs around them to route through the new one.
+
+Nothing else in the chain has to move. Only the **links** change.
+
+<Figure title="The Idea Behind a Linked List" caption="Nodes as chairs people bring themselves, linked together in a chain">
+<svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" width="640" height="300" fontFamily="Georgia, 'Times New Roman', serif"><rect x="0" y="0" width="640" height="300" fill="#fdfdfb"/><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2b2b2b"/></marker><marker id="arrowAccent" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#8a2323"/></marker></defs>
+<text x="320" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">The Idea: Every Element Brings Its Own Memory</text>
+<rect x="90" y="120" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="126.3" y1="120" x2="126.3" y2="162" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="108.2" y="147.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">8</text>
+<rect x="230" y="120" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="266.3" y1="120" x2="266.3" y2="162" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="248.2" y="147.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+<rect x="370" y="120" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="406.3" y1="120" x2="406.3" y2="162" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="388.1" y="147.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">7</text>
+<rect x="510" y="120" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="546.3" y1="120" x2="546.3" y2="162" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="528.1" y="147.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">12</text>
+<line x1="553.1" y1="141.0" x2="569.1" y2="141.0" stroke="#b8b4a4" strokeWidth="2.4"/>
+<line x1="555.1" y1="135.0" x2="567.1" y2="147.0" stroke="#b8b4a4" strokeWidth="1.8"/>
+<line x1="156.0" y1="141.0" x2="226.0" y2="141.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<line x1="296.0" y1="141.0" x2="366.0" y2="141.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<line x1="436.0" y1="141.0" x2="506.0" y2="141.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="118.0" y="52" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">first</text>
+<rect x="98" y="60" width="40" height="26" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<text x="118.0" y="78.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#1a1a1a" textAnchor="middle">●</text>
+<line x1="118.0" y1="86.0" x2="108.2" y2="118.0" stroke="#2b2b2b" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="320" y="200" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Each node = its own little bit of memory + a link to the next one</text>
+<text x="320" y="225" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">New person arrives → brings a chair → links onto the chain</text>
+<text x="320" y="265" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle" fontStyle="italic">Removing or inserting a node only means re-pointing a link — nothing else moves</text></svg>
+</Figure>
+
+Each "chair" — one element's data, plus a link to the next element — is what we call a **node**. Put together, a chain of these nodes, allocated dynamically in the heap, is a **linked list**.
+
+**One important note:** a linked list only makes sense when built inside the **heap**, never the stack. Since we're allocating memory for each node individually and dynamically, as elements are added or removed, this naturally requires heap allocation.
+
+---
+
+## 4. What Is a Linked List? — A Formal Definition
+
+Now that we have the intuition, here's the precise definition:
+
+> A **linked list** is a collection of nodes, where each node contains **data** and a **pointer to the next node**.
+
+Let's ground this with a concrete example. Suppose we have four nodes holding the values `8`, `3`, `7`, and `12`, and each node sits at some memory address:
+
+- The first node is at address **200**, holds data `8`, and its pointer holds `210` (the address of the next node).
+- The node at address **210** holds data `3`, and its pointer holds `270`.
+- The node at address **270** holds data `7`, and its pointer holds `300`.
+- The node at address **300** holds data `12`, and since it's the last node, its pointer holds nothing (**null**).
+
+There's also a special pointer, usually called **first** (or **head**), that points to the very first node in the list — here, that's address `200`. This pointer itself lives at some address too (say, `100`), but that detail rarely matters in practice.
+
+<Figure title="A Linked List: Nodes Linked by Address, Not Position" caption="The example chain of nodes, each at its own address, linked by pointers">
+<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" width="640" height="260" fontFamily="Georgia, 'Times New Roman', serif"><rect x="0" y="0" width="640" height="260" fill="#fdfdfb"/><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2b2b2b"/></marker><marker id="arrowAccent" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#8a2323"/></marker></defs>
+<text x="320" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">A Linked List: Nodes Linked by Address, Not Position</text>
+<rect x="140" y="110" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="176.3" y1="110" x2="176.3" y2="152" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="158.2" y="137.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">8</text>
+<rect x="280" y="110" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="316.3" y1="110" x2="316.3" y2="152" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="298.1" y="137.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+<rect x="420" y="110" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="456.3" y1="110" x2="456.3" y2="152" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="438.1" y="137.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">7</text>
+<rect x="560" y="110" width="66" height="42" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="596.3" y1="110" x2="596.3" y2="152" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="578.1" y="137.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">12</text>
+<line x1="603.1" y1="131.0" x2="619.1" y2="131.0" stroke="#b8b4a4" strokeWidth="2.4"/>
+<line x1="605.1" y1="125.0" x2="617.1" y2="137.0" stroke="#b8b4a4" strokeWidth="1.8"/>
+<line x1="206.0" y1="131.0" x2="276.0" y2="131.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<line x1="346.0" y1="131.0" x2="416.0" y2="131.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<line x1="486.0" y1="131.0" x2="556.0" y2="131.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="140" y="170" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11.5" fontWeight="700" fill="#8a2323" textAnchor="middle">200</text>
+<text x="280" y="170" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11.5" fontWeight="700" fill="#8a2323" textAnchor="middle">210</text>
+<text x="420" y="170" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11.5" fontWeight="700" fill="#8a2323" textAnchor="middle">270</text>
+<text x="560" y="170" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11.5" fontWeight="700" fill="#8a2323" textAnchor="middle">300</text>
+<text x="180.0" y="42" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">first (100)</text>
+<rect x="148" y="50" width="64" height="26" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<text x="180.0" y="68.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#1a1a1a" textAnchor="middle">200</text>
+<line x1="180.0" y1="76.0" x2="158.2" y2="108.0" stroke="#2b2b2b" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="320" y="205" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Node addresses (200, 210, 270, 300, …) are NOT contiguous like an array</text>
+<text x="320" y="228" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Order is maintained purely through the next pointers, not physical position</text></svg>
+</Figure>
+
+**The key contrast with arrays:** in an array, every element's address is contiguous — if one element is at address 200, the next is right next to it. Here, that's not true at all: `200`, `210`, `270`, `300` are scattered, with no predictable spacing between them. The only thing holding the list together, in the right order, is the **chain of pointers** — not physical position in memory.
+
+---
+
+## 5. Defining a Node — a Self-Referential Structure
+
+To actually build this in code, we need to define what a node looks like. A node needs exactly two things:
+
+1. **Data** — this can be an integer, float, double, or any other type you need.
+2. **A pointer to the next node** — and here's the interesting part: since "the next node" is itself a node, this pointer must be of the **same type** as the structure we're currently defining.
+
+In C (and C++, which supports the same `struct` syntax), this looks like:
+
+```c
+struct Node {
+    int data;
+    struct Node *next;
+};
+```
+
+Notice that the structure contains a pointer to *its own type*. This is called a **self-referential structure**, and it's the defining trait that makes linked lists possible.
+
+<Figure title="Defining a Node — a Self-Referential Structure" caption="The Node structure, its code definition, and a worked-out byte size">
+<svg viewBox="0 0 620 400" xmlns="http://www.w3.org/2000/svg" width="620" height="400" fontFamily="Georgia, 'Times New Roman', serif"><rect x="0" y="0" width="620" height="400" fill="#fdfdfb"/><text x="310" y="28" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Defining a Node — a Self-Referential Structure</text>
+<rect x="240" y="58" width="140" height="44" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="310.0" y1="58" x2="310.0" y2="102" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="275" y="48" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#5a5648" textAnchor="middle">data</text>
+<text x="345" y="48" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#5a5648" textAnchor="middle">next</text>
+<text x="310" y="120" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Node</text>
+<text x="310" y="145" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#8a2323" textAnchor="middle" fontStyle="italic">"self-referential" — a Node contains a pointer to another Node</text>
+<rect x="39" y="176" width="300" height="118" fill="#f0efe9" stroke="#b8b4a4" strokeWidth="1.3" rx="4"/>
+<text x="55" y="200" fontFamily="'Courier New', monospace" fontSize="14" fontWeight="700" fill="#1a1a1a" textAnchor="start">struct Node {`{`}</text>
+<text x="75" y="224" fontFamily="'Courier New', monospace" fontSize="14" fontWeight="700" fill="#1a1a1a" textAnchor="start">int data;</text>
+<text x="75" y="248" fontFamily="'Courier New', monospace" fontSize="14" fontWeight="700" fill="#1a1a1a" textAnchor="start">struct Node *next;</text>
+<text x="55" y="272" fontFamily="'Courier New', monospace" fontSize="14" fontWeight="700" fill="#1a1a1a" textAnchor="start">{`}`};</text>
+<text x="475" y="160" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#5a5648" textAnchor="middle">Size of a Node (example)</text>
+<rect x="400" y="196" width="150" height="36" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="1.6"/>
+<line x1="475" y1="196" x2="475" y2="232" stroke="#2b2b2b" strokeWidth="1.2"/>
+<text x="437" y="218" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12.5" fontWeight="400" fill="#5a5648" textAnchor="middle">2 bytes</text>
+<text x="512" y="218" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12.5" fontWeight="400" fill="#5a5648" textAnchor="middle">2 bytes</text>
+<text x="437" y="250" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">(int)</text>
+<text x="512" y="250" fontFamily="Georgia, 'Times New Roman', serif" fontSize="11" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">(pointer)</text>
+<text x="475" y="282" fontFamily="Georgia, 'Times New Roman', serif" fontSize="14" fontWeight="700" fill="#8a2323" textAnchor="middle">Total = 4 bytes</text>
+<text x="310" y="370" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12.5" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Both fields commonly take the same width as the compiler's pointer size</text></svg>
+</Figure>
+
+**A note on C++:** a `struct` in C++ behaves almost identically to a `class`, with one key difference — members of a `struct` are `public` by default, while members of a `class` are `private` by default. So in C++, you're free to define a node using either a `struct` or a `class`.
+
+**Working out the size of a node:** suppose, for a given compiler, an `int` takes 2 bytes. In that same compiler, a pointer will also typically take 2 bytes (this scales together — if `int` takes 4 bytes, so does the pointer, in most common setups). That gives us a total node size of **2 + 2 = 4 bytes**.
+
+---
+
+## 6. Creating and Accessing a Node
+
+**Creating a node in C:** since nodes live in the heap, we need a pointer and the `malloc` function:
+
+```c
+struct Node *P;
+P = (struct Node *) malloc(sizeof(struct Node));
+```
+
+This is fairly verbose — we have to compute the byte size, request it from `malloc`, and then type-cast the result (since `malloc` returns a generic `void*`).
+
+**Creating a node in C++:** this becomes much simpler with the `new` keyword:
+
+```cpp
+P = new Node;
+```
+
+This one line creates a new node in the heap and stores its address in `P` — no manual size calculation or type-casting required.
+
+**Accessing a node's members:** once `P` points to a node, we access its fields using the arrow (`->`) operator, since `P` is a pointer to a structure:
+
+```c
+P->data = 10;   // store 10 in the node's data field
+P->next = 0;    // 0 means the node doesn't point anywhere (null)
+```
+
+---
+
+## 7. Three Essential Pointer Statements
+
+Once you're working with multiple pointers in a linked list, a small set of statements come up constantly. Suppose we have two pointers, `P` and `Q`, and `P` is currently pointing at some node.
+
+**Statement 1 — `Q = P;`**
+This copies whatever address is stored in `P` into `Q`. Both pointers now point to the **exact same node**. Nothing about the list itself changes — we've just made a second pointer refer to the same place.
+
+**Statement 2 — `Q = P->next;`**
+This stores *the address that P's node points to* into `Q`. In other words, `Q` now points to the node **right after** `P`'s node. Importantly, `P` itself doesn't move — only `Q` changes.
+
+**Statement 3 — `P = P->next;`**
+This is subtly different, and it's the single most important statement for traversing a linked list. Here, `P`'s *own* next-address gets written back into `P` itself. This means **`P` moves forward** to the next node. This is exactly the statement you'd use in a loop to walk through an entire linked list, one node at a time.
+
+<Figure title="Three Essential Pointer Statements" caption="Three pointer statements shown as before/after diagrams on a small chain">
+<svg viewBox="0 0 780 340" xmlns="http://www.w3.org/2000/svg" width="780" height="340" fontFamily="Georgia, 'Times New Roman', serif"><rect x="0" y="0" width="780" height="340" fill="#fdfdfb"/><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2b2b2b"/></marker><marker id="arrowAccent" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#8a2323"/></marker></defs>
+<text x="390" y="30" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#2b2b2b" textAnchor="middle">Three Essential Pointer Statements</text>
+<text x="130" y="240" fontFamily="'Courier New', monospace" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">Q = P;</text>
+<text x="130" y="320" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Q now points to the SAME node as P</text>
+<rect x="70" y="136" width="58" height="38" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="101.9" y1="136" x2="101.9" y2="174" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="86.0" y="161.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">8</text>
+<rect x="150" y="136" width="58" height="38" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="181.9" y1="136" x2="181.9" y2="174" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="165.9" y="161.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+<line x1="188.0" y1="155.0" x2="202.0" y2="155.0" stroke="#b8b4a4" strokeWidth="2.2"/>
+<line x1="190.0" y1="150.0" x2="200.0" y2="160.0" stroke="#b8b4a4" strokeWidth="1.6"/>
+<line x1="128.0" y1="155.0" x2="146.0" y2="155.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="82.0" y="76" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">P</text>
+<rect x="66" y="84" width="32" height="24" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<text x="82.0" y="101.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#8a2323" textAnchor="middle">●</text>
+<line x1="82.0" y1="108.0" x2="86.0" y2="134.0" stroke="#8a2323" strokeWidth="2.2" markerEnd="url(#arrowAccent)"/>
+<text x="116.0" y="76" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">Q</text>
+<rect x="100" y="84" width="32" height="24" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<text x="116.0" y="101.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#1a1a1a" textAnchor="middle">●</text>
+<line x1="116.0" y1="108.0" x2="102.0" y2="134.0" stroke="#2b2b2b" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="390" y="240" fontFamily="'Courier New', monospace" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">Q = P→next;</text>
+<text x="390" y="320" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">Q moves to P's next node — P stays put</text>
+<rect x="330" y="136" width="58" height="38" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="361.9" y1="136" x2="361.9" y2="174" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="345.9" y="161.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">8</text>
+<rect x="410" y="136" width="58" height="38" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="441.9" y1="136" x2="441.9" y2="174" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="425.9" y="161.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+<line x1="447.9" y1="155.0" x2="461.9" y2="155.0" stroke="#b8b4a4" strokeWidth="2.2"/>
+<line x1="449.9" y1="150.0" x2="459.9" y2="160.0" stroke="#b8b4a4" strokeWidth="1.6"/>
+<line x1="388.0" y1="155.0" x2="406.0" y2="155.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="342.0" y="76" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">P</text>
+<rect x="326" y="84" width="32" height="24" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<text x="342.0" y="101.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#8a2323" textAnchor="middle">●</text>
+<line x1="342.0" y1="108.0" x2="345.9" y2="134.0" stroke="#8a2323" strokeWidth="2.2" markerEnd="url(#arrowAccent)"/>
+<text x="422.0" y="76" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">Q</text>
+<rect x="406" y="84" width="32" height="24" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<text x="422.0" y="101.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#1a1a1a" textAnchor="middle">●</text>
+<line x1="422.0" y1="108.0" x2="425.9" y2="134.0" stroke="#2b2b2b" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="650" y="240" fontFamily="'Courier New', monospace" fontSize="15" fontWeight="700" fill="#1a1a1a" textAnchor="middle">P = P→next;</text>
+<text x="650" y="320" fontFamily="Georgia, 'Times New Roman', serif" fontSize="12" fontWeight="400" fill="#5a5648" textAnchor="middle" fontStyle="italic">P itself moves forward one node</text>
+<rect x="590" y="136" width="58" height="38" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="621.9" y1="136" x2="621.9" y2="174" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="606.0" y="161.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">8</text>
+<rect x="670" y="136" width="58" height="38" fill="#fdfdfb" stroke="#2b2b2b" strokeWidth="2"/>
+<line x1="701.9" y1="136" x2="701.9" y2="174" stroke="#2b2b2b" strokeWidth="1.6"/>
+<text x="686.0" y="161.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="17" fontWeight="700" fill="#1a1a1a" textAnchor="middle">3</text>
+<line x1="707.9" y1="155.0" x2="721.9" y2="155.0" stroke="#b8b4a4" strokeWidth="2.2"/>
+<line x1="709.9" y1="150.0" x2="719.9" y2="160.0" stroke="#b8b4a4" strokeWidth="1.6"/>
+<line x1="648.0" y1="155.0" x2="666.0" y2="155.0" stroke="#c3bfae" strokeWidth="2" markerEnd="url(#arrow)"/>
+<text x="682.0" y="76" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" fontWeight="700" fill="#1a1a1a" textAnchor="middle">P</text>
+<rect x="666" y="84" width="32" height="24" fill="#f6e9e5" stroke="#8a2323" strokeWidth="2"/>
+<text x="682.0" y="101.0" fontFamily="Georgia, 'Times New Roman', serif" fontSize="13.5" fontWeight="700" fill="#8a2323" textAnchor="middle">●</text>
+<line x1="682.0" y1="108.0" x2="686.0" y2="134.0" stroke="#8a2323" strokeWidth="2.2" markerEnd="url(#arrowAccent)"/></svg>
+</Figure>
+
+---
+
+## 8. Checking Whether a Pointer Is Null
+
+When working with linked lists, you constantly need to check whether a pointer is actually pointing to a node, or pointing nowhere (null). There are a few equivalent ways to write each check.
+
+**Checking if `P` points to nothing** (any of these three work identically):
+
+```c
+if (P == NULL)
+if (P == 0)
+if (!P)
+```
+
+**Checking if `P` does point to a valid node** (again, all equivalent):
+
+```c
+if (P != NULL)
+if (P != 0)
+if (P)
+```
+
+These all rely on a simple rule from C/C++: the value `0` is treated as `false`, and any non-zero value is treated as `true`. Since a null pointer holds the value `0` and a valid pointer holds some real (non-zero) address, checking "is `P` truthy" is the same as checking "does `P` point somewhere."
+
+**One more useful check — is this the last node in the list?** If `P` points to a node, you can check whether there's anything *after* it:
+
+```c
+if (P->next == NULL)   // P is the last node in the list
+if (P->next != NULL)   // there is at least one more node after P
+```
+
+These small conditions come up over and over again once we start writing real linked list operations — traversal, insertion, deletion — which is exactly what the next video builds on.
+
+---
+
+**Key takeaway:** a linked list solves the array's fixed-size problem by letting each element carry its own memory, connected purely through pointers rather than physical position. This flexibility costs us direct indexing (we can no longer jump straight to the *n*-th element — we have to follow the chain), but in exchange, we gain a structure that can grow and shrink freely, and that supports easy insertion and removal anywhere in the list.
+
+---
+
+**References:** <a href="https://claude.ai/chat/01d12618-bd18-4cda-9a31-3300d37c96df" target="_blank" rel="noopener noreferrer">Material prep chat</a> · <a href="https://www.youtube.com/watch?v=akErwS16DUg&list=PLsr8vTgyLdy_YndxNcI4WkH5Vorj5qvrv&index=57" target="_blank" rel="noopener noreferrer">Abdul Bari — Linked List — Introduction & Concepts</a>
+
+---
+
+<ArticleNav
+  prev={{ href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-hashing-technique", title: "11: Hashing Technique" }}
+  next={null}
+/>

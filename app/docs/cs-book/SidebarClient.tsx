@@ -87,6 +87,7 @@ const chapters = [
           { title: "6: Introduction to Backtracking — Brute-Force Approach", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction" },
           { title: "6.1: The N-Queens Problem — Backtracking", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-1-the-n-queens-problem" },
           { title: "11: Hashing Technique", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-hashing-technique" },
+          { title: "11.1: Linked List — Introduction & Concepts", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-1-linked-list-introduction-and-concepts" },
         ],
       },
     ],
