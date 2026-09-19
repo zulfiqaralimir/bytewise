@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "event-bus",
+    title: "The Event Bus, End to End: A Field Guide to Event-Driven Systems",
+    description:
+      "How services announce that something happened, how the bus routes it, and why the producer never needs to know who's listening — from first principles to idempotency, ordering, and dead-letter queues.",
+    date: "September 19, 2026",
+    tag: "System Design",
+  },
+  {
     slug: "building-a-3-year-financial-model",
     title: "How to Build a 3-Year Financial Model for a Startup",
     description:
