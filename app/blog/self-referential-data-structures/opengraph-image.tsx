@@ -56,6 +56,9 @@ export default function OgImage() {
         {/* Title */}
         <div
           style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             fontSize: 56,
             fontWeight: 900,
             color: "#f7fee7",

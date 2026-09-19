@@ -171,7 +171,7 @@ flowchart LR
 
 ## Event Bus vs. message queue
 
-A **queue** is work waiting to be picked up by one of several competing workers — 1,000 image-processing jobs split across a worker pool. An Event Bus is **publish–subscribe**: every interested subscriber gets its own copy of the same event.
+A **queue** is work waiting to be picked up by one of several competing workers — 1,000 image-processing jobs split across a worker pool. An Event Bus is **publish/subscribe**: every interested subscriber gets its own copy of the same event.
 
 <MermaidDiagram title="Queue — One Job, One Worker" chart={`
 flowchart LR
