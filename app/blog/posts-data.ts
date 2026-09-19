@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "economics-of-aldi",
+    title: "The Economics of Aldi: How a No-Frills Grocer Became America's Fastest-Growing Chain",
+    description:
+      "Aldi undercuts nearly every competitor on price by engineering cost out of the store itself — small footprint, radically fewer SKUs, private label at 90% of stock, and a stripped-down aesthetic that doubles as a pricing signal.",
+    date: "September 20, 2026",
+    tag: "Economics",
+  },
+  {
     slug: "self-referential-data-structures",
     title: "Understanding Self-Referential Data Structures",
     description:
