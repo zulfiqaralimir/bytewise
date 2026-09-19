@@ -8,4 +8,5 @@ export const tagColors: Record<string, string> = {
   "AI System Design": "bg-indigo-50 text-indigo-700",
   "Research Methods": "bg-rose-50 text-rose-700",
   Finance: "bg-amber-50 text-amber-700",
+  DSA: "bg-lime-50 text-lime-700",
 };

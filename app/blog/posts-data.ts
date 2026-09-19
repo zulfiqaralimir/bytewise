@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: "self-referential-data-structures",
+    title: "Understanding Self-Referential Data Structures",
+    description:
+      "Linked lists, trees, graphs, recursion, and the call stack are not separate topics — they're one idea, wearing different costumes. A beginner's guide from first principles.",
+    date: "September 19, 2026",
+    tag: "DSA",
+  },
+  {
     slug: "event-bus",
     title: "The Event Bus, End to End: A Field Guide to Event-Driven Systems",
     description:

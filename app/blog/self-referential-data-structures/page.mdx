@@ -1,0 +1,353 @@
+import { Figure } from "@/app/components/Figure";
+
+export const metadata = {
+  title: "Understanding Self-Referential Data Structures — ByteWise",
+  description:
+    "Linked lists, trees, graphs, recursion, and the call stack are not separate topics — they're one idea, wearing different costumes. A beginner's guide from first principles.",
+  keywords: [
+    "self-referential data structures",
+    "linked list",
+    "binary tree",
+    "graph data structure",
+    "recursion",
+    "call stack",
+    "data structures for beginners",
+    "DSA",
+  ],
+  openGraph: {
+    title: "Understanding Self-Referential Data Structures",
+    description:
+      "Linked lists, trees, graphs, recursion, and the call stack are not separate topics — they're one idea, wearing different costumes.",
+    type: "article",
+  },
+};
+
+# Understanding Self-Referential Data Structures
+
+From one idea to linked lists, trees, graphs, and recursion — in simple English.
+
+Here's a secret that nobody tells you when you first start learning about linked lists, trees, and graphs: **they're not three different topics. They're one idea, wearing three different costumes.**
+
+That one idea is this:
+
+> A `Node` can contain a pointer to another `Node` of the same type.
+
+That's it. That's the whole seed. Everything else — linked lists, trees, graphs, even recursion and the call stack — grows out of this single sentence.
+
+## Part 1 — Basics: Where This All Starts
+
+### What is a Node, really?
+
+Think of a `Node` as a little box. Inside the box, you can put two things:
+
+1. Some **data** (a number, a name, whatever you care about)
+2. A **pointer** — an arrow — to another box of the exact same kind
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value   # the data
+        self.next = None     # the pointer — currently pointing at nothing
+```
+
+Right now, `self.next` is `None`, meaning "this box isn't pointing at anything yet." But the *type* of `self.next` is always meant to be another `Node`. That's the important part. The box is designed to hold a pointer to another box just like itself.
+
+This is called being **self-referential**: the definition of `Node` refers to `Node` itself.
+
+<Figure title="A Self-Referential Node" caption="Same type, pointing to another instance of itself.">
+<svg viewBox="0 0 680 220" role="img" aria-label="A self-referential Node box pointing to another Node box">
+<defs><marker id="srds-a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+<rect x="90" y="60" width="180" height="90" rx="8" fill="#e6f1fb" stroke="#185fa5" strokeWidth="1"/>
+<text x="180" y="88" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="14" fontWeight="600">Node</text>
+<text x="180" y="112" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">value: 10</text>
+<text x="180" y="132" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">next: -&gt;</text>
+<rect x="410" y="60" width="180" height="90" rx="8" fill="#e6f1fb" stroke="#185fa5" strokeWidth="1"/>
+<text x="500" y="88" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="14" fontWeight="600">Node</text>
+<text x="500" y="112" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">value: 20</text>
+<text x="500" y="132" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">next: null</text>
+<line x1="270" y1="105" x2="405" y2="105" stroke="#185fa5" strokeWidth="1.5" markerEnd="url(#srds-a1)"/>
+<text x="339" y="88" textAnchor="middle" fill="#5f5e5a" fontSize="12">points to a Node</text>
+</svg>
+</Figure>
+
+### A simple picture
+
+Imagine three boxes on a table:
+
+```text
+[ 10 ] --> [ 20 ] --> [ 30 ] --> (nothing)
+```
+
+Each box has a number in it, and an arrow pointing to the next box. The last box's arrow points at nothing (empty, or `None`).
+
+```python
+a = Node(10)
+b = Node(20)
+c = Node(30)
+
+a.next = b   # box "10" points to box "20"
+b.next = c   # box "20" points to box "30"
+```
+
+That's it. You just built a **linked list**. Not a new concept — just three `Node` objects, wired together using the pointer that was already built into the design.
+
+### Why does this matter so much?
+
+Because once a structure can "contain another one of itself," you can chain together as many as you want — 3 nodes, 3,000 nodes, 3 million nodes — using the exact same tiny definition of `Node`. You never had to write a "3-node class" or a "30-node class." One definition, endlessly repeatable.
+
+This is the leap from *fixed-size* data (like an array with a set number of slots) to structures that can **grow dynamically**, one node at a time, for as long as memory allows.
+
+### Two words that sound alike but aren't: self-referential vs. self-pointing
+
+**Self-referential** is about the type definition. It means: "the class refers to itself in its own blueprint."
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None   # this field's type is "Node" — the SAME class
+```
+
+The blueprint for `Node` says "I contain a pointer to a Node." That's self-referential. It's a statement about design, not about any particular object.
+
+**Self-pointing** is about a specific instance at runtime pointing back to itself.
+
+```python
+a = Node(1)
+a.next = a   # 'a' now points to itself!
+```
+
+This isn't about the class definition anymore — it's about what happened to this one specific object while your program was running. `a` now forms a tiny loop, pointing to itself.
+
+> Every `Node` is self-referential by design (its `next` field is typed to hold another Node). But most nodes are not self-pointing — a node usually points to a different node, not back at itself. Self-pointing is the exception, and often the bug. Debugging an infinite loop in a linked list? Look for a node accidentally pointing back into a cycle.
+
+## Part 2 — Intermediate: Watching the Same Idea Take Different Shapes
+
+### Linked list: one pointer, one direction
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+head = Node(10)
+head.next = Node(20)
+head.next.next = Node(30)
+
+curr = head
+while curr:
+    print(curr.value)
+    curr = curr.next
+```
+
+<Figure title="Linked List" caption={'One rule — each node points to exactly one "next" node — is the entire personality of a linked list.'}>
+<svg viewBox="0 0 680 160" role="img" aria-label="Linked list of three nodes, ten to twenty to thirty, ending in null">
+<defs><marker id="srds-a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+<rect x="40" y="50" width="120" height="60" rx="8" fill="#e6f1fb" stroke="#185fa5" strokeWidth="1"/>
+<text x="100" y="72" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="14" fontWeight="600">10</text>
+<text x="100" y="92" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">next -&gt;</text>
+<rect x="280" y="50" width="120" height="60" rx="8" fill="#e6f1fb" stroke="#185fa5" strokeWidth="1"/>
+<text x="340" y="72" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="14" fontWeight="600">20</text>
+<text x="340" y="92" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">next -&gt;</text>
+<rect x="520" y="50" width="120" height="60" rx="8" fill="#e6f1fb" stroke="#185fa5" strokeWidth="1"/>
+<text x="580" y="72" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="14" fontWeight="600">30</text>
+<text x="580" y="92" textAnchor="middle" dominantBaseline="central" fill="#0c447c" fontSize="12">next: null</text>
+<line x1="160" y1="80" x2="278" y2="80" stroke="#185fa5" strokeWidth="1.5" markerEnd="url(#srds-a2)"/>
+<line x1="400" y1="80" x2="518" y2="80" stroke="#185fa5" strokeWidth="1.5" markerEnd="url(#srds-a2)"/>
+<text x="100" y="135" textAnchor="middle" fill="#5f5e5a" fontSize="12">head</text>
+</svg>
+</Figure>
+
+### Tree: two (or more) pointers, branching out
+
+```python
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+root = TreeNode(50)
+root.left = TreeNode(30)
+root.right = TreeNode(70)
+root.left.left = TreeNode(20)
+```
+
+<Figure title="Binary Tree" caption="Same Node idea, but now with two self-referential pointers — left and right — instead of one.">
+<svg viewBox="0 0 680 260" role="img" aria-label="Binary tree with root fifty, children thirty and seventy, and grandchild twenty">
+<defs><marker id="srds-a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+<line x1="340" y1="90" x2="220" y2="150" stroke="#0f6e56" strokeWidth="1.5" markerEnd="url(#srds-a3)"/>
+<line x1="340" y1="90" x2="460" y2="150" stroke="#0f6e56" strokeWidth="1.5" markerEnd="url(#srds-a3)"/>
+<line x1="220" y1="190" x2="150" y2="220" stroke="#0f6e56" strokeWidth="1.5" markerEnd="url(#srds-a3)"/>
+<rect x="290" y="50" width="100" height="50" rx="8" fill="#e1f5ee" stroke="#0f6e56" strokeWidth="1"/>
+<text x="340" y="75" textAnchor="middle" dominantBaseline="central" fill="#085041" fontSize="14" fontWeight="600">50</text>
+<rect x="170" y="150" width="100" height="50" rx="8" fill="#e1f5ee" stroke="#0f6e56" strokeWidth="1"/>
+<text x="220" y="175" textAnchor="middle" dominantBaseline="central" fill="#085041" fontSize="14" fontWeight="600">30</text>
+<rect x="410" y="150" width="100" height="50" rx="8" fill="#e1f5ee" stroke="#0f6e56" strokeWidth="1"/>
+<text x="460" y="175" textAnchor="middle" dominantBaseline="central" fill="#085041" fontSize="14" fontWeight="600">70</text>
+<rect x="100" y="220" width="100" height="50" rx="8" fill="#e1f5ee" stroke="#0f6e56" strokeWidth="1"/>
+<text x="150" y="245" textAnchor="middle" dominantBaseline="central" fill="#085041" fontSize="14" fontWeight="600">20</text>
+</svg>
+</Figure>
+
+A linked list is really just a tree where every node happens to only ever use one branch. Same idea, fewer options exercised.
+
+Walking a tree naturally uses recursion, because each branch is itself a smaller tree:
+
+```python
+def inorder(node):
+    if node is None:
+        return
+    inorder(node.left)
+    print(node.value)
+    inorder(node.right)
+
+inorder(root)
+```
+
+### Graph: pointers to many others, no shape rules at all
+
+```python
+class GraphNode:
+    def __init__(self, value):
+        self.value = value
+        self.neighbors = []   # a LIST of other GraphNodes — no limit, no fixed shape
+
+a = GraphNode("A")
+b = GraphNode("B")
+c = GraphNode("C")
+
+a.neighbors = [b, c]
+b.neighbors = [a, c]   # notice: b points back toward a
+c.neighbors = [a, b]
+```
+
+<Figure title="Graph" caption="Any number of pointers, any pattern — including looping back. Cycles are normal here, not a bug.">
+<svg viewBox="0 0 680 260" role="img" aria-label="Graph of three nodes A, B and C all pointing to each other, forming a cycle">
+<defs><marker id="srds-a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#993c1d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+<line x1="310" y1="80" x2="190" y2="180" stroke="#993c1d" strokeWidth="1.2" markerEnd="url(#srds-a4)"/>
+<line x1="220" y1="200" x2="340" y2="100" stroke="#993c1d" strokeWidth="1.2" markerEnd="url(#srds-a4)"/>
+<line x1="370" y1="80" x2="480" y2="180" stroke="#993c1d" strokeWidth="1.2" markerEnd="url(#srds-a4)"/>
+<line x1="500" y1="200" x2="390" y2="100" stroke="#993c1d" strokeWidth="1.2" markerEnd="url(#srds-a4)"/>
+<line x1="250" y1="215" x2="450" y2="215" stroke="#993c1d" strokeWidth="1.2" markerEnd="url(#srds-a4)"/>
+<line x1="450" y1="205" x2="250" y2="205" stroke="#993c1d" strokeWidth="1.2" markerEnd="url(#srds-a4)"/>
+<circle cx="340" cy="60" r="35" fill="#faece7" stroke="#993c1d" strokeWidth="1"/>
+<text x="340" y="60" textAnchor="middle" dominantBaseline="central" fill="#712b13" fontSize="14" fontWeight="600">A</text>
+<circle cx="170" cy="215" r="35" fill="#faece7" stroke="#993c1d" strokeWidth="1"/>
+<text x="170" y="215" textAnchor="middle" dominantBaseline="central" fill="#712b13" fontSize="14" fontWeight="600">B</text>
+<circle cx="510" cy="215" r="35" fill="#faece7" stroke="#993c1d" strokeWidth="1"/>
+<text x="510" y="215" textAnchor="middle" dominantBaseline="central" fill="#712b13" fontSize="14" fontWeight="600">C</text>
+</svg>
+</Figure>
+
+```python
+def dfs(node, visited=None):
+    if visited is None:
+        visited = set()
+    if node in visited:
+        return
+    visited.add(node)
+    print(node.value)
+    for neighbor in node.neighbors:
+        dfs(neighbor, visited)
+```
+
+### The pattern so far
+
+| Structure | Pointer rule | Shape |
+|---|---|---|
+| Linked list | 1 pointer, strictly forward | Straight chain |
+| Tree | 2+ pointers, no cycles allowed | Branching, no loops |
+| Graph | Any number of pointers, cycles allowed | Anything goes |
+
+### Queue and stack — same Node, different usage rules
+
+A **queue** and a **stack** are usually built with the exact same linked-list `Node` you saw above. The difference isn't the data structure underneath — it's the rule for adding and removing:
+
+- **Queue**: add at the back, remove from the front (first in, first out — like a line at a shop)
+- **Stack**: add and remove from the same end (last in, first out — like a stack of plates)
+
+```python
+class Queue:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def enqueue(self, value):
+        node = Node(value)
+        if self.tail:
+            self.tail.next = node
+        else:
+            self.head = node
+        self.tail = node
+
+    def dequeue(self):
+        if not self.head:
+            return None
+        value = self.head.value
+        self.head = self.head.next
+        return value
+```
+
+Nothing new structurally — same self-referential `Node`, just different rules about where you're allowed to add or remove.
+
+## Part 3 — Advanced: Recursion and the Call Stack
+
+### Recursion is self-reference, applied to functions
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)   # calling itself, on a smaller problem
+```
+
+Same underlying trick as `next` pointing to another `Node`: the definition of `factorial` includes a call to `factorial`. Just like a node "trusts" that whatever `next` points to is also a valid Node it knows how to handle, `factorial` "trusts" that `factorial(n-1)` will correctly solve the smaller version of the problem.
+
+This is why recursive functions are the natural way to walk trees and graphs — the data structure and the function that processes it share the same self-referential shape.
+
+### The call stack: recursion becomes a linked list, live, in memory
+
+When `factorial(3)` calls `factorial(2)`, which calls `factorial(1)`, which calls `factorial(0)` — your computer needs to remember where to come back to after each call finishes. It does this using a **stack frame** — a block of memory holding that call's local variables and a pointer back to the frame that called it.
+
+<Figure title="The Call Stack" caption="Structurally identical to a linked list — just built automatically by the runtime instead of by hand.">
+<svg viewBox="0 0 680 300" role="img" aria-label="Four stack frames for factorial three down to factorial zero, each pointing back to the caller">
+<defs><marker id="srds-a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+<rect x="240" y="30" width="200" height="44" rx="8" fill="#eeedfe" stroke="#534ab7" strokeWidth="1"/>
+<text x="340" y="52" textAnchor="middle" dominantBaseline="central" fill="#3c3489" fontSize="14" fontWeight="600">factorial(3)</text>
+<rect x="240" y="94" width="200" height="44" rx="8" fill="#eeedfe" stroke="#534ab7" strokeWidth="1"/>
+<text x="340" y="116" textAnchor="middle" dominantBaseline="central" fill="#3c3489" fontSize="14" fontWeight="600">factorial(2)</text>
+<rect x="240" y="158" width="200" height="44" rx="8" fill="#eeedfe" stroke="#534ab7" strokeWidth="1"/>
+<text x="340" y="180" textAnchor="middle" dominantBaseline="central" fill="#3c3489" fontSize="14" fontWeight="600">factorial(1)</text>
+<rect x="240" y="222" width="200" height="44" rx="8" fill="#f1efe8" stroke="#5f5e5a" strokeWidth="1"/>
+<text x="340" y="244" textAnchor="middle" dominantBaseline="central" fill="#444441" fontSize="14" fontWeight="600">factorial(0)</text>
+<line x1="340" y1="94" x2="340" y2="76" stroke="#534ab7" strokeWidth="1.5" markerEnd="url(#srds-a5)"/>
+<line x1="340" y1="158" x2="340" y2="140" stroke="#534ab7" strokeWidth="1.5" markerEnd="url(#srds-a5)"/>
+<line x1="340" y1="222" x2="340" y2="204" stroke="#534ab7" strokeWidth="1.5" markerEnd="url(#srds-a5)"/>
+<text x="340" y="280" textAnchor="middle" fill="#5f5e5a" fontSize="12">each frame points back to the one that called it — base case at the bottom</text>
+</svg>
+</Figure>
+
+When `factorial(0)` finally returns `1`, the stack "unwinds" — each frame pops off in reverse order (last one created, first one removed — LIFO, same principle as the Stack above).
+
+So the punchline is: **recursion in your code and the linked-list-of-frames in memory are the same self-referential idea**, just happening at two different levels — one in the data you designed, one in the machinery that runs your program.
+
+### Where this idea shows up outside "data structures class"
+
+- **File systems**: a folder can contain files and other folders — a tree.
+- **The DOM** (structure of a webpage): a `<div>` can contain other `<div>`s — the same tree shape.
+- **JSON / nested dictionaries**: a JSON value can itself be another JSON object.
+- **Blockchain**: every block stores the hash of the previous block — a linked list, using hashes instead of memory pointers.
+- **Org charts**: a manager oversees other managers or employees — a tree again.
+- **Git**: each commit points to its parent commit(s) — usually a tree, but can become a graph when branches merge.
+
+---
+
+## The One Idea to Carry Forward
+
+If you remember nothing else from this: a structure that can contain another instance of itself is the seed of recursion, and recursion is the seed of an enormous amount of computer science. Linked lists, trees, graphs, the call stack, file systems, even Git — they're all just different rulebooks layered on top of one sentence:
+
+> *A thing can contain, or point to, another thing of the same kind.*
+
+Once that clicks, you're not learning five separate topics anymore. You're learning one idea and recognizing its costume changes.
