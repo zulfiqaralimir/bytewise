@@ -522,49 +522,6 @@ const chapters = [
     ],
   },
   {
-    part: "Part 20 — GRE",
-    chapters: [
-      {
-        chapter: "Overview",
-        items: [
-          { title: "Overview & Roadmap", href: "/docs/cs-book/part-20-gre/overview" },
-        ],
-      },
-      {
-        chapter: "Chapter 1: Verbal Reasoning",
-        items: [
-          { title: "1.1 GRE Verbal Reasoning Decoded", href: "/docs/cs-book/part-20-gre/chapter-1/1-1-verbal-reasoning-decoded" },
-          { title: "1.2 Vocabulary List & Memorization Strategies", href: "/docs/cs-book/part-20-gre/chapter-1/1-2-vocabulary-list-and-strategies" },
-          { title: "1.3 Reading Comprehension Decoded", href: "/docs/cs-book/part-20-gre/chapter-1/1-3-reading-comprehension-decoded" },
-          { title: "1.4 Mechanics of Reading Comprehension", href: "/docs/cs-book/part-20-gre/chapter-1/1-4-mechanics-of-reading-comprehension" },
-        ],
-      },
-      {
-        chapter: "Chapter 2: Quantitative Reasoning",
-        items: [],
-      },
-      {
-        chapter: "Chapter 3: Analytical Writing (AWA)",
-        items: [
-          { title: "3.1 Analytical Writing — The Issue Task", href: "/docs/cs-book/part-20-gre/chapter-3/3-1-issue-essay-structure" },
-          { title: "3.2 Grammar & Mechanics Checklist", href: "/docs/cs-book/part-20-gre/chapter-3/3-2-grammar-mechanics-checklist" },
-        ],
-      },
-      {
-        chapter: "Chapter 4: Practice Tests",
-        items: [
-          { title: "4.1 Reading Comprehension Practice Set", href: "/docs/cs-book/part-20-gre/chapter-4/4-1-reading-comprehension-practice-set" },
-        ],
-      },
-      {
-        chapter: "Chapter 5: Reading Vocabulary",
-        items: [
-          { title: "5.1 GRE Reading Vocabulary — Word Bank", href: "/docs/cs-book/part-20-gre/chapter-5/5-1-reading-vocabulary" },
-        ],
-      },
-    ],
-  },
-  {
     part: "Part 21 — Python Internals",
     chapters: [
       {
