@@ -211,39 +211,6 @@ const chapters = [
     ],
   },
   {
-    part: "Part 11 — Economic & Finance Models",
-    chapters: [
-      {
-        chapter: "Chapter 1: Social Accounting Matrix",
-        items: [
-          { title: "Social Accounting Matrix: A Complete Guide", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/social-accounting-matrix" },
-          { title: "1.1 How to Read a Social Accounting Matrix", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-1-how-to-read-a-sam" },
-          { title: "1.2 SAM Multiplier Analysis Pipeline", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-2-sam-multiplier-analysis-pipeline" },
-          { title: "1.3 SAM Multiplier Analysis: Data to Policy Insights", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-3-pakistan-sam-multiplier-analysis" },
-          { title: "1.4 Types of Equations in SAM & CGE Modeling", href: "/docs/cs-book/part-11-economic-finance-models/chapter-1/1-4-types-of-equations-sam-cge-modeling" },
-        ],
-      },
-      {
-        chapter: "Chapter 2: Quantitative Trading & Backtesting",
-        items: [
-          { title: "Mastering Quantitative Trading with VectorBT", href: "/docs/cs-book/part-11-economic-finance-models/chapter-2/vectorbt-backtesting" },
-        ],
-      },
-      {
-        chapter: "Chapter 3: Currency Markets & Macro Indicators",
-        items: [
-          { title: "What Is the Dollar Index (DXY)?", href: "/docs/cs-book/part-11-economic-finance-models/chapter-3/dollar-index-dxy" },
-        ],
-      },
-      {
-        chapter: "Chapter 4: Market Research & Bubble Analysis",
-        items: [
-          { title: "Researchers Uncover a Reliable Bubble Indicator", href: "/docs/cs-book/part-11-economic-finance-models/chapter-4/researchers-uncover-reliable-market-bubble-indicator" },
-        ],
-      },
-    ],
-  },
-  {
     part: "Part 12 — Mastering Programming Language C",
     chapters: [
       {
