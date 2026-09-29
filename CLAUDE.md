@@ -1,5 +1,4 @@
 @AGENTS.md
-@app/docs/cs-book/part-10-introduction-to-algorithms/CLAUDE.md
 
 # ByteWise Project Context
 

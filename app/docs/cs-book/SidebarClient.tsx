@@ -20,17 +20,6 @@ const chapters = [
     ],
   },
   {
-    part: "Part 1 — Foundations",
-    items: [
-      { title: "DSA Learning Framework", href: "/docs/cs-book/part-1-foundations/dsa-learning-framework" },
-      { title: "Big O Notation", href: "/docs/cs-book/part-1-foundations/big-o-notation" },
-      { title: "Stack vs Heap", href: "/docs/cs-book/part-1-foundations/stack-vs-heap" },
-      { title: "Data Structures", href: "/docs/cs-book/part-1-foundations/data-structures" },
-      { title: "Hash Tables", href: "/docs/cs-book/part-1-foundations/hash-tables" },
-      { title: "Recursion", href: "/docs/cs-book/part-1-foundations/recursion" },
-    ],
-  },
-  {
     part: "Part 2 — Design Patterns (LLD)",
     chapters: [
       {
@@ -48,46 +37,6 @@ const chapters = [
           { title: "Section 9: SOLID — Liskov Substitution", href: "/docs/cs-book/part-2-design-patterns/chapter-1/9-solid-lsp" },
           { title: "Section 10: SOLID — Interface Segregation", href: "/docs/cs-book/part-2-design-patterns/chapter-1/10-solid-isp" },
           { title: "Section 11: SOLID — Dependency Inversion", href: "/docs/cs-book/part-2-design-patterns/chapter-1/11-solid-dip" },
-        ],
-      },
-    ],
-  },
-  {
-    part: "Part 3 — Algorithms",
-    chapters: [
-      {
-        chapter: "General Algorithms",
-        items: [
-          { title: "Top 6 Coding Interview Concepts (Data Structures & Algorithms)", href: "/docs/cs-book/part-2-algorithms/top-6-coding-interview-concepts" },
-          { title: "Binary Search", href: "/docs/cs-book/part-2-algorithms/binary-search" },
-          { title: "Sorting Algorithms", href: "/docs/cs-book/part-2-algorithms/sorting-algorithms" },
-          { title: "Graph Traversal", href: "/docs/cs-book/part-2-algorithms/graph-traversal" },
-          { title: "Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/dynamic-programming" },
-        ],
-      },
-      {
-        chapter: "Algorithms by Abdul Bari",
-        items: [
-          { title: "Section 0: Course Overview & Roadmap", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/0-introduction-and-roadmap" },
-          { title: "1: Introduction to Algorithms", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-introduction-to-algorithms" },
-          { title: "1.1: Priori vs. Posteriori Analysis", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-1-priori-vs-posteriori-analysis" },
-          { title: "1.2: Characteristics of an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-2-characteristics-of-an-algorithm" },
-          { title: "1.3: How to Write and Analyze an Algorithm", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-3-how-to-write-and-analyze-an-algorithm" },
-          { title: "1.4: Frequency Count Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-1/1-4-frequency-count-method" },
-          { title: "2: Divide and Conquer — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-divide-and-conquer-introduction" },
-          { title: "2.1: Recurrence Relation T(n) = T(n-1) + 1 — Part 1", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-1-recurrence-relation-part-1" },
-          { title: "2.6.1: Binary Search — Iterative Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-6-1-binary-search-iterative-method" },
-          { title: "2.6.2: Binary Search — Recursive Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-6-2-binary-search-recursive-method" },
-          { title: "2.7.1: Two-Way Merge Sort — Iterative Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-2/2-7-1-two-way-merge-sort-iterative-method" },
-          { title: "3: Greedy Method — Introduction", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-greedy-method-introduction" },
-          { title: "3.5: Prim's and Kruskal's Algorithms — Greedy Method", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-3/3-5-prims-and-kruskals-algorithms" },
-          { title: "4: Principle of Optimality — Introduction to Dynamic Programming", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-4/4-principle-of-optimality-dynamic-programming" },
-          { title: "5.1: Graph Traversals — BFS & DFS", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-1-graph-traversals-bfs-dfs" },
-          { title: "5.2: Articulation Point and Biconnected Components", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-5/5-2-articulation-point-and-biconnected-components" },
-          { title: "6: Introduction to Backtracking — Brute-Force Approach", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-backtracking-introduction" },
-          { title: "6.1: The N-Queens Problem — Backtracking", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-6/6-1-the-n-queens-problem" },
-          { title: "11: Hashing Technique", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-hashing-technique" },
-          { title: "11.1: Linked List — Introduction & Concepts", href: "/docs/cs-book/part-2-algorithms/algorithms-by-abdul-bari/chapter-11/11-1-linked-list-introduction-and-concepts" },
         ],
       },
     ],
@@ -188,24 +137,6 @@ const chapters = [
         chapter: "Agentic AI",
         items: [
           { title: "Agents of Chaos: A Warning About Autonomous AI Systems", href: "/docs/cs-book/part-9-research/agentic-ai/agents-of-chaos" },
-        ],
-      },
-    ],
-  },
-  {
-    part: "Part 10 — Introduction to Algorithms (CLRS)",
-    chapters: [
-      {
-        chapter: "Chapter 1: The Role of Algorithms in Computing",
-        items: [
-          { title: "1.1 Algorithms", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-1-algorithms" },
-          { title: "1.2 Algorithms as a Technology", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-1/1-2-algorithms-as-a-technology" },
-        ],
-      },
-      {
-        chapter: "Chapter 2: Getting Started",
-        items: [
-          { title: "2.1 Insertion Sort", href: "/docs/cs-book/part-10-introduction-to-algorithms/chapter-2/2-1-insertion-sort" },
         ],
       },
     ],
@@ -317,53 +248,6 @@ const chapters = [
       {
         chapter: "Chapter 9: Multimedia Networking",
         items: [],
-      },
-    ],
-  },
-  {
-    part: "Part 14 — Mastering LeetCode & NeetCode",
-    chapters: [
-      {
-        chapter: "Mastering NeetCode 150",
-        items: [
-          { title: "NeetCode 150 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150" },
-          { title: "Part Review — Mastering NeetCode 150", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/part-review" },
-          { title: "Topic 1: Arrays & Hashing", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/topic-1-arrays-and-hashing" },
-          { title: "HashMaps in Data Structures & Algorithms", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/hashmaps-deep-dive" },
-          { title: "Python Loops: Index, Value & enumerate()", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/python-loops-enumerate" },
-          { title: "Topic 1: Problem 1 — Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-1-contains-duplicate" },
-          { title: "Topic 1: Problem 2 — Valid Anagram", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-2-valid-anagram" },
-          { title: "Topic 1: Problem 3 — Two Sum", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-3-two-sum" },
-          { title: "Topic 1: Problem 4 — Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/mastering-neetcode-150/problem-4-group-anagrams" },
-        ],
-      },
-      {
-        chapter: "Mastering Blind 75",
-        items: [
-          { title: "Blind 75 — Overview & Roadmap", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75" },
-          { title: "Python Fundamentals for LeetCode", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/python-fundamentals-for-leetcode" },
-          { title: "1. Indentation", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/indentation" },
-          { title: "2. While Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/while-loops" },
-          { title: "3. For Loops", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/for-loops" },
-          { title: "4. Lists and Indexing/Slicing", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/lists-and-indexing-slicing" },
-          { title: "5. Dictionaries and Hash Maps", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/dictionaries-and-hash-maps" },
-          { title: "6. Functions (def)", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/functions" },
-          { title: "7. Classes and self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/classes-and-self" },
-          { title: "8. List Comprehensions", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/list-comprehensions" },
-          { title: "15. Recursion Basics", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/recursion-basics" },
-          { title: "15.1. Recursion: Stack and Time Complexity", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/recursion-stack-and-time-complexity" },
-        ],
-      },
-      {
-        chapter: "LeetCode Blind-75 Solutions",
-        items: [
-          { title: "Blind 75 #3: Contains Duplicate", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/contains-duplicate" },
-          { title: "Blind 75 #4: Product of Array Except Self", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/product-of-array-except-self" },
-          { title: "Blind 75 #30: Longest Consecutive Sequence", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/longest-consecutive-sequence" },
-          { title: "Blind 75 #52: Group Anagrams", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/string/group-anagrams" },
-          { title: "Blind-75 Misc #1: Trapping Rain Water", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/misc/trapping-rain-water" },
-          { title: "Blind 75 #10: Container With Most Water", href: "/docs/cs-book/part-13-mastering-leetcode-and-neetcode/blind-75/array/container-with-most-water" },
-        ],
       },
     ],
   },
@@ -514,24 +398,6 @@ const chapters = [
       {
         chapter: "Part IV — History and Philosophy",
         items: [],
-      },
-    ],
-  },
-  {
-    part: "Part 22 — Project Euler",
-    chapters: [
-      {
-        chapter: "Overview",
-        items: [
-          { title: "Overview & Roadmap", href: "/docs/cs-book/part-22-project-euler/overview" },
-        ],
-      },
-      {
-        chapter: "Problems",
-        items: [
-          { title: "Problem 1: Multiples of 3 or 5", href: "/docs/cs-book/part-22-project-euler/problem-1-multiples-of-3-or-5" },
-          { title: "Problem 2: Even Fibonacci Numbers", href: "/docs/cs-book/part-22-project-euler/problem-2-even-fibonacci-numbers" },
-        ],
       },
     ],
   },

@@ -87,7 +87,7 @@ export default function HomePage() {
               Start Reading →
             </Link>
             <Link
-              href="/docs/cs-book/part-1-foundations/big-o-notation"
+              href="https://algorithms-mastery.vercel.app/docs/cs-book/part-1-foundations/big-o-notation"
               className="inline-block bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl border border-white/20 transition-all"
             >
               Chapter 1: Big O Notation
