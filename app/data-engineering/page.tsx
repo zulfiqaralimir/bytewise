@@ -81,6 +81,13 @@ export default function DataEngineeringPage() {
           ))}
         </ul>
 
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Program Syllabus</h2>
+        <p className="mb-2">
+          <Link href="/data-engineering/syllabus" className="text-blue-600 hover:text-blue-500 underline font-semibold">
+            Read the full syllabus — prerequisites, four-course outline, grading and support
+          </Link>
+        </p>
+
         <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Week 1: Introduction to Data Engineering</h2>
         <ul className="space-y-2">
           <li>
