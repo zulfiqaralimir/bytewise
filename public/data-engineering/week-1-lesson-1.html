@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Week 1 · Lesson 1 – Welcome to Data Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2F5; --panel:#FFFFFF; --ink:#1B2A41; --muted:#5C6B7A;
+  --pipe:#1F7A8C; --pipe-soft:#CFE6EA; --packet:#E0A100; --rule:#C9D3DC;
+  --head:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14202E; --panel:#1B2A3B; --ink:#E6EDF3; --muted:#9AAAB9;
+    --pipe:#4FB3C4; --pipe-soft:#24414D; --packet:#F2B833; --rule:#2E4152;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14202E; --panel:#1B2A3B; --ink:#E6EDF3; --muted:#9AAAB9;
+  --pipe:#4FB3C4; --pipe-soft:#24414D; --packet:#F2B833; --rule:#2E4152;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.6}
+main{max-width:46rem;margin:0 auto;padding:0 1.25rem 4rem}
+h1,h2,h3{font-family:var(--head);line-height:1.15;color:var(--ink)}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;margin:.3rem 0 .8rem;letter-spacing:-.02em}
+h2{font-size:1.65rem;font-weight:700;margin:3.2rem 0 .8rem;padding-top:1.4rem;border-top:2px solid var(--rule)}
+h3{font-size:1.2rem;font-weight:700;margin:1.8rem 0 .5rem;color:var(--pipe)}
+p{margin:.5rem 0}
+ul{padding-left:1.25rem;margin:.4rem 0}
+li{margin:.35rem 0}
+li::marker{color:var(--pipe)}
+strong{font-weight:600;color:var(--ink);background:linear-gradient(transparent 62%,var(--pipe-soft) 62%)}
+.kicker{font-family:var(--head);font-weight:500;color:var(--muted);font-size:1.05rem;margin-top:2.5rem}
+.lede{color:var(--muted);font-size:1.1rem;max-width:38rem}
+figure{margin:1.4rem 0;background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:1rem;overflow-x:auto}
+figure svg{display:block;width:100%;height:auto;min-width:520px}
+figcaption{font-size:.9rem;color:var(--muted);margin-top:.5rem}
+.hero{margin-top:1.5rem;border-radius:18px;padding:1.2rem}
+.hero svg{min-width:600px}
+svg text{font-family:var(--body);fill:var(--ink)}
+svg .lbl{font-size:13px}
+svg .sm{font-size:11px;fill:var(--muted)}
+svg .hd{font-family:var(--head);font-weight:700;font-size:15px}
+.pipe{fill:none;stroke:var(--pipe);stroke-width:10;stroke-linecap:round;opacity:.9}
+.pipe-thin{fill:none;stroke:var(--pipe);stroke-width:3}
+.box{fill:var(--panel);stroke:var(--pipe);stroke-width:2}
+.soft{fill:var(--pipe-soft);stroke:none}
+.pkt{fill:var(--packet)}
+.flow{stroke-dasharray:2 22;stroke:var(--packet);stroke-width:7;stroke-linecap:round;fill:none;animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-48}}
+.grow{transform-origin:left center;transform:scaleX(1);transition:transform 1.6s cubic-bezier(.2,.8,.2,1)}
+.ttv.pre .grow-slow{transform:scaleX(1)}
+.ttv .grow-slow{transform-origin:left center;transition:transform 1.8s cubic-bezier(.2,.8,.2,1)}
+.ttv.go .grow-slow{transform:scaleX(.08)}
+.course-step{transition:opacity .5s ease, transform .5s ease}
+.roadmap.pre .course-step{opacity:.25}
+.roadmap.go .course-step{opacity:1}
+.roadmap.go .course-step:nth-of-type(2){transition-delay:.25s}
+.roadmap.go .course-step:nth-of-type(3){transition-delay:.5s}
+.roadmap.go .course-step:nth-of-type(4){transition-delay:.75s}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.dl{display:inline-block;margin-top:1rem;font-family:var(--head);font-weight:500;color:var(--pipe);text-decoration:none;border-bottom:2px solid var(--pipe)}
+.dl:focus-visible,button:focus-visible{outline:3px solid var(--packet);outline-offset:3px}
+.theme{position:fixed;top:calc(env(safe-area-inset-top,0px) + .8rem);right:.8rem;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:.35rem .8rem;font-family:var(--body);cursor:pointer}
+.links a{color:var(--pipe);word-break:break-all}
+footer{color:var(--muted);font-size:.9rem;margin-top:3rem;border-top:2px solid var(--rule);padding-top:1rem}
+@media (prefers-reduced-motion: reduce){
+  .flow,.pulse{animation:none}
+  .ttv .grow-slow,.course-step{transition:none}
+}
+@media print{.theme{display:none} figure{break-inside:avoid}}
+</style>
+</head>
+<body>
+<button class="theme" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+<main>
+
+<p class="kicker">Data Engineering · Course 1 · Week 1 · Lesson 1</p>
+<h1>Welcome to Data Engineering</h1>
+<p class="lede">An intro conversation between the host and instructor <strong>Joe Reis</strong> on why data engineering matters, what you'll learn, and how the program is laid out.</p>
+
+<!-- HERO: paper -> digital -> pipeline -> value -->
+<figure class="hero">
+<svg viewBox="0 0 720 230" role="img" aria-label="Paper records become digital data that flows through a pipeline to create value">
+  <!-- paper stack -->
+  <g transform="translate(20,60)">
+    <rect x="10" y="10" width="70" height="90" rx="4" class="soft"/>
+    <rect x="4" y="4" width="70" height="90" rx="4" class="soft" opacity=".8"/>
+    <rect x="0" y="0" width="70" height="90" rx="4" class="box"/>
+    <line x1="12" y1="20" x2="58" y2="20" class="pipe-thin" opacity=".5"/>
+    <line x1="12" y1="34" x2="58" y2="34" class="pipe-thin" opacity=".5"/>
+    <line x1="12" y1="48" x2="44" y2="48" class="pipe-thin" opacity=".5"/>
+    <text x="35" y="122" text-anchor="middle" class="lbl">Paper</text>
+  </g>
+  <!-- arrow to digital -->
+  <path d="M110 105 L150 105" class="pipe-thin" marker-end="url(#ar)"/>
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="var(--pipe)"/></marker></defs>
+  <!-- digital cloud of bits -->
+  <g transform="translate(160,55)">
+    <rect width="110" height="100" rx="12" class="box"/>
+    <g class="pkt">
+      <rect x="16" y="18" width="14" height="14" rx="3"/><rect x="40" y="18" width="14" height="14" rx="3" class="pulse"/><rect x="64" y="18" width="14" height="14" rx="3"/>
+      <rect x="16" y="42" width="14" height="14" rx="3" class="pulse"/><rect x="40" y="42" width="14" height="14" rx="3"/><rect x="64" y="42" width="14" height="14" rx="3"/><rect x="88" y="42" width="10" height="14" rx="3"/>
+      <rect x="16" y="66" width="14" height="14" rx="3"/><rect x="40" y="66" width="14" height="14" rx="3"/><rect x="64" y="66" width="14" height="14" rx="3" class="pulse"/>
+    </g>
+    <text x="55" y="128" text-anchor="middle" class="lbl">Tidal wave of data</text>
+  </g>
+  <!-- pipeline -->
+  <path d="M275 105 C 330 105, 330 60, 390 60 L 470 60 C 520 60, 520 105, 560 105" class="pipe"/>
+  <path d="M275 105 C 330 105, 330 60, 390 60 L 470 60 C 520 60, 520 105, 560 105" class="flow"/>
+  <path d="M275 105 C 330 105, 330 150, 390 150 L 470 150 C 520 150, 520 105, 560 105" class="pipe"/>
+  <path d="M275 105 C 330 105, 330 150, 390 150 L 470 150 C 520 150, 520 105, 560 105" class="flow" style="animation-delay:-.8s"/>
+  <text x="430" y="40" text-anchor="middle" class="lbl">Store</text>
+  <text x="430" y="182" text-anchor="middle" class="lbl">Process</text>
+  <text x="430" y="110" text-anchor="middle" class="hd">Data pipelines</text>
+  <!-- value -->
+  <g transform="translate(570,55)">
+    <rect width="130" height="100" rx="12" class="box"/>
+    <text x="65" y="38" text-anchor="middle" class="hd">Value</text>
+    <text x="65" y="62" text-anchor="middle" class="sm">Serve customers</text>
+    <text x="65" y="80" text-anchor="middle" class="sm">Outmaneuver rivals</text>
+  </g>
+</svg>
+<figcaption>Paper gives way to digital data; pipelines store and process it to create value.</figcaption>
+</figure>
+
+<h2>Why data engineering matters now</h2>
+<ul>
+  <li>In the last decade, <strong>pretty much every industry has gone digital</strong>.</li>
+  <li><strong>Digital communications are everywhere</strong>, and <strong>digital data is replacing paper</strong> as the main way information is stored in:
+    <ul><li>Healthcare</li><li>Finance</li><li>Manufacturing</li><li>Education</li><li>Tech</li><li>Pretty much every other industry</li></ul>
+  </li>
+  <li>This <strong>tidal wave of data</strong> brings:
+    <ul><li><strong>Risks</strong></li><li><strong>New challenges</strong> in how to <strong>store and process</strong> all this data to <strong>create value</strong></li></ul>
+  </li>
+  <li>Whether an organization wants to <strong>serve customers better</strong> or <strong>outmaneuver the competition</strong>, <strong>good data pipelines are increasingly critical</strong>.</li>
+  <li>That's why there's <strong>skyrocketing demand for data engineers</strong>.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 640 220" role="img" aria-label="Industries going digital: healthcare, finance, manufacturing, education, tech, and more">
+  <circle cx="320" cy="110" r="46" class="box"/>
+  <text x="320" y="106" text-anchor="middle" class="hd">Digital</text>
+  <text x="320" y="124" text-anchor="middle" class="hd">data</text>
+  <g>
+    <path d="M320 64 L320 30" class="pipe-thin"/><path d="M320 64 L320 30" class="flow" style="stroke-width:4"/>
+    <path d="M366 110 L470 60" class="pipe-thin"/><path d="M366 110 L470 60" class="flow" style="stroke-width:4"/>
+    <path d="M366 110 L470 160" class="pipe-thin"/><path d="M366 110 L470 160" class="flow" style="stroke-width:4"/>
+    <path d="M274 110 L170 60" class="pipe-thin"/><path d="M274 110 L170 60" class="flow" style="stroke-width:4"/>
+    <path d="M274 110 L170 160" class="pipe-thin"/><path d="M274 110 L170 160" class="flow" style="stroke-width:4"/>
+    <path d="M320 156 L320 190" class="pipe-thin"/><path d="M320 156 L320 190" class="flow" style="stroke-width:4"/>
+  </g>
+  <text x="320" y="22" text-anchor="middle" class="lbl">Healthcare</text>
+  <text x="480" y="56" class="lbl">Finance</text>
+  <text x="480" y="166" class="lbl">Manufacturing</text>
+  <text x="160" y="56" text-anchor="end" class="lbl">Education</text>
+  <text x="160" y="166" text-anchor="end" class="lbl">Tech</text>
+  <text x="320" y="208" text-anchor="middle" class="lbl">…pretty much every industry</text>
+</svg>
+<figcaption>Digital data is now the primary way information is stored across industries.</figcaption>
+</figure>
+
+<h2>Meet the instructor: Joe Reis</h2>
+<ul>
+  <li><strong>Data engineer and data architect</strong> with <strong>decades of experience</strong> helping companies with their data needs.</li>
+  <li>Also a <strong>professor</strong> and <strong>podcaster</strong>.</li>
+  <li><strong>Co-author</strong> of the best-selling book <strong><em>Fundamentals of Data Engineering</em></strong>.</li>
+</ul>
+
+<h3>What is a "recovering data scientist"?</h3>
+<ul>
+  <li>It's a <strong>nickname Joe was given around the mid-2010s</strong>, when <strong>data science was becoming very hot and popular</strong>.</li>
+  <li>His background was in <strong>machine learning, analytics, and similar roles</strong>.</li>
+  <li>What he noticed:
+    <ul>
+      <li>Companies were <strong>hiring data scientists without giving them proper support and foundational infrastructure</strong>.</li>
+      <li>Data scientists often started jobs with <strong>no data to actually do science on</strong>.</li>
+    </ul>
+  </li>
+  <li>After seeing this again and again, he realized <strong>data engineering was key to making data science succeed</strong>.</li>
+  <li>Data engineering means <strong>building the foundation</strong>:
+    <ul><li><strong>Infrastructure</strong></li><li><strong>Data quality</strong></li><li><strong>The means for data scientists to do their job</strong></li></ul>
+  </li>
+  <li>So he <strong>started in data science, then moved into data engineering</strong> to solve these problems for data scientists.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 640 230" role="img" aria-label="Data science sits on a foundation of infrastructure, data quality, and the means to succeed">
+  <!-- left: no foundation -->
+  <g transform="translate(30,20)">
+    <text x="120" y="14" text-anchor="middle" class="hd">Without data engineering</text>
+    <rect x="70" y="40" width="100" height="60" rx="8" class="box"/>
+    <text x="120" y="75" text-anchor="middle" class="lbl">Data scientist</text>
+    <rect x="60" y="140" width="120" height="44" rx="8" fill="none" stroke="var(--muted)" stroke-dasharray="6 6" stroke-width="2"/>
+    <text x="120" y="167" text-anchor="middle" class="sm">No data to do science on</text>
+    <path d="M120 100 L120 136" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 5"/>
+  </g>
+  <!-- right: with foundation -->
+  <g transform="translate(340,20)">
+    <text x="135" y="14" text-anchor="middle" class="hd">With data engineering</text>
+    <rect x="85" y="40" width="100" height="44" rx="8" class="box"/>
+    <text x="135" y="67" text-anchor="middle" class="lbl">Data science</text>
+    <rect x="20" y="96" width="230" height="34" rx="6" class="soft"/>
+    <text x="135" y="118" text-anchor="middle" class="lbl">Means to succeed</text>
+    <rect x="20" y="134" width="230" height="34" rx="6" class="soft"/>
+    <text x="135" y="156" text-anchor="middle" class="lbl">Data quality</text>
+    <rect x="20" y="172" width="230" height="34" rx="6" fill="var(--pipe)"/>
+    <text x="135" y="194" text-anchor="middle" class="lbl" style="fill:#fff">Infrastructure</text>
+  </g>
+</svg>
+<figcaption>Data engineering is the foundation data science stands on.</figcaption>
+</figure>
+
+<h2>Speed and efficiency: why the foundation matters</h2>
+<ul>
+  <li>With a <strong>large dataset</strong>, if a data scientist can ask a question and get an answer in <strong>five minutes or an hour instead of a week or a month</strong>, that creates <strong>massive efficiency differences</strong>.</li>
+  <li>Often, the difference comes down to <strong>whether data engineering is there to support rapid development</strong>.</li>
+  <li>Companies now see <strong>data as an invaluable asset</strong>, so they're <strong>investing in that foundational layer again</strong>.</li>
+  <li>The goal: cut <strong>time to value</strong> from <strong>days, weeks, months</strong> down to <strong>hours, minutes, sometimes seconds</strong>.</li>
+</ul>
+
+<figure class="ttv pre" id="ttv">
+<svg viewBox="0 0 640 170" role="img" aria-label="Time to value shrinking from days, weeks, months to hours, minutes, seconds">
+  <text x="20" y="28" class="hd">Time to value</text>
+  <text x="20" y="72" class="lbl">Weak foundation</text>
+  <rect x="160" y="56" width="440" height="24" rx="12" class="soft"/>
+  <text x="590" y="73" text-anchor="end" class="sm">days · weeks · months</text>
+  <text x="20" y="128" class="lbl">Strong foundation</text>
+  <rect x="160" y="112" width="440" height="24" rx="12" class="grow-slow" fill="var(--pipe)"/>
+  <text x="200" y="129" class="sm" id="ttvLabel">hours · minutes · seconds</text>
+</svg>
+<figcaption>Investing in data engineering shrinks the wait between a question and its answer.</figcaption>
+</figure>
+
+<h3>Small data vs. big data</h3>
+<ul>
+  <li>A <strong>small CSV file on your laptop</strong> is manageable, though it still has <strong>some complexities</strong>.</li>
+  <li>Once you <strong>go beyond small data</strong>, the <strong>complexity in the pipeline makes a huge difference in performance</strong>.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 640 180" role="img" aria-label="A small CSV on a laptop versus a complex pipeline for larger data">
+  <g transform="translate(30,30)">
+    <rect x="0" y="20" width="150" height="90" rx="8" class="box"/>
+    <rect x="-12" y="110" width="174" height="10" rx="4" fill="var(--pipe)"/>
+    <rect x="45" y="40" width="60" height="50" rx="4" class="soft"/>
+    <text x="75" y="70" text-anchor="middle" class="lbl">.csv</text>
+    <text x="75" y="145" text-anchor="middle" class="lbl">Small CSV on a laptop</text>
+  </g>
+  <g transform="translate(250,20)">
+    <path d="M10 40 L120 40 L120 100 L230 100 L230 40 L360 40" class="pipe"/>
+    <path d="M10 40 L120 40 L120 100 L230 100 L230 40 L360 40" class="flow"/>
+    <path d="M10 130 L80 130 L80 70 L180 70 L180 130 L360 130" class="pipe" opacity=".6"/>
+    <path d="M10 130 L80 130 L80 70 L180 70 L180 130 L360 130" class="flow" style="animation-delay:-.6s"/>
+    <text x="185" y="160" text-anchor="middle" class="lbl">Beyond small data: pipeline complexity drives performance</text>
+  </g>
+</svg>
+</figure>
+
+<h2>Data engineering in the age of AI</h2>
+<ul>
+  <li>With the <strong>rise of AI</strong>, it's more important than ever to take a <strong>data-centric first approach</strong>.</li>
+  <li>There's finally <strong>recognition</strong> that <strong>data, infrastructure, and methodologies to support data</strong> truly matter.</li>
+  <li>Since <strong>AI is now front and center in every company and every workload</strong>, Joe feels <strong>this is the time for data engineering</strong>.</li>
+</ul>
+
+<h3>What is data-centric AI?</h3>
+<ul>
+  <li>A term <strong>popularized by Andrew Ng</strong> (the host).</li>
+  <li><strong>Definition:</strong> the discipline of <strong>systematically engineering the data to build a successful AI system</strong>.</li>
+  <li>It applies across all dataset sizes:
+    <ul>
+      <li>From a <strong>small CSV file on your laptop</strong></li>
+      <li>To <strong>massive datasets in data warehouses</strong></li>
+      <li>Including how <strong>large language models are trained today on trillions of tokens</strong></li>
+    </ul>
+  </li>
+  <li>Engineering the data so the <strong>AI / machine learning algorithm gets the data it needs to succeed</strong> is a <strong>wildly exciting, exploding discipline</strong>.</li>
+  <li>Data-centric AI will also be <strong>covered in this specialization</strong>.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 660 200" role="img" aria-label="Data-centric AI spans small CSV files, data warehouses, and LLM training on trillions of tokens, all feeding a successful AI system">
+  <g transform="translate(20,40)">
+    <rect width="120" height="60" rx="8" class="box"/>
+    <text x="60" y="35" text-anchor="middle" class="lbl">Small CSV</text>
+  </g>
+  <g transform="translate(180,30)">
+    <ellipse cx="65" cy="12" rx="65" ry="12" class="box"/>
+    <path d="M0 12 L0 68 A65 12 0 0 0 130 68 L130 12" class="box"/>
+    <text x="65" y="50" text-anchor="middle" class="lbl">Data warehouse</text>
+  </g>
+  <g transform="translate(350,30)">
+    <rect width="130" height="80" rx="8" class="box"/>
+    <text x="65" y="38" text-anchor="middle" class="lbl">LLM training</text>
+    <text x="65" y="58" text-anchor="middle" class="sm">trillions of tokens</text>
+  </g>
+  <path d="M80 100 C 80 160, 520 160, 560 120" class="pipe-thin"/>
+  <path d="M245 104 C 245 150, 520 150, 560 120" class="pipe-thin"/>
+  <path d="M415 110 C 430 140, 520 140, 560 120" class="pipe-thin"/>
+  <path d="M80 100 C 80 160, 520 160, 560 120" class="flow" style="stroke-width:4"/>
+  <g transform="translate(540,60)">
+    <rect width="110" height="70" rx="10" fill="var(--pipe)"/>
+    <text x="55" y="32" text-anchor="middle" class="lbl" style="fill:#fff">Successful</text>
+    <text x="55" y="50" text-anchor="middle" class="lbl" style="fill:#fff">AI system</text>
+  </g>
+  <text x="300" y="190" text-anchor="middle" class="sm">Systematically engineering the data, at every scale</text>
+</svg>
+</figure>
+
+<h2>What you'll learn</h2>
+<ul>
+  <li>Data engineering is an <strong>important and specialized skill</strong>.</li>
+  <li>The program focuses on <strong>frameworks and principles</strong> to help you <strong>think like a data engineer</strong>.</li>
+  <li>It also includes <strong>hands-on practical exercises</strong>, thanks to a <strong>partnership with Amazon Web Services (AWS)</strong>.
+    <ul>
+      <li>You'll build <strong>data systems on the cloud</strong>.</li>
+      <li>Today, <strong>most data engineers build on the cloud</strong>.</li>
+      <li><strong>AWS is currently the most widely used public cloud</strong>, so AWS skills are a <strong>real asset</strong>.</li>
+    </ul>
+  </li>
+  <li>The courses <strong>combine platform-agnostic foundational principles</strong> with <strong>practical hands-on exercises</strong>.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 600 150" role="img" aria-label="Platform-agnostic principles plus hands-on AWS exercises equals thinking and building like a data engineer">
+  <rect x="20" y="35" width="170" height="70" rx="10" class="soft"/>
+  <text x="105" y="65" text-anchor="middle" class="lbl">Platform-agnostic</text>
+  <text x="105" y="84" text-anchor="middle" class="lbl">principles</text>
+  <text x="215" y="78" text-anchor="middle" class="hd">+</text>
+  <rect x="240" y="35" width="150" height="70" rx="10" class="soft"/>
+  <text x="315" y="65" text-anchor="middle" class="lbl">Hands-on AWS</text>
+  <text x="315" y="84" text-anchor="middle" class="lbl">cloud exercises</text>
+  <text x="415" y="78" text-anchor="middle" class="hd">=</text>
+  <rect x="440" y="35" width="140" height="70" rx="10" fill="var(--pipe)"/>
+  <text x="510" y="65" text-anchor="middle" class="lbl" style="fill:#fff">Think like a</text>
+  <text x="510" y="84" text-anchor="middle" class="lbl" style="fill:#fff">data engineer</text>
+</svg>
+</figure>
+
+<h2>Who this program is for</h2>
+<ul>
+  <li><strong>Aspiring data engineers</strong></li>
+  <li><strong>Working data engineers</strong> looking to <strong>refine their skills</strong></li>
+  <li>People in <strong>data-adjacent roles</strong>, such as:
+    <ul><li>Data science</li><li>Machine learning</li><li>Software engineering</li><li>Analytics</li><li>Other data-related roles</li></ul>
+  </li>
+</ul>
+
+<h3>Prerequisites</h3>
+<ul>
+  <li><strong>Required:</strong> prior <strong>working experience with data and Python</strong>.</li>
+  <li><strong>Nice to have, but not required:</strong> some experience with <strong>SQL and cloud tools</strong>.</li>
+  <li>The course will <strong>show you what you need to know</strong> and provide <strong>suggested resources</strong> to learn more.</li>
+</ul>
+
+<h2>Program structure: four courses</h2>
+<ul>
+  <li><strong>Course 1:</strong> The <strong>big picture</strong>, forming a <strong>mental framework for data engineering</strong>, and <strong>spinning up cloud data pipelines</strong>.</li>
+  <li><strong>Course 2:</strong> <strong>Ingesting data from source systems</strong>, <strong>DataOps</strong>, and <strong>orchestration of data pipelines</strong>.</li>
+  <li><strong>Course 3:</strong> <strong>Data storage in the cloud</strong>, and how <strong>storage is essential to every stage of the data engineering lifecycle</strong>.</li>
+  <li><strong>Course 4:</strong> <strong>Modeling, transforming, and serving data</strong> for <strong>end use cases</strong>.</li>
+</ul>
+
+<figure class="roadmap pre" id="roadmap">
+<svg viewBox="0 0 680 200" role="img" aria-label="Four-course roadmap: big picture, ingestion and orchestration, storage, modeling transforming and serving">
+  <path d="M60 70 L620 70" class="pipe"/>
+  <path d="M60 70 L620 70" class="flow"/>
+  <g class="course-step">
+    <circle cx="80" cy="70" r="24" fill="var(--pipe)"/><text x="80" y="76" text-anchor="middle" class="hd" style="fill:#fff">1</text>
+    <text x="80" y="122" text-anchor="middle" class="lbl">Big picture</text>
+    <text x="80" y="140" text-anchor="middle" class="sm">Mental framework</text>
+    <text x="80" y="156" text-anchor="middle" class="sm">Cloud pipelines</text>
+  </g>
+  <g class="course-step">
+    <circle cx="253" cy="70" r="24" fill="var(--pipe)"/><text x="253" y="76" text-anchor="middle" class="hd" style="fill:#fff">2</text>
+    <text x="253" y="122" text-anchor="middle" class="lbl">Ingestion</text>
+    <text x="253" y="140" text-anchor="middle" class="sm">Source systems</text>
+    <text x="253" y="156" text-anchor="middle" class="sm">DataOps · Orchestration</text>
+  </g>
+  <g class="course-step">
+    <circle cx="426" cy="70" r="24" fill="var(--pipe)"/><text x="426" y="76" text-anchor="middle" class="hd" style="fill:#fff">3</text>
+    <text x="426" y="122" text-anchor="middle" class="lbl">Storage</text>
+    <text x="426" y="140" text-anchor="middle" class="sm">Cloud storage across</text>
+    <text x="426" y="156" text-anchor="middle" class="sm">the whole lifecycle</text>
+  </g>
+  <g class="course-step">
+    <circle cx="600" cy="70" r="24" fill="var(--pipe)"/><text x="600" y="76" text-anchor="middle" class="hd" style="fill:#fff">4</text>
+    <text x="600" y="122" text-anchor="middle" class="lbl">Serving</text>
+    <text x="600" y="140" text-anchor="middle" class="sm">Model · Transform</text>
+    <text x="600" y="156" text-anchor="middle" class="sm">Serve end use cases</text>
+  </g>
+</svg>
+</figure>
+
+<h2>Wrap-up</h2>
+<ul>
+  <li>There's <strong>a lot to cover</strong>, and Joe is looking forward to sharing it.</li>
+  <li>Next step: <strong>move on to the next video and get started</strong>.</li>
+</ul>
+
+<h2>Links</h2>
+<ul class="links">
+  <li><strong>Course:</strong> <a href="https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering" target="_blank" rel="noopener noreferrer">https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering</a></li>
+  <li><strong>Claude:</strong> <a href="https://claude.ai/chat/1bbabe50-6e06-4394-a958-71ad9cfd58e8" target="_blank" rel="noopener noreferrer">https://claude.ai/chat/1bbabe50-6e06-4394-a958-71ad9cfd58e8</a></li>
+</ul>
+<p><a class="dl" href="/data-engineering">← Back to Data Engineering</a></p>
+
+<footer>Week 1 · Lesson 1 notes · Data Engineering Specialization</footer>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  btn.addEventListener('click',function(){
+    var dark = root.getAttribute('data-theme')==='dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+  var targets=[document.getElementById('ttv'),document.getElementById('roadmap')];
+  if(!('IntersectionObserver' in window)){targets.forEach(function(t){t.classList.remove('pre');t.classList.add('go');});return;}
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.remove('pre');e.target.classList.add('go');io.unobserve(e.target);}
+    });
+  },{threshold:.5});
+  targets.forEach(function(t){io.observe(t);});
+})();
+</script>
+</body>
+</html>
