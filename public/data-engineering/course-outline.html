@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Engineering – Course Outline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2F5; --panel:#FFFFFF; --ink:#1B2A41; --muted:#5C6B7A;
+  --pipe:#1F7A8C; --pipe-soft:#CFE6EA; --packet:#E0A100; --rule:#C9D3DC;
+  --head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#14202E;--panel:#1B2A3B;--ink:#E6EDF3;--muted:#9AAAB9;--pipe:#4FB3C4;--pipe-soft:#24414D;--packet:#F2B833;--rule:#2E4152}
+}
+:root[data-theme="dark"]{--paper:#14202E;--panel:#1B2A3B;--ink:#E6EDF3;--muted:#9AAAB9;--pipe:#4FB3C4;--pipe-soft:#24414D;--packet:#F2B833;--rule:#2E4152}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.5}
+main{max-width:48rem;margin:0 auto;padding:0 1.25rem 4rem}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(2rem,5.5vw,3rem);letter-spacing:-.02em;margin:2.5rem 0 .4rem}
+.lede{color:var(--muted);margin:0 0 1.6rem}
+.back{display:inline-block;margin-top:1.5rem;color:var(--pipe);font-size:.9rem;text-decoration:none;border-bottom:2px solid var(--pipe-soft)}
+/* pipeline course tabs */
+.tabs{display:flex;position:relative;margin:1.2rem 0 1.6rem;overflow-x:auto}
+.tabs::before{content:"";position:absolute;left:2rem;right:2rem;top:1.35rem;height:6px;border-radius:3px;background:var(--pipe-soft)}
+.tab{flex:1;min-width:8.5rem;background:none;border:0;cursor:pointer;color:var(--ink);font-family:var(--body);padding:0 .3rem;position:relative;text-align:center}
+.tab .dot{display:grid;place-items:center;width:2.7rem;height:2.7rem;margin:0 auto .45rem;border-radius:50%;background:var(--panel);border:3px solid var(--pipe-soft);font-family:var(--head);font-weight:700;color:var(--muted);transition:background .25s,border-color .25s,color .25s}
+.tab .t{display:block;font-size:.88rem;color:var(--muted);line-height:1.3}
+.tab[aria-selected="true"] .dot{background:var(--pipe);border-color:var(--pipe);color:#fff}
+.tab[aria-selected="true"] .t{color:var(--ink);font-weight:600}
+.tab:focus-visible,summary:focus-visible,a:focus-visible,.theme:focus-visible{outline:3px solid var(--packet);outline-offset:3px;border-radius:6px}
+.panel[hidden]{display:none}
+.course-title{font-family:var(--head);font-weight:700;font-size:1.5rem;margin:0 0 .3rem}
+.course-sub{color:var(--muted);margin:0 0 1rem}
+/* weeks */
+details.week{background:var(--panel);border:1px solid var(--rule);border-radius:14px;margin:.8rem 0;overflow:hidden}
+details.week>summary{list-style:none;cursor:pointer;padding:1rem 1.1rem;display:flex;align-items:center;gap:.8rem;font-family:var(--head);font-weight:700;font-size:1.12rem}
+details>summary::-webkit-details-marker{display:none}
+.wk{flex:none;font-size:.8rem;font-family:var(--body);font-weight:600;color:#fff;background:var(--pipe);border-radius:999px;padding:.15rem .6rem}
+.chev{margin-left:auto;transition:transform .25s;color:var(--muted)}
+details[open]>summary .chev{transform:rotate(180deg)}
+details.sec{border-top:1px solid var(--rule)}
+details.sec>summary{list-style:none;cursor:pointer;padding:.75rem 1.1rem .75rem 1.4rem;display:flex;align-items:center;gap:.6rem;font-weight:600}
+details.sec>summary .chev{font-size:.85rem}
+.empty{color:var(--muted);font-size:.92rem;padding:0 1.4rem .9rem 2.6rem;margin:0}
+ol.items{list-style:none;margin:0;padding:0 1.1rem .8rem 1.4rem;position:relative}
+ol.items::before{content:"";position:absolute;left:2.05rem;top:.4rem;bottom:1.4rem;width:3px;background:var(--pipe-soft);border-radius:2px}
+ol.items li{display:flex;gap:.8rem;align-items:flex-start;padding:.45rem 0;position:relative}
+.ic{flex:none;width:1.3rem;height:1.3rem;margin-top:.1rem;position:relative;z-index:1}
+.ic circle{fill:var(--panel);stroke:var(--pipe);stroke-width:2}
+.done .ic circle{fill:var(--pipe)}
+.name{display:block;font-weight:500}
+.name a{color:var(--pipe);text-decoration:none;border-bottom:2px solid var(--pipe-soft)}
+.name a:hover{border-color:var(--pipe)}
+.meta{display:block;font-size:.84rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;color:var(--ink);background:var(--pipe-soft);border-radius:999px;padding:0 .5rem;margin-left:.35rem;vertical-align:1px}
+.progress{display:flex;align-items:center;gap:.7rem;font-size:.9rem;color:var(--muted);margin:.2rem 0 1rem}
+.bar{flex:1;max-width:16rem;height:8px;border-radius:4px;background:var(--pipe-soft);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--pipe);border-radius:4px}
+.theme{position:fixed;top:calc(env(safe-area-inset-top,0px) + .8rem);right:.8rem;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:.35rem .8rem;font-family:var(--body);cursor:pointer}
+@media (prefers-reduced-motion: reduce){.chev,.tab .dot{transition:none}}
+</style>
+</head>
+<body>
+<button class="theme" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+<main>
+<a class="back" href="/data-engineering">← Back to Data Engineering</a>
+<h1>Data Engineering</h1>
+<p class="lede">Course outline and lesson notes for the four-course specialization.</p>
+
+<div class="tabs" role="tablist" aria-label="Courses">
+  <button class="tab" role="tab" aria-selected="true" aria-controls="c1" id="t1"><span class="dot">1</span><span class="t">Course 1</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="c2" id="t2" tabindex="-1"><span class="dot">2</span><span class="t">Course 2</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="c3" id="t3" tabindex="-1"><span class="dot">3</span><span class="t">Course 3</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="c4" id="t4" tabindex="-1"><span class="dot">4</span><span class="t">Course 4</span></button>
+</div>
+
+<!-- COURSE 1 -->
+<section class="panel" id="c1" role="tabpanel" aria-labelledby="t1">
+  <p class="course-title">Introduction to Data Engineering</p>
+  <div class="progress"><div class="bar"><span style="width:25%"></span></div>4 of 16 lesson notes done</div>
+
+  <details class="week" open>
+    <summary><span class="wk">Week 1</span>Introduction to Data Engineering<span class="chev" aria-hidden="true">▾</span></summary>
+
+    <details class="sec" open>
+      <summary><span class="chev" aria-hidden="true">▾</span>Introduction to Data Engineering</summary>
+      <ol class="items">
+        <li class="done"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name"><a href="/data-engineering/week-1-lesson-1.html">Welcome to Data Engineering</a><span class="tag">Notes</span></span><span class="meta">Video · 6m</span></span></li>
+        <li class="done"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name"><a href="/data-engineering/syllabus">Program Syllabus</a><span class="tag">Notes</span></span><span class="meta">Reading · 5m</span></span></li>
+        <li class="done"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name"><a href="/data-engineering/acknowledgments">Acknowledgments</a><span class="tag">Notes</span></span><span class="meta">Reading · 5m</span></span></li>
+        <li class="done"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name"><a href="/data-engineering/week-1-lesson-2.html">Course 1 Overview</a><span class="tag">Notes</span></span><span class="meta">Video · 5m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Data Engineering Defined</span><span class="meta">Video · 6m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">A Brief History of Data Engineering</span><span class="meta">Video · 7m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">The Data Engineer Among Other Stakeholders</span><span class="meta">Video · 4m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Business Value</span><span class="meta">Video · 4m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">System Requirements</span><span class="meta">Video · 3m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Conversation with Sol Rashidi</span><span class="meta">Video · 11m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Conversation with Jordan Morrow</span><span class="meta">Video · 5m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Requirements Gathering Conversation</span><span class="meta">Video · 10m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Translate Stakeholder Needs into Specific Requirements</span><span class="meta">Video · 6m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Thinking Like a Data Engineer</span><span class="meta">Video · 5m</span></span></li>
+        <li><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg><span><span class="name">Join the DeepLearning.AI Forum to ask questions, get support, or share amazing ideas!</span><span class="meta">Reading · 2m</span></span></li>
+      </ol>
+    </details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Engineering on the Cloud</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 2</span>The Data Engineering Lifecycle and Undercurrents<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>The Data Engineering Lifecycle</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>The Undercurrents of the Data Engineering Lifecycle</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Practical Examples on AWS</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 3</span>Data Architecture<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Architecture</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Choosing the Right Technologies</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Investigating Your Architecture on AWS</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 4</span>Translating Requirements to Architecture<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Stakeholder Management &amp; Gathering Requirements</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Translating Requirements to Architecture</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary</summary><p class="empty">No notes yet.</p></details>
+  </details>
+</section>
+
+<!-- COURSES 2-4 -->
+<section class="panel" id="c2" role="tabpanel" aria-labelledby="t2" hidden>
+  <p class="course-title">Source Systems, Data Ingestion, and Pipelines</p>
+  <p class="course-sub">Ingestion of data from source systems, DataOps, and orchestration of data pipelines.</p>
+
+  <details class="week">
+    <summary><span class="wk">Week 1</span>Working with Source Systems<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Introduction to Source Systems</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Connecting to Source Systems</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 2</span>Data Ingestion<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Ingestion Overview</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Batch Ingestion</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Streaming Ingestion</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 3</span>DataOps<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>DataOps - Automation</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>DataOps - Observability</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 4</span>Orchestration, Monitoring, and Automating Your Data Pipelines<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Orchestration Overview</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Airflow</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Acknowledgements</summary><p class="empty">No notes yet.</p></details>
+  </details>
+</section>
+<section class="panel" id="c3" role="tabpanel" aria-labelledby="t3" hidden>
+  <p class="course-title">Data Storage and Queries</p>
+  <p class="course-sub">Data storage in the cloud, and how storage is essential to every stage of the data engineering lifecycle.</p>
+
+  <details class="week">
+    <summary><span class="wk">Week 1</span>Storage Ingredients and Storage Systems<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Storage Deep Dive</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Storage in Databases</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 2</span>Storage Abstractions<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Warehouses &amp; Data Lakes</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Lakehouses</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 3</span>Queries<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Batch Queries</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Streaming Queries</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary, Resources, &amp; Acknowledgements</summary><p class="empty">No notes yet.</p></details>
+  </details>
+</section>
+<section class="panel" id="c4" role="tabpanel" aria-labelledby="t4" hidden>
+  <p class="course-title">Data Modeling, Transformation, and Serving</p>
+  <p class="course-sub">Modeling, transforming, and serving data for end use cases.</p>
+
+  <details class="week">
+    <summary><span class="wk">Week 1</span>Data Modeling &amp; Transformations for Analytics<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Introduction to Data Modeling for Analytics</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Data Modeling Techniques</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 2</span>Data Modeling &amp; Transformations for Machine Learning<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Modeling and Processing Tabular Data for Machine Learning</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Modeling and Processing Unstructured Data for Machine Learning</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 3</span>Data Transformations &amp; Technical Considerations<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Batch Transformations</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Streaming Transformations</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary &amp; Resources</summary><p class="empty">No notes yet.</p></details>
+  </details>
+
+  <details class="week">
+    <summary><span class="wk">Week 4</span>Serving Data<span class="chev" aria-hidden="true">▾</span></summary>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Serving Data for Analytics and Machine Learning</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Course Capstone Project</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Lecture Notes (Optional)</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Quiz</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>Summary, Resources, &amp; Acknowledgements</summary><p class="empty">No notes yet.</p></details>
+    <details class="sec"><summary><span class="chev" aria-hidden="true">▾</span>[Optional] Insights and Career Advice From Industry Experts</summary><p class="empty">No notes yet.</p></details>
+  </details>
+</section>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme',dark?'light':'dark');
+  });
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  function select(t){
+    tabs.forEach(function(x){
+      var on=x===t; x.setAttribute('aria-selected',on); x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden=!on;
+    });
+    t.focus();
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){select(t);});
+    t.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight')select(tabs[(i+1)%tabs.length]);
+      if(e.key==='ArrowLeft')select(tabs[(i-1+tabs.length)%tabs.length]);
+    });
+  });
+})();
+</script>
+</body>
+</html>

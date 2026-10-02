@@ -28,6 +28,23 @@ const activities = [
   "Build different data storage architecture, query and transform your data, and serve your data to data stakeholders for business analytics and machine learning use cases.",
 ];
 
+const skills = [
+  "Machine Learning",
+  "LLMs (Large Language Models)",
+  "Generative AI",
+  "Software Development",
+  "Software Engineering",
+  "Data Engineering",
+  "Data Architecture",
+  "Data Management",
+  "Data Orchestration",
+  "Data Modeling",
+  "Data Transformation",
+  "Data Ingestion",
+  "Data Sourcing",
+  "DataOps",
+];
+
 const links = [
   {
     label: "Course",
@@ -81,6 +98,28 @@ export default function DataEngineeringPage() {
             </li>
           ))}
         </ul>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Skills you will gain</h2>
+        <div className="flex flex-wrap gap-2">
+          {skills.map((s) => (
+            <span
+              key={s}
+              className="rounded-full bg-blue-50 border border-blue-100 px-3 py-1 text-sm font-medium text-blue-800"
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Course Outline</h2>
+        <p className="mb-2">
+          <a
+            href="/data-engineering/course-outline.html"
+            className="text-blue-600 hover:text-blue-500 underline font-semibold"
+          >
+            Browse all 4 courses, week by week, with lesson notes as they&apos;re added
+          </a>
+        </p>
 
         <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Program Syllabus</h2>
         <p className="mb-2">
