@@ -81,14 +81,14 @@ export default function DataEngineeringPage() {
           ))}
         </ul>
 
-        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Lessons</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Week 1: Introduction to Data Engineering</h2>
         <ul className="space-y-2">
           <li>
             <a
               href="/data-engineering/week-1-lesson-1.html"
               className="text-blue-600 hover:text-blue-500 underline font-semibold"
             >
-              Week 1 · Lesson 1 — Welcome to Data Engineering
+              Lesson 1 — Welcome to Data Engineering
             </a>
           </li>
         </ul>
