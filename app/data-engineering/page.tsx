@@ -28,6 +28,15 @@ const activities = [
   "Build different data storage architecture, query and transform your data, and serve your data to data stakeholders for business analytics and machine learning use cases.",
 ];
 
+const links = [
+  {
+    label: "Course",
+    href: "https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering",
+  },
+  { label: "Claude", href: "https://claude.ai/chat/1bbabe50-6e06-4394-a958-71ad9cfd58e8" },
+  { label: "ByteWise", href: "https://bytewise-psi.vercel.app/data-engineering" },
+];
+
 export default function DataEngineeringPage() {
   return (
     <main className="min-h-screen bg-white">
@@ -68,6 +77,23 @@ export default function DataEngineeringPage() {
             <li key={a} className="flex gap-3 text-gray-700 leading-relaxed">
               <span className="mt-2 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
               {a}
+            </li>
+          ))}
+        </ul>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Links</h2>
+        <ul className="space-y-2">
+          {links.map((l) => (
+            <li key={l.href} className="text-gray-700">
+              <span className="font-semibold">{l.label}:</span>{" "}
+              <a
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-500 underline break-all"
+              >
+                {l.href}
+              </a>
             </li>
           ))}
         </ul>
