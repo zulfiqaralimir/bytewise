@@ -46,6 +46,7 @@ const skills = [
 ];
 
 const links = [
+  { label: "Course Home Page", href: "https://www.deeplearning.ai/specializations/data-engineering" },
   {
     label: "Course",
     href: "https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering",
