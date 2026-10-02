@@ -166,6 +166,7 @@ export default function HomePage() {
             <Link href="/docs/cs-book" className="hover:text-gray-700 transition-colors">CS Book</Link>
             <Link href="/blog" className="hover:text-gray-700 transition-colors">Blog</Link>
             <Link href="/financial-strategy" className="hover:text-amber-700 transition-colors font-semibold" style={{ color: "#b45309" }}>Financial Strategy</Link>
+            <Link href="/data-engineering" className="hover:text-gray-700 transition-colors">Data Engineering</Link>
           </div>
         </div>
       </footer>
