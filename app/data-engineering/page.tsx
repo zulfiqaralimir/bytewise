@@ -33,6 +33,7 @@ const links = [
     label: "Course",
     href: "https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering",
   },
+  { label: "Joe Reis (LinkedIn)", href: "https://www.linkedin.com/in/josephreis/" },
   { label: "Claude", href: "https://claude.ai/chat/1bbabe50-6e06-4394-a958-71ad9cfd58e8" },
   { label: "ByteWise", href: "https://bytewise-psi.vercel.app/data-engineering" },
 ];
@@ -85,6 +86,16 @@ export default function DataEngineeringPage() {
         <p className="mb-2">
           <Link href="/data-engineering/syllabus" className="text-blue-600 hover:text-blue-500 underline font-semibold">
             Read the full syllabus — prerequisites, four-course outline, grading and support
+          </Link>
+        </p>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Acknowledgments</h2>
+        <p className="mb-2">
+          <Link
+            href="/data-engineering/acknowledgments"
+            className="text-blue-600 hover:text-blue-500 underline font-semibold"
+          >
+            Meet the experts, engineers, and testers behind the program
           </Link>
         </p>
 

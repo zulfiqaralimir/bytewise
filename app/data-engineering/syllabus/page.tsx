@@ -7,11 +7,86 @@ export const metadata: Metadata = {
     "Syllabus of the Data Engineering Specialization by Joe Reis, DeepLearning.AI and AWS: prerequisites, four-course outline, learning activities, grading and support.",
 };
 
+function rich(text: string) {
+  return text.split("**").map((part, i) =>
+    i % 2 === 1 ? (
+      <strong key={i} className="font-semibold text-gray-900">
+        {part}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
+function Bullets({ items, dot = "bg-blue-500" }: { items: string[]; dot?: string }) {
+  return (
+    <ul className="space-y-2">
+      {items.map((t) => (
+        <li key={t} className="flex gap-3">
+          <span className={`mt-2.5 w-1.5 h-1.5 rounded-full ${dot} flex-shrink-0`} />
+          <span>{rich(t)}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const stats = [
+  { value: "4", label: "Courses" },
+  { value: "15", label: "Weeks" },
+  { value: "60%", label: "Pass graded labs" },
+  { value: "80%", label: "Pass graded quizzes" },
+];
+
+const nav = [
+  { id: "about", label: "About" },
+  { id: "prerequisites", label: "Prerequisites" },
+  { id: "unique", label: "What’s unique" },
+  { id: "outline", label: "Course outline" },
+  { id: "activities", label: "Activities" },
+  { id: "grading", label: "Grading" },
+  { id: "support", label: "Support" },
+];
+
+const prerequisites = [
+  {
+    tag: "Required",
+    tagStyle: "bg-rose-100 text-rose-700",
+    title: "Intermediate Python",
+    points: ["**Python syntax**", "**Data structures**, **functions**, and **classes**"],
+    hint: "",
+  },
+  {
+    tag: "Helpful",
+    tagStyle: "bg-amber-100 text-amber-700",
+    title: "Pandas dataframes",
+    points: ["Some familiarity **may help**, **not required**"],
+    hint: "Try the W3Schools or Kaggle Pandas tutorials.",
+  },
+  {
+    tag: "Helpful",
+    tagStyle: "bg-amber-100 text-amber-700",
+    title: "Basic SQL",
+    points: ["Basic familiarity **may help**, **not required**"],
+    hint: "Try the SQLBolt Tutorials.",
+  },
+  {
+    tag: "Helpful",
+    tagStyle: "bg-amber-100 text-amber-700",
+    title: "AWS cloud fundamentals",
+    points: ["Technical fundamentals of **AWS** will **help**, **not required**"],
+    hint: "Try AWS Cloud Practitioner Essentials and AWS Cloud Technical Essentials.",
+  },
+];
+
 const courses = [
   {
     n: 1,
     title: "Introduction to Data Engineering",
     weeks: 4,
+    accent: "bg-blue-600",
+    soft: "border-blue-200 bg-blue-50",
     objectives: [
       "Identify key upstream and downstream collaborators and stakeholders for data engineers",
       "Articulate a mental framework for building data engineering solutions",
@@ -27,6 +102,8 @@ const courses = [
     n: 2,
     title: "Source Systems, Data Ingestion, and Pipelines",
     weeks: 4,
+    accent: "bg-violet-600",
+    soft: "border-violet-200 bg-violet-50",
     objectives: [
       "Identify different data formats and determine appropriate source systems for generating each type of data",
       "Explain at a high level how data is generated, stored, and retrieved in various source systems, including relational databases, NoSQL databases, object storage, and streaming systems",
@@ -48,6 +125,8 @@ const courses = [
     n: 3,
     title: "Data Storage and Queries",
     weeks: 3,
+    accent: "bg-emerald-600",
+    soft: "border-emerald-200 bg-emerald-50",
     objectives: [
       "Explain how data is physically stored on disk and in memory",
       "Compare how data is stored and queried in object, block, and file storage systems",
@@ -69,12 +148,14 @@ const courses = [
     n: 4,
     title: "Data Modeling, Transformation, and Serving",
     weeks: 4,
+    accent: "bg-orange-600",
+    soft: "border-orange-200 bg-orange-50",
     objectives: [
       "Define data modeling and its role in reflecting business logic",
       "Apply the normalization stages to a denormalized table",
       "Describe the fact and dimension tables of a star schema and transform data in third normal form to a star schema",
       "Describe the data warehouse modeling approaches such as Inmon, Kimball, Data Vault, and One Big Table",
-      "Use feature engineering to convert a dataset into a tabular form that's expected by a classical machine learning algorithms",
+      "Use feature engineering to convert a dataset into a tabular form that’s expected by a classical machine learning algorithms",
       "Preprocess and vectorize textual data",
       "List techniques for processing and augmenting image data",
       "Compare an in-memory processing framework like Spark, and a disk-based processing framework like Hadoop",
@@ -91,165 +172,329 @@ const courses = [
 
 const activities = [
   {
+    letter: "V",
     title: "Lecture videos",
-    body: "A collection of short videos that cover the underlying theory as well as demonstrations for important tools and technologies you need for each week. There are also “Lab Walkthrough” videos that give you a high level overview of the labs before you dive in. Some of the videos are labeled “[Optional]”, and are designed to supplement your learning experience but you will not be assessed on this content. Some of these optional videos feature industry experts and are intended to provide you with practical feedback from veterans in the field of data.",
+    points: [
+      "**Short videos** on the underlying **theory** plus **demonstrations** of key tools and technologies each week",
+      "**Lab Walkthrough** videos give a high-level overview of each lab before you dive in",
+      "Videos labeled **[Optional]** supplement your learning and are **not assessed**",
+      "Some optional videos feature **industry experts** sharing practical feedback from veterans in data",
+    ],
   },
   {
+    letter: "L",
     title: "Labs",
-    body: "Hands-on exercises that allow you to practice applying what you learned in the lecture videos. These are designed to help you develop skills for particular open source or AWS technologies that are commonly used when building data engineering solutions. There are two types of labs: Graded Programming Assignments cover critical concepts for that week, and they typically make up a larger percentage of your grade. Practice Labs are ungraded; the concepts they cover are still important, but designating some labs as “practice” reduces the pressure to excel in all of them, so you can focus on learning rather than just completing them for a grade. You are encouraged to try all of the labs, whether graded or practice.",
+    points: [
+      "**Hands-on exercises** to apply what you learned with **open source** and **AWS** technologies",
+      "**Graded Programming Assignments** cover critical concepts and carry a **larger share of your grade**",
+      "**Practice Labs** are **ungraded** so you can focus on learning, not just grades",
+      "Try **all** labs, graded or practice",
+    ],
   },
   {
+    letter: "Q",
     title: "Quizzes",
-    body: "A collection of questions to help you reinforce your learning about the concepts covered in each week. You will find a graded quiz near the end of each week, and the grade you obtain for those quizzes will contribute to your overall grade for each course. Occasionally you will find practice quizzes that contain reflection questions or short graded quizzes that contain questions to check your understanding throughout the week. After completing each quiz, make sure you read the feedback carefully.",
+    points: [
+      "Questions that **reinforce** each week's concepts",
+      "A **graded quiz** near the end of each week counts toward your course grade",
+      "**Practice quizzes** contain reflection questions; **short graded quizzes** check understanding along the way",
+      "**Read the feedback** carefully after each quiz",
+    ],
   },
   {
+    letter: "R",
     title: "Reading items",
-    body: "Content presented in a textual format so that you can more easily reference the information later on. Some of these reading items will include additional links for you to learn more about the topic. Unless otherwise specified, you are not required to review the materials from these external links to be successful in this program. Some of these reading items are labeled “[Optional]” and cover secondary material that is not critical for the program.",
+    points: [
+      "**Text content** you can easily reference later",
+      "Some include **additional links** to learn more; these are **not required** unless specified",
+      "Items labeled **[Optional]** cover secondary material and are **not assessed**",
+    ],
   },
 ];
 
+const grading = [
+  { value: "60%+", title: "Graded labs", points: ["**Graded programming assignments**", "**60% or more** required to pass"], style: "border-blue-200 bg-blue-50 text-blue-700" },
+  { value: "80%+", title: "Graded quizzes", points: ["**Graded quiz** assignments", "**80% or more** required to pass"], style: "border-violet-200 bg-violet-50 text-violet-700" },
+  { value: "Done", title: "Practice labs", points: ["**Ungraded** practice labs", "**No grade needed**, you only need to **complete** them"], style: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+];
+
+function SectionHeading({ id, kicker, title }: { id: string; kicker: string; title: string }) {
+  return (
+    <div id={id} className="scroll-mt-20 mb-6">
+      <div className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1">{kicker}</div>
+      <h2 className="text-3xl font-black text-gray-900 tracking-tight">{title}</h2>
+    </div>
+  );
+}
+
 export default function SyllabusPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-slate-50 text-gray-700">
+      {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
-        <div className="max-w-4xl mx-auto px-6 py-16">
+        <div className="max-w-5xl mx-auto px-6 pt-12 pb-16">
           <Link href="/data-engineering" className="text-sm text-blue-300 hover:text-blue-200">
             ← Data Engineering
           </Link>
-          <h1 className="mt-6 text-4xl md:text-5xl font-black tracking-tight">Program Syllabus</h1>
-          <p className="mt-3 text-lg text-slate-300">
-            Data Engineering Specialization · Joe Reis · DeepLearning.AI &amp; AWS
+          <h1 className="mt-6 text-4xl md:text-6xl font-black tracking-tight">Program Syllabus</h1>
+          <p className="mt-3 text-lg text-slate-300 max-w-2xl">
+            Data Engineering Specialization · designed by Joe Reis with DeepLearning.AI &amp; AWS
           </p>
+          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3">
+            {stats.map((s) => (
+              <div key={s.label} className="rounded-2xl bg-white/10 border border-white/15 px-5 py-4">
+                <div className="text-3xl font-black text-blue-300">{s.value}</div>
+                <div className="text-sm text-slate-300">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <article className="max-w-4xl mx-auto px-6 py-12 text-gray-700 leading-relaxed">
-        <h2 className="text-2xl font-bold text-gray-900 mb-3">What is this program about?</h2>
-        <p>
-          This program was designed by Joe Reis in partnership with DeepLearning.AI and AWS to cover the
-          fundamentals of data engineering, both in terms of the underlying theory and frameworks for thinking
-          like a data engineer, as well as practical skills for building data engineering solutions on the cloud.
-        </p>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-3">Who is this program designed for?</h2>
-        <p>
-          This program is designed for anyone interested in pursuing a career in or adjacent to data engineering.
-          You might be a student, or already working professionally in a field that involves data. In either case,
-          you&apos;re interested in acquiring data engineering skills and knowledge to support your career goals.
-          Even if you are already working as a data engineer, you will find value in the combination of theoretical
-          background and technical application presented here.
-        </p>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-3">What background knowledge do I need?</h2>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <strong>Required:</strong> intermediate Python programming skills, including familiarity with Python
-            syntax, data structures, functions, and classes.
-          </li>
-          <li>
-            Some familiarity with Pandas dataframes may be helpful but is not required. To learn the basics, the
-            W3Schools Pandas tutorials or the Kaggle Pandas tutorials are recommended.
-          </li>
-          <li>
-            Basic familiarity with SQL may be helpful but is not required. The SQLBolt Tutorials are a good place
-            to learn the basics.
-          </li>
-          <li>
-            Basic familiarity with the technical fundamentals of the AWS cloud will be helpful but is not required.
-            To learn the basics, the AWS Cloud Practitioner Essentials and AWS Cloud Technical Essentials courses are
-            recommended.
-          </li>
-        </ul>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-3">What is unique about this program?</h2>
-        <h3 className="font-bold text-gray-900 mt-4 mb-1">It teaches you how to think like a data engineer</h3>
-        <p>
-          You will learn how to think like a data engineer when designing, building, and maintaining systems that
-          take raw data, turn it into something useful, and serve it to downstream stakeholders. It&apos;s not just
-          about the tools and technologies! You will first learn how to gather stakeholder needs and understand the
-          business problems they are trying to solve with data. Then you&apos;ll translate those needs into system
-          requirements, and choose the appropriate tools and technologies for the solutions you&apos;re aiming to
-          build. By the end of this program, you&apos;ll walk away with a robust mental framework that you can apply
-          to any data engineering project.
-        </p>
-        <h3 className="font-bold text-gray-900 mt-4 mb-1">Hands-on practice</h3>
-        <p>
-          You&apos;ll have plenty of opportunities to practice applying the mental framework through hands-on
-          activities. You&apos;ll be thrown into simulated stakeholder conversations and be asked to gather
-          requirements for your data systems. You&apos;ll design and implement end-to-end batch and streaming data
-          pipelines on the AWS cloud, troubleshoot common problems faced by many new data engineers, use popular open
-          source tools to orchestrate and monitor your data pipelines, build data lake and data lakehouse storage
-          architectures, query, model, and transform your data using various processing frameworks, and serve data to
-          downstream stakeholders for business analytics and machine learning use cases. The program takes a
-          just-in-time approach to introduce you to tools and technologies you&apos;ll need for each exercise, and
-          you&apos;ll be guided through each step of the labs with detailed instructions and video walkthroughs.
-        </p>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-3">Textbook and readings</h2>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <em>Fundamentals of Data Engineering</em>
-          </li>
-          <li>Additional supplementary reading materials will be provided throughout the courses</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-2">Program outline</h2>
-        <p className="mb-5">This program is structured as 4 courses.</p>
-        <div className="space-y-5">
-          {courses.map((c) => (
-            <section key={c.n} className="rounded-2xl border border-blue-200 bg-blue-50 p-6">
-              <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">
-                Course {c.n} · {c.weeks} weeks
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{c.title}</h3>
-              <p className="text-sm text-gray-600 mb-2">
-                This course consists of {c.weeks} weeks of content and covers these main learning objectives:
-              </p>
-              <ul className="list-disc pl-6 space-y-1 text-sm">
-                {c.objectives.map((o) => (
-                  <li key={o}>{o}</li>
-                ))}
-              </ul>
-            </section>
+      {/* Section nav */}
+      <nav className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex gap-2 overflow-x-auto text-sm whitespace-nowrap">
+          {nav.map((n) => (
+            <a
+              key={n.id}
+              href={`#${n.id}`}
+              className="px-3 py-1.5 rounded-full text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+            >
+              {n.label}
+            </a>
           ))}
         </div>
+      </nav>
 
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">Learning activities used in this program</h2>
-        <div className="space-y-4">
-          {activities.map((a) => (
-            <div key={a.title}>
-              <h3 className="font-bold text-gray-900 mb-1">{a.title}</h3>
-              <p>{a.body}</p>
+      <div className="max-w-5xl mx-auto px-6 py-14 space-y-20 text-[17px] leading-relaxed">
+        {/* About */}
+        <section>
+          <SectionHeading id="about" kicker="Overview" title="What is this program about?" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+              <h3 className="font-bold text-gray-900 mb-2">The program</h3>
+              <Bullets
+                items={[
+                  "Designed by **Joe Reis** with **DeepLearning.AI** and **AWS**",
+                  "Covers the **fundamentals of data engineering**",
+                  "**Theory and frameworks** for thinking like a data engineer",
+                  "**Practical skills** for building data engineering solutions **on the cloud**",
+                ]}
+              />
             </div>
-          ))}
+            <div className="rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+              <h3 className="font-bold text-gray-900 mb-2">Who it&apos;s for</h3>
+              <Bullets
+                items={[
+                  "Anyone pursuing a **career in or adjacent to data engineering**",
+                  "**Students**, or professionals already working in a field that **involves data**",
+                  "Working **data engineers** benefit from the mix of **theory and technical application**",
+                ]}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Instructor */}
+        <section>
+          <div className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
+            <span className="flex-shrink-0 w-16 h-16 rounded-2xl bg-blue-600 text-white text-2xl font-black flex items-center justify-center">
+              JR
+            </span>
+            <div className="flex-1">
+              <div className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1">Program designer</div>
+              <h3 className="text-xl font-bold text-gray-900">Joe Reis</h3>
+              <Bullets
+                items={[
+                  "**Best-Selling Author** and **Global Keynote Speaker**",
+                  "**Data Engineer & Architect**, **Professor**, **Podcaster**",
+                  "**Advisor & Investor**",
+                ]}
+              />
+            </div>
+            <a
+              href="https://www.linkedin.com/in/josephreis/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-3 text-center"
+            >
+              LinkedIn →
+            </a>
+          </div>
+        </section>
+
+        {/* Prerequisites */}
+        <section>
+          <SectionHeading id="prerequisites" kicker="Before you start" title="What background knowledge do I need?" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {prerequisites.map((p) => (
+              <div key={p.title} className="rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+                <span className={`inline-block rounded-full px-3 py-0.5 text-xs font-bold ${p.tagStyle}`}>{p.tag}</span>
+                <h3 className="mt-3 font-bold text-gray-900 text-lg">{p.title}</h3>
+                <div className="mt-2"><Bullets items={p.points} /></div>
+                {p.hint && <p className="mt-2 text-sm text-gray-500">{p.hint}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Unique */}
+        <section>
+          <SectionHeading id="unique" kicker="Approach" title="What is unique about this program?" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6">
+              <h3 className="font-bold text-gray-900 mb-2">Learn to think like a data engineer</h3>
+              <Bullets
+                items={[
+                  "Design, build, and maintain systems that turn **raw data** into something **useful** for **downstream stakeholders**",
+                  "It\’s **not just about tools**",
+                  "First **gather stakeholder needs** and understand their **business problems**",
+                  "**Translate needs into system requirements**, then choose the right tools and technologies",
+                  "Leave with a **robust mental framework** for **any** data engineering project",
+                ]}
+              />
+            </div>
+            <div className="rounded-2xl border border-violet-200 bg-violet-50 p-6">
+              <h3 className="font-bold text-gray-900 mb-2">Hands-on practice</h3>
+              <Bullets
+                dot="bg-violet-500"
+                items={[
+                  "**Simulated stakeholder conversations** to gather requirements",
+                  "**End-to-end batch and streaming pipelines** on AWS",
+                  "**Troubleshoot** problems new data engineers commonly face",
+                  "**Open source tools** to orchestrate and monitor pipelines",
+                  "**Data lake** and **data lakehouse** storage architectures",
+                  "**Query, model, and transform** data with various processing frameworks",
+                  "**Serve data** for business analytics and machine learning",
+                  "**Just-in-time** tool introductions, with detailed lab instructions and **video walkthroughs**",
+                ]}
+              />
+            </div>
+          </div>
+          <div className="mt-4 rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+            <h3 className="font-bold text-gray-900 mb-2">Textbook and readings</h3>
+            <Bullets
+              items={[
+                "Textbook: **Fundamentals of Data Engineering**",
+                "**Additional supplementary readings** are provided throughout the courses",
+              ]}
+            />
+          </div>
+        </section>
+
+        {/* Outline */}
+        <section>
+          <SectionHeading id="outline" kicker="Program outline" title="Four courses" />
+          <p className="mb-6">Tap a course to see its main learning objectives.</p>
+          <div className="space-y-4">
+            {courses.map((c, i) => (
+              <details
+                key={c.n}
+                open={i === 0}
+                className={`group rounded-2xl border ${c.soft} overflow-hidden`}
+              >
+                <summary className="flex items-center gap-4 p-5 cursor-pointer list-none select-none">
+                  <span
+                    className={`flex-shrink-0 w-12 h-12 rounded-xl ${c.accent} text-white text-xl font-black flex items-center justify-center`}
+                  >
+                    {c.n}
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-xs font-bold uppercase tracking-widest text-gray-500">
+                      Course {c.n} · {c.weeks} weeks
+                    </span>
+                    <span className="block text-xl font-bold text-gray-900">{c.title}</span>
+                  </span>
+                  <span className="text-gray-400 text-2xl transition-transform group-open:rotate-90">›</span>
+                </summary>
+                <div className="px-5 pb-6 bg-white/70">
+                  <p className="text-sm text-gray-500 pt-4 pb-3">
+                    This course consists of {c.weeks} weeks of content and covers these main learning objectives:
+                  </p>
+                  <ol className="space-y-2.5">
+                    {c.objectives.map((o, k) => (
+                      <li key={o} className="flex gap-3">
+                        <span
+                          className={`flex-shrink-0 mt-0.5 w-6 h-6 rounded-full ${c.accent} text-white text-xs font-bold flex items-center justify-center`}
+                        >
+                          {k + 1}
+                        </span>
+                        <span>{o}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* Activities */}
+        <section>
+          <SectionHeading id="activities" kicker="How you learn" title="Learning activities" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {activities.map((a) => (
+              <div key={a.title} className="rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="w-10 h-10 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center">
+                    {a.letter}
+                  </span>
+                  <h3 className="font-bold text-gray-900 text-lg">{a.title}</h3>
+                </div>
+                <Bullets items={a.points} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Grading */}
+        <section>
+          <SectionHeading id="grading" kicker="Assessment" title="How are assessments graded?" />
+          <div className="grid gap-4 md:grid-cols-3">
+            {grading.map((g) => (
+              <div key={g.title} className={`rounded-2xl border p-6 ${g.style}`}>
+                <div className="text-4xl font-black">{g.value}</div>
+                <h3 className="mt-2 font-bold text-gray-900">{g.title}</h3>
+                <div className="mt-2 text-gray-700"><Bullets items={g.points} dot="bg-gray-400" /></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Support */}
+        <section>
+          <SectionHeading id="support" kicker="Help" title="Where to get support" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+              <h3 className="font-bold text-gray-900 mb-2">Course content questions</h3>
+              <Bullets
+                items={[
+                  "Join the **DeepLearning.AI Forum**",
+                  "Reach **course Mentors** and **fellow learners**",
+                  "Help with any **course content-related** issue",
+                ]}
+              />
+            </div>
+            <div className="rounded-2xl bg-white border border-gray-200 p-6 shadow-sm">
+              <h3 className="font-bold text-gray-900 mb-2">Platform questions</h3>
+              <Bullets
+                items={[
+                  "Use the **Learner Help Center**",
+                  "For **technical problems** such as **error messages**",
+                  "**Difficulty submitting assignments**",
+                  "Problems with **video playback**",
+                ]}
+              />
+            </div>
+          </div>
+        </section>
+
+        <div className="text-center">
+          <Link href="/data-engineering" className="text-blue-600 hover:text-blue-500 underline font-semibold">
+            ← Back to Data Engineering
+          </Link>
         </div>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-3">How are assessments graded?</h2>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <strong>Graded labs</strong> (graded programming assignments): a grade of 60% or more is required to pass.
-          </li>
-          <li>
-            <strong>Quiz assignments</strong> (graded quiz): a grade of 80% or more is required to pass.
-          </li>
-          <li>
-            <strong>Ungraded labs</strong> (practice labs): no grade needed, you only need to complete them.
-          </li>
-        </ul>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-3">Where to get support</h2>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <strong>Questions related to the course content:</strong> join the DeepLearning.AI Forum, where you can
-            reach out to course Mentors and fellow learners for help with any course content-related issues.
-          </li>
-          <li>
-            <strong>Questions related to the DeepLearning.AI platform:</strong> refer to the Learner Help Center for
-            specific technical problems, such as error messages, difficulty submitting assignments, or problems with
-            video playback.
-          </li>
-        </ul>
-      </article>
+      </div>
     </main>
   );
 }
