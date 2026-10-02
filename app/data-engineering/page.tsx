@@ -109,6 +109,14 @@ export default function DataEngineeringPage() {
               Lesson 1 — Welcome to Data Engineering
             </a>
           </li>
+          <li>
+            <a
+              href="/data-engineering/week-1-lesson-2.html"
+              className="text-blue-600 hover:text-blue-500 underline font-semibold"
+            >
+              Lesson 2 — Welcome and Course Overview
+            </a>
+          </li>
         </ul>
 
         <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-4">Links</h2>

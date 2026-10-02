@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Week 1 · Lesson 2 – Welcome and Course Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2F5; --panel:#FFFFFF; --ink:#1B2A41; --muted:#5C6B7A;
+  --pipe:#1F7A8C; --pipe-soft:#CFE6EA; --packet:#E0A100; --warn:#B8432F; --rule:#C9D3DC;
+  --head:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14202E; --panel:#1B2A3B; --ink:#E6EDF3; --muted:#9AAAB9;
+    --pipe:#4FB3C4; --pipe-soft:#24414D; --packet:#F2B833; --warn:#E07A63; --rule:#2E4152;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14202E; --panel:#1B2A3B; --ink:#E6EDF3; --muted:#9AAAB9;
+  --pipe:#4FB3C4; --pipe-soft:#24414D; --packet:#F2B833; --warn:#E07A63; --rule:#2E4152;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.6}
+main{max-width:46rem;margin:0 auto;padding:0 1.25rem 4rem}
+h1,h2,h3{font-family:var(--head);line-height:1.15;color:var(--ink)}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;margin:.3rem 0 .8rem;letter-spacing:-.02em}
+h2{font-size:1.65rem;font-weight:700;margin:3.2rem 0 .8rem;padding-top:1.4rem;border-top:2px solid var(--rule)}
+h3{font-size:1.2rem;font-weight:700;margin:1.8rem 0 .5rem;color:var(--pipe)}
+ul{padding-left:1.25rem;margin:.4rem 0}
+li{margin:.35rem 0}
+li::marker{color:var(--pipe)}
+strong{font-weight:600;color:var(--ink);background:linear-gradient(transparent 62%,var(--pipe-soft) 62%)}
+.kicker{font-family:var(--head);font-weight:500;color:var(--muted);font-size:1.05rem;margin-top:2.5rem}
+.lede{color:var(--muted);font-size:1.1rem;max-width:38rem}
+figure{margin:1.4rem 0;background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:1rem;overflow-x:auto}
+figure svg{display:block;width:100%;height:auto;min-width:540px}
+figcaption{font-size:.9rem;color:var(--muted);margin-top:.5rem}
+svg text{font-family:var(--body);fill:var(--ink)}
+svg .lbl{font-size:13px}
+svg .sm{font-size:11px;fill:var(--muted)}
+svg .hd{font-family:var(--head);font-weight:700;font-size:15px}
+svg .wt{fill:#fff}
+.pipe{fill:none;stroke:var(--pipe);stroke-width:10;stroke-linecap:round;opacity:.9}
+.pipe-thin{fill:none;stroke:var(--pipe);stroke-width:3}
+.box{fill:var(--panel);stroke:var(--pipe);stroke-width:2}
+.soft{fill:var(--pipe-soft);stroke:none}
+.warnbox{fill:none;stroke:var(--warn);stroke-width:2;stroke-dasharray:6 5}
+.warntxt{fill:var(--warn)!important;font-family:var(--head);font-weight:700;font-size:14px}
+.flow{stroke-dasharray:2 22;stroke:var(--packet);stroke-width:7;stroke-linecap:round;fill:none;animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-48}}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.reveal .step{transition:opacity .5s ease}
+.reveal.pre .step{opacity:.2}
+.reveal.go .step{opacity:1}
+.reveal.go .step:nth-of-type(2){transition-delay:.3s}
+.reveal.go .step:nth-of-type(3){transition-delay:.6s}
+.reveal.go .step:nth-of-type(4){transition-delay:.9s}
+.reveal.go .step:nth-of-type(5){transition-delay:1.2s}
+.theme{position:fixed;top:calc(env(safe-area-inset-top,0px) + .8rem);right:.8rem;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:.35rem .8rem;font-family:var(--body);cursor:pointer}
+button:focus-visible{outline:3px solid var(--packet);outline-offset:3px}
+.links a{color:var(--pipe);word-break:break-all}
+.dl{display:inline-block;margin-top:1rem;font-family:var(--head);font-weight:500;color:var(--pipe);text-decoration:none;border-bottom:2px solid var(--pipe)}
+footer{color:var(--muted);font-size:.9rem;margin-top:3rem;border-top:2px solid var(--rule);padding-top:1rem}
+@media (prefers-reduced-motion: reduce){.flow,.pulse{animation:none}.reveal .step{transition:none}}
+@media print{.theme{display:none} figure{break-inside:avoid}}
+</style>
+</head>
+<body>
+<button class="theme" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+<main>
+
+<p class="kicker">Data Engineering · Course 1 · Week 1: Introduction to Data Engineering · Lesson 2</p>
+<h1>Welcome and Course Overview</h1>
+<p class="lede">The scenario you'll carry through every course, why thinking comes before tools, and the week-by-week plan for Course 1.</p>
+
+<h2>The scenario you'll picture throughout</h2>
+<ul>
+  <li>Throughout these courses, <strong>picture yourself in a particular scenario</strong>.</li>
+  <li>You've <strong>just been hired as a data engineer</strong> at an <strong>exciting new company in the e-commerce space</strong>. (Congratulations on the new job!)</li>
+</ul>
+
+<h3>Why the company hired you</h3>
+<ul>
+  <li>The company <strong>first hired a data scientist</strong> because they wanted to <strong>do analytics</strong> to learn about their customers':
+    <ul><li><strong>Interests</strong></li><li><strong>Behaviors</strong></li><li><strong>Purchasing habits</strong></li></ul>
+  </li>
+  <li>They also wanted to <strong>develop machine learning tools using large language models</strong> to <strong>automate various aspects of customer support</strong>.</li>
+  <li>But when the data scientist started, they found that <strong>none of the data infrastructure needed</strong> for the analytics or ML tasks <strong>even existed yet</strong>.</li>
+  <li>They <strong>started studying data architectures and systems</strong> to try to build the infrastructure themselves.</li>
+  <li>They also <strong>told leadership</strong> that <strong>building data infrastructure wasn't their forte</strong>, and that to <strong>optimize for success</strong>, the company should <strong>also hire a data engineer</strong>.</li>
+  <li><strong>That's where you come in.</strong></li>
+</ul>
+
+<figure class="reveal pre">
+<svg viewBox="0 0 700 230" role="img" aria-label="Scenario: e-commerce company hires a data scientist, finds no data infrastructure, then hires you as data engineer">
+  <path d="M90 90 L610 90" class="pipe" opacity=".35"/>
+  <path d="M90 90 L610 90" class="flow"/>
+  <g class="step">
+    <rect x="20" y="50" width="140" height="80" rx="10" class="box"/>
+    <text x="90" y="82" text-anchor="middle" class="hd">E-commerce</text>
+    <text x="90" y="102" text-anchor="middle" class="lbl">company</text>
+    <text x="90" y="155" text-anchor="middle" class="sm">Wants analytics + LLM</text>
+    <text x="90" y="170" text-anchor="middle" class="sm">customer-support tools</text>
+  </g>
+  <g class="step">
+    <rect x="195" y="50" width="140" height="80" rx="10" class="box"/>
+    <text x="265" y="82" text-anchor="middle" class="hd">Data scientist</text>
+    <text x="265" y="102" text-anchor="middle" class="lbl">hired first</text>
+    <text x="265" y="155" text-anchor="middle" class="sm">Interests · Behaviors</text>
+    <text x="265" y="170" text-anchor="middle" class="sm">Purchasing habits</text>
+  </g>
+  <g class="step">
+    <rect x="370" y="50" width="140" height="80" rx="10" class="warnbox"/>
+    <text x="440" y="82" text-anchor="middle" class="warntxt">No data</text>
+    <text x="440" y="102" text-anchor="middle" class="warntxt">infrastructure</text>
+    <text x="440" y="155" text-anchor="middle" class="sm">"Not my forte" —</text>
+    <text x="440" y="170" text-anchor="middle" class="sm">tells leadership</text>
+  </g>
+  <g class="step">
+    <rect x="545" y="50" width="140" height="80" rx="10" fill="var(--pipe)"/>
+    <text x="615" y="82" text-anchor="middle" class="hd wt">You:</text>
+    <text x="615" y="102" text-anchor="middle" class="lbl wt">data engineer</text>
+    <text x="615" y="160" text-anchor="middle" class="sm">That's where you come in</text>
+  </g>
+</svg>
+<figcaption>The scenario you'll carry through all four courses.</figcaption>
+</figure>
+
+<h2>Joe's own story</h2>
+<ul>
+  <li>It might sound like a <strong>silly story</strong>, but Joe has seen <strong>this exact scenario play out in real life many times</strong>.</li>
+  <li>In fact, <strong>Joe was one of those data scientists</strong> hired by a company just like this one.</li>
+  <li>He was <strong>thrown into a situation</strong> where he had to <strong>quickly learn to build various parts of data infrastructure</strong>, just to get the company's <strong>data and systems into a state</strong> where he could start the <strong>data science projects he was hired for</strong>.</li>
+  <li>That was <strong>many years ago</strong>, when <strong>the role of data engineer didn't even exist yet</strong>.
+    <ul><li>So the company <strong>could be forgiven</strong> for <strong>not knowing what they really needed</strong>.</li></ul>
+  </li>
+  <li>Diving into designing and building data systems, he was <strong>both overwhelmed and excited</strong> by what he learned.</li>
+</ul>
+
+<h3>The core skills are the same</h3>
+<ul>
+  <li>He discovered that the <strong>core skills needed to build robust data infrastructure</strong> are <strong>largely the same no matter the downstream task</strong>, whether that's:
+    <ul>
+      <li><strong>Data science</strong></li>
+      <li><strong>Machine learning</strong></li>
+      <li><strong>Delivering embedded analytics</strong> to users <strong>within applications</strong></li>
+    </ul>
+  </li>
+  <li>Over time, that <strong>core set of skills</strong> has come to be known as <strong>data engineering</strong>.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 640 210" role="img" aria-label="One core skill set, data engineering, feeds data science, machine learning, and embedded analytics">
+  <rect x="30" y="70" width="190" height="70" rx="12" fill="var(--pipe)"/>
+  <text x="125" y="100" text-anchor="middle" class="hd wt">Core skills</text>
+  <text x="125" y="120" text-anchor="middle" class="lbl wt">= data engineering</text>
+  <path d="M220 105 C 300 105, 300 40, 400 40" class="pipe-thin"/><path d="M220 105 C 300 105, 300 40, 400 40" class="flow" style="stroke-width:4"/>
+  <path d="M220 105 L400 105" class="pipe-thin"/><path d="M220 105 L400 105" class="flow" style="stroke-width:4;animation-delay:-.5s"/>
+  <path d="M220 105 C 300 105, 300 170, 400 170" class="pipe-thin"/><path d="M220 105 C 300 105, 300 170, 400 170" class="flow" style="stroke-width:4;animation-delay:-1s"/>
+  <rect x="400" y="20" width="210" height="40" rx="8" class="box"/><text x="505" y="45" text-anchor="middle" class="lbl">Data science</text>
+  <rect x="400" y="85" width="210" height="40" rx="8" class="box"/><text x="505" y="110" text-anchor="middle" class="lbl">Machine learning</text>
+  <rect x="400" y="150" width="210" height="40" rx="8" class="box"/><text x="505" y="175" text-anchor="middle" class="lbl">Embedded analytics in apps</text>
+</svg>
+<figcaption>Same foundation, whatever the downstream use.</figcaption>
+</figure>
+
+<h2>Your job as the data engineer</h2>
+<ul>
+  <li>Your company wants you to <strong>build data systems that deliver on their goals</strong>.</li>
+  <li>To do this, you'll need to:
+    <ul>
+      <li><strong>Translate the needs of stakeholders</strong> into <strong>system requirements</strong></li>
+      <li>Then <strong>choose the right set of tools and technologies</strong> to build that system</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>The trap: tools before understanding</h3>
+<ul>
+  <li>It <strong>sounds straightforward</strong>, but Joe has often seen data engineers <strong>dive straight into implementation</strong>.</li>
+  <li>They <strong>choose tools and technologies</strong> <strong>before deeply understanding how the system will deliver value</strong> for the organization.</li>
+  <li>That approach can lead to <strong>disaster</strong>:
+    <ul>
+      <li><strong>Wasting time</strong></li>
+      <li><strong>Wasting company resources</strong></li>
+      <li>Even <strong>costing you your job</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<figure class="reveal pre">
+<svg viewBox="0 0 720 270" role="img" aria-label="Stakeholder needs flow into system requirements, functional and nonfunctional, then technology choices: ingestion tool, storage system, transformation tool. Skipping straight to technology wastes time and resources.">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="var(--pipe)"/></marker>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="var(--warn)"/></marker></defs>
+  <g class="step">
+    <rect x="20" y="70" width="180" height="150" rx="12" class="box"/>
+    <rect x="80" y="60" width="60" height="18" rx="6" fill="var(--pipe)"/>
+    <text x="110" y="102" text-anchor="middle" class="hd">Stakeholder needs</text>
+    <g fill="var(--pipe)">
+      <rect x="38" y="118" width="14" height="14" rx="3"/><rect x="38" y="144" width="14" height="14" rx="3"/>
+      <rect x="38" y="170" width="14" height="14" rx="3"/><rect x="38" y="196" width="14" height="14" rx="3"/>
+    </g>
+    <g class="soft"><rect x="60" y="121" width="120" height="8" rx="4"/><rect x="60" y="147" width="96" height="8" rx="4"/><rect x="60" y="173" width="110" height="8" rx="4"/><rect x="60" y="199" width="84" height="8" rx="4"/></g>
+  </g>
+  <path d="M205 145 L245 145" class="pipe-thin" marker-end="url(#ar)"/>
+  <g class="step">
+    <rect x="255" y="85" width="190" height="120" rx="12" class="box"/>
+    <rect x="255" y="85" width="190" height="36" rx="12" fill="var(--pipe)"/>
+    <text x="350" y="109" text-anchor="middle" class="hd wt">System requirements</text>
+    <rect x="270" y="135" width="75" height="54" rx="6" class="soft"/>
+    <text x="307" y="159" text-anchor="middle" class="sm" style="fill:var(--ink)">Functional</text>
+    <rect x="355" y="135" width="78" height="54" rx="6" class="soft"/>
+    <text x="394" y="159" text-anchor="middle" class="sm" style="fill:var(--ink)">Non-</text>
+    <text x="394" y="173" text-anchor="middle" class="sm" style="fill:var(--ink)">functional</text>
+  </g>
+  <path d="M450 145 L490 145" class="pipe-thin" marker-end="url(#ar)"/>
+  <g class="step">
+    <rect x="500" y="80" width="200" height="130" rx="12" class="box"/>
+    <text x="600" y="106" text-anchor="middle" class="hd">Technology choices</text>
+    <g fill="var(--pipe)"><rect x="516" y="122" width="14" height="14" rx="3"/><rect x="516" y="152" width="14" height="14" rx="3"/><rect x="516" y="182" width="14" height="14" rx="3"/></g>
+    <text x="540" y="134" class="lbl">Ingestion tool</text>
+    <text x="540" y="164" class="lbl">Storage system</text>
+    <text x="540" y="194" class="lbl">Transformation tool</text>
+  </g>
+  <g class="step">
+    <path d="M110 60 C 110 10, 600 10, 600 72" fill="none" stroke="var(--warn)" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#arw)"/>
+    <rect x="195" y="14" width="330" height="28" rx="14" fill="var(--paper)" stroke="var(--warn)" stroke-width="2"/>
+    <text x="360" y="33" text-anchor="middle" class="warntxt pulse">Skip ahead = wasting time &amp; resources!</text>
+  </g>
+  <text x="350" y="252" text-anchor="middle" class="sm">The data engineer's path: needs → requirements → tools</text>
+</svg>
+<figcaption>Understand needs and requirements first; jumping straight to tools wastes time and resources.</figcaption>
+</figure>
+
+<h2>How these courses approach it</h2>
+<ul>
+  <li>Rather than <strong>diving straight into implementation</strong>, these courses (especially <strong>Course 1</strong>) spend <strong>a fair amount of time on the big picture</strong>:
+    <ul>
+      <li>A <strong>set of principles</strong> that apply to <strong>all your data engineering projects</strong></li>
+      <li>Forming a <strong>mental framework for building successful data systems</strong></li>
+    </ul>
+  </li>
+  <li>Don't worry, you'll <strong>also get into implementation</strong>.</li>
+  <li>In the <strong>lab exercises</strong>, you'll work with <strong>cutting-edge tools and technologies</strong> to <strong>build data systems on the AWS cloud</strong>.</li>
+</ul>
+
+<h2>Plan for Course 1</h2>
+
+<h3>Week 1: High-level look at the field of data engineering</h3>
+<ul>
+  <li><strong>Data engineering lifecycle</strong></li>
+  <li><strong>History of data engineering</strong></li>
+  <li><strong>The data engineer among other stakeholders</strong>: where data engineering sits alongside other roles in your company</li>
+  <li><strong>Business value</strong>: what it means to add value to the business as a data engineer</li>
+  <li><strong>Translation of stakeholder needs into requirements</strong>: gathering needs and turning them into system requirements, a theme <strong>revisited throughout these courses</strong></li>
+</ul>
+
+<h3>An important heads-up about Week 1</h3>
+<ul>
+  <li><strong>You won't write any code this week.</strong></li>
+  <li><strong>You won't use any cloud tools this week.</strong></li>
+  <li>This week is all about <strong>how to think like a data engineer</strong>.</li>
+  <li>It may <strong>feel different from what you expected</strong> when signing up, but <strong>thinking like a data engineer is step one</strong> to succeeding in this field.</li>
+  <li>With the <strong>right high-level knowledge and mindset</strong>, <strong>all the rest of successful data engineering becomes possible</strong>.</li>
+  <li><strong>Without it</strong>, <strong>no amount of technical know-how or coding skill can save you</strong>.</li>
+  <li>The specialization <strong>will go deep on the technical side</strong> too, so <strong>that's coming</strong>.</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 640 170" role="img" aria-label="Mindset is the base; technical know-how and coding build on top of it">
+  <rect x="40" y="110" width="560" height="44" rx="10" fill="var(--pipe)"/>
+  <text x="320" y="138" text-anchor="middle" class="hd wt">Think like a data engineer (Week 1: no code, no cloud tools)</text>
+  <rect x="120" y="60" width="400" height="40" rx="10" class="soft"/>
+  <text x="320" y="85" text-anchor="middle" class="lbl">Technical know-how · coding · cloud tools</text>
+  <rect x="200" y="14" width="240" height="36" rx="10" class="box"/>
+  <text x="320" y="37" text-anchor="middle" class="lbl">Successful data engineering</text>
+</svg>
+<figcaption>Mindset first; everything else builds on it.</figcaption>
+</figure>
+
+<h3>Week 2: Data engineering lifecycle and undercurrents</h3>
+<ul>
+  <li>A <strong>deep dive into each stage of the data engineering lifecycle</strong>.</li>
+  <li>Also contains <strong>a lot of theory and high-level orientation</strong>, so <strong>brace yourself</strong>.</li>
+  <li>You'll <strong>build on thinking like a data engineer</strong>.</li>
+  <li>Then you'll get <strong>hands-on practice with cloud data pipelines on AWS</strong> in the <strong>lab at the end of the week</strong>.</li>
+</ul>
+
+<h3>Week 3: Principles of good data architecture</h3>
+<ul>
+  <li>Focus on the <strong>principles of good data architecture</strong>.</li>
+</ul>
+
+<h3>Week 4: Design and build out a data architecture</h3>
+<ul>
+  <li><strong>Pull it all together</strong> to <strong>design and build a data architecture</strong> that <strong>delivers value based on stakeholder needs</strong>.</li>
+</ul>
+
+<figure class="reveal pre">
+<svg viewBox="0 0 700 210" role="img" aria-label="Course 1 roadmap: Week 1 high-level look, Week 2 lifecycle and undercurrents with AWS lab, Week 3 data architecture principles, Week 4 design and build">
+  <path d="M70 70 L630 70" class="pipe"/>
+  <path d="M70 70 L630 70" class="flow"/>
+  <g class="step">
+    <circle cx="90" cy="70" r="26" fill="var(--pipe)"/><text x="90" y="76" text-anchor="middle" class="hd wt">W1</text>
+    <text x="90" y="124" text-anchor="middle" class="lbl">High-level look</text>
+    <text x="90" y="142" text-anchor="middle" class="sm">Think like a</text>
+    <text x="90" y="157" text-anchor="middle" class="sm">data engineer</text>
+  </g>
+  <g class="step">
+    <circle cx="270" cy="70" r="26" fill="var(--pipe)"/><text x="270" y="76" text-anchor="middle" class="hd wt">W2</text>
+    <text x="270" y="124" text-anchor="middle" class="lbl">Lifecycle &amp;</text>
+    <text x="270" y="142" text-anchor="middle" class="lbl">undercurrents</text>
+    <text x="270" y="160" text-anchor="middle" class="sm">+ AWS pipeline lab</text>
+  </g>
+  <g class="step">
+    <circle cx="450" cy="70" r="26" fill="var(--pipe)"/><text x="450" y="76" text-anchor="middle" class="hd wt">W3</text>
+    <text x="450" y="124" text-anchor="middle" class="lbl">Principles of good</text>
+    <text x="450" y="142" text-anchor="middle" class="lbl">data architecture</text>
+  </g>
+  <g class="step">
+    <circle cx="620" cy="70" r="26" fill="var(--pipe)"/><text x="620" y="76" text-anchor="middle" class="hd wt">W4</text>
+    <text x="620" y="124" text-anchor="middle" class="lbl">Design &amp; build</text>
+    <text x="620" y="142" text-anchor="middle" class="sm">Architecture that</text>
+    <text x="620" y="157" text-anchor="middle" class="sm">meets stakeholder needs</text>
+  </g>
+</svg>
+<figcaption>The four weeks of Course 1.</figcaption>
+</figure>
+
+<h2>What's next</h2>
+<ul>
+  <li>In the next video: <strong>a closer look at the data engineering lifecycle</strong>.</li>
+</ul>
+
+<h2>Links</h2>
+<ul class="links">
+  <li><strong>Course:</strong> <a href="https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering" target="_blank" rel="noopener noreferrer">https://learn.deeplearning.ai/specializations/data-engineering/lesson/gy6y4z/welcome-to-data-engineering</a></li>
+  <li><strong>Claude:</strong> <a href="https://claude.ai/chat/1bbabe50-6e06-4394-a958-71ad9cfd58e8" target="_blank" rel="noopener noreferrer">https://claude.ai/chat/1bbabe50-6e06-4394-a958-71ad9cfd58e8</a></li>
+</ul>
+<p><a class="dl" href="/data-engineering">← Back to Data Engineering</a></p>
+
+<footer>Week 1: Introduction to Data Engineering · Lesson 2 notes · Data Engineering Specialization</footer>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme',dark?'light':'dark');
+  });
+  var t=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){t.forEach(function(e){e.classList.remove('pre');e.classList.add('go');});return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.remove('pre');e.target.classList.add('go');io.unobserve(e.target);}});},{threshold:.4});
+  t.forEach(function(e){io.observe(e);});
+})();
+</script>
+</body>
+</html>
